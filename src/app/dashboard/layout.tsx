@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
 import { Menu } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 function DashboardLayoutContent({
   children,
@@ -39,6 +42,43 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-deep-space">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+          <p className="mt-4 font-mono text-xs text-text-muted">
+            VERIFYING SESSION...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard content if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-deep-space">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+          <p className="mt-4 font-mono text-xs text-text-muted">
+            REDIRECTING TO LOGIN...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <DashboardLayoutContent>{children}</DashboardLayoutContent>

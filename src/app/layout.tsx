@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/lib/constants";
+import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   title: {
@@ -50,7 +51,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full bg-deep-space text-text-main font-body scanline">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

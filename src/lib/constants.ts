@@ -17,7 +17,6 @@ export const NAV_ITEMS = [
   { label: "PROJECTS", href: "/#projects", sysId: "NODE//02" },
   { label: "SKILLS", href: "/#skills", sysId: "NODE//03" },
   { label: "CONTACT", href: "/#contact", sysId: "NODE//04" },
-  { label: "DASHBOARD", href: "/dashboard", sysId: "NODE//05" },
 ] as const;
 
 export const DASHBOARD_NAV = [

@@ -61,7 +61,6 @@ export function HudHeader() {
             href: `/#${s.key}`,
             sysId: `NODE//${String(s.order + 1).padStart(2, "0")}`,
           })),
-          { label: "DASHBOARD", href: "/dashboard", sysId: "NODE//99" },
         ]
       : [...NAV_ITEMS];
 
