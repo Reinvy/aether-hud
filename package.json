@@ -5,7 +5,7 @@
   "description": "AETHER-HUD — High-End Tactical Portfolio with AAA Game HUD Design System",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
