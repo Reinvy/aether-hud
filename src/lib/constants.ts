@@ -23,6 +23,7 @@ export const DASHBOARD_NAV = [
   { label: "OVERVIEW", href: "/dashboard", icon: "Activity", sysId: "DASH//00" },
   { label: "PROJECTS", href: "/dashboard/projects", icon: "Boxes", sysId: "DASH//01" },
   { label: "SKILLS", href: "/dashboard/skills", icon: "Cpu", sysId: "DASH//02" },
+  { label: "SECTIONS", href: "/dashboard/sections", icon: "Boxes", sysId: "DASH//SECT" },
   { label: "SETTINGS", href: "/dashboard/settings", icon: "Settings", sysId: "DASH//03" },
 ] as const;
 

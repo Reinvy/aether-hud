@@ -7,11 +7,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS, PORTFOLIO_CONFIG } from "@/lib/constants";
+import { useData } from "@/lib/use-data";
+
+interface Section {
+  id: string;
+  key: string;
+  title: string;
+  subtitle: string | null;
+  enabled: boolean;
+  order: number;
+}
 
 export function HudHeader() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [time, setTime] = useState("");
+
+  const { data: sections } = useData<Section[]>("/api/sections");
 
   useEffect(() => {
     const update = () => {
@@ -35,6 +47,25 @@ export function HudHeader() {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  // Build nav items from API sections or fall back to constants
+  const enabledSections = (sections ?? [])
+    .filter((s) => s.enabled)
+    .sort((a, b) => a.order - b.order);
+
+  const dynamicNavItems =
+    enabledSections.length > 0
+      ? [
+          ...enabledSections.map((s) => ({
+            label: s.title.toUpperCase(),
+            href: `/#${s.key}`,
+            sysId: `NODE//${String(s.order + 1).padStart(2, "0")}`,
+          })),
+          { label: "DASHBOARD", href: "/dashboard", sysId: "NODE//99" },
+        ]
+      : [...NAV_ITEMS];
+
+  const navItems = dynamicNavItems;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
@@ -67,7 +98,7 @@ export function HudHeader() {
 
           {/* Center: Navigation */}
           <div className="hidden items-center gap-1 md:flex">
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               return (
                 <Link
@@ -131,7 +162,7 @@ export function HudHeader() {
             className="glass-panel-strong chamfered-sm mx-4 mt-2 px-4 py-4 sm:mx-6 lg:mx-8"
           >
             <div className="flex flex-col gap-1">
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
