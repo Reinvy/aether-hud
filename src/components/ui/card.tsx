@@ -1,26 +1,31 @@
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "glass" | "bordered";
-  hover?: "lift" | "sweep" | "none";
+  hover?: "lift" | "sweep" | "glow" | "none";
+  diamond?: boolean;
 }
 
-function Card({ className, variant = "glass", hover = "sweep", children, ...props }: CardProps) {
+function Card({ className, variant = "glass", hover = "sweep", diamond = false, children, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "chamfered relative",
+        "chamfered relative group",
         variant === "glass" && "glass-panel",
         variant === "default" && "bg-surface-primary border border-border-subtle",
         variant === "bordered" && "bg-surface-primary border border-border-glass",
         hover === "lift" && "card-lift",
         hover === "sweep" && "energy-sweep",
+        hover === "glow" && "card-lift animate-glow-pulse",
         "corner-decor",
+        diamond && "diamond-corner",
         className
       )}
       {...props}
     >
+      {/* Diamond accent on hover */}
+      <div className="pointer-events-none absolute -top-px -right-px h-3 w-3 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
       {children}
     </div>
   );

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
+import { DashboardFormSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const fadeInUp = {
@@ -89,14 +90,7 @@ export default function DashboardSettings() {
   }
 
   if (loading) {
-    return (
-      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">LOADING WEB CONFIG...</p>
-        </div>
-      </div>
-    );
+    return <DashboardFormSkeleton />;
   }
 
   return (

@@ -27,6 +27,17 @@ export function Modal({ open, onClose, title, children, className, sysId = "MODA
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, handleKeyDown]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -68,6 +79,12 @@ export function Modal({ open, onClose, title, children, className, sysId = "MODA
               >
                 <X className="h-4 w-4" />
               </button>
+            </div>
+
+            {/* Diamond indicator */}
+            <div className="absolute top-3 right-3 flex gap-1">
+              <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/40" />
+              <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/20" />
             </div>
 
             {/* Content */}

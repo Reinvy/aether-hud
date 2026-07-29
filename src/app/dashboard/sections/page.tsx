@@ -17,6 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
+import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 interface Section {
@@ -95,14 +96,7 @@ export default function DashboardSections() {
   }
 
   if (loading) {
-    return (
-      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">LOADING SECTION CONFIG...</p>
-        </div>
-      </div>
-    );
+    return <DashboardListSkeleton rows={5} />;
   }
 
   const sectionList = sections ?? [];

@@ -71,7 +71,7 @@ export function DashboardSidebar() {
               href={item.href}
               onClick={close}
               className={cn(
-                "flex items-center gap-3 rounded px-4 py-3 text-xs font-mono tracking-wider transition-all duration-200",
+                "flex items-center gap-3 rounded px-4 py-3 text-xs font-mono tracking-wider transition-all duration-200 hover-scale-sm",
                 isActive
                   ? "bg-[rgba(242,201,76,0.08)] text-gold-400 border-l-2 border-gold-400"
                   : "text-text-muted hover:bg-glass-200 hover:text-gold-400 border-l-2 border-transparent"

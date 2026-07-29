@@ -80,7 +80,7 @@ export function HeroSection() {
           </motion.div>
 
           {/* Main Title */}
-          <h1 className="mt-8 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="mt-8 text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
             <span className="text-text-main/90 font-display tracking-[0.08em]">
               {cfg.name}
             </span>

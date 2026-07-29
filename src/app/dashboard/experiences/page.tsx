@@ -16,6 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { useData } from "@/lib/use-data";
+import { DashboardListSkeleton, DashboardFormSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -150,14 +151,7 @@ export default function DashboardExperiences() {
   }
 
   if (loading) {
-    return (
-      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">LOADING EXPERIENCE LOG...</p>
-        </div>
-      </div>
-    );
+    return <DashboardListSkeleton rows={4} />;
   }
 
   const list = experiences ?? [];
