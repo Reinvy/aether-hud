@@ -1,0 +1,577 @@
+/* ============================================================
+   AETHER-HUD — High-End Tactical AAA Design System
+   Inspired by Honkai: Star Rail · Cyberpunk 2077 · Armored Core
+   Theme: Obsidian & Imperial Gold/Platinum — Luxury Cybernetics
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* ─── Design Tokens ────────────────────────────────────────── */
+@theme inline {
+  /* Surface & Background (Obsidian Luxury) */
+  --color-deep-space: #030407;
+  --color-surface-primary: #0a0c10;
+  --color-surface-overlay: rgba(15, 18, 26, 0.75);
+  --color-glass-card: rgba(20, 24, 35, 0.45);
+
+  /* Brand / Luxury Accents (Imperial Gold & Titanium) */
+  --color-gold-50: #fef9e7;
+  --color-gold-100: #fdf0c9;
+  --color-gold-200: #fbe39b;
+  --color-gold-300: #f9d36d;
+  --color-gold-400: #f2c94c;
+  --color-gold-500: #e2b93b;
+  --color-gold-600: #c19a32;
+  --color-gold-700: #a07e28;
+  --color-gold-800: #7c631e;
+  --color-gold-900: #5c4a14;
+
+  /* Titanium / Platinum secondary */
+  --color-platinum-50: #f4f6f8;
+  --color-platinum-100: #e0e6ed;
+  --color-platinum-200: #c7d0db;
+  --color-platinum-300: #adb6c4;
+
+  /* Stellar Blue / Emerald Energy */
+  --color-stellar-50: #e6fcf5;
+  --color-stellar-100: #b3f5d8;
+  --color-stellar-200: #80edbc;
+  --color-stellar-300: #4de5a0;
+  --color-stellar-400: #38ef7d;
+  --color-stellar-500: #00d2ff;
+  --color-stellar-600: #00a8cc;
+  --color-stellar-700: #008099;
+
+  /* HUD Status */
+  --color-hud-active: #00ff87;
+  --color-hud-warning: #ff9900;
+  --color-hud-danger: #ff0055;
+
+  /* Glass & Border */
+  --color-glass-100: rgba(255, 255, 255, 0.03);
+  --color-glass-200: rgba(255, 255, 255, 0.06);
+  --color-glass-300: rgba(255, 255, 255, 0.10);
+  --color-glass-400: rgba(255, 255, 255, 0.15);
+
+  --color-border-glass: rgba(242, 201, 76, 0.25);
+  --color-border-subtle: rgba(220, 225, 235, 0.12);
+  --color-border-active: #f2c94c;
+
+  /* Typography */
+  --color-text-main: #f8fafc;
+  --color-text-muted: #8a94a6;
+
+  /* Accent energy pulse */
+  --color-accent-pulse: #4a00e0;
+
+  /* Fonts */
+  --font-display: "Orbitron", "Chakra Petch", "Syne", system-ui, sans-serif;
+  --font-body: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Share Tech Mono", monospace;
+}
+
+/* ─── Global Styles ────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-deep-space);
+  color: var(--color-text-main);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Glass Surface ────────────────────────────────────────── */
+.glass-panel {
+  background: var(--color-glass-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-subtle);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--color-border-glass);
+}
+
+.glass-panel-strong {
+  background: rgba(20, 24, 35, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* ─── Chamfered Corners (45° cut) ──────────────────────────── */
+.chamfered {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.chamfered-sm {
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.chamfered-lg {
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+}
+
+/* Tactical Button Double Cut */
+.tactical-btn {
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+/* ─── Corner Decorative Elements ───────────────────────────── */
+.corner-decor {
+  position: relative;
+}
+.corner-decor::before {
+  content: "+";
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  color: rgba(242, 201, 76, 0.15);
+  pointer-events: none;
+}
+
+.sys-node {
+  position: relative;
+}
+.sys-node::after {
+  content: "[SYS_NODE]";
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: rgba(138, 148, 166, 0.3);
+  pointer-events: none;
+}
+
+/* ─── Gold Corner Brackets ─────────────────────────────────── */
+.corner-brackets {
+  position: relative;
+}
+.corner-brackets::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid rgba(242, 201, 76, 0.25);
+  border-left: 2px solid rgba(242, 201, 76, 0.25);
+  pointer-events: none;
+}
+.corner-brackets::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid rgba(242, 201, 76, 0.25);
+  border-right: 2px solid rgba(242, 201, 76, 0.25);
+  pointer-events: none;
+}
+
+/* ─── Angled Top Bar ───────────────────────────────────────── */
+.angled-bar {
+  position: relative;
+}
+.angled-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(242, 201, 76, 0.6), transparent);
+  pointer-events: none;
+}
+
+/* ─── Glow Effects ─────────────────────────────────────────── */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(242, 201, 76, 0.15), 0 0 40px rgba(242, 201, 76, 0.05);
+}
+.glow-gold-strong {
+  box-shadow: 0 0 30px rgba(242, 201, 76, 0.25), 0 0 60px rgba(242, 201, 76, 0.1);
+}
+.glow-stellar {
+  box-shadow: 0 0 20px rgba(56, 239, 125, 0.15), 0 0 40px rgba(56, 239, 125, 0.05);
+}
+.glow-platinum {
+  box-shadow: 0 0 20px rgba(224, 230, 237, 0.1), 0 0 40px rgba(224, 230, 237, 0.05);
+}
+
+/* ─── HUD Scanline Overlay ─────────────────────────────────── */
+.scanline {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.012) 2px,
+    rgba(255, 255, 255, 0.012) 4px
+  );
+}
+
+/* ─── Grid Background ──────────────────────────────────────── */
+.bg-grid-hud {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ─── Starfield (particle dots) ────────────────────────────── */
+.bg-starfield {
+  background-image: radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.12), transparent),
+    radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.08), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, rgba(242,201,76,0.15), transparent),
+    radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.08), transparent),
+    radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.12), transparent),
+    radial-gradient(1.5px 1.5px at 15% 85%, rgba(56,239,125,0.08), transparent),
+    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.04), transparent),
+    radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.06), transparent);
+}
+
+/* ─── Ambient Dark Radial Glow ─────────────────────────────── */
+.bg-ambient-gold {
+  background: radial-gradient(ellipse at 50% 0%, rgba(242, 201, 76, 0.08) 0%, transparent 60%);
+}
+.bg-ambient-violet {
+  background: radial-gradient(ellipse at 100% 50%, rgba(74, 0, 224, 0.06) 0%, transparent 50%);
+}
+
+/* ─── Typography System ────────────────────────────────────── */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f8fafc 0%, #f2c94c 40%, #c19a32 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-stellar {
+  background: linear-gradient(135deg, #38ef7d 0%, #00d2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-platinum {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e6ed 50%, #adb6c4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sys-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.sys-label-gold {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: rgba(242, 201, 76, 0.6);
+}
+
+.sys-label-active {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--color-hud-active);
+}
+
+/* ─── HUD Status Indicator LED ─────────────────────────────── */
+.led-active {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-hud-active);
+  box-shadow: 0 0 8px rgba(0, 255, 135, 0.6);
+  animation: led-pulse 2s ease-in-out infinite;
+}
+
+.led-warning {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-hud-warning);
+  box-shadow: 0 0 8px rgba(255, 153, 0, 0.6);
+}
+
+/* ─── Animations ───────────────────────────────────────────── */
+@keyframes led-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(0, 255, 135, 0.6); }
+  50% { opacity: 0.6; box-shadow: 0 0 4px rgba(0, 255, 135, 0.3); }
+}
+
+@keyframes energy-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(242, 201, 76, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(242, 201, 76, 0.25); }
+}
+
+@keyframes float-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes light-sweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes scanline-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes border-dance {
+  0%, 100% { border-color: rgba(242, 201, 76, 0.2); }
+  50% { border-color: rgba(242, 201, 76, 0.5); }
+}
+
+.animate-energy-pulse {
+  animation: energy-pulse 2s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.animate-float-drift {
+  animation: float-drift 3s ease-in-out infinite;
+}
+
+.animate-light-sweep {
+  background-size: 200% 100%;
+  animation: light-sweep 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+.animate-scanline {
+  animation: scanline-scroll 8s linear infinite;
+}
+
+/* ─── Energy Sweep on Hover ────────────────────────────────── */
+.energy-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.energy-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(242, 201, 76, 0.06),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.energy-sweep:hover::after {
+  transform: translateX(100%);
+}
+
+/* ─── Button Glow Sweep ────────────────────────────────────── */
+.btn-glow-sweep {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-glow-sweep::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-glow-sweep:hover::before {
+  left: 100%;
+}
+.btn-glow-sweep:hover {
+  transform: scale(1.03);
+}
+
+/* ─── Recessed Input ───────────────────────────────────────── */
+.input-recessed {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-border-subtle);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--color-text-main);
+}
+.input-recessed:focus {
+  border-color: rgba(242, 201, 76, 0.4);
+  box-shadow: 0 0 0 1px rgba(242, 201, 76, 0.2), inset 0 0 12px rgba(242, 201, 76, 0.1);
+  outline: none;
+}
+.input-recessed::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+/* ─── Hover Card Lift ──────────────────────────────────────── */
+.card-lift {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  border-color: var(--color-border-glass);
+  box-shadow: 0 0 25px rgba(242, 201, 76, 0.1), 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Tech Badge (Hexagonal) ───────────────────────────────── */
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--color-platinum-100);
+  background: rgba(224, 230, 237, 0.08);
+  border: 1px solid rgba(242, 201, 76, 0.2);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+/* ─── Segment Progress Bar ─────────────────────────────────── */
+.segment-bar {
+  display: flex;
+  gap: 3px;
+  height: 8px;
+}
+.segment-bar .segment {
+  flex: 1;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.06);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.segment-bar .segment.active {
+  background: var(--color-gold-400);
+  box-shadow: 0 0 6px rgba(242, 201, 76, 0.4);
+}
+.segment-bar .segment.active.stellar {
+  background: var(--color-stellar-400);
+  box-shadow: 0 0 6px rgba(56, 239, 125, 0.4);
+}
+
+/* ─── Crosshair Button Ring ────────────────────────────────── */
+.crosshair-ring {
+  position: relative;
+}
+.crosshair-ring::before,
+.crosshair-ring::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.crosshair-ring::before {
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 1px solid rgba(242, 201, 76, 0);
+}
+.crosshair-ring:hover::before {
+  border-color: rgba(242, 201, 76, 0.3);
+}
+.crosshair-ring::after {
+  top: 50%;
+  left: 50%;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  transform: translate(-50%, -50%);
+  background:
+    linear-gradient(90deg, rgba(242, 201, 76, 0) calc(50% - 0.5px), rgba(242, 201, 76, 0.15) calc(50% - 0.5px), rgba(242, 201, 76, 0.15) calc(50% + 0.5px), rgba(242, 201, 76, 0) calc(50% + 0.5px)),
+    linear-gradient(0deg, rgba(242, 201, 76, 0) calc(50% - 0.5px), rgba(242, 201, 76, 0.15) calc(50% - 0.5px), rgba(242, 201, 76, 0.15) calc(50% + 0.5px), rgba(242, 201, 76, 0) calc(50% + 0.5px));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.crosshair-ring:hover::after {
+  opacity: 1;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(242, 201, 76, 0.2);
+}
+
+/* ─── Selection ────────────────────────────────────────────── */
+::selection {
+  background: rgba(242, 201, 76, 0.2);
+  color: var(--color-text-main);
+}
+
+/* ─── Dashboard Specific ───────────────────────────────────── */
+.dashboard-grid-bg {
+  background-image:
+    radial-gradient(circle at 25px 25px, rgba(242, 201, 76, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ─── Responsive helpers ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .chamfered {
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+}
