@@ -15,6 +15,7 @@ import {
   Briefcase,
   MessageCircle,
   Layout,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
@@ -29,6 +30,7 @@ const iconMap: Record<string, React.ElementType> = {
   Briefcase,
   MessageCircle,
   Layout,
+  Globe,
 };
 
 export function DashboardSidebar() {

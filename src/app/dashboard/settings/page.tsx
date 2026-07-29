@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Settings,
+  Settings2,
   Save,
   RefreshCw,
   Globe,
-  User,
-  Mail,
-  Bell,
-  Shield,
+  Monitor,
+  Sun,
+  Moon,
+  Code2,
+  Eye,
   Palette,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
+import { cn } from "@/lib/utils";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -26,16 +28,19 @@ const fadeInUp = {
 } as const;
 
 interface ApiConfig {
-  id: string;
-  name: string;
-  tagline: string;
-  bio: string;
-  email: string;
-  location: string;
-  avatar: string;
-  status: string;
+  siteName: string;
+  siteDescription: string;
+  themePreset: string;
+  animationsEnabled: boolean;
   sysVersion: string;
+  id: string;
 }
+
+const THEME_PRESETS = [
+  { key: "obsidian", name: "OBSIDIAN", desc: "Deep space & imperial gold", color: "bg-gold-400" },
+  { key: "night-ops", name: "NIGHT OPS", desc: "Dark tactical & stellar blue", color: "bg-stellar-400" },
+  { key: "titanium", name: "TITANIUM", desc: "Platinum & silver frost", color: "bg-platinum-100" },
+];
 
 export default function DashboardSettings() {
   const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
@@ -43,30 +48,27 @@ export default function DashboardSettings() {
   const [initialized, setInitialized] = useState(false);
 
   const [form, setForm] = useState({
-    name: "",
-    tagline: "",
-    email: "",
-    location: "",
+    siteName: "",
+    siteDescription: "",
+    themePreset: "obsidian",
+    animationsEnabled: true,
     sysVersion: "",
-    bio: "",
   });
 
-  // Sync form when config loads
   useEffect(() => {
     if (config && !initialized) {
       setForm({
-        name: config.name || "",
-        tagline: config.tagline || "",
-        email: config.email || "",
-        location: config.location || "",
-        sysVersion: config.sysVersion || "",
-        bio: config.bio || "",
+        siteName: config.siteName || "AETHER-HUD",
+        siteDescription: config.siteDescription || "",
+        themePreset: config.themePreset || "obsidian",
+        animationsEnabled: config.animationsEnabled !== false,
+        sysVersion: config.sysVersion || "v2.4.1",
       });
       setInitialized(true);
     }
   }, [config, initialized]);
 
-  function updateField(key: string, value: string) {
+  function updateField(key: string, value: string | boolean) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -80,7 +82,7 @@ export default function DashboardSettings() {
       });
       refetch();
     } catch (e) {
-      console.error("Failed to save config", e);
+      console.error("Failed to save web config", e);
     } finally {
       setSaving(false);
     }
@@ -91,7 +93,7 @@ export default function DashboardSettings() {
       <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">LOADING CONFIGURATION...</p>
+          <p className="mt-4 font-mono text-xs text-text-muted">LOADING WEB CONFIG...</p>
         </div>
       </div>
     );
@@ -104,11 +106,11 @@ export default function DashboardSettings() {
         <div className="flex items-center justify-between">
           <div>
             <div className="mb-1 flex items-center gap-2">
-              <Settings className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // CONFIGURATION</span>
+              <Settings2 className="h-4 w-4 text-gold-400" />
+              <span className="sys-label-gold">DASHBOARD // WEB CONFIGURATION</span>
             </div>
             <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              System <span className="text-gradient-gold">Settings</span>
+              Web <span className="text-gradient-gold">Settings</span>
             </h1>
           </div>
           <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
@@ -119,102 +121,104 @@ export default function DashboardSettings() {
       </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Profile Settings */}
+        {/* Site Identity */}
         <motion.div {...fadeInUp}>
           <Card variant="glass" hover="none">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gold-400" />
-                <CardTitle>Profile Config</CardTitle>
+                <Globe className="h-4 w-4 text-gold-400" />
+                <CardTitle>Site Identity</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
-                label="DISPLAY NAME"
-                value={form.name}
-                onChange={(e) => updateField("name", e.target.value)}
+                label="FIELD_01 // SITE NAME"
+                value={form.siteName}
+                onChange={(e) => updateField("siteName", e.target.value)}
+                placeholder="AETHER-HUD"
               />
-              <Input
-                label="TAGLINE"
-                value={form.tagline}
-                onChange={(e) => updateField("tagline", e.target.value)}
-              />
-              <Input
-                label="EMAIL NODE"
-                value={form.email}
-                onChange={(e) => updateField("email", e.target.value)}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="LOCATION"
-                  value={form.location}
-                  onChange={(e) => updateField("location", e.target.value)}
-                />
-                <Input
-                  label="SYS VERSION"
-                  value={form.sysVersion}
-                  onChange={(e) => updateField("sysVersion", e.target.value)}
-                />
-              </div>
               <div>
-                <label className="sys-label mb-2 block text-text-muted">BIO</label>
+                <label className="sys-label mb-2 block text-text-muted">FIELD_02 // SITE DESCRIPTION</label>
                 <textarea
                   className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
                   rows={3}
-                  value={form.bio}
-                  onChange={(e) => updateField("bio", e.target.value)}
-                  placeholder="System bio..."
+                  value={form.siteDescription}
+                  onChange={(e) => updateField("siteDescription", e.target.value)}
+                  placeholder="High-End Tactical Portfolio"
                 />
+                <p className="mt-1 sys-label text-[9px] text-text-muted">
+                  Used for SEO meta tags and social sharing
+                </p>
               </div>
+              <Input
+                label="FIELD_03 // SYS VERSION"
+                value={form.sysVersion}
+                onChange={(e) => updateField("sysVersion", e.target.value)}
+                placeholder="v2.4.1"
+              />
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Appearance */}
+        {/* Theme & Appearance */}
         <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
           <Card variant="glass" hover="none">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Palette className="h-4 w-4 text-gold-400" />
-                <CardTitle>Appearance</CardTitle>
+                <CardTitle>Theme & Appearance</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Theme preset */}
+              {/* Theme Presets */}
               <div>
-                <span className="sys-label mb-3 block">THEME PRESET</span>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { name: "OBSIDIAN", colors: "bg-deep-space border-gold-400" },
-                    { name: "NIGHT OPS", colors: "bg-surface-primary border-stellar-400" },
-                    { name: "TITANIUM", colors: "bg-deep-space border-platinum-100" },
-                  ].map((theme) => (
+                <span className="sys-label mb-3 block">FIELD_04 // THEME PRESET</span>
+                <div className="grid grid-cols-1 gap-3">
+                  {THEME_PRESETS.map((theme) => (
                     <button
-                      key={theme.name}
-                      className={`flex items-center gap-2 rounded border-2 px-4 py-3 text-xs font-mono tracking-wider transition-all ${theme.colors} ${
-                        theme.name === "OBSIDIAN"
-                          ? "border-gold-400 bg-[rgba(242,201,76,0.06)] text-gold-400"
+                      key={theme.key}
+                      onClick={() => updateField("themePreset", theme.key)}
+                      className={cn(
+                        "flex items-center gap-4 rounded border-2 px-4 py-3 text-left transition-all",
+                        form.themePreset === theme.key
+                          ? "border-gold-400 bg-[rgba(242,201,76,0.06)]"
                           : "border-border-subtle text-text-muted hover:border-border-glass"
-                      }`}
+                      )}
                     >
-                      <span className="h-3 w-3 rounded-full bg-gold-400" />
-                      {theme.name}
+                      <span className={cn("h-4 w-4 rounded-full", theme.color)} />
+                      <div className="flex-1">
+                        <p className={cn(
+                          "font-mono text-xs font-medium tracking-wider",
+                          form.themePreset === theme.key ? "text-gold-400" : "text-text-main"
+                        )}>
+                          {theme.name}
+                        </p>
+                        <p className="font-mono text-[9px] text-text-muted">{theme.desc}</p>
+                      </div>
+                      {form.themePreset === theme.key && (
+                        <Badge variant="gold" size="sm">ACTIVE</Badge>
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Animation toggle */}
+              {/* Animations Toggle */}
               <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <RefreshCw className="h-4 w-4 text-gold-400/60" />
+                  <Monitor className="h-4 w-4 text-gold-400/60" />
                   <div>
-                    <p className="font-mono text-xs tracking-wider text-text-main">ANIMATIONS</p>
+                    <p className="font-mono text-xs tracking-wider text-text-main">FIELD_05 // ANIMATIONS</p>
                     <p className="font-mono text-[9px] text-text-muted">Framer Motion effects</p>
                   </div>
                 </div>
                 <label className="relative inline-flex cursor-pointer items-center">
-                  <input type="checkbox" defaultChecked className="peer sr-only" />
+                  <input
+                    type="checkbox"
+                    checked={form.animationsEnabled}
+                    onChange={(e) => updateField("animationsEnabled", e.target.checked)}
+                    className="peer sr-only"
+                  />
                   <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
                 </label>
               </div>
@@ -222,70 +226,59 @@ export default function DashboardSettings() {
           </Card>
         </motion.div>
 
-        {/* Security */}
+        {/* System Info */}
         <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
           <Card variant="glass" hover="none">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-gold-400" />
-                <CardTitle>Security</CardTitle>
+                <Code2 className="h-4 w-4 text-gold-400" />
+                <CardTitle>System Info</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <Shield className="h-4 w-4 text-hud-active" />
-                  <div>
-                    <p className="font-mono text-xs tracking-wider text-text-main">TWO-FACTOR AUTH</p>
-                    <p className="font-mono text-[9px] text-text-muted">Additional security layer</p>
-                  </div>
-                </div>
-                <Badge variant="gold" size="sm">ENABLED</Badge>
+                <span className="font-mono text-xs text-text-muted">FRAMEWORK</span>
+                <span className="font-mono text-xs text-text-main">Next.js 16</span>
               </div>
-
               <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <Bell className="h-4 w-4 text-gold-400/60" />
-                  <div>
-                    <p className="font-mono text-xs tracking-wider text-text-main">SESSION TIMEOUT</p>
-                    <p className="font-mono text-[9px] text-text-muted">Auto-logout after inactivity</p>
-                  </div>
-                </div>
-                <span className="font-mono text-[10px] text-text-muted">30 MIN</span>
+                <span className="font-mono text-xs text-text-muted">DATABASE</span>
+                <span className="font-mono text-xs text-stellar-400">PostgreSQL</span>
+              </div>
+              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
+                <span className="font-mono text-xs text-text-muted">DEPLOY</span>
+                <span className="font-mono text-xs text-text-main">Vercel</span>
+              </div>
+              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
+                <span className="font-mono text-xs text-text-muted">DESIGN SYSTEM</span>
+                <span className="font-mono text-xs text-gold-400">AETHER-HUD v2</span>
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Notifications */}
+        {/* Danger Zone */}
         <motion.div {...fadeInUp} transition={{ delay: 0.3 }}>
           <Card variant="glass" hover="none">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-gold-400" />
-                <CardTitle>Notifications</CardTitle>
+                <Settings2 className="h-4 w-4 text-hud-danger" />
+                <CardTitle className="text-hud-danger">Danger Zone</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { label: "DEPLOYMENT ALERTS", desc: "When new version is deployed" },
-                { label: "CONTACT FORM", desc: "When someone sends a message" },
-                { label: "SYSTEM UPDATES", desc: "Framework and dependency updates" },
-              ].map((notif) => (
-                <div
-                  key={notif.label}
-                  className="flex items-center justify-between rounded border border-border-subtle px-4 py-3"
-                >
-                  <div>
-                    <p className="font-mono text-xs tracking-wider text-text-main">{notif.label}</p>
-                    <p className="font-mono text-[9px] text-text-muted">{notif.desc}</p>
-                  </div>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input type="checkbox" defaultChecked className="peer sr-only" />
-                    <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
-                  </label>
+            <CardContent className="space-y-3">
+              <p className="font-mono text-[10px] text-text-muted leading-relaxed">
+                These actions are irreversible. Proceed with caution.
+              </p>
+              <div className="flex items-center justify-between rounded border border-hud-danger/30 px-4 py-3">
+                <div>
+                  <p className="font-mono text-xs tracking-wider text-text-main">RESET ALL DATA</p>
+                  <p className="font-mono text-[9px] text-text-muted">Clear all portfolio content</p>
                 </div>
-              ))}
+                <Button variant="secondary" size="sm" glow="none" className="text-hud-danger border-hud-danger/30">
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  RESET
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -294,13 +287,13 @@ export default function DashboardSettings() {
       {/* Deploy Button */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
         <div className="glass-panel chamfered-sm inline-flex items-center gap-4 px-8 py-4">
-          <Globe className="h-5 w-5 text-gold-400" />
+          <Eye className="h-5 w-5 text-gold-400" />
           <div className="text-left">
             <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-              Configuration Ready for Deployment
+              Web Config Ready for Deployment
             </p>
             <p className="font-mono text-[9px] text-text-muted">
-              Changes are applied immediately after deploy
+              Theme and site changes applied immediately
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} disabled={saving}>

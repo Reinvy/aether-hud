@@ -70,17 +70,22 @@ model Testimonial {
 }
 
 model PortfolioConfig {
-  id         String   @id @default("main")
-  name       String   @default("Bahrul Ulumul Haq")
-  tagline    String   @default("Full-Stack Developer & AI Engineer")
-  bio        String   @default("")
-  email      String   @default("")
-  location   String   @default("")
-  avatar     String   @default("/placeholder.svg")
-  status     String   @default("ONLINE")
-  sysVersion String   @default("v2.4.1")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                String   @id @default("main")
+  name              String   @default("Bahrul Ulumul Haq")
+  tagline           String   @default("Full-Stack Developer & AI Engineer")
+  bio               String   @default("")
+  email             String   @default("")
+  location          String   @default("")
+  avatar            String   @default("/placeholder.svg")
+  status            String   @default("ONLINE")
+  sysVersion        String   @default("v2.4.1")
+  // Web config
+  siteName          String   @default("AETHER-HUD")
+  siteDescription   String   @default("High-End Tactical Portfolio — Obsidian &amp; Imperial Gold Edition")
+  themePreset       String   @default("obsidian")
+  animationsEnabled Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model SocialLink {

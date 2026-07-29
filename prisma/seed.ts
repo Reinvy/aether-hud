@@ -9,7 +9,7 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   // ─── Sections ───────────────────────────────────
   const sections = [
-    { id: "sec-hero", key: "hero", title: "Hero", subtitle: "Main introduction with terminal display", enabled: true, order: 0 },
+    { id: "sec-hero", key: "hero", title: "Profile", subtitle: "Personal profile & terminal introduction", enabled: true, order: 0 },
     { id: "sec-projects", key: "projects", title: "Projects", subtitle: "Portfolio project archive dossiers", enabled: true, order: 1 },
     { id: "sec-skills", key: "skills", title: "Skills", subtitle: "Technical attribute matrix", enabled: true, order: 2 },
     { id: "sec-experience", key: "experience", title: "Experience", subtitle: "Career timeline history", enabled: true, order: 3 },

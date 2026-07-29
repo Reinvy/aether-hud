@@ -13,6 +13,7 @@ export const PORTFOLIO_CONFIG = {
 
 export const NAV_ITEMS = [
   { label: "HOME", href: "/", sysId: "NODE//01" },
+  { label: "PROFILE", href: "/#hero", sysId: "NODE//01" },
   { label: "PROJECTS", href: "/#projects", sysId: "NODE//02" },
   { label: "SKILLS", href: "/#skills", sysId: "NODE//03" },
   { label: "CONTACT", href: "/#contact", sysId: "NODE//04" },
@@ -21,13 +22,14 @@ export const NAV_ITEMS = [
 
 export const DASHBOARD_NAV = [
   { label: "OVERVIEW", href: "/dashboard", icon: "Activity", sysId: "DASH//00" },
-  { label: "HERO CONFIG", href: "/dashboard/contact", icon: "User", sysId: "DASH//01" },
+  { label: "PROFILE", href: "/dashboard/profile", icon: "User", sysId: "DASH//01" },
   { label: "PROJECTS", href: "/dashboard/projects", icon: "Boxes", sysId: "DASH//02" },
   { label: "SKILLS", href: "/dashboard/skills", icon: "Cpu", sysId: "DASH//03" },
   { label: "EXPERIENCE", href: "/dashboard/experiences", icon: "Briefcase", sysId: "DASH//04" },
   { label: "TESTIMONIALS", href: "/dashboard/testimonials", icon: "MessageCircle", sysId: "DASH//05" },
+  { label: "CONTACT", href: "/dashboard/contact", icon: "Globe", sysId: "DASH//06" },
   { label: "SECTIONS", href: "/dashboard/sections", icon: "Layout", sysId: "DASH//SECT" },
-  { label: "SETTINGS", href: "/dashboard/settings", icon: "Settings", sysId: "DASH//06" },
+  { label: "SETTINGS", href: "/dashboard/settings", icon: "Settings", sysId: "DASH//07" },
 ] as const;
 
 export type Project = {
@@ -62,4 +64,11 @@ export type PortfolioData = {
   projects: Project[];
   skills: Skill[];
   socials: { platform: string; url: string; icon: string }[];
+};
+
+export type WebConfig = {
+  siteName: string;
+  siteDescription: string;
+  themePreset: string;
+  animationsEnabled: boolean;
 };
