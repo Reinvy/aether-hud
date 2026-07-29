@@ -562,7 +562,54 @@ body {
   color: var(--color-text-main);
 }
 
-/* ─── Dashboard Specific ───────────────────────────────────── */
+/* ─── Diamond Corner Decor ────────────────────────────── */
+.diamond-corner {
+  position: relative;
+}
+.diamond-corner::before {
+  content: "◆";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.4rem;
+  color: rgba(242, 201, 76, 0.15);
+  pointer-events: none;
+}
+
+/* ─── Stagger Fade-In Utility ─────────────────────────── */
+.stagger-fade > * {
+  opacity: 0;
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+.stagger-fade > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-fade > *:nth-child(2) { animation-delay: 60ms; }
+.stagger-fade > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-fade > *:nth-child(4) { animation-delay: 180ms; }
+.stagger-fade > *:nth-child(5) { animation-delay: 240ms; }
+.stagger-fade > *:nth-child(6) { animation-delay: 300ms; }
+.stagger-fade > *:nth-child(7) { animation-delay: 360ms; }
+.stagger-fade > *:nth-child(8) { animation-delay: 420ms; }
+.stagger-fade > *:nth-child(9) { animation-delay: 480ms; }
+.stagger-fade > *:nth-child(10) { animation-delay: 540ms; }
+
+/* ─── Hover Scale Micro-Interaction ───────────────────── */
+.hover-scale {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+.hover-scale-sm:hover {
+  transform: scale(1.05);
+}
+
+/* ─── Focus Ring ──────────────────────────────────────── */
+.focus-ring-gold:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.3);
+}
+
+/* ─── Dashboard Sub-page Skeleton ─────────────────────── */
 .dashboard-grid-bg {
   background-image:
     radial-gradient(circle at 25px 25px, rgba(242, 201, 76, 0.03) 1px, transparent 1px);

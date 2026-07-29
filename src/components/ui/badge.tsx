@@ -10,7 +10,7 @@ function Badge({ className, variant = "default", size = "sm", children, ...props
   return (
     <span
       className={cn(
-        "tech-badge inline-flex items-center gap-1.5 font-mono",
+        "tech-badge inline-flex items-center gap-1.5 font-mono transition-all duration-300 hover:border-gold-400/40",
 
         size === "sm" && "text-[10px] px-2 py-0.5",
         size === "md" && "text-xs px-3 py-1",

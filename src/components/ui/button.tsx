@@ -16,12 +16,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
-          "tactical-btn btn-glow-sweep",
+          "tactical-btn btn-glow-sweep focus-ring-gold",
 
           /* Size */
-          size === "sm" && "px-4 py-1.5 text-xs",
-          size === "md" && "px-6 py-2.5 text-sm",
-          size === "lg" && "px-8 py-3.5 text-base",
+          size === "sm" && "px-4 py-1.5 text-xs min-h-[32px]",
+          size === "md" && "px-6 py-2.5 text-sm min-h-[40px]",
+          size === "lg" && "px-8 py-3.5 text-base min-h-[48px] sm:px-10",
 
           /* Variant */
           variant === "primary" &&

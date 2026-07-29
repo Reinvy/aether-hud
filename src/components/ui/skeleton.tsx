@@ -206,3 +206,94 @@ export function DashboardPageSkeleton() {
     </div>
   );
 }
+
+/* ─── Dashboard Sub-page Skeleton (list/card view) ─────── */
+
+interface ListSkeletonProps {
+  rows?: number;
+  className?: string;
+}
+
+export function DashboardListSkeleton({ rows = 5, className }: ListSkeletonProps) {
+  return (
+    <div className={cn("dashboard-grid-bg min-h-full p-6 lg:p-8", className)}>
+      {/* Header */}
+      <div className={cn("mb-6 flex items-center justify-between", pulseClass)}>
+        <div>
+          <div className="mb-1 flex items-center gap-2">
+            <div className="h-4 w-4 bg-glass-300 rounded-none" />
+            <div className="h-3 w-40 bg-glass-300 rounded-none" />
+          </div>
+          <div className="h-8 w-56 bg-glass-300 rounded-none" />
+        </div>
+        <div className="h-9 w-32 bg-glass-300 rounded-none tactical-btn" />
+      </div>
+
+      {/* Filters */}
+      <div className={cn("mb-6 flex gap-2", pulseClass)}>
+        <div className="h-7 w-24 bg-glass-200 rounded-none tech-badge" />
+        <div className="h-7 w-28 bg-glass-200 rounded-none tech-badge" />
+        <div className="h-7 w-20 bg-glass-200 rounded-none tech-badge" />
+      </div>
+
+      {/* List rows */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-4 border-b border-border-subtle px-4 py-2">
+          <div className="h-3 w-8 bg-glass-200 rounded-none" />
+          <div className="h-3 flex-1 bg-glass-200 rounded-none" />
+          <div className="h-3 w-24 bg-glass-200 rounded-none hidden sm:block" />
+          <div className="h-3 w-20 bg-glass-200 rounded-none hidden md:block" />
+          <div className="h-3 w-20 bg-glass-200 rounded-none" />
+        </div>
+        {Array.from({ length: rows }).map((_, i) => (
+          <div key={i} className={cn("glass-panel chamfered p-4", pulseClass)}>
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-8 bg-glass-300 rounded-none shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3 w-3/5 bg-glass-300 rounded-none" />
+                <div className="h-2 w-2/3 bg-glass-200 rounded-none" />
+              </div>
+              <div className="h-5 w-20 bg-glass-200 rounded-none hidden sm:block" />
+              <div className="h-5 w-16 bg-glass-200 rounded-none hidden md:flex items-center gap-2" />
+              <div className="flex gap-1">
+                <div className="h-7 w-7 bg-glass-200 rounded-none" />
+                <div className="h-7 w-7 bg-glass-200 rounded-none" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Settings/Form Page Skeleton ──────────────────────── */
+
+export function DashboardFormSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("dashboard-grid-bg min-h-full p-6 lg:p-8", className)}>
+      <div className={cn("mb-6", pulseClass)}>
+        <div className="mb-1 flex items-center gap-2">
+          <div className="h-4 w-4 bg-glass-300 rounded-none" />
+          <div className="h-3 w-36 bg-glass-300 rounded-none" />
+        </div>
+        <div className="h-8 w-52 bg-glass-300 rounded-none" />
+      </div>
+
+      <div className={cn("glass-panel chamfered p-6 max-w-2xl", pulseClass)}>
+        <div className="space-y-5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i}>
+              <div className="h-3 w-32 bg-glass-300 rounded-none mb-2" />
+              <div className="h-10 w-full bg-glass-200 rounded-none" />
+            </div>
+          ))}
+          <div className="flex justify-end gap-3 pt-2">
+            <div className="h-9 w-24 bg-glass-200 rounded-none tactical-btn" />
+            <div className="h-9 w-32 bg-glass-300 rounded-none tactical-btn" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
