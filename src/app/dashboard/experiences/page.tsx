@@ -1,0 +1,362 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Briefcase,
+  Plus,
+  Pencil,
+  Trash2,
+  GraduationCap,
+  Globe,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
+import { useData } from "@/lib/use-data";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+} as const;
+
+interface ApiExperience {
+  id: string;
+  company: string;
+  role: string;
+  description: string;
+  startDate: string;
+  endDate: string | null;
+  type: "work" | "education" | "freelance";
+  order: number;
+}
+
+type FormData = {
+  company: string;
+  role: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  type: "work" | "education" | "freelance";
+  order: string;
+};
+
+const EMPTY_FORM: FormData = {
+  company: "",
+  role: "",
+  description: "",
+  startDate: "",
+  endDate: "",
+  type: "work",
+  order: "0",
+};
+
+const typeColors: Record<string, string> = {
+  work: "border-gold-400/40 text-gold-400",
+  education: "border-stellar-400/40 text-stellar-400",
+  freelance: "border-[#38EF7D]/40 text-[#38EF7D]",
+};
+
+const typeIcons: Record<string, React.ElementType> = {
+  work: Briefcase,
+  education: GraduationCap,
+  freelance: Globe,
+};
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+}
+
+export default function DashboardExperiences() {
+  const { data: experiences, loading, refetch } = useData<ApiExperience[]>("/api/experiences");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState<FormData>(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+
+  function openNew() {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setModalOpen(true);
+  }
+
+  function openEdit(exp: ApiExperience) {
+    setEditingId(exp.id);
+    setForm({
+      company: exp.company,
+      role: exp.role,
+      description: exp.description,
+      startDate: exp.startDate ? exp.startDate.slice(0, 10) : "",
+      endDate: exp.endDate ? exp.endDate.slice(0, 10) : "",
+      type: exp.type,
+      order: String(exp.order),
+    });
+    setModalOpen(true);
+  }
+
+  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const body = {
+        company: form.company,
+        role: form.role,
+        description: form.description,
+        startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
+        endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+        type: form.type,
+        order: parseInt(form.order, 10) || 0,
+      };
+
+      if (editingId) {
+        await fetch("/api/experiences", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editingId, ...body }),
+        });
+      } else {
+        await fetch("/api/experiences", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+      }
+
+      setModalOpen(false);
+      refetch();
+    } catch (e) {
+      console.error("Failed to save experience", e);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("PURGE EXPERIENCE RECORD? This action cannot be undone.")) return;
+    try {
+      await fetch(`/api/experiences/${id}`, { method: "DELETE" });
+      refetch();
+    } catch (e) {
+      console.error("Failed to delete experience", e);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+          <p className="mt-4 font-mono text-xs text-text-muted">LOADING EXPERIENCE LOG...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const list = experiences ?? [];
+
+  return (
+    <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
+      {/* Header */}
+      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-gold-400" />
+              <span className="sys-label-gold">DASHBOARD // EXPERIENCE LOG</span>
+            </div>
+            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
+              Manage <span className="text-gradient-gold">Experience Record</span>
+            </h1>
+          </div>
+          <Button variant="primary" size="sm" onClick={openNew}>
+            <Plus className="h-4 w-4" />
+            NEW EXPERIENCE
+          </Button>
+        </div>
+      </motion.div>
+
+      {/* Experience List */}
+      <motion.div className="space-y-3" {...fadeInUp}>
+        <div className="flex items-center gap-4 border-b border-border-subtle px-4 py-2">
+          <span className="sys-label w-8 text-center">#</span>
+          <span className="sys-label flex-1">COMPANY / ROLE</span>
+          <span className="sys-label hidden w-24 sm:block">TYPE</span>
+          <span className="sys-label hidden w-40 md:block">PERIOD</span>
+          <span className="sys-label w-20 text-center">ACTIONS</span>
+        </div>
+
+        {list.length === 0 ? (
+          <Card variant="glass" hover="none">
+            <CardContent className="p-8 text-center">
+              <p className="font-mono text-sm text-text-muted">
+                [EMPTY] // No experience records found
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          list.map((exp, i) => {
+            const TypeIcon = typeIcons[exp.type] || Briefcase;
+            return (
+              <motion.div
+                key={exp.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Card variant="glass" hover="sweep">
+                  <div className="flex items-center gap-4 px-4 py-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                      <TypeIcon className="h-4 w-4 text-gold-400/60" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main">
+                        {exp.role}
+                      </p>
+                      <p className="mt-0.5 truncate font-mono text-[9px] text-text-muted">
+                        {exp.company}
+                      </p>
+                    </div>
+
+                    <div className="hidden w-24 sm:block">
+                      <Badge
+                        variant="default"
+                        size="sm"
+                        className={typeColors[exp.type] || ""}
+                      >
+                        {exp.type.toUpperCase()}
+                      </Badge>
+                    </div>
+
+                    <div className="hidden w-40 items-center gap-2 md:flex">
+                      <span className="font-mono text-[10px] text-text-muted">
+                        {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : "PRESENT"}
+                      </span>
+                    </div>
+
+                    <div className="flex w-20 items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        glow="none"
+                        className="p-1.5"
+                        onClick={() => openEdit(exp)}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        glow="none"
+                        className="p-1.5 text-hud-danger hover:text-hud-danger"
+                        onClick={() => handleDelete(exp.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })
+        )}
+      </motion.div>
+
+      {/* New / Edit Modal */}
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editingId ? "EDIT EXPERIENCE RECORD" : "NEW EXPERIENCE RECORD"}
+        sysId={editingId ? `DASH//04 // ${editingId.slice(0, 8)}` : "DASH//04 // NEW"}
+      >
+        <div className="space-y-4">
+          <Input
+            label="FIELD_01 // COMPANY"
+            placeholder="Enter company name..."
+            value={form.company}
+            onChange={(e) => updateField("company", e.target.value)}
+          />
+          <Input
+            label="FIELD_02 // ROLE"
+            placeholder="e.g., Senior Full-Stack Developer"
+            value={form.role}
+            onChange={(e) => updateField("role", e.target.value)}
+          />
+          <div>
+            <label className="sys-label mb-2 block text-text-muted">
+              FIELD_03 // DESCRIPTION
+            </label>
+            <textarea
+              className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
+              rows={3}
+              value={form.description}
+              onChange={(e) => updateField("description", e.target.value)}
+              placeholder="Describe your responsibilities and achievements..."
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="FIELD_04 // START DATE"
+              type="date"
+              value={form.startDate}
+              onChange={(e) => updateField("startDate", e.target.value)}
+            />
+            <Input
+              label="FIELD_05 // END DATE"
+              type="date"
+              value={form.endDate}
+              onChange={(e) => updateField("endDate", e.target.value)}
+              placeholder="Leave empty for present"
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="sys-label mb-2 block text-text-muted">
+                FIELD_06 // TYPE
+              </label>
+              <select
+                className="input-recessed w-full px-4 py-2.5 text-sm font-body"
+                value={form.type}
+                onChange={(e) => updateField("type", e.target.value as FormData["type"])}
+              >
+                <option value="work">WORK</option>
+                <option value="education">EDUCATION</option>
+                <option value="freelance">FREELANCE</option>
+              </select>
+            </div>
+            <div className="col-span-2">
+              <Input
+                label="FIELD_07 // ORDER"
+                type="number"
+                placeholder="0"
+                value={form.order}
+                onChange={(e) => updateField("order", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setModalOpen(false)}
+              disabled={saving}
+            >
+              CANCEL
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? "SAVING..." : "SAVE RECORD"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}

@@ -15,3 +15,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(item, { status: 201 });
   } catch (e) { return NextResponse.json({ error: "Failed" }, { status: 500 }); }
 }
+
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, ...data } = body;
+    const item = await prisma.experience.update({ where: { id }, data });
+    return NextResponse.json(item);
+  } catch (e) { return NextResponse.json({ error: "Failed" }, { status: 500 }); }
+}

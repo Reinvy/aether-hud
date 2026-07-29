@@ -21,10 +21,13 @@ export const NAV_ITEMS = [
 
 export const DASHBOARD_NAV = [
   { label: "OVERVIEW", href: "/dashboard", icon: "Activity", sysId: "DASH//00" },
-  { label: "PROJECTS", href: "/dashboard/projects", icon: "Boxes", sysId: "DASH//01" },
-  { label: "SKILLS", href: "/dashboard/skills", icon: "Cpu", sysId: "DASH//02" },
-  { label: "SECTIONS", href: "/dashboard/sections", icon: "Boxes", sysId: "DASH//SECT" },
-  { label: "SETTINGS", href: "/dashboard/settings", icon: "Settings", sysId: "DASH//03" },
+  { label: "HERO CONFIG", href: "/dashboard/contact", icon: "User", sysId: "DASH//01" },
+  { label: "PROJECTS", href: "/dashboard/projects", icon: "Boxes", sysId: "DASH//02" },
+  { label: "SKILLS", href: "/dashboard/skills", icon: "Cpu", sysId: "DASH//03" },
+  { label: "EXPERIENCE", href: "/dashboard/experiences", icon: "Briefcase", sysId: "DASH//04" },
+  { label: "TESTIMONIALS", href: "/dashboard/testimonials", icon: "MessageCircle", sysId: "DASH//05" },
+  { label: "SECTIONS", href: "/dashboard/sections", icon: "Layout", sysId: "DASH//SECT" },
+  { label: "SETTINGS", href: "/dashboard/settings", icon: "Settings", sysId: "DASH//06" },
 ] as const;
 
 export type Project = {

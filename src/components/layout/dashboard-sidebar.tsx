@@ -11,6 +11,10 @@ import {
   LayoutDashboard,
   LogOut,
   X,
+  User,
+  Briefcase,
+  MessageCircle,
+  Layout,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
@@ -21,6 +25,10 @@ const iconMap: Record<string, React.ElementType> = {
   Boxes,
   Cpu,
   Settings,
+  User,
+  Briefcase,
+  MessageCircle,
+  Layout,
 };
 
 export function DashboardSidebar() {
