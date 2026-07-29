@@ -14,8 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { portfolioData } from "@/data/portfolio";
-import type { Project } from "@/lib/constants";
+import { useData } from "@/lib/use-data";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -23,27 +22,93 @@ const fadeInUp = {
   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 } as const;
 
-const stats = [
-  { label: "ACTIVE PROJECTS", value: portfolioData.projects.length.toString().padStart(2, "0"), icon: Boxes, color: "gold" },
-  { label: "SKILL MODULES", value: portfolioData.skills.length.toString().padStart(2, "0"), icon: Cpu, color: "stellar" },
-  { label: "TOTAL VIEWS", value: "1,247", icon: Eye, color: "gold" },
-  { label: "UPTIME", value: "99.9%", icon: TrendingUp, color: "stellar" },
-];
+interface DashboardStats {
+  projectCount: number;
+  skillCount: number;
+  experienceCount: number;
+  testimonialCount: number;
+  uptime: string;
+}
 
-const recentActivity = [
-  { action: "Portfolio deployed", detail: "AETHER-HUD v2.4.1", time: "2m ago", type: "deploy" },
-  { action: "Project updated", detail: "AniVerse — performance optimization", time: "1h ago", type: "update" },
-  { action: "Skill recalibrated", detail: "TypeScript → 92% proficiency", time: "3h ago", type: "calibrate" },
-];
+interface ApiProject {
+  id: string;
+  title: string;
+  description: string;
+  tags: string; // JSON string
+  category: string;
+  complexity: string;
+  performance: string;
+  year: string;
+  liveUrl: string | null;
+  githubUrl: string | null;
+}
+
+function parseTags(tags: string): string[] {
+  try {
+    const parsed = JSON.parse(tags);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return tags ? tags.split(",").map((t) => t.trim()) : [];
+  }
+}
 
 export default function DashboardOverview() {
+  const { data: stats, loading: statsLoading } = useData<DashboardStats>("/api/dashboard/stats");
+  const { data: projects, loading: projectsLoading } = useData<ApiProject[]>("/api/projects");
+
+  if (statsLoading || projectsLoading) {
+    return (
+      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+          <p className="mt-4 font-mono text-xs text-text-muted">INITIALIZING SYSTEM...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const statCards = [
+    {
+      label: "ACTIVE PROJECTS",
+      value: String(stats?.projectCount ?? 0).padStart(2, "0"),
+      icon: Boxes,
+      color: "gold" as const,
+    },
+    {
+      label: "SKILL MODULES",
+      value: String(stats?.skillCount ?? 0).padStart(2, "0"),
+      icon: Cpu,
+      color: "stellar" as const,
+    },
+    {
+      label: "EXPERIENCES",
+      value: String(stats?.experienceCount ?? 0).padStart(2, "0"),
+      icon: Eye,
+      color: "gold" as const,
+    },
+    {
+      label: "UPTIME",
+      value: stats?.uptime ?? "99.9%",
+      icon: TrendingUp,
+      color: "stellar" as const,
+    },
+  ];
+
+  const projectList = projects ?? [];
+
+  const recentActivity = [
+    { action: "Portfolio deployed", detail: "AETHER-HUD v2.4.1", time: "2m ago", type: "deploy" },
+    { action: "System online", detail: "All modules operational", time: "1h ago", type: "update" },
+    { action: "Data synchronized", detail: `${projectList.length} projects indexed`, time: "3h ago", type: "calibrate" },
+  ];
+
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
       <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="mb-1 flex items-center gap-2">
               <Activity className="h-4 w-4 text-gold-400" />
               <span className="sys-label-gold">DASHBOARD // CONTROL PANEL</span>
             </div>
@@ -60,7 +125,7 @@ export default function DashboardOverview() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => {
+        {statCards.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <motion.div
@@ -74,15 +139,19 @@ export default function DashboardOverview() {
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="sys-label text-[9px]">{stat.label}</span>
-                      <p className={`mt-2 font-display text-3xl font-bold tracking-wider ${
-                        stat.color === "gold" ? "text-gold-400" : "text-stellar-400"
-                      }`}>
+                      <p
+                        className={`mt-2 font-display text-3xl font-bold tracking-wider ${
+                          stat.color === "gold" ? "text-gold-400" : "text-stellar-400"
+                        }`}
+                      >
                         {stat.value}
                       </p>
                     </div>
-                    <Icon className={`h-8 w-8 ${
-                      stat.color === "gold" ? "text-gold-400/30" : "text-stellar-400/30"
-                    }`} />
+                    <Icon
+                      className={`h-8 w-8 ${
+                        stat.color === "gold" ? "text-gold-400/30" : "text-stellar-400/30"
+                      }`}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -103,40 +172,51 @@ export default function DashboardOverview() {
                   <CardTitle>Deployed Archives</CardTitle>
                 </div>
                 <Badge variant="gold" size="sm">
-                  {portfolioData.projects.length} ACTIVE
+                  {projectList.length} ACTIVE
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {portfolioData.projects.map((project: Project) => (
-                  <div
-                    key={project.id}
-                    className="flex items-center justify-between rounded border border-border-subtle px-4 py-3 transition-all hover:border-border-glass hover:bg-glass-200 group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-center justify-center w-8 h-8 rounded border border-border-glass bg-deep-space/50">
-                        <span className="font-mono text-[9px] text-gold-400">{project.complexity.slice(-1)}</span>
+                {projectList.length === 0 ? (
+                  <p className="py-4 text-center font-mono text-xs text-text-muted">
+                    [EMPTY] // No projects deployed
+                  </p>
+                ) : (
+                  projectList.map((project: ApiProject) => {
+                    const tags = parseTags(project.tags);
+                    return (
+                      <div
+                        key={project.id}
+                        className="group flex items-center justify-between rounded border border-border-subtle px-4 py-3 transition-all hover:border-border-glass hover:bg-glass-200"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 flex-col items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                            <span className="font-mono text-[9px] text-gold-400">
+                              {project.complexity.slice(-1)}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
+                              {project.title}
+                            </p>
+                            <p className="font-mono text-[9px] tracking-wider text-text-muted">
+                              {project.category} // {tags.slice(0, 2).join(", ")}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="sys-label text-[8px]">PERF: {project.performance}</span>
+                          {project.liveUrl && (
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors group-hover:text-gold-400" />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-                          {project.title}
-                        </p>
-                        <p className="font-mono text-[9px] text-text-muted tracking-wider">
-                          {project.category} // {project.tags.slice(0, 2).join(", ")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="sys-label text-[8px]">PERF: {project.performance}</span>
-                      {project.links.live && (
-                        <a href={project.links.live} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3.5 w-3.5 text-text-muted group-hover:text-gold-400 transition-colors" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    );
+                  })
+                )}
               </div>
             </CardContent>
           </Card>
@@ -151,25 +231,30 @@ export default function DashboardOverview() {
                   <TrendingUp className="h-4 w-4 text-gold-400" />
                   <CardTitle>Activity Log</CardTitle>
                 </div>
-                <RefreshCw className="h-3.5 w-3.5 text-text-muted cursor-pointer hover:text-gold-400 transition-colors" />
+                <RefreshCw className="h-3.5 w-3.5 cursor-pointer text-text-muted transition-colors hover:text-gold-400" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recentActivity.map((activity, i) => (
                   <div key={i} className="flex gap-3">
-                    <div className={`mt-0.5 h-2 w-2 rounded-full ${
-                      activity.type === "deploy" ? "bg-hud-active" :
-                      activity.type === "update" ? "bg-gold-400" : "bg-stellar-400"
-                    }`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-mono text-[11px] font-medium tracking-wider text-text-main truncate">
+                    <div
+                      className={`mt-0.5 h-2 w-2 rounded-full ${
+                        activity.type === "deploy"
+                          ? "bg-hud-active"
+                          : activity.type === "update"
+                            ? "bg-gold-400"
+                            : "bg-stellar-400"
+                      }`}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main">
                         {activity.action}
                       </p>
-                      <p className="font-mono text-[9px] text-text-muted mt-0.5">
+                      <p className="mt-0.5 font-mono text-[9px] text-text-muted">
                         {activity.detail}
                       </p>
-                      <p className="sys-label text-[8px] mt-0.5">{activity.time}</p>
+                      <p className="sys-label mt-0.5 text-[8px]">{activity.time}</p>
                     </div>
                   </div>
                 ))}

@@ -3,8 +3,17 @@
 import { motion } from "framer-motion";
 import { Cpu, Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { portfolioData } from "@/data/portfolio";
+import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
+
+type Skill = {
+  id: string;
+  name: string;
+  level: number; // 0-100
+  category: string;
+  icon: string;
+  order: number;
+};
 
 const iconMap: Record<string, React.ElementType> = {
   Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
@@ -62,6 +71,8 @@ function SkillBar({ name, level, icon, category }: { name: string; level: number
 }
 
 export function SkillsSection() {
+  const { data: skills, loading } = useData<Skill[]>("/api/skills");
+
   return (
     <section id="skills" className="relative py-20 sm:py-28">
       <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
@@ -92,11 +103,22 @@ export function SkillsSection() {
               <span className="sys-label-gold">
                 SKILL ARRAY // SEGMENTED DATA
               </span>
-              <span className="ml-auto sys-label">10 MODULES LOADED</span>
+              <span className="ml-auto sys-label">
+                {skills ? `${skills.length} MODULES LOADED` : "LOADING..."}
+              </span>
             </div>
 
+            {loading && (
+              <div className="flex justify-center py-8">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
+                  <span className="sys-label text-xs text-text-muted">LOADING SKILLS...</span>
+                </div>
+              </div>
+            )}
+
             <div className="grid gap-6 sm:grid-cols-2">
-              {portfolioData.skills.map((skill) => (
+              {skills?.map((skill) => (
                 <motion.div
                   key={skill.id}
                   variants={{
@@ -114,6 +136,12 @@ export function SkillsSection() {
                 </motion.div>
               ))}
             </div>
+
+            {!loading && skills?.length === 0 && (
+              <div className="flex justify-center py-8">
+                <span className="sys-label text-xs text-text-muted">NO SKILL DATA AVAILABLE</span>
+              </div>
+            )}
           </div>
         </motion.div>
 

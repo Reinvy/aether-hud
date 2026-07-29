@@ -5,9 +5,39 @@ import { Sparkles, ArrowRight, ChevronRight, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PORTFOLIO_CONFIG } from "@/lib/constants";
+import { useData } from "@/lib/use-data";
+
+type Config = {
+  id: string;
+  name: string;
+  tagline: string;
+  bio: string;
+  email: string;
+  location: string;
+  avatar: string;
+  status: string;
+  sysVersion: string;
+};
+
+type Social = {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  order: number;
+};
 
 export function HeroSection() {
+  const { data: config, loading: configLoading } = useData<Config>("/api/config");
+  const { data: socials } = useData<Social[]>("/api/socials");
+
+  const cfg = config || {
+    name: "Bahrul Ulumul Haq",
+    tagline: "Full-Stack Developer & AI Engineer",
+    sysVersion: "v2.4.1",
+    status: "ONLINE",
+  };
+
   return (
     <section className="relative min-h-screen overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
       {/* Background layers */}
@@ -41,10 +71,10 @@ export function HeroSection() {
             <div className="inline-flex items-center gap-2 rounded-none border border-border-glass bg-[rgba(242,201,76,0.06)] px-4 py-1.5 tactical-btn">
               <span className="led-active" />
               <span className="sys-label-active text-[10px]">
-                STATUS: ONLINE // SYS_READY
+                STATUS: {cfg.status} // SYS_READY
               </span>
               <span className="sys-label text-[10px]">
-                {PORTFOLIO_CONFIG.sysVersion}
+                {cfg.sysVersion}
               </span>
             </div>
           </motion.div>
@@ -52,11 +82,11 @@ export function HeroSection() {
           {/* Main Title */}
           <h1 className="mt-8 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
             <span className="text-text-main/90 font-display tracking-[0.08em]">
-              {PORTFOLIO_CONFIG.name}
+              {cfg.name}
             </span>
             <br />
             <span className="text-gradient-gold font-display tracking-[0.08em] mt-2 block">
-              {PORTFOLIO_CONFIG.tagline}
+              {cfg.tagline}
             </span>
           </h1>
 

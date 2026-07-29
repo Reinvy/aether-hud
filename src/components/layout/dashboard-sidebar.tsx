@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Activity,
   Boxes,
@@ -9,9 +10,11 @@ import {
   Settings,
   LayoutDashboard,
   LogOut,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
+import { useSidebar } from "@/lib/sidebar-context";
 
 const iconMap: Record<string, React.ElementType> = {
   Activity,
@@ -22,21 +25,28 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { isOpen, close } = useSidebar();
 
-  return (
-    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="angled-bar flex items-center gap-3 border-b border-border-subtle px-6 py-5">
         <div className="relative">
           <LayoutDashboard className="h-5 w-5 text-gold-400" />
           <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-hud-active shadow-[0_0_6px_rgba(0,255,135,0.6)]" />
         </div>
-        <div>
+        <div className="flex-1">
           <h1 className="font-display text-xs font-bold tracking-[0.15em] text-text-main">
             AETHER // DASH
           </h1>
           <p className="sys-label text-[9px]">CONTROL PANEL // v2.4</p>
         </div>
+        <button
+          onClick={close}
+          className="rounded p-1 text-text-muted transition-colors hover:text-gold-400 lg:hidden"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -49,6 +59,7 @@ export function DashboardSidebar() {
             <Link
               key={item.sysId}
               href={item.href}
+              onClick={close}
               className={cn(
                 "flex items-center gap-3 rounded px-4 py-3 text-xs font-mono tracking-wider transition-all duration-200",
                 isActive
@@ -68,6 +79,7 @@ export function DashboardSidebar() {
       <div className="border-t border-border-subtle px-3 py-4">
         <Link
           href="/"
+          onClick={close}
           className="flex items-center gap-3 rounded px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-colors hover:bg-glass-200 hover:text-gold-400"
         >
           <LogOut className="h-4 w-4" />
@@ -80,6 +92,42 @@ export function DashboardSidebar() {
           </div>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — always visible on lg+ */}
+      <aside className="fixed left-0 top-0 z-30 hidden h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:flex">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar — overlay with AnimatePresence */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 bg-deep-space/60 backdrop-blur-sm lg:hidden"
+              onClick={close}
+            />
+            {/* Sidebar panel */}
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:hidden"
+            >
+              {sidebarContent}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

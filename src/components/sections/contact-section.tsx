@@ -7,8 +7,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { portfolioData } from "@/data/portfolio";
+import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
+
+type Social = {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  order: number;
+};
+
+type Config = {
+  id: string;
+  name: string;
+  tagline: string;
+  bio: string;
+  email: string;
+  location: string;
+  avatar: string;
+  status: string;
+  sysVersion: string;
+};
 
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
@@ -21,8 +41,14 @@ const socialIcons: Record<string, React.ElementType> = {
   GitBranch, Globe, MessageCircle,
 };
 
+const defaultSocials: Social[] = [
+  { id: "default-1", platform: "GitHub", url: "https://github.com", icon: "GitBranch", order: 0 },
+  { id: "default-2", platform: "LinkedIn", url: "https://linkedin.com", icon: "Globe", order: 1 },
+];
+
 export function ContactSection() {
   const [sent, setSent] = useState(false);
+  const { data: socials } = useData<Social[]>("/api/socials");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +165,7 @@ export function ContactSection() {
                     <span className="sys-label-gold">COMM // CHANNELS</span>
                   </div>
                   <div className="space-y-2">
-                    {portfolioData.socials.map((social) => {
+                    {(socials || defaultSocials).map((social) => {
                       const Icon = socialIcons[social.icon] || Terminal;
                       return (
                         <a
@@ -167,12 +193,12 @@ export function ContactSection() {
                     <span className="sys-label-gold">DIRECT // NODE</span>
                   </div>
                   <a
-                    href={`mailto:${portfolioData.name.toLowerCase().replace(/\s/g, ".")}@dev.io`}
+                    href="mailto:hello@aether-hud.dev"
                     className="flex items-center gap-3 rounded border border-border-subtle px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 group"
                   >
                     <Mail className="h-4 w-4 text-gold-400/60 group-hover:text-gold-400" />
                     <span className="font-mono text-[11px]">
-                      {portfolioData.name.toLowerCase().replace(/\s/g, ".")}@dev.io
+                      hello@aether-hud.dev
                     </span>
                     <span className="ml-auto sys-label text-[8px]">[SEND]</span>
                   </a>

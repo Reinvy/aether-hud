@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Settings,
@@ -16,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PORTFOLIO_CONFIG } from "@/lib/constants";
+import { useData } from "@/lib/use-data";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -24,14 +25,85 @@ const fadeInUp = {
   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 } as const;
 
+interface ApiConfig {
+  id: string;
+  name: string;
+  tagline: string;
+  bio: string;
+  email: string;
+  location: string;
+  avatar: string;
+  status: string;
+  sysVersion: string;
+}
+
 export default function DashboardSettings() {
+  const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
+  const [saving, setSaving] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  const [form, setForm] = useState({
+    name: "",
+    tagline: "",
+    email: "",
+    location: "",
+    sysVersion: "",
+    bio: "",
+  });
+
+  // Sync form when config loads
+  useEffect(() => {
+    if (config && !initialized) {
+      setForm({
+        name: config.name || "",
+        tagline: config.tagline || "",
+        email: config.email || "",
+        location: config.location || "",
+        sysVersion: config.sysVersion || "",
+        bio: config.bio || "",
+      });
+      setInitialized(true);
+    }
+  }, [config, initialized]);
+
+  function updateField(key: string, value: string) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await fetch("/api/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      refetch();
+    } catch (e) {
+      console.error("Failed to save config", e);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+          <p className="mt-4 font-mono text-xs text-text-muted">LOADING CONFIGURATION...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
       <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="mb-1 flex items-center gap-2">
               <Settings className="h-4 w-4 text-gold-400" />
               <span className="sys-label-gold">DASHBOARD // CONFIGURATION</span>
             </div>
@@ -39,9 +111,9 @@ export default function DashboardSettings() {
               System <span className="text-gradient-gold">Settings</span>
             </h1>
           </div>
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4" />
-            DEPLOY CHANGES
+            {saving ? "DEPLOYING..." : "DEPLOY CHANGES"}
           </Button>
         </div>
       </motion.div>
@@ -59,24 +131,39 @@ export default function DashboardSettings() {
             <CardContent className="space-y-4">
               <Input
                 label="DISPLAY NAME"
-                defaultValue={PORTFOLIO_CONFIG.name}
+                value={form.name}
+                onChange={(e) => updateField("name", e.target.value)}
               />
               <Input
                 label="TAGLINE"
-                defaultValue={PORTFOLIO_CONFIG.tagline}
+                value={form.tagline}
+                onChange={(e) => updateField("tagline", e.target.value)}
               />
               <Input
                 label="EMAIL NODE"
-                defaultValue={PORTFOLIO_CONFIG.email}
+                value={form.email}
+                onChange={(e) => updateField("email", e.target.value)}
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input
                   label="LOCATION"
-                  defaultValue={PORTFOLIO_CONFIG.location}
+                  value={form.location}
+                  onChange={(e) => updateField("location", e.target.value)}
                 />
                 <Input
                   label="SYS VERSION"
-                  defaultValue={PORTFOLIO_CONFIG.sysVersion}
+                  value={form.sysVersion}
+                  onChange={(e) => updateField("sysVersion", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="sys-label mb-2 block text-text-muted">BIO</label>
+                <textarea
+                  className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
+                  rows={3}
+                  value={form.bio}
+                  onChange={(e) => updateField("bio", e.target.value)}
+                  placeholder="System bio..."
                 />
               </div>
             </CardContent>
@@ -110,7 +197,7 @@ export default function DashboardSettings() {
                           : "border-border-subtle text-text-muted hover:border-border-glass"
                       }`}
                     >
-                      <span className="w-3 h-3 rounded-full bg-gold-400" />
+                      <span className="h-3 w-3 rounded-full bg-gold-400" />
                       {theme.name}
                     </button>
                   ))}
@@ -128,7 +215,7 @@ export default function DashboardSettings() {
                 </div>
                 <label className="relative inline-flex cursor-pointer items-center">
                   <input type="checkbox" defaultChecked className="peer sr-only" />
-                  <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
+                  <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
                 </label>
               </div>
             </CardContent>
@@ -195,7 +282,7 @@ export default function DashboardSettings() {
                   </div>
                   <label className="relative inline-flex cursor-pointer items-center">
                     <input type="checkbox" defaultChecked className="peer sr-only" />
-                    <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
+                    <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
                   </label>
                 </div>
               ))}
@@ -216,9 +303,9 @@ export default function DashboardSettings() {
               Changes are applied immediately after deploy
             </p>
           </div>
-          <Button variant="primary" size="md">
+          <Button variant="primary" size="md" onClick={handleSave} disabled={saving}>
             <RefreshCw className="h-4 w-4" />
-            DEPLOY
+            {saving ? "DEPLOYING..." : "DEPLOY"}
           </Button>
         </div>
       </motion.div>

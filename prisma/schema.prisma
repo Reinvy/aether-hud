@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String   @default("/placeholder.svg")
+  tags        String   // JSON array stored as string
+  category    String
+  complexity  String   @default("CLASS-B")
+  performance String   @default("95%")
+  year        String
+  liveUrl     String?
+  githubUrl   String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  name      String
+  level     Int      // 0-100
+  category  String
+  icon      String   @default("Zap")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  company     String
+  role        String
+  description String
+  startDate   String
+  endDate     String?
+  type        String   @default("work") // "work" | "education" | "freelance"
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  content   String
+  avatar    String   @default("/placeholder.svg")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PortfolioConfig {
+  id         String   @id @default("main")
+  name       String   @default("Bahrul Ulumul Haq")
+  tagline    String   @default("Full-Stack Developer & AI Engineer")
+  bio        String   @default("")
+  email      String   @default("")
+  location   String   @default("")
+  avatar     String   @default("/placeholder.svg")
+  status     String   @default("ONLINE")
+  sysVersion String   @default("v2.4.1")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  icon      String   @default("Globe")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
