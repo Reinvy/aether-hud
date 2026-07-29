@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useData } from "@/lib/use-data";
+import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -34,7 +35,7 @@ interface ApiProject {
   id: string;
   title: string;
   description: string;
-  tags: string; // JSON string
+  tags: string;
   category: string;
   complexity: string;
   performance: string;
@@ -57,14 +58,7 @@ export default function DashboardOverview() {
   const { data: projects, loading: projectsLoading } = useData<ApiProject[]>("/api/projects");
 
   if (statsLoading || projectsLoading) {
-    return (
-      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">INITIALIZING SYSTEM...</p>
-        </div>
-      </div>
-    );
+    return <DashboardPageSkeleton />;
   }
 
   const statCards = [
@@ -97,9 +91,9 @@ export default function DashboardOverview() {
   const projectList = projects ?? [];
 
   const recentActivity = [
-    { action: "Portfolio deployed", detail: "AETHER-HUD v2.4.1", time: "2m ago", type: "deploy" },
-    { action: "System online", detail: "All modules operational", time: "1h ago", type: "update" },
-    { action: "Data synchronized", detail: `${projectList.length} projects indexed`, time: "3h ago", type: "calibrate" },
+    { action: "Portfolio deployed", detail: "AETHER-HUD v2.4.1", time: "2m ago", type: "deploy" as const },
+    { action: "System online", detail: "All modules operational", time: "1h ago", type: "update" as const },
+    { action: "Data synchronized", detail: `${projectList.length} projects indexed`, time: "3h ago", type: "calibrate" as const },
   ];
 
   return (
