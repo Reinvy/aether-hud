@@ -207,7 +207,7 @@ export default function DashboardSkills() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <Card variant="glass" hover="sweep">
+              <Card variant="glass" hover="sweep" diamond>
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ export default function DashboardSkills() {
                       variant="ghost"
                       size="sm"
                       glow="none"
-                      className="p-1.5"
+                      className="p-1.5 sm:p-2"
                       onClick={() => openEdit(skill)}
                     >
                       <Pencil className="h-3.5 w-3.5" />
@@ -256,7 +256,7 @@ export default function DashboardSkills() {
                       variant="ghost"
                       size="sm"
                       glow="none"
-                      className="p-1.5 text-hud-danger"
+                      className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
                       onClick={() => handleDelete(skill.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -275,6 +275,21 @@ export default function DashboardSkills() {
         onClose={() => setModalOpen(false)}
         title={editingId ? "EDIT SKILL MODULE" : "NEW SKILL MODULE"}
         sysId={editingId ? `DASH//02 // ${editingId.slice(0, 8)}` : "DASH//02 // NEW"}
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setModalOpen(false)}
+              disabled={saving}
+            >
+              CANCEL
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? "CALIBRATING..." : "CALIBRATE"}
+            </Button>
+          </>
+        }
       >
         <div className="space-y-4">
           <Input
@@ -283,7 +298,7 @@ export default function DashboardSkills() {
             value={form.name}
             onChange={(e) => updateField("name", e.target.value)}
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="FIELD_02 // CATEGORY"
               placeholder="Frontend"
@@ -306,19 +321,6 @@ export default function DashboardSkills() {
             value={form.icon}
             onChange={(e) => updateField("icon", e.target.value)}
           />
-          <div className="flex justify-end gap-3 pt-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "CALIBRATING..." : "CALIBRATE"}
-            </Button>
-          </div>
         </div>
       </Modal>
     </div>

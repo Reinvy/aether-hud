@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { useData } from "@/lib/use-data";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
@@ -165,7 +166,7 @@ export default function DashboardTestimonials() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <Card variant="glass" hover="sweep">
+              <Card variant="glass" hover="sweep" diamond>
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-glass bg-deep-space/50">
@@ -197,12 +198,12 @@ export default function DashboardTestimonials() {
 
                   <div className="mt-3 flex items-center justify-between">
                     <span className="sys-label text-[8px]">ORDER: {t.order}</span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5 sm:gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
                         glow="none"
-                        className="p-1.5"
+                        className="p-1.5 sm:p-2"
                         onClick={() => openEdit(t)}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -211,7 +212,7 @@ export default function DashboardTestimonials() {
                         variant="ghost"
                         size="sm"
                         glow="none"
-                        className="p-1.5 text-hud-danger hover:text-hud-danger"
+                        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
                         onClick={() => handleDelete(t.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -231,9 +232,24 @@ export default function DashboardTestimonials() {
         onClose={() => setModalOpen(false)}
         title={editingId ? "EDIT TESTIMONIAL" : "NEW TESTIMONIAL"}
         sysId={editingId ? `DASH//05 // ${editingId.slice(0, 8)}` : "DASH//05 // NEW"}
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setModalOpen(false)}
+              disabled={saving}
+            >
+              CANCEL
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? "SAVING..." : "SAVE TESTIMONIAL"}
+            </Button>
+          </>
+        }
       >
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="FIELD_01 // NAME"
               placeholder="Client or colleague name..."
@@ -247,18 +263,13 @@ export default function DashboardTestimonials() {
               onChange={(e) => updateField("role", e.target.value)}
             />
           </div>
-          <div>
-            <label className="sys-label mb-2 block text-text-muted">
-              FIELD_03 // TESTIMONIAL CONTENT
-            </label>
-            <textarea
-              className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
-              rows={4}
-              value={form.content}
-              onChange={(e) => updateField("content", e.target.value)}
-              placeholder="What did they say about your work?..."
-            />
-          </div>
+          <Textarea
+            label="FIELD_03 // TESTIMONIAL CONTENT"
+            placeholder="What did they say about your work?..."
+            value={form.content}
+            onChange={(e) => updateField("content", e.target.value)}
+            rows={4}
+          />
           <Input
             label="FIELD_04 // AVATAR URL"
             placeholder="https://example.com/avatar.jpg"
@@ -272,19 +283,6 @@ export default function DashboardTestimonials() {
             value={form.order}
             onChange={(e) => updateField("order", e.target.value)}
           />
-          <div className="flex justify-end gap-3 pt-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE TESTIMONIAL"}
-            </Button>
-          </div>
         </div>
       </Modal>
     </div>

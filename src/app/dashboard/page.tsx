@@ -18,6 +18,23 @@ import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+};
+
+const fadeInUpItem = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  },
+};
+
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -98,7 +115,7 @@ export default function DashboardOverview() {
   ];
 
   return (
-    <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
+    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
         icon={Activity}
@@ -107,24 +124,24 @@ export default function DashboardOverview() {
         titleHighlight="OVERVIEW"
       />
 
-      {/* Stats Grid */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat, i) => {
+      {/* Stats Grid — Stagger Animation */}
+      <motion.div
+        className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-            >
-              <Card variant="glass" hover="sweep">
-                <CardContent className="p-5">
+            <motion.div key={stat.label} variants={fadeInUpItem}>
+              <Card variant="glass" hover="lift" diamond>
+                <CardContent className="p-4 sm:p-5">
                   <div className="flex items-start justify-between">
-                    <div>
+                    <div className="min-w-0">
                       <span className="sys-label text-[9px]">{stat.label}</span>
                       <p
-                        className={`mt-2 font-display text-3xl font-bold tracking-wider ${
+                        className={`mt-2 font-display text-2xl sm:text-3xl font-bold tracking-wider ${
                           stat.color === "gold" ? "text-gold-400" : "text-stellar-400"
                         }`}
                       >
@@ -132,7 +149,7 @@ export default function DashboardOverview() {
                       </p>
                     </div>
                     <Icon
-                      className={`h-8 w-8 ${
+                      className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 ${
                         stat.color === "gold" ? "text-gold-400/30" : "text-stellar-400/30"
                       }`}
                     />
@@ -142,13 +159,13 @@ export default function DashboardOverview() {
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Main Content Area */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Projects Quick Overview */}
         <motion.div className="lg:col-span-2" {...fadeInUp}>
-          <Card variant="glass" hover="none">
+          <Card variant="glass" hover="none" diamond>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -172,28 +189,28 @@ export default function DashboardOverview() {
                     return (
                       <div
                         key={project.id}
-                        className="group flex items-center justify-between rounded border border-border-subtle px-4 py-3 transition-all hover:border-border-glass hover:bg-glass-200"
+                        className="group flex items-center justify-between rounded-sm border border-border-subtle px-3 sm:px-4 py-3 transition-all duration-200 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 flex-col items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border-glass bg-deep-space/50">
                             <span className="font-mono text-[9px] text-gold-400">
                               {project.complexity.slice(-1)}
                             </span>
                           </div>
-                          <div>
-                            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
+                          <div className="min-w-0">
+                            <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
                               {project.title}
                             </p>
-                            <p className="font-mono text-[9px] tracking-wider text-text-muted">
+                            <p className="truncate font-mono text-[9px] tracking-wider text-text-muted">
                               {project.category} // {tags.slice(0, 2).join(", ")}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="sys-label text-[8px]">PERF: {project.performance}</span>
+                        <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-2">
+                          <span className="sys-label text-[8px] hidden sm:inline">PERF: {project.performance}</span>
                           {project.liveUrl && (
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors group-hover:text-gold-400" />
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="hover-scale-sm block p-1">
+                              <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors hover:text-gold-400" />
                             </a>
                           )}
                         </div>
@@ -208,22 +225,22 @@ export default function DashboardOverview() {
 
         {/* Activity Feed */}
         <motion.div {...fadeInUp}>
-          <Card variant="glass" hover="none" className="h-full">
+          <Card variant="glass" hover="none" diamond className="h-full">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-gold-400" />
                   <CardTitle>Activity Log</CardTitle>
                 </div>
-                <RefreshCw className="h-3.5 w-3.5 cursor-pointer text-text-muted transition-colors hover:text-gold-400" />
+                <RefreshCw className="h-3.5 w-3.5 cursor-pointer text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recentActivity.map((activity, i) => (
-                  <div key={i} className="flex gap-3">
+                  <div key={i} className="flex gap-3 group">
                     <div
-                      className={`mt-0.5 h-2 w-2 rounded-full ${
+                      className={`mt-0.5 h-2 w-2 rounded-full transition-transform duration-200 group-hover:scale-125 ${
                         activity.type === "deploy"
                           ? "bg-hud-active"
                           : activity.type === "update"
@@ -232,7 +249,7 @@ export default function DashboardOverview() {
                       }`}
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main">
+                      <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
                         {activity.action}
                       </p>
                       <p className="mt-0.5 font-mono text-[9px] text-text-muted">
@@ -249,9 +266,9 @@ export default function DashboardOverview() {
       </div>
 
       {/* Quick Actions */}
-      <motion.div className="mt-6" {...fadeInUp}>
-        <Card variant="glass" hover="none">
-          <CardContent className="p-5">
+      <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
+        <Card variant="glass" hover="none" diamond>
+          <CardContent className="p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className="sys-label-gold text-[9px]">QUICK ACTIONS //</span>
               <Button variant="secondary" size="sm">

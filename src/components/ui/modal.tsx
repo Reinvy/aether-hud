@@ -10,11 +10,40 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: ReactNode;
+  footer?: ReactNode;
   className?: string;
   sysId?: string;
+  size?: "sm" | "md" | "lg" | "xl";
+  variant?: "default" | "danger";
+  /** Prevent close on backdrop click */
+  disableBackdropClose?: boolean;
 }
 
-export function Modal({ open, onClose, title, children, className, sysId = "MODAL//00" }: ModalProps) {
+const sizeStyles: Record<string, string> = {
+  sm: "max-w-sm",
+  md: "max-w-lg",
+  lg: "max-w-2xl",
+  xl: "max-w-4xl",
+};
+
+const variantStyles: Record<string, string> = {
+  default: "",
+  danger:
+    "border-hud-danger/30 [&_.angled-bar::before]:bg-gradient-to-r [&_.angled-bar::before]:from-transparent [&_.angled-bar::before]:via-hud-danger/40 [&_.angled-bar::before]:to-transparent",
+};
+
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  className,
+  sysId = "MODAL//00",
+  size = "md",
+  variant = "default",
+  disableBackdropClose = false,
+}: ModalProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -41,14 +70,14 @@ export function Modal({ open, onClose, title, children, className, sysId = "MODA
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-deep-space/80 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={disableBackdropClose ? undefined : onClose}
           />
 
           {/* Modal Panel */}
@@ -58,37 +87,47 @@ export function Modal({ open, onClose, title, children, className, sysId = "MODA
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "glass-panel-strong chamfered-lg relative w-full max-w-lg p-0",
+              "glass-panel-strong chamfered-lg relative z-10 w-full max-h-[90vh] overflow-y-auto",
               "corner-brackets",
+              sizeStyles[size] || sizeStyles.md,
+              variantStyles[variant] || variantStyles.default,
               className
             )}
           >
             {/* Header */}
-            <div className="angled-bar flex items-center justify-between border-b border-border-subtle px-6 py-4">
-              <div className="flex items-center gap-3">
-                <span className="sys-label-gold">{sysId}</span>
+            <div className="angled-bar flex items-center justify-between border-b border-border-subtle px-4 py-3 sm:px-6 sm:py-4">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <span className="sys-label-gold shrink-0">{sysId}</span>
                 {title && (
-                  <h2 className="font-display text-sm font-bold tracking-wider uppercase text-text-main">
+                  <h2 className="font-display text-xs sm:text-sm font-bold tracking-wider uppercase text-text-main truncate">
                     {title}
                   </h2>
                 )}
               </div>
               <button
                 onClick={onClose}
-                className="rounded p-1 text-text-muted transition-colors hover:text-gold-400"
+                className="rounded p-1.5 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm focus-ring-gold shrink-0"
+                aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Diamond indicator */}
-            <div className="absolute top-3 right-3 flex gap-1">
+            <div className="absolute top-3 right-3 flex gap-1 pointer-events-none">
               <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/40" />
               <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/20" />
             </div>
 
             {/* Content */}
-            <div className="p-6">{children}</div>
+            <div className="p-4 sm:p-6">{children}</div>
+
+            {/* Footer */}
+            {footer && (
+              <div className="border-t border-border-subtle px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-end gap-3">
+                {footer}
+              </div>
+            )}
 
             {/* Bottom sys node */}
             <span className="sys-node block" />
