@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
@@ -31,7 +32,9 @@ function DashboardLayoutContent({
             AETHER // DASH
           </span>
         </div>
-        {children}
+        <ErrorBoundary section="dashboard">
+          {children}
+        </ErrorBoundary>
       </main>
     </div>
   );

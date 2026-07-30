@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
@@ -99,23 +100,12 @@ export default function DashboardOverview() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Activity className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // CONTROL PANEL</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              SYSTEM <span className="text-gradient-gold">OVERVIEW</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="led-active" />
-            <span className="sys-label-active text-[10px]">ALL SYSTEMS NOMINAL</span>
-          </div>
-        </div>
-      </motion.div>
+      <DashboardPageHeader
+        icon={Activity}
+        label="DASHBOARD // CONTROL PANEL"
+        title="SYSTEM OVERVIEW"
+        titleHighlight="OVERVIEW"
+      />
 
       {/* Stats Grid */}
       <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">

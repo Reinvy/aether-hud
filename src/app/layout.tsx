@@ -57,7 +57,6 @@ export const metadata: Metadata = {
   },
   category: "technology",
   verification: {
-    // Add your Google Search Console / other verification IDs here
     // google: "google-site-verification-code",
   },
   other: {
