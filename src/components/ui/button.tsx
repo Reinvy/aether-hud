@@ -7,16 +7,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
   glow?: "gold" | "stellar" | "none";
+  crosshair?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", glow = "gold", children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", glow = "gold", crosshair = false, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
           "tactical-btn btn-glow-sweep focus-ring-gold",
+          crosshair && "crosshair-ring",
 
           /* Size */
           size === "sm" && "px-4 py-1.5 text-xs min-h-[32px]",

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
@@ -232,8 +233,8 @@ export default function DashboardProjects() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <Card variant="glass" hover="sweep">
-                  <div className="flex items-center gap-4 px-4 py-4">
+                <Card variant="glass" hover="sweep" diamond>
+                  <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border-glass bg-deep-space/50">
                       <span className="font-mono text-[10px] text-gold-400">
                         {project.complexity.slice(-1)}
@@ -241,7 +242,7 @@ export default function DashboardProjects() {
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main">
+                      <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
                         {project.title}
                       </p>
                       <p className="mt-0.5 truncate font-mono text-[9px] text-text-muted">
@@ -260,10 +261,10 @@ export default function DashboardProjects() {
                       <span className="sys-label-active text-[8px]">DEPLOYED</span>
                     </div>
 
-                    <div className="flex w-20 items-center justify-end gap-1">
+                    <div className="flex w-20 items-center justify-end gap-0.5 sm:gap-1">
                       {project.liveUrl && (
                         <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                          <Button variant="ghost" size="sm" glow="none" className="p-1.5">
+                          <Button variant="ghost" size="sm" glow="none" className="p-1.5 sm:p-2">
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Button>
                         </a>
@@ -272,7 +273,7 @@ export default function DashboardProjects() {
                         variant="ghost"
                         size="sm"
                         glow="none"
-                        className="p-1.5"
+                        className="p-1.5 sm:p-2"
                         onClick={() => openEdit(project)}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -281,7 +282,7 @@ export default function DashboardProjects() {
                         variant="ghost"
                         size="sm"
                         glow="none"
-                        className="p-1.5 text-hud-danger hover:text-hud-danger"
+                        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
                         onClick={() => handleDelete(project.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -301,6 +302,22 @@ export default function DashboardProjects() {
         onClose={() => setModalOpen(false)}
         title={editingId ? "EDIT DOSSIER" : "NEW DOSSIER"}
         sysId={editingId ? `DASH//01 // ${editingId.slice(0, 8)}` : "DASH//01 // NEW"}
+        size="lg"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setModalOpen(false)}
+              disabled={saving}
+            >
+              CANCEL
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? "SAVING..." : "SAVE DOSSIER"}
+            </Button>
+          </>
+        }
       >
         <div className="space-y-4">
           <Input
@@ -309,19 +326,14 @@ export default function DashboardProjects() {
             value={form.title}
             onChange={(e) => updateField("title", e.target.value)}
           />
-          <div>
-            <label className="sys-label mb-2 block text-text-muted">
-              FIELD_02 // DESCRIPTION
-            </label>
-            <textarea
-              className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
-              rows={3}
-              value={form.description}
-              onChange={(e) => updateField("description", e.target.value)}
-              placeholder="Mission briefing..."
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+          <Textarea
+            label="FIELD_02 // DESCRIPTION"
+            placeholder="Mission briefing..."
+            value={form.description}
+            onChange={(e) => updateField("description", e.target.value)}
+            rows={3}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="FIELD_03 // COMPLEXITY"
               placeholder="CLASS-B"
@@ -335,7 +347,7 @@ export default function DashboardProjects() {
               onChange={(e) => updateField("category", e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="FIELD_05 // PERFORMANCE"
               placeholder="95%"
@@ -355,7 +367,7 @@ export default function DashboardProjects() {
             value={form.tags}
             onChange={(e) => updateField("tags", e.target.value)}
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="FIELD_08 // LIVE URL"
               placeholder="https://..."
@@ -368,19 +380,6 @@ export default function DashboardProjects() {
               value={form.githubUrl}
               onChange={(e) => updateField("githubUrl", e.target.value)}
             />
-          </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE DOSSIER"}
-            </Button>
           </div>
         </div>
       </Modal>
