@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useData } from "@/lib/use-data";
-import { useEffect } from "react";
 
 type Experience = {
   id: string;
