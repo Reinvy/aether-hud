@@ -12,5 +12,8 @@ export async function GET() {
     return NextResponse.json({
       projectCount, skillCount, experienceCount, testimonialCount, uptime: "99.9%",
     });
-  } catch (e) { return NextResponse.json({ error: "Failed" }, { status: 500 }); }
+  } catch (e) {
+    console.error("[DASHBOARD_STATS_GET]", e instanceof Error ? e.message : e);
+    return NextResponse.json({ error: "Failed to fetch dashboard stats" }, { status: 500 });
+  }
 }

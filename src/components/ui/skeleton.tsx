@@ -132,17 +132,6 @@ export function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps)
   );
 }
 
-/* ─── Loading Pulse Dot ────────────────────────────────────── */
-
-export function LoadingDots({ label = "LOADING" }: { label?: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
-      <span className="sys-label text-[10px] text-text-muted">{label}...</span>
-    </div>
-  );
-}
-
 /* ─── Full Page Dashboard Skeleton ─────────────────────────── */
 
 export function DashboardPageSkeleton() {
