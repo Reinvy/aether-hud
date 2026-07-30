@@ -8,6 +8,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test:e2e": "node e2e/run-tests.mjs",
+    "test": "node e2e/run-tests.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {
