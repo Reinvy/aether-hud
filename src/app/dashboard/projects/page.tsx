@@ -16,6 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
@@ -170,23 +171,18 @@ export default function DashboardProjects() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Boxes className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // PROJECT ARCHIVE</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Manage <span className="text-gradient-gold">Projects</span>
-            </h1>
-          </div>
+      <DashboardPageHeader
+        icon={Boxes}
+        label="DASHBOARD // PROJECT ARCHIVE"
+        title="Manage Projects"
+        titleHighlight="Projects"
+        actions={
           <Button variant="primary" size="sm" onClick={openNew}>
             <Plus className="h-4 w-4" />
             NEW DOSSIER
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       {/* Search */}
       <motion.div className="mb-6 max-w-md" {...fadeInUp}>

@@ -25,6 +25,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -153,23 +154,18 @@ export default function DashboardSkills() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Cpu className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // SKILL MATRIX</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Manage <span className="text-gradient-gold">Proficiencies</span>
-            </h1>
-          </div>
+      <DashboardPageHeader
+        icon={Cpu}
+        label="DASHBOARD // SKILL MATRIX"
+        title="Manage Proficiencies"
+        titleHighlight="Proficiencies"
+        actions={
           <Button variant="primary" size="sm" onClick={openNew}>
             <Plus className="h-4 w-4" />
             ADD SKILL
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       {/* Category Filters */}
       <motion.div className="mb-6 flex flex-wrap gap-2" {...fadeInUp}>
