@@ -9,7 +9,19 @@
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
 
-const PRODUCTION_URL = "https://aether-hud.vercel.app";
+// aether-hud.vercel.app is TAKEN by another project — the real production
+// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
+function resolveProductionUrl() {
+  try {
+    if (existsSync(".cron/VERCEL_DOMAIN.env")) {
+      const env = readFileSync(".cron/VERCEL_DOMAIN.env", "utf-8");
+      const match = env.match(/^PRODUCTION_URL="([^"]+)"/m);
+      if (match) return match[1];
+    }
+  } catch {}
+  return "https://aether-hud-lyart.vercel.app";
+}
+const PRODUCTION_URL = resolveProductionUrl();
 
 // ─── Color helpers ──────────────────────────────────────────
 const RED = "\x1b[31m";
@@ -96,12 +108,18 @@ async function main() {
 
   // ===== TEST 2: Live Page Check =====
   log("\n📋 TEST 2: Production Page Accessibility", CYAN);
-  // Verify site is reachable
-  try {
-    const resp = await fetchUrl(PRODUCTION_URL);
-    assert(resp.status === 200, `Homepage returns 200 (got ${resp.status})`);
-  } catch (e) {
-    assert(false, `Homepage is reachable: ${e.message}`);
+  log(`  Target: ${PRODUCTION_URL}`, YELLOW);
+  // Verify ALL expected routes (pages + APIs) are live, not just the homepage.
+  // 405 is acceptable for API routes that are POST-only (e.g. /api/auth) —
+  // it proves the route is mounted even though HEAD is not allowed.
+  for (const route of [...ALL_ROUTES, ...API_ROUTES]) {
+    try {
+      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`);
+      const ok = resp.status === 200 || (resp.status === 405 && route.startsWith("/api/"));
+      assert(ok, `${route} is live (got ${resp.status})`);
+    } catch (e) {
+      assert(false, `${route} is reachable: ${e.message}`);
+    }
   }
 
   // ===== TEST 3: Git Health =====

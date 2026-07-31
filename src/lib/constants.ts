@@ -1,6 +1,8 @@
 export const APP_NAME = "AETHER-HUD";
 export const APP_DESCRIPTION = "High-End Tactical Portfolio — Obsidian & Imperial Gold Edition";
-export const APP_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud.vercel.app";
+// NOTE: aether-hud.vercel.app is TAKEN by another project. The real production
+// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
+export const APP_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
 
 export const PORTFOLIO_CONFIG = {
   name: process.env.NEXT_PUBLIC_PORTFOLIO_NAME || "Bahrul Ulumul Haq",
