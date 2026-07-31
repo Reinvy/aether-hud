@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { portfolioData } from "../../../data/portfolio";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" };
 
