@@ -1,0 +1,10 @@
+# Exclude large non-deployable directories from Vercel upload
+node_modules/
+.next/
+browsers/
+.cache/
+e2e/
+test-results/
+dev.db
+test.db
+*.tsbuildinfo
