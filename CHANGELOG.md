@@ -4,6 +4,23 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-07-31] — C3 Dynamic Content Update
+
+### Added
+- **Projects**: 2 new portfolio entries
+  - `AETHER Forge` — AI-assisted creative studio for game-ready asset generation (CLASS-S)
+  - `AETHER Beacon` — Observability command center with logs/metrics/traces aggregation (CLASS-A)
+- **Skills**: 2 new skill entries — WebSockets/Realtime (84), Redis/Queues (76)
+- **Socials**: Instagram and Email profile links added
+- **API**: `GET /api/portfolio?section=projects|skills|socials` — section filtering with CDN cache headers
+- **API**: Dashboard stats graceful fallback — derives counts from data file when database is unreachable (`source: "data-file-fallback"`), plus `avgSkillLevel` metric
+
+### Updated
+- Skill levels incremented across all categories (Node.js/API 91, Prisma/SQL 88, Python/AI 85, Docker 80, Go/Rust 68, PostgreSQL 83)
+- Portfolio API route now serves with `Cache-Control` headers (`s-maxage=3600`)
+
+---
+
 ## [2026-07-30] — C5 Performance Optimization & Code Maintenance
 
 ### Maintenance
