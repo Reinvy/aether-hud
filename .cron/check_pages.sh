@@ -2,7 +2,7 @@
 # Check that all main pages return 200
 set -euo pipefail
 
-BASE_URL="${1:-https://aether-hud.vercel.app}"
+BASE_URL="${1:-https://aether-hud-lyart.vercel.app}"
 PAGES=(
   "/"
   "/dashboard"

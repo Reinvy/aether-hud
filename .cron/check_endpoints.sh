@@ -2,7 +2,7 @@
 # Quick endpoint connectivity check
 set -euo pipefail
 
-BASE_URL="${1:-https://aether-hud.vercel.app}"
+BASE_URL="${1:-https://aether-hud-lyart.vercel.app}"
 
 echo "=== AETHER-HUD Endpoint Check ==="
 echo "Target: $BASE_URL"

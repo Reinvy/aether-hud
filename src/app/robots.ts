@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud.vercel.app";
+// aether-hud.vercel.app is taken by another project; actual domain is aether-hud-lyart.vercel.app
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
 
 export default function robots(): MetadataRoute.Robots {
   return {
