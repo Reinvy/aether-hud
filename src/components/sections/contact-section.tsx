@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { fadeInView } from "@/lib/motion-variants";
 import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,12 +31,6 @@ type Config = {
   sysVersion: string;
 };
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
 
 const socialIcons: Record<string, React.ElementType> = {
   GitBranch, Globe, MessageCircle,
@@ -73,7 +68,7 @@ export function ContactSection() {
         <div className="mt-14 mx-auto max-w-4xl">
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
-            <motion.div className="lg:col-span-3" {...fadeInUp}>
+            <motion.div className="lg:col-span-3" {...fadeInView}>
               <Card variant="glass" hover="none" className="h-full">
                 <CardContent className="p-6 sm:p-8">
                   {/* Form header */}
@@ -151,7 +146,7 @@ export function ContactSection() {
             </motion.div>
 
             {/* Contact Info — takes 2 cols */}
-            <motion.div className="lg:col-span-2 space-y-4" {...fadeInUp}>
+            <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Links */}
               <Card variant="glass" hover="sweep">
                 <CardContent className="p-5">

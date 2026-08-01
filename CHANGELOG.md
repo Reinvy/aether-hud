@@ -4,6 +4,29 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-02] — C2 UI/UX Design System Enhancement
+
+### Added
+- **`src/lib/motion-variants.ts`** — single source of truth for animation variants
+  (`fadeInUp`, `fadeInView`, `staggerContainer`, `fadeInUpItem`, `fadeIn`, `EASE_HUD`
+  cubic-bezier(0.16, 1, 0.3, 1)). Removes 12 duplicated `const fadeInUp` blocks across
+  dashboard pages and landing sections — every enter animation now uses the SAME
+  curve per the design system.
+- **`StatCard` component** (`src/components/ui/stat-card.tsx`) — reusable HUD stat
+  tile (glass chamfered panel, sys-label, display value, tone-colored icon with
+  hover scale/rotate/brighten), extracted from the dashboard overview page.
+
+### Updated
+- **Dashboard overview** — stat grid now renders via `StatCard` (shared variants +
+  reusable tile), removing duplicated markup.
+- **RowActions** — mobile-first touch targets: 36px min hit area (`min-h-9 min-w-9`)
+  on <640px, plus hover background feedback on edit/delete.
+- **Modal** — close button gets a 36px mobile touch target.
+- **Mobile dashboard hamburger** — 40px touch target (`min-h-10 min-w-10`).
+- **Badge** — micro-interaction: gold glow shadow + subtle scale on hover.
+
+---
+
 ## [2026-08-01] — C5 Performance Optimization & Code Maintenance
 
 ### Maintenance

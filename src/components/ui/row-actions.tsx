@@ -27,13 +27,13 @@ export function RowActions({
   className,
 }: RowActionsProps) {
   return (
-    <div className={cn("flex items-center gap-0.5 sm:gap-1", className)}>
+    <div className={cn("flex items-center gap-1 sm:gap-1", className)}>
       {leading}
       <Button
         variant="ghost"
         size="sm"
         glow="none"
-        className="p-1.5 sm:p-2"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-glass-200"
         onClick={onEdit}
         aria-label={editLabel}
         title={editLabel}
@@ -44,7 +44,7 @@ export function RowActions({
         variant="ghost"
         size="sm"
         glow="none"
-        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 text-hud-danger hover:bg-[rgba(255,0,85,0.08)] hover:text-hud-danger"
         onClick={onDelete}
         aria-label={deleteLabel}
         title={deleteLabel}

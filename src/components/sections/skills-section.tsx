@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { fadeInView } from "@/lib/motion-variants";
 import { Cpu, Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
@@ -15,12 +16,6 @@ type Skill = {
   order: number;
 };
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
 
 const stagger = {
   initial: { opacity: 0 },
@@ -102,7 +97,7 @@ export function SkillsSection() {
         {/* Radar / Hex graph placeholder */}
         <motion.div
           className="mt-12 mx-auto max-w-md text-center"
-          {...fadeInUp}
+          {...fadeInView}
         >
           <div className="glass-panel chamfered-sm p-6">
             <div className="flex items-center justify-center gap-2 mb-3">
