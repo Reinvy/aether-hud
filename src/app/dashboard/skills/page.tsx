@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { fadeInUp } from "@/lib/motion-variants";
 import {
   Cpu,
   Plus,
@@ -33,11 +34,6 @@ const iconMap: Record<string, React.ElementType> = {
   Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
 };
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
 
 interface ApiSkill {
   id: string;

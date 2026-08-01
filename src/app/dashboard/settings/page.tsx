@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { fadeInUp } from "@/lib/motion-variants";
 import {
   Settings2,
   Save,
@@ -23,11 +24,6 @@ import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
 
 interface ApiConfig {
   siteName: string;

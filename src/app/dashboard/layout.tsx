@@ -24,7 +24,7 @@ function DashboardLayoutContent({
         <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-border-subtle bg-deep-space/80 px-4 py-3 backdrop-blur-xl lg:hidden">
           <button
             onClick={toggle}
-            className="rounded p-2 text-text-muted transition-all duration-300 hover:text-gold-400 hover-scale-sm focus-ring-gold"
+            className="min-h-10 min-w-10 rounded p-0 text-text-muted transition-all duration-300 hover:text-gold-400 hover-scale-sm focus-ring-gold"
             aria-label="Toggle sidebar"
           >
             <Menu className="h-5 w-5" />

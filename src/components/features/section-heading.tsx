@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { fadeInView } from "@/lib/motion-variants";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -15,12 +16,6 @@ import { cn } from "@/lib/utils";
  * Design: Obsidian & Imperial Gold — Luxury Cybernetics.
  */
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
 
 interface SectionHeadingProps {
   /** Short uppercase label rendered inside the gold badge. */
@@ -54,7 +49,7 @@ export function SectionHeading({
         align === "center" ? "mx-auto text-center" : "text-left",
         className,
       )}
-      {...fadeInUp}
+      {...fadeInView}
     >
       <Badge variant="gold" size="md" className="mb-4">
         {icon}

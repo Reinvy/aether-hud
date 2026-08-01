@@ -15,32 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IconBox } from "@/components/ui/icon-box";
+import { StatCard } from "@/components/ui/stat-card";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.06,
-    },
-  },
-};
-
-const fadeInUpItem = {
-  initial: { opacity: 0, y: 20 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-  },
-};
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
+import { fadeInUp, fadeInUpItem, staggerContainer } from "@/lib/motion-variants";
 
 interface DashboardStats {
   projectCount: number;
@@ -132,34 +111,11 @@ export default function DashboardOverview() {
         initial="initial"
         animate="animate"
       >
-        {statCards.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <motion.div key={stat.label} variants={fadeInUpItem}>
-              <Card variant="glass" hover="lift" diamond>
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="min-w-0">
-                      <span className="sys-label text-[9px]">{stat.label}</span>
-                      <p
-                        className={`mt-2 font-display text-2xl sm:text-3xl font-bold tracking-wider ${
-                          stat.color === "gold" ? "text-gold-400" : "text-stellar-400"
-                        }`}
-                      >
-                        {stat.value}
-                      </p>
-                    </div>
-                    <Icon
-                      className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 ${
-                        stat.color === "gold" ? "text-gold-400/30 group-hover:text-gold-400/60" : "text-stellar-400/30 group-hover:text-stellar-400/60"
-                      }`}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
+        {statCards.map((stat) => (
+          <motion.div key={stat.label} variants={fadeInUpItem}>
+            <StatCard label={stat.label} value={stat.value} icon={stat.icon} tone={stat.color} />
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* Main Content Area */}
