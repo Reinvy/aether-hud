@@ -107,9 +107,9 @@ export default function DashboardSettings() {
               Web <span className="text-gradient-gold">Settings</span>
             </h1>
           </div>
-          <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+          <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
             <Save className="h-4 w-4" />
-            {saving ? "DEPLOYING..." : "DEPLOY CHANGES"}
+            DEPLOY CHANGES
           </Button>
         </div>
       </motion.div>
@@ -290,9 +290,9 @@ export default function DashboardSettings() {
               Theme and site changes applied immediately
             </p>
           </div>
-          <Button variant="primary" size="md" onClick={handleSave} disabled={saving}>
+          <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
             <RefreshCw className="h-4 w-4" />
-            {saving ? "DEPLOYING..." : "DEPLOY"}
+            DEPLOY
           </Button>
         </div>
       </motion.div>

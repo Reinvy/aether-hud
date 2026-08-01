@@ -285,8 +285,8 @@ export default function DashboardSkills() {
             >
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "CALIBRATING..." : "CALIBRATE"}
+            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
+              CALIBRATE
             </Button>
           </>
         }

@@ -325,9 +325,9 @@ export default function DashboardContact() {
                   variant="primary"
                   size="sm"
                   onClick={handleSaveConfig}
-                  disabled={savingConfig}
+                  loading={savingConfig}
                 >
-                  {savingConfig ? "UPDATING..." : "UPDATE EMAIL"}
+                  UPDATE EMAIL
                 </Button>
               </div>
             </CardContent>
@@ -379,8 +379,8 @@ export default function DashboardContact() {
             >
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSaveSocial} disabled={savingSocial}>
-              {savingSocial ? "SAVING..." : "SAVE LINK"}
+            <Button variant="primary" size="sm" onClick={handleSaveSocial} loading={savingSocial}>
+              SAVE LINK
             </Button>
           </div>
         </div>

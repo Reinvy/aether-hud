@@ -4,6 +4,21 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-01] — C3 Dynamic Content Update
+
+### Added
+- **Projects**: 2 new portfolio entries
+  - `AETHER Nexus` — Zero-trust API gateway & service mesh with edge auth (CLASS-S)
+  - `AETHER Vault` — Encrypted secrets management with zero-knowledge architecture (CLASS-A)
+- **Skills**: 2 new skill entries — Kubernetes/Orchestration (72), GraphQL/tRPC (75)
+- **Socials**: Telegram and Dev.to profile links added
+- **API**: `GET /api/portfolio?search=<term>` — search filter for projects (matches title, category, and tags)
+
+### Updated
+- Skill levels incremented across all categories (Next.js/React 97, TypeScript 95, Python/AI 87, Vercel/Deploy 94, PostgreSQL 85, WebSockets 86, Redis/Queues 78)
+
+---
+
 ## [2026-07-31] — C3 Dynamic Content Update
 
 ### Added

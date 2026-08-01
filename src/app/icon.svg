@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- AETHER-HUD favicon: chamfered obsidian tile with imperial-gold A -->
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7D97E"/>
+      <stop offset="0.5" stop-color="#F2C94C"/>
+      <stop offset="1" stop-color="#B8860B"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2A2F3A"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+  </defs>
+  <!-- Obsidian tile with chamfered corners -->
+  <path d="M14 2h36l12 12v36L50 62H14L2 50V14L14 2Z" fill="#0B0E14" stroke="url(#gold)" stroke-width="2.5"/>
+  <!-- Inner grid hint -->
+  <path d="M14 8h36l6 6v36l-6 6H14l-6-6V14l6-6Z" fill="none" stroke="#2A2F3A" stroke-width="1"/>
+  <!-- Imperial-gold A glyph -->
+  <path d="M32 14 L48 50 H42.5 L32 26.5 L21.5 50 H16 L32 14 Z" fill="url(#gold)"/>
+  <rect x="25" y="38" width="14" height="4" fill="#0B0E14"/>
+</svg>

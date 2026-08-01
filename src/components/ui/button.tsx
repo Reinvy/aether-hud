@@ -8,16 +8,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
   glow?: "gold" | "stellar" | "none";
   crosshair?: boolean;
+  /** Renders a HUD diamond spinner and disables the button while true. */
+  loading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", glow = "gold", crosshair = false, children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", glow = "gold", crosshair = false, loading = false, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
           "tactical-btn btn-glow-sweep focus-ring-gold",
+          "active:scale-[0.97] disabled:active:scale-100",
           crosshair && "crosshair-ring",
 
           /* Size */
@@ -42,10 +47,20 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           glow === "stellar" && "glow-stellar",
           glow === "none" && "shadow-none",
 
+          /* Loading / disabled */
+          loading && "cursor-wait opacity-80",
+          (disabled || loading) && "disabled:opacity-40 disabled:cursor-not-allowed",
+
           className
         )}
         {...props}
       >
+        {loading && (
+          <span
+            className="hud-spinner shrink-0"
+            aria-hidden="true"
+          />
+        )}
         {children}
       </button>
     );

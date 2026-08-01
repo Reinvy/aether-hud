@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
+import { SectionHeading } from "@/components/features/section-heading";
 
 type Social = {
   id: string;
@@ -62,18 +62,13 @@ export function ContactSection() {
       <div className="pointer-events-none absolute inset-0 bg-ambient-gold" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div className="mx-auto max-w-2xl text-center" {...fadeInUp}>
-          <Badge variant="gold" size="md" className="mb-4">
-            <Terminal className="mr-1.5 h-3.5 w-3.5" />
-            CONTACT NODE // ENCRYPTED
-          </Badge>
-          <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-text-main sm:text-4xl">
-            Establish <span className="text-gradient-gold">Connection</span>
-          </h2>
-          <p className="mt-4 text-lg text-text-muted font-body">
-            Secure channel. Messages are encrypted end-to-end.
-          </p>
-        </motion.div>
+        <SectionHeading
+          badge="CONTACT NODE // ENCRYPTED"
+          icon={<Terminal className="mr-1.5 h-3.5 w-3.5" />}
+          title="Establish"
+          highlight="Connection"
+          subtitle="Secure channel. Messages are encrypted end-to-end."
+        />
 
         <div className="mt-14 mx-auto max-w-4xl">
           <div className="grid gap-6 lg:grid-cols-5">

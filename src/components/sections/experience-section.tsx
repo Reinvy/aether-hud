@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useData } from "@/lib/use-data";
+import { SectionHeading } from "@/components/features/section-heading";
 
 type Experience = {
   id: string;
@@ -23,13 +24,6 @@ const stagger = {
   transition: { staggerChildren: 0.1 },
 };
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
-
 const typeIcons: Record<string, React.ElementType> = {
   work: Briefcase,
   education: GraduationCap,
@@ -46,18 +40,13 @@ export function ExperienceSection() {
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div className="mx-auto max-w-2xl text-center" {...fadeInUp}>
-          <Badge variant="gold" size="md" className="mb-4">
-            <Briefcase className="mr-1.5 h-3.5 w-3.5" />
-            EXPERIENCE // TIMELINE
-          </Badge>
-          <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-text-main sm:text-4xl">
-            Mission <span className="text-gradient-gold">History</span>
-          </h2>
-          <p className="mt-4 text-lg text-text-muted font-body">
-            A chronological record of deployed missions, operations, and system upgrades.
-          </p>
-        </motion.div>
+        <SectionHeading
+          badge="EXPERIENCE // TIMELINE"
+          icon={<Briefcase className="mr-1.5 h-3.5 w-3.5" />}
+          title="Mission"
+          highlight="History"
+          subtitle="A chronological record of deployed missions, operations, and system upgrades."
+        />
 
         {/* Timeline */}
         <motion.div

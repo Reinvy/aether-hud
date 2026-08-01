@@ -108,9 +108,9 @@ export default function DashboardProfile() {
               Manage <span className="text-gradient-gold">Profile</span>
             </h1>
           </div>
-          <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+          <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
             <Save className="h-4 w-4" />
-            {saving ? "DEPLOYING..." : "DEPLOY CHANGES"}
+            DEPLOY CHANGES
           </Button>
         </div>
       </motion.div>
@@ -262,9 +262,9 @@ export default function DashboardProfile() {
               Changes are applied immediately after deploy
             </p>
           </div>
-          <Button variant="primary" size="md" onClick={handleSave} disabled={saving}>
+          <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
             <RefreshCw className="h-4 w-4" />
-            {saving ? "DEPLOYING..." : "DEPLOY"}
+            DEPLOY
           </Button>
         </div>
       </motion.div>

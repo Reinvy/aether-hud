@@ -242,8 +242,8 @@ export default function DashboardTestimonials() {
             >
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE TESTIMONIAL"}
+            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
+              SAVE TESTIMONIAL
             </Button>
           </>
         }

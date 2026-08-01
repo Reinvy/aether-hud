@@ -609,6 +609,30 @@ body {
   box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.3);
 }
 
+/* ─── HUD Diamond Spinner ─────────────────────────────── */
+.hud-spinner {
+  display: inline-block;
+  border: 2px solid rgba(242, 201, 76, 0.15);
+  border-top-color: var(--color-gold-400);
+  border-right-color: rgba(242, 201, 76, 0.5);
+  transform: rotate(45deg);
+  border-radius: 0;
+  animation: hud-spin 0.7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes hud-spin {
+  from { transform: rotate(45deg); }
+  to { transform: rotate(405deg); }
+}
+
+/* ─── Press Micro-Interaction ─────────────────────────── */
+.press-scale {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.press-scale:active {
+  transform: scale(0.96);
+}
+
 /* ─── Dashboard Sub-page Skeleton ─────────────────────── */
 .dashboard-grid-bg {
   background-image:
@@ -620,5 +644,23 @@ body {
 @media (max-width: 640px) {
   .chamfered {
     clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+}
+
+/* ─── Reduced Motion (accessibility) ───────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .stagger-fade > * {
+    opacity: 1 !important;
   }
 }

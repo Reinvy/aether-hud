@@ -282,8 +282,8 @@ export default function DashboardExperiences() {
             >
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE RECORD"}
+            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
+              SAVE RECORD
             </Button>
           </>
         }

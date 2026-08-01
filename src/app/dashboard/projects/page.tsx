@@ -313,8 +313,8 @@ export default function DashboardProjects() {
             >
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE DOSSIER"}
+            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
+              SAVE DOSSIER
             </Button>
           </>
         }

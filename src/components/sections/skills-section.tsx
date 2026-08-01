@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Cpu, Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
-import { cn } from "@/lib/utils";
+import { SectionHeading } from "@/components/features/section-heading";
+import { SkillBar } from "@/components/features/skill-bar";
 
 type Skill = {
   id: string;
@@ -13,10 +13,6 @@ type Skill = {
   category: string;
   icon: string;
   order: number;
-};
-
-const iconMap: Record<string, React.ElementType> = {
-  Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
 };
 
 const fadeInUp = {
@@ -33,43 +29,6 @@ const stagger = {
   transition: { staggerChildren: 0.05 },
 };
 
-function SkillBar({ name, level, icon, category }: { name: string; level: number; icon: string; category: string }) {
-  const segments = 10;
-  const activeSegments = Math.round((level / 100) * segments);
-  const Icon = iconMap[icon] || Zap;
-
-  return (
-    <div className="group">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Icon className="h-3.5 w-3.5 text-gold-400/60" />
-          <span className="font-mono text-xs tracking-wider text-text-main">
-            {name}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="sys-label text-[9px]">{category}</span>
-          <span className="font-mono text-[10px] text-gold-400 tabular-nums">
-            {level}%
-          </span>
-        </div>
-      </div>
-      {/* Segment Bar */}
-      <div className="segment-bar">
-        {Array.from({ length: segments }).map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "segment",
-              i < activeSegments && "active",
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function SkillsSection() {
   const { data: skills, loading } = useData<Skill[]>("/api/skills");
 
@@ -79,18 +38,13 @@ export function SkillsSection() {
       <div className="pointer-events-none absolute inset-0 bg-ambient-violet" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div className="mx-auto max-w-2xl text-center" {...fadeInUp}>
-          <Badge variant="gold" size="md" className="mb-4">
-            <Cpu className="mr-1.5 h-3.5 w-3.5" />
-            SKILLS MATRIX // ATTRIBUTE
-          </Badge>
-          <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-text-main sm:text-4xl">
-            Combat <span className="text-gradient-gold">Proficiencies</span>
-          </h2>
-          <p className="mt-4 text-lg text-text-muted font-body">
-            Technical attributes and system capabilities — HUD segment display.
-          </p>
-        </motion.div>
+        <SectionHeading
+          badge="SKILLS MATRIX // ATTRIBUTE"
+          icon={<Cpu className="mr-1.5 h-3.5 w-3.5" />}
+          title="Combat"
+          highlight="Proficiencies"
+          subtitle="Technical attributes and system capabilities — HUD segment display."
+        />
 
         {/* Skills Grid */}
         <motion.div

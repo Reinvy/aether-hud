@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import { MessageCircle, Quote } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useData } from "@/lib/use-data";
+import { SectionHeading } from "@/components/features/section-heading";
 
 type Testimonial = {
   id: string;
@@ -22,13 +22,6 @@ const stagger = {
   transition: { staggerChildren: 0.1 },
 };
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-} as const;
-
 export function TestimonialsSection() {
   const { data: testimonials, loading } = useData<Testimonial[]>("/api/testimonials");
 
@@ -39,18 +32,13 @@ export function TestimonialsSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div className="mx-auto max-w-2xl text-center" {...fadeInUp}>
-          <Badge variant="gold" size="md" className="mb-4">
-            <MessageCircle className="mr-1.5 h-3.5 w-3.5" />
-            TESTIMONIALS // FEEDBACK
-          </Badge>
-          <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-text-main sm:text-4xl">
-            Verified <span className="text-gradient-gold">Reports</span>
-          </h2>
-          <p className="mt-4 text-lg text-text-muted font-body">
-            After-action reports from collaborators, clients, and peers.
-          </p>
-        </motion.div>
+        <SectionHeading
+          badge="TESTIMONIALS // FEEDBACK"
+          icon={<MessageCircle className="mr-1.5 h-3.5 w-3.5" />}
+          title="Verified"
+          highlight="Reports"
+          subtitle="After-action reports from collaborators, clients, and peers."
+        />
 
         {/* Testimonials Grid */}
         <motion.div

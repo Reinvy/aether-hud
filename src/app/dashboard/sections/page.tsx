@@ -324,8 +324,8 @@ export default function DashboardSections() {
             <Button variant="secondary" size="sm" onClick={closeModal} disabled={saving}>
               CANCEL
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "SAVING..." : "SAVE CHANGES"}
+            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
+              SAVE CHANGES
             </Button>
           </div>
         </div>
