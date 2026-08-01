@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-01] — C5 Performance Optimization & Code Maintenance
+
+### Maintenance
+- **Dead code removal**: Removed unused `WebConfig` type from `src/lib/constants.ts`; removed unused deps `@libsql/client` + `@prisma/adapter-libsql` (0 imports anywhere in src/prisma); untracked leftover SQLite dev artifacts (`dev.db`, `test.db`) — project uses PostgreSQL — and added `*.db` to `.gitignore`
+- **Security hardening**: Removed hardcoded fallback password `"aether-admin-2026"` from `src/app/api/auth/route.ts` — auth now **fails closed** (HTTP 503) when `DASHBOARD_SECRET` is unset instead of accepting a known default
+- **Documentation**: `.env.example` now documents `DATABASE_URL` and `DASHBOARD_SECRET` (no defaults — both required), and updates `NEXT_PUBLIC_SITE_URL` to the real production domain (`aether-hud-lyart.vercel.app`)
+- **Structured error handling**: Standardized context-prefix error logging (`console.error("[PREFIX]", ...)`) across API routes that lacked it — projects (GET/POST/PUT), experiences (GET/POST/PUT/DELETE), and all `[id]` DELETE routes (skills, socials, testimonials, projects, experiences); descriptive error messages replace generic `"Failed"`
+- **Dependencies updated**: `@types/react` 19.2.17→19.2.18, `@types/react-dom` 19.2.3→19.2.4 (patch-level only; major bumps to eslint 10 / typescript 7 skipped for stability)
+
+---
+
 ## [2026-08-01] — C2 UI/UX Design System Enhancement
 
 ### Added
