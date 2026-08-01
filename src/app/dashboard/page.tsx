@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { IconBox } from "@/components/ui/icon-box";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
@@ -192,11 +193,11 @@ export default function DashboardOverview() {
                         className="group flex items-center justify-between rounded-sm border border-border-subtle px-3 sm:px-4 py-3 transition-all duration-200 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border-glass bg-deep-space/50">
+                          <IconBox>
                             <span className="font-mono text-[9px] text-gold-400">
                               {project.complexity.slice(-1)}
                             </span>
-                          </div>
+                          </IconBox>
                           <div className="min-w-0">
                             <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
                               {project.title}

@@ -5,18 +5,20 @@ import { motion } from "framer-motion";
 import {
   Briefcase,
   Plus,
-  Pencil,
-  Trash2,
   GraduationCap,
   Globe,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
+import { RowActions } from "@/components/ui/row-actions";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton, DashboardFormSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
@@ -160,23 +162,18 @@ export default function DashboardExperiences() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // EXPERIENCE LOG</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Manage <span className="text-gradient-gold">Experience Record</span>
-            </h1>
-          </div>
+      <DashboardPageHeader
+        icon={Briefcase}
+        label="DASHBOARD // EXPERIENCE LOG"
+        title="Manage Experience Record"
+        titleHighlight="Experience Record"
+        actions={
           <Button variant="primary" size="sm" onClick={openNew}>
             <Plus className="h-4 w-4" />
             NEW EXPERIENCE
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       {/* Experience List */}
       <motion.div className="space-y-3" {...fadeInUp}>
@@ -189,13 +186,7 @@ export default function DashboardExperiences() {
         </div>
 
         {list.length === 0 ? (
-          <Card variant="glass" hover="none">
-            <CardContent className="p-8 text-center">
-              <p className="font-mono text-sm text-text-muted">
-                [EMPTY] // No experience records found
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState message="No experience records found" />
         ) : (
           list.map((exp, i) => {
             const TypeIcon = typeIcons[exp.type] || Briefcase;
@@ -208,9 +199,9 @@ export default function DashboardExperiences() {
               >
                 <Card variant="glass" hover="sweep" diamond>
                   <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                    <IconBox>
                       <TypeIcon className="h-4 w-4 text-gold-400/60" />
-                    </div>
+                    </IconBox>
 
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
@@ -237,25 +228,11 @@ export default function DashboardExperiences() {
                       </span>
                     </div>
 
-                    <div className="flex w-20 items-center justify-end gap-0.5 sm:gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2"
-                        onClick={() => openEdit(exp)}
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
-                        onClick={() => handleDelete(exp.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                    <div className="flex w-20 items-center justify-end">
+                      <RowActions
+                        onEdit={() => openEdit(exp)}
+                        onDelete={() => handleDelete(exp.id)}
+                      />
                     </div>
                   </div>
                 </Card>

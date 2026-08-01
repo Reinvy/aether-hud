@@ -1,7 +1,7 @@
 "use client";
 
 import { Cpu, Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { SegmentBar } from "@/components/ui/segment-bar";
 
 /**
  * SkillBar — reusable HUD segmented skill bar.
@@ -25,7 +25,6 @@ interface SkillBarProps {
 }
 
 export function SkillBar({ name, level, icon, category, segments = 10 }: SkillBarProps) {
-  const activeSegments = Math.round((level / 100) * segments);
   const Icon = skillIconMap[icon] || Zap;
 
   return (
@@ -45,17 +44,7 @@ export function SkillBar({ name, level, icon, category, segments = 10 }: SkillBa
         </div>
       </div>
       {/* Segment Bar */}
-      <div className="segment-bar">
-        {Array.from({ length: segments }).map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "segment",
-              i < activeSegments && "active",
-            )}
-          />
-        ))}
-      </div>
+      <SegmentBar value={level} segments={segments} />
     </div>
   );
 }
