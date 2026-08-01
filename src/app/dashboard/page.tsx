@@ -149,8 +149,8 @@ export default function DashboardOverview() {
                       </p>
                     </div>
                     <Icon
-                      className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 ${
-                        stat.color === "gold" ? "text-gold-400/30" : "text-stellar-400/30"
+                      className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 ${
+                        stat.color === "gold" ? "text-gold-400/30 group-hover:text-gold-400/60" : "text-stellar-400/30 group-hover:text-stellar-400/60"
                       }`}
                     />
                   </div>

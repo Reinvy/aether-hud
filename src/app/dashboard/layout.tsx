@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
@@ -58,12 +59,7 @@ export default function DashboardLayout({
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-deep-space">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">
-            VERIFYING SESSION...
-          </p>
-        </div>
+        <HudLoader label="VERIFYING SESSION" size="lg" />
       </div>
     );
   }
@@ -72,12 +68,7 @@ export default function DashboardLayout({
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-deep-space">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
-          <p className="mt-4 font-mono text-xs text-text-muted">
-            REDIRECTING TO LOGIN...
-          </p>
-        </div>
+        <HudLoader label="REDIRECTING TO LOGIN" size="lg" />
       </div>
     );
   }

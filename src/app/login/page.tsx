@@ -239,7 +239,7 @@ export default function LoginPage() {
                       >
                         {loading ? (
                           <span className="flex items-center justify-center gap-2">
-                            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold-400 border-t-transparent" />
+                            <span className="hud-spinner h-3.5 w-3.5" />
                             AUTHENTICATING...
                           </span>
                         ) : (

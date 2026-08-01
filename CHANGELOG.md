@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-01] — C2 UI/UX Design System Enhancement
+
+### Added
+- **`HudLoader` component** (`src/components/ui/hud-loader.tsx`) — reusable HUD-style loading indicator with gold diamond spinner + `[SYS_NODE]` label, replacing ad-hoc `animate-spin rounded-full` spinners across dashboard layout, login, and contact pages
+- **Button `loading` prop** — renders the HUD diamond spinner, disables the button, sets `aria-busy`; used by all dashboard save/deploy buttons (projects, skills, experiences, testimonials, sections, settings, profile, contact) replacing duplicated `saving ? "SAVING..." : "SAVE"` text-swap logic
+- **`prefers-reduced-motion` support** — global animation/transition disable for accessibility
+- **HUD diamond spinner keyframes** (`.hud-spinner`, `hud-spin`) and `.press-scale` press micro-interaction utility in globals.css
+
+### Updated
+- **DashboardPageHeader** — responsive: title scales down on mobile (`text-xl` → `sm:text-2xl`), wraps actions, hides status label on <640px
+- **Dashboard stat cards** — icon micro-interaction: scale + rotate + brighten on hover
+- **Sidebar nav** — added `.press-scale` tactile press feedback
+- **Login page** — AUTHENTICATING spinner now uses HUD diamond spinner
+
+---
+
 ## [2026-08-01] — C3 Dynamic Content Update
 
 ### Added
