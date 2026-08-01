@@ -67,9 +67,4 @@ export type PortfolioData = {
   socials: { platform: string; url: string; icon: string }[];
 };
 
-export type WebConfig = {
-  siteName: string;
-  siteDescription: string;
-  themePreset: string;
-  animationsEnabled: boolean;
-};
+

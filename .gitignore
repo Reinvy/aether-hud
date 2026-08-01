@@ -34,3 +34,8 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# local sqlite dev leftovers (project uses PostgreSQL)
+dev.db
+test.db
+*.db
