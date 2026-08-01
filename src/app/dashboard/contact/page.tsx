@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import {
   User,
   Plus,
-  Pencil,
-  Trash2,
   Link2,
   Mail,
   Globe,
@@ -15,10 +13,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -178,15 +180,12 @@ export default function DashboardContact() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center gap-2">
-          <User className="h-4 w-4 text-gold-400" />
-          <span className="sys-label-gold">DASHBOARD // HERO & CONTACT CONTROL</span>
-        </div>
-        <h1 className="mt-1 font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-          Manage <span className="text-gradient-gold">Contact Configuration</span>
-        </h1>
-      </motion.div>
+      <DashboardPageHeader
+        icon={User}
+        label="DASHBOARD // HERO & CONTACT CONTROL"
+        title="Manage Contact Configuration"
+        titleHighlight="Contact Configuration"
+      />
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* === SOCIAL LINKS === */}
@@ -206,9 +205,7 @@ export default function DashboardContact() {
             </CardHeader>
             <CardContent>
               {socialList.length === 0 ? (
-                <p className="py-8 text-center font-mono text-xs text-text-muted">
-                  [EMPTY] // No social links configured
-                </p>
+                <EmptyState message="No social links configured" className="sm:col-span-1" />
               ) : (
                 <div className="space-y-2">
                   {socialList.map((s, i) => {
@@ -222,9 +219,9 @@ export default function DashboardContact() {
                         className="group flex items-center justify-between rounded border border-border-subtle px-4 py-3 transition-all hover:border-border-glass hover:bg-glass-200"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                          <IconBox>
                             <Icon className="h-4 w-4 text-gold-400/60" />
-                          </div>
+                          </IconBox>
                           <div>
                             <p className="font-mono text-xs font-medium tracking-wider text-text-main">
                               {s.platform}
@@ -236,24 +233,10 @@ export default function DashboardContact() {
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="sys-label text-[8px]">#{s.order}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            glow="none"
-                            className="p-1.5"
-                            onClick={() => openEditSocial(s)}
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            glow="none"
-                            className="p-1.5 text-hud-danger hover:text-hud-danger"
-                            onClick={() => handleDeleteSocial(s.id)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                          <RowActions
+                            onEdit={() => openEditSocial(s)}
+                            onDelete={() => handleDeleteSocial(s.id)}
+                          />
                         </div>
                       </motion.div>
                     );

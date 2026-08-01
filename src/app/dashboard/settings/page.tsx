@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -96,23 +97,18 @@ export default function DashboardSettings() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Settings2 className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // WEB CONFIGURATION</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Web <span className="text-gradient-gold">Settings</span>
-            </h1>
-          </div>
+      <DashboardPageHeader
+        icon={Settings2}
+        label="DASHBOARD // WEB CONFIGURATION"
+        title="Web Settings"
+        titleHighlight="Settings"
+        actions={
           <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
             <Save className="h-4 w-4" />
             DEPLOY CHANGES
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Site Identity */}

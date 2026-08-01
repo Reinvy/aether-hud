@@ -5,16 +5,17 @@ import { motion } from "framer-motion";
 import {
   MessageCircle,
   Plus,
-  Pencil,
-  Trash2,
   Quote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
+import { RowActions } from "@/components/ui/row-actions";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
@@ -130,34 +131,23 @@ export default function DashboardTestimonials() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // TESTIMONIAL ARCHIVE</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Manage <span className="text-gradient-gold">Testimonials</span>
-            </h1>
-          </div>
+      <DashboardPageHeader
+        icon={MessageCircle}
+        label="DASHBOARD // TESTIMONIAL ARCHIVE"
+        title="Manage Testimonials"
+        titleHighlight="Testimonials"
+        actions={
           <Button variant="primary" size="sm" onClick={openNew}>
             <Plus className="h-4 w-4" />
             NEW TESTIMONIAL
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       {/* Testimonials Grid */}
       <motion.div className="grid gap-4 sm:grid-cols-2" {...fadeInUp}>
         {list.length === 0 ? (
-          <Card variant="glass" hover="none" className="sm:col-span-2">
-            <CardContent className="p-8 text-center">
-              <p className="font-mono text-sm text-text-muted">
-                [EMPTY] // No testimonials recorded
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState message="No testimonials recorded" />
         ) : (
           list.map((t, i) => (
             <motion.div
@@ -198,26 +188,10 @@ export default function DashboardTestimonials() {
 
                   <div className="mt-3 flex items-center justify-between">
                     <span className="sys-label text-[8px]">ORDER: {t.order}</span>
-                    <div className="flex items-center gap-0.5 sm:gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2"
-                        onClick={() => openEdit(t)}
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
-                        onClick={() => handleDelete(t.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
+                    <RowActions
+                      onEdit={() => openEdit(t)}
+                      onDelete={() => handleDelete(t.id)}
+                    />
                   </div>
                 </CardContent>
               </Card>

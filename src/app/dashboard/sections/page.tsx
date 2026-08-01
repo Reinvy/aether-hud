@@ -14,9 +14,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { IconBox } from "@/components/ui/icon-box";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -104,30 +106,14 @@ export default function DashboardSections() {
   return (
     <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
       {/* Header */}
-      <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Blocks className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">DASHBOARD // SECTION CONTROL</span>
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Manage <span className="text-gradient-gold">Sections</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                "h-2 w-2 rounded-full",
-                sectionList.length > 0 ? "bg-hud-active" : "bg-hud-danger"
-              )}
-            />
-            <span className="sys-label-active text-[10px]">
-              {sectionList.length} SECTIONS
-            </span>
-          </div>
-        </div>
-      </motion.div>
+      <DashboardPageHeader
+        icon={Blocks}
+        label="DASHBOARD // SECTION CONTROL"
+        title="Manage Sections"
+        titleHighlight="Sections"
+        statusLabel={`${sectionList.length} SECTIONS`}
+        statusActive={sectionList.length > 0}
+      />
 
       {/* Info Banner */}
       <motion.div className="mb-6" {...fadeInUp}>
@@ -194,11 +180,11 @@ export default function DashboardSections() {
                     {/* Title */}
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                        <IconBox>
                           <span className="font-mono text-[10px] text-gold-400">
                             {String(section.order + 1).padStart(2, "0")}
                           </span>
-                        </div>
+                        </IconBox>
                         <div>
                           <p className="font-mono text-xs font-medium tracking-wider text-text-main">
                             {section.title}

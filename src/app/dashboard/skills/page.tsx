@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import {
   Cpu,
   Plus,
-  Pencil,
-  Trash2,
   Globe,
   FileCode,
   Server,
@@ -21,10 +19,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { IconBox } from "@/components/ui/icon-box";
+import { RowActions } from "@/components/ui/row-actions";
+import { SegmentBar } from "@/components/ui/segment-bar";
+import { CategoryFilter } from "@/components/features/category-filter";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
-import { cn } from "@/lib/utils";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 
@@ -37,15 +38,6 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 } as const;
-
-const categoryColors: Record<string, string> = {
-  Frontend: "border-gold-400/40 text-gold-400",
-  Language: "border-stellar-400/40 text-stellar-400",
-  Backend: "border-gold-400/40 text-gold-400",
-  Design: "border-stellar-400/40 text-stellar-400",
-  DevOps: "border-gold-400/40 text-gold-400",
-  AI: "border-gold-400/40 text-gold-400",
-};
 
 interface ApiSkill {
   id: string;
@@ -168,32 +160,16 @@ export default function DashboardSkills() {
       />
 
       {/* Category Filters */}
-      <motion.div className="mb-6 flex flex-wrap gap-2" {...fadeInUp}>
-        <button
-          onClick={() => setActiveCategory(null)}
-          className={cn(
-            "tech-badge px-3 py-1.5 text-[10px] font-mono tracking-wider transition-all",
-            !activeCategory
-              ? "border-border-glass bg-[rgba(242,201,76,0.12)] text-gold-400"
-              : "border-border-subtle text-text-muted hover:border-border-glass"
+      <motion.div className="mb-6" {...fadeInUp}>
+        <CategoryFilter
+          categories={categories}
+          active={activeCategory}
+          onSelect={setActiveCategory}
+          total={skillList.length}
+          counts={Object.fromEntries(
+            categories.map((cat) => [cat, skillList.filter((s) => s.category === cat).length])
           )}
-        >
-          ALL // {skillList.length}
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-            className={cn(
-              "tech-badge px-3 py-1.5 text-[10px] font-mono tracking-wider transition-all",
-              activeCategory === cat
-                ? "border-border-glass bg-[rgba(242,201,76,0.12)] text-gold-400"
-                : "border-border-subtle text-text-muted hover:border-border-glass"
-            )}
-          >
-            {cat.toUpperCase()} // {skillList.filter((s) => s.category === cat).length}
-          </button>
-        ))}
+        />
       </motion.div>
 
       {/* Skills Grid */}
@@ -211,9 +187,9 @@ export default function DashboardSkills() {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                      <IconBox size="md">
                         <Icon className="h-5 w-5 text-gold-400/60" />
-                      </div>
+                      </IconBox>
                       <div>
                         <p className="font-mono text-xs font-medium tracking-wider text-text-main">
                           {skill.name}
@@ -229,38 +205,14 @@ export default function DashboardSkills() {
                   </div>
 
                   {/* Segment bar */}
-                  <div className="segment-bar mt-4">
-                    {Array.from({ length: 10 }).map((_, segIdx) => (
-                      <div
-                        key={segIdx}
-                        className={cn(
-                          "segment",
-                          segIdx < Math.round(skill.level / 10) && "active"
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <SegmentBar value={skill.level} className="mt-4" />
 
                   {/* Actions */}
-                  <div className="mt-4 flex items-center justify-end gap-1 border-t border-border-subtle pt-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      glow="none"
-                      className="p-1.5 sm:p-2"
-                      onClick={() => openEdit(skill)}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      glow="none"
-                      className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
-                      onClick={() => handleDelete(skill.id)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                  <div className="mt-4 flex items-center justify-end border-t border-border-subtle pt-3">
+                    <RowActions
+                      onEdit={() => openEdit(skill)}
+                      onDelete={() => handleDelete(skill.id)}
+                    />
                   </div>
                 </CardContent>
               </Card>

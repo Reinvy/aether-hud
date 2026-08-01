@@ -6,16 +6,17 @@ import {
   Boxes,
   Plus,
   ExternalLink,
-  Pencil,
-  Trash2,
   Search,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
+import { RowActions } from "@/components/ui/row-actions";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
@@ -209,13 +210,7 @@ export default function DashboardProjects() {
         </div>
 
         {filtered.length === 0 ? (
-          <Card variant="glass" hover="none">
-            <CardContent className="p-8 text-center">
-              <p className="font-mono text-sm text-text-muted">
-                [EMPTY] // No projects match your search criteria
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState message="No projects match your search criteria" />
         ) : (
           filtered.map((project, i) => {
             const tags = (() => {
@@ -235,11 +230,11 @@ export default function DashboardProjects() {
               >
                 <Card variant="glass" hover="sweep" diamond>
                   <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border-glass bg-deep-space/50">
+                    <IconBox>
                       <span className="font-mono text-[10px] text-gold-400">
                         {project.complexity.slice(-1)}
                       </span>
-                    </div>
+                    </IconBox>
 
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
@@ -261,32 +256,20 @@ export default function DashboardProjects() {
                       <span className="sys-label-active text-[8px]">DEPLOYED</span>
                     </div>
 
-                    <div className="flex w-20 items-center justify-end gap-0.5 sm:gap-1">
-                      {project.liveUrl && (
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                          <Button variant="ghost" size="sm" glow="none" className="p-1.5 sm:p-2">
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </Button>
-                        </a>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2"
-                        onClick={() => openEdit(project)}
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="p-1.5 sm:p-2 text-hud-danger hover:text-hud-danger"
-                        onClick={() => handleDelete(project.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                    <div className="flex w-20 items-center justify-end">
+                      <RowActions
+                        onEdit={() => openEdit(project)}
+                        onDelete={() => handleDelete(project.id)}
+                        leading={
+                          project.liveUrl ? (
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                              <Button variant="ghost" size="sm" glow="none" className="p-1.5 sm:p-2">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </Button>
+                            </a>
+                          ) : undefined
+                        }
+                      />
                     </div>
                   </div>
                 </Card>
