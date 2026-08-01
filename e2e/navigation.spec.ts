@@ -13,7 +13,7 @@ import { execSync } from "child_process";
 
 // ─── Expected Routes ──────────────────────────────────────────────
 const EXPECTED_PAGES: Record<string, string[]> = {
-  public: ["/", "/login"],
+  public: ["/", "/login", "/robots.txt", "/sitemap.xml"],
   dashboard: [
     "/dashboard",
     "/dashboard/contact",

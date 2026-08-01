@@ -60,6 +60,12 @@ const API_ROUTES = [
   "/api/testimonials",
 ];
 
+// SEO files must be live AND reference the ACTUAL production domain.
+// aether-hud.vercel.app is taken by another project — if robots/sitemap
+// ever point there (stale-domain regression), search engines index the
+// wrong site. Guard against that.
+const SEO_ROUTES = ["/robots.txt", "/sitemap.xml"];
+
 function log(msg, color = "") {
   console.log(`${color}${msg}${RESET}`);
 }
@@ -117,6 +123,24 @@ async function main() {
       const resp = await fetchUrl(`${PRODUCTION_URL}${route}`);
       const ok = resp.status === 200 || (resp.status === 405 && route.startsWith("/api/"));
       assert(ok, `${route} is live (got ${resp.status})`);
+    } catch (e) {
+      assert(false, `${route} is reachable: ${e.message}`);
+    }
+  }
+
+  // SEO files: live AND reference the correct production domain.
+  for (const route of SEO_ROUTES) {
+    try {
+      const resp = await fetch(`${PRODUCTION_URL}${route}`, {
+        method: "GET",
+        signal: AbortSignal.timeout(10000),
+      });
+      assert(resp.status === 200, `${route} is live (got ${resp.status})`);
+      const body = await resp.text();
+      assert(
+        body.includes(PRODUCTION_URL),
+        `${route} references the correct production domain (${PRODUCTION_URL})`
+      );
     } catch (e) {
       assert(false, `${route} is reachable: ${e.message}`);
     }
