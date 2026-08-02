@@ -3,6 +3,9 @@ import type { MetadataRoute } from "next";
 // aether-hud.vercel.app is taken by another project; actual domain is aether-hud-lyart.vercel.app
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
 
+// Single-page portfolio: only the homepage is publicly indexable.
+// /dashboard and /login are auth-gated and robots-disallowed (robots.ts),
+// so listing them here would contradict the crawl rules.
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -10,18 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/login`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
     },
   ];
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Cpu, Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
 import { SegmentBar } from "@/components/ui/segment-bar";
 
@@ -24,7 +25,7 @@ interface SkillBarProps {
   segments?: number;
 }
 
-export function SkillBar({ name, level, icon, category, segments = 10 }: SkillBarProps) {
+export const SkillBar = memo(function SkillBar({ name, level, icon, category, segments = 10 }: SkillBarProps) {
   const Icon = skillIconMap[icon] || Zap;
 
   return (
@@ -47,4 +48,4 @@ export function SkillBar({ name, level, icon, category, segments = 10 }: SkillBa
       <SegmentBar value={level} segments={segments} />
     </div>
   );
-}
+});

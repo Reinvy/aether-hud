@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, GitBranch } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,7 +45,7 @@ const cardMotion = {
   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 } as const;
 
-export function ProjectCard(project: ProjectCardProps) {
+export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) {
   const tags = parseTags(project.tags);
 
   return (
@@ -126,4 +127,4 @@ export function ProjectCard(project: ProjectCardProps) {
       </Card>
     </motion.div>
   );
-}
+});
