@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -58,10 +59,7 @@ export function ExperienceSection() {
 
           {loading && (
             <div className="flex justify-center py-12">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
-                <span className="sys-label text-xs text-text-muted">LOADING TIMELINE...</span>
-              </div>
+              <HudLoader label="LOADING TIMELINE" size="md" />
             </div>
           )}
 
@@ -78,8 +76,8 @@ export function ExperienceSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {/* Timeline node */}
-                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-full border border-border-glass bg-surface-primary">
-                  <TypeIcon className="h-4 w-4 text-gold-400" />
+                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-full border border-border-glass bg-surface-primary transition-all duration-300 group-hover:border-gold-400/40 group-hover:shadow-[0_0_16px_rgba(242,201,76,0.25)] group-hover:scale-110">
+                  <TypeIcon className="h-4 w-4 text-gold-400 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(242,201,76,0.6)]" />
                 </div>
 
                 {/* Node connector line */}
@@ -100,7 +98,7 @@ export function ExperienceSection() {
                           )}
                         </Badge>
                       </div>
-                      <h3 className="font-display text-base font-bold tracking-wider text-text-main">
+                      <h3 className="font-display text-base font-bold tracking-wider text-text-main transition-colors duration-300 group-hover:text-gold-400">
                         {exp.role}
                       </h3>
                       <p className="mt-0.5 font-mono text-xs tracking-wider text-gold-400">

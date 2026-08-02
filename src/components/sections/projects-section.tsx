@@ -5,6 +5,8 @@ import { Boxes } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { ProjectCard } from "@/components/features/project-card";
+import { HudLoader } from "@/components/ui/hud-loader";
+import { CardSkeleton } from "@/components/ui/skeleton";
 
 type Project = {
   id: string;
@@ -52,12 +54,17 @@ export function ProjectsSection() {
           {...stagger}
         >
           {loading && (
-            <div className="col-span-full flex justify-center py-12">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
-                <span className="sys-label text-xs text-text-muted">LOADING PROJECTS...</span>
+            <>
+              <div className="col-span-full flex justify-center py-12">
+                <HudLoader label="LOADING PROJECTS" size="md" />
               </div>
-            </div>
+              {/* Skeleton grid preview while fetching */}
+              <div className="col-span-full grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <CardSkeleton key={i} />
+                ))}
+              </div>
+            </>
           )}
 
           {projects?.map((project) => (

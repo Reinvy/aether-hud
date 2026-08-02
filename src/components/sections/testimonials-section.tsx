@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MessageCircle, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -47,10 +48,7 @@ export function TestimonialsSection() {
         >
           {loading && (
             <div className="col-span-full flex justify-center py-12">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
-                <span className="sys-label text-xs text-text-muted">LOADING REPORTS...</span>
-              </div>
+              <HudLoader label="LOADING REPORTS" size="md" />
             </div>
           )}
 

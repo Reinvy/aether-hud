@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-03] — C2 UI/UX Enhancement & Design System
+
+### Refactor (reusable components)
+- **`src/components/sections/contact-section.tsx`** — subject + message fields now use the shared `Input` / `Textarea` components instead of raw HTML elements (labels, error slots, focus rings consistent with name/email fields). Added prefix icons (User / AtSign / Hash) to all form fields.
+- Contact form now has a real sending state: `Button loading` HUD diamond spinner + "ENCRYPTING..." label while transmitting, then "TRANSMITTED" — no more silent 1s pause.
+
+### Micro-interactions
+- **Hero terminal panel** — added `.corner-brackets` gold L-brackets + hover border/glow.
+- **Skill bars** — new `.skillbar-hover` segment hover glow (segments brighten, active segments gold-300 + stronger glow, stellar variant included); skill name/icon/percentage tint gold on hover.
+- **Experience timeline** — node scales up with gold glow on hover; role title transitions to gold.
+- **Project cards** — banner gradient subtle zoom (scale-110), grid overlay brightens, gold gradient overlay fades in on hover.
+
+### Loading states (HUD-style)
+- **Projects / Skills / Experience / Testimonials** landing sections now use the reusable `HudLoader` diamond spinner + sys-label instead of ad-hoc pulsing dots.
+- **Projects grid** shows a 2-card `CardSkeleton` preview while fetching, matching the real card layout.
+
+### Verified
+- `npm run build` passes with zero errors/warnings.
+- Design-system compliant: all new styles use chamfered corners, gold glow (never neon), `cubic-bezier(0.16, 1, 0.3, 1)` transitions, Orbitron/JetBrains Mono typography.
+
+---
+
 ## [2026-08-02] — C5 Performance & Code Maintenance
 
 ### Cleanup (dead code)

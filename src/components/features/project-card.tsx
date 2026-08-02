@@ -53,10 +53,13 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
       <Card variant="glass" hover="lift" className="group h-full overflow-hidden">
         {/* Project Image / Banner Area */}
         <div className="relative h-48 overflow-hidden bg-surface-primary border-b border-border-subtle">
-          {/* Placeholder gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-deep-space to-stellar-500/10" />
-          <div className="absolute inset-0 bg-grid-hud opacity-30" />
+          {/* Placeholder gradient — subtle zoom on hover */}
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-deep-space to-stellar-500/10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110" />
+          <div className="absolute inset-0 bg-grid-hud opacity-30 transition-opacity duration-300 group-hover:opacity-50" />
           <div className="scanline absolute inset-0" />
+
+          {/* Gold overlay on hover */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gold-500/0 to-gold-500/0 transition-colors duration-500 group-hover:from-gold-500/15 group-hover:to-transparent" />
 
           {/* Tech overlay */}
           <div className="absolute top-3 right-3 flex gap-1.5">
