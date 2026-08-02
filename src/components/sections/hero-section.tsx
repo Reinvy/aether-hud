@@ -146,7 +146,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
         >
-          <div className="glass-panel chamfered overflow-hidden">
+          <div className="glass-panel chamfered overflow-hidden corner-brackets transition-all duration-300 hover:border-border-glass hover:shadow-[0_0_30px_rgba(242,201,76,0.08)]">
             {/* Terminal-style header */}
             <div className="flex items-center gap-2 border-b border-border-subtle px-4 py-3">
               <div className="flex gap-1.5">

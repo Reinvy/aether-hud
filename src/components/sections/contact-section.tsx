@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
-import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle } from "lucide-react";
+import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle, User, AtSign, Hash, FileText, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
@@ -43,12 +44,18 @@ const defaultSocials: Social[] = [
 
 export function ContactSection() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const { data: socials } = useData<Social[]>("/api/socials");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (sending) return;
+    setSending(true);
     // Simulate send
-    setTimeout(() => setSent(true), 1000);
+    setTimeout(() => {
+      setSending(false);
+      setSent(true);
+    }, 1200);
   };
 
   return (
@@ -102,6 +109,7 @@ export function ContactSection() {
                           id="name"
                           label="FIELD_01 // NAME"
                           placeholder="Enter your designation..."
+                          prefix={<User className="h-4 w-4" />}
                           required
                         />
                         <Input
@@ -109,35 +117,39 @@ export function ContactSection() {
                           label="FIELD_02 // EMAIL"
                           type="email"
                           placeholder="comm@channel.domain"
+                          prefix={<AtSign className="h-4 w-4" />}
                           required
                         />
                       </div>
                       <div>
-                        <label htmlFor="subject" className="sys-label mb-2 block text-text-muted">
-                          FIELD_03 // SUBJECT
-                        </label>
-                        <input
+                        <Input
                           id="subject"
-                          className="input-recessed w-full px-4 py-2.5 text-sm font-body"
+                          label="FIELD_03 // SUBJECT"
                           placeholder="Transmission subject..."
+                          prefix={<Hash className="h-4 w-4" />}
                           required
                         />
                       </div>
                       <div>
-                        <label htmlFor="message" className="sys-label mb-2 block text-text-muted">
-                          FIELD_04 // MESSAGE BODY
-                        </label>
-                        <textarea
+                        <Textarea
                           id="message"
+                          label="FIELD_04 // MESSAGE BODY"
                           rows={5}
-                          className="input-recessed w-full px-4 py-2.5 text-sm font-body resize-none"
+                          className="resize-none"
                           placeholder="Type your encrypted message..."
                           required
                         />
                       </div>
-                      <Button type="submit" variant="primary" size="lg" className="w-full crosshair-ring">
-                        <Send className="h-4 w-4" />
-                        TRANSMIT MESSAGE
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        className="w-full crosshair-ring"
+                        loading={sending}
+                        disabled={sent}
+                      >
+                        {!sending && !sent && <Send className="h-4 w-4" />}
+                        {sending ? "ENCRYPTING..." : sent ? "TRANSMITTED" : "TRANSMIT MESSAGE"}
                       </Button>
                     </form>
                   )}
@@ -163,11 +175,12 @@ export function ContactSection() {
                           href={social.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 rounded border border-border-subtle px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 group"
+                          className="group/channel flex items-center gap-3 rounded border border-border-subtle px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200"
                         >
-                          <Icon className="h-4 w-4 text-gold-400/60 group-hover:text-gold-400 transition-colors" />
+                          <Icon className="h-4 w-4 text-gold-400/60 transition-transform duration-300 group-hover/channel:scale-110 group-hover/channel:text-gold-400" />
                           <span className="flex-1">{social.platform}</span>
-                          <span className="sys-label text-[8px]">[LINK]</span>
+                          <span className="sys-label text-[8px] transition-colors duration-300 group-hover/channel:text-gold-400/60">[LINK]</span>
+                          <ChevronRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-300 group-hover/channel:translate-x-0 group-hover/channel:opacity-100 text-gold-400" />
                         </a>
                       );
                     })}
@@ -184,13 +197,14 @@ export function ContactSection() {
                   </div>
                   <a
                     href="mailto:hello@aether-hud.dev"
-                    className="flex items-center gap-3 rounded border border-border-subtle px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 group"
+                    className="group/channel flex items-center gap-3 rounded border border-border-subtle px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200"
                   >
-                    <Mail className="h-4 w-4 text-gold-400/60 group-hover:text-gold-400" />
+                    <Mail className="h-4 w-4 text-gold-400/60 transition-transform duration-300 group-hover/channel:scale-110 group-hover/channel:text-gold-400" />
                     <span className="font-mono text-[11px]">
                       hello@aether-hud.dev
                     </span>
-                    <span className="ml-auto sys-label text-[8px]">[SEND]</span>
+                    <span className="ml-auto sys-label text-[8px] transition-colors duration-300 group-hover/channel:text-gold-400/60">[SEND]</span>
+                    <ChevronRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-300 group-hover/channel:translate-x-0 group-hover/channel:opacity-100 text-gold-400" />
                   </a>
                 </CardContent>
               </Card>

@@ -6,6 +6,7 @@ import { Cpu, Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
+import { HudLoader } from "@/components/ui/hud-loader";
 
 type Skill = {
   id: string;
@@ -59,10 +60,7 @@ export function SkillsSection() {
 
             {loading && (
               <div className="flex justify-center py-8">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse" />
-                  <span className="sys-label text-xs text-text-muted">LOADING SKILLS...</span>
-                </div>
+                <HudLoader label="LOADING SKILLS" size="sm" />
               </div>
             )}
 
