@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-02] — C3 Dynamic Content Update
+
+### Added
+- **Projects**: 2 new portfolio entries
+  - `AETHER Sentinel` — Autonomous security operations platform with AI threat detection & SIEM ingestion (CLASS-S)
+  - `AETHER Atlas` — Geospatial data intelligence platform with vector tile streaming & map analytics (CLASS-A)
+- **Skills**: 2 new skill entries — AI Agents/LLM Ops (82), System Design/Architecture (80)
+- **Socials**: TikTok and Mastodon profile links added
+
+### Updated
+- Skill levels incremented across all categories (Next.js/React 98, TypeScript 96, Tailwind CSS 94, Node.js/API 93, Prisma/SQL 90, Python/AI 88, Framer Motion 91, Docker 84, Figma 88, Vercel/Deploy 95, Go/Rust 72, PostgreSQL 86, WebSockets 88, Redis/Queues 80, Kubernetes 74, GraphQL/tRPC 77)
+- Portfolio data file now seeds 12 projects, 18 skills, and 11 social links
+
+### Verified
+- All landing sections (hero, projects, skills, testimonials, experience, contact) render content from API routes and use AETHER-HUD design tokens (glass-panel, chamfered, btn-glow-sweep, sys-label, bg-deep-space + starfield + grid-hud) — no hardcoded content
+
+---
+
 ## [2026-08-02] — C2 UI/UX Design System Enhancement
 
 ### Added
