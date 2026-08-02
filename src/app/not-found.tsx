@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Compass } from "lucide-react";
 
 /**
  * HUD-styled 404 page — unknown coordinates outside the tactical grid.
  */
+
+export const metadata: Metadata = {
+  title: "404 — Signal Lost",
+  description: "The requested sector does not exist in the tactical grid. Return to base.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function NotFound() {
   return (

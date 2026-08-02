@@ -66,6 +66,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: APP_URL,
+    languages: {
+      "en-US": APP_URL,
+    },
   },
   category: "technology",
   verification: {

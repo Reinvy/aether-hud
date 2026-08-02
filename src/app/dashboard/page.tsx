@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -8,18 +9,44 @@ import {
   Eye,
   TrendingUp,
   Users,
-  ExternalLink,
   RefreshCw,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconBox } from "@/components/ui/icon-box";
 import { StatCard } from "@/components/ui/stat-card";
+import { ProjectRow, type ProjectRowData } from "@/components/features/project-row";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 import { fadeInUp, fadeInUpItem, staggerContainer } from "@/lib/motion-variants";
+
+// Lazy-load the ActivityFeed widget — it is below-the-fold on the overview
+// and only renders after stats/projects resolve, so deferring its chunk
+// keeps the initial dashboard payload smaller.
+const ActivityFeed = dynamic(
+  () =>
+    import("@/components/features/activity-feed").then((m) => ({
+      default: m.ActivityFeed,
+    })),
+  {
+    loading: () => (
+      <Card variant="glass" hover="none" diamond className="h-full">
+        <CardContent className="space-y-4 p-5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex gap-3">
+              <div className="mt-1 h-2 w-2 rounded-full bg-glass-300 animate-pulse" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3 w-3/4 bg-glass-200 rounded-none animate-pulse" />
+                <div className="h-2 w-1/2 bg-glass-200 rounded-none animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    ),
+  }
+);
 
 interface DashboardStats {
   projectCount: number;
@@ -29,26 +56,11 @@ interface DashboardStats {
   uptime: string;
 }
 
-interface ApiProject {
+interface ApiProject extends ProjectRowData {
   id: string;
-  title: string;
   description: string;
-  tags: string;
-  category: string;
-  complexity: string;
-  performance: string;
   year: string;
-  liveUrl: string | null;
   githubUrl: string | null;
-}
-
-function parseTags(tags: string): string[] {
-  try {
-    const parsed = JSON.parse(tags);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return tags ? tags.split(",").map((t) => t.trim()) : [];
-  }
 }
 
 export default function DashboardOverview() {
@@ -141,84 +153,18 @@ export default function DashboardOverview() {
                     [EMPTY] // No projects deployed
                   </p>
                 ) : (
-                  projectList.map((project: ApiProject) => {
-                    const tags = parseTags(project.tags);
-                    return (
-                      <div
-                        key={project.id}
-                        className="group flex items-center justify-between rounded-sm border border-border-subtle px-3 sm:px-4 py-3 transition-all duration-200 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <IconBox>
-                            <span className="font-mono text-[9px] text-gold-400">
-                              {project.complexity.slice(-1)}
-                            </span>
-                          </IconBox>
-                          <div className="min-w-0">
-                            <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
-                              {project.title}
-                            </p>
-                            <p className="truncate font-mono text-[9px] tracking-wider text-text-muted">
-                              {project.category} // {tags.slice(0, 2).join(", ")}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-2">
-                          <span className="sys-label text-[8px] hidden sm:inline">PERF: {project.performance}</span>
-                          {project.liveUrl && (
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="hover-scale-sm block p-1">
-                              <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors hover:text-gold-400" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
+                  projectList.map((project: ApiProject) => (
+                    <ProjectRow key={project.id} project={project} />
+                  ))
                 )}
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Activity Feed */}
+        {/* Activity Feed — lazy-loaded */}
         <motion.div {...fadeInUp}>
-          <Card variant="glass" hover="none" diamond className="h-full">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-gold-400" />
-                  <CardTitle>Activity Log</CardTitle>
-                </div>
-                <RefreshCw className="h-3.5 w-3.5 cursor-pointer text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivity.map((activity, i) => (
-                  <div key={i} className="flex gap-3 group">
-                    <div
-                      className={`mt-0.5 h-2 w-2 rounded-full transition-transform duration-200 group-hover:scale-125 ${
-                        activity.type === "deploy"
-                          ? "bg-hud-active"
-                          : activity.type === "update"
-                            ? "bg-gold-400"
-                            : "bg-stellar-400"
-                      }`}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
-                        {activity.action}
-                      </p>
-                      <p className="mt-0.5 font-mono text-[9px] text-text-muted">
-                        {activity.detail}
-                      </p>
-                      <p className="sys-label mt-0.5 text-[8px]">{activity.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <ActivityFeed items={recentActivity} />
         </motion.div>
       </div>
 

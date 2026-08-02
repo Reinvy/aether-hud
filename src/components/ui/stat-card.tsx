@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({ label, value, icon: Icon, tone = "gold", className }: StatCardProps) {
+export const StatCard = memo(function StatCard({ label, value, icon: Icon, tone = "gold", className }: StatCardProps) {
   return (
     <Card variant="glass" hover="lift" diamond className={className}>
       <CardContent className="p-4 sm:p-5">
@@ -49,4 +50,4 @@ export function StatCard({ label, value, icon: Icon, tone = "gold", className }:
       </CardContent>
     </Card>
   );
-}
+});
