@@ -8,55 +8,6 @@ import { cn } from "@/lib/utils";
 /** Pulse animation for skeleton segments */
 const pulseClass = "animate-pulse";
 
-/* ─── Segment Skeleton Bar ─────────────────────────────────── */
-
-interface SegmentSkeletonProps {
-  segments?: number;
-  active?: number;
-  className?: string;
-}
-
-export function SegmentSkeleton({ segments = 10, active = 0, className }: SegmentSkeletonProps) {
-  return (
-    <div className={cn("segment-bar", className)}>
-      {Array.from({ length: segments }).map((_, i) => (
-        <div
-          key={i}
-          className={cn(
-            "segment",
-            i < active && "active",
-            "opacity-50",
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ─── Text Skeleton ────────────────────────────────────────── */
-
-interface TextSkeletonProps {
-  lines?: number;
-  className?: string;
-}
-
-export function TextSkeleton({ lines = 3, className }: TextSkeletonProps) {
-  return (
-    <div className={cn("space-y-2", className)}>
-      {Array.from({ length: lines }).map((_, i) => (
-        <div
-          key={i}
-          className={cn(
-            "h-3 rounded-none bg-glass-300",
-            i === lines - 1 ? "w-2/3" : "w-full",
-            pulseClass,
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
 /* ─── Card Skeleton ────────────────────────────────────────── */
 
 interface CardSkeletonProps {
@@ -112,13 +63,13 @@ export function SectionHeaderSkeleton({ className }: SectionSkeletonProps) {
   );
 }
 
-/* ─── Dashboard Stat Skeleton ──────────────────────────────── */
+/* ─── Dashboard Stat Skeleton (module-private; used by DashboardPageSkeleton) ── */
 
 interface DashboardStatSkeletonProps {
   className?: string;
 }
 
-export function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps) {
+function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps) {
   return (
     <div className={cn("glass-panel chamfered p-5", className)}>
       <div className="flex items-start justify-between">

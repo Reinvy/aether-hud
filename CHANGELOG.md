@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-02] — C5 Performance & Code Maintenance
+
+### Cleanup (dead code)
+- **`src/lib/motion-variants.ts`** — removed unused `fadeIn` export; `EASE_HUD` is now module-private (used only by the shared variants). Consumers import `fadeInUp` / `fadeInView` / `staggerContainer` / `fadeInUpItem` — API unchanged.
+- **`src/components/ui/skeleton.tsx`** — removed unused `SegmentSkeleton` and `TextSkeleton` exports (no importers anywhere in `src/`); `DashboardStatSkeleton` is now module-private (used only by `DashboardPageSkeleton`).
+- **`src/components/features/skill-bar.tsx`** — `skillIconMap` is now module-private (used only inside `SkillBar`).
+
+### Audit (verified, no change needed)
+- **Build**: `npm run build` passes with zero errors/warnings (all 27 routes compile, static + dynamic as expected).
+- **Dependencies**: `npm outdated` — all packages at latest within semver range. Only major-version jumps available (`@types/node` 20→26, `eslint` 9→10, `typescript` 5→7) — intentionally NOT applied in a maintenance patch (breaking changes, would require a dedicated upgrade PR).
+- **Security**: no secrets in tracked files; `.env` is gitignored and not tracked; `.env.example` contains only placeholders; auth fails closed (HTTP 503) when `DASHBOARD_SECRET` is unset; no hardcoded credentials in `src/` or `prisma/` (matches in `portfolio.ts` are skill IDs, not keys).
+- **Error handling**: all 15 API routes use structured try/catch with tagged `console.error` + JSON error responses; `useData` hook has AbortController cleanup, stale-response guards, and HTTP-status → message mapping.
+- **Design system**: no generic `rounded-xl`/`rounded-lg` outside the chamfered design tokens; all color usage goes through AETHER-HUD CSS vars / token classes (`glass-panel`, `btn-glow-sweep`, `sys-label`, `bg-deep-space` + starfield + grid-hud, gold `#F2C94C` accents).
+
+### Verified
+- Dead-export audit script: 0 remaining unused exports; 0 unreferenced source files.
+
+---
+
 ## [2026-08-02] — C3 Dynamic Content Update
 
 ### Added

@@ -11,7 +11,7 @@ import { SegmentBar } from "@/components/ui/segment-bar";
  * module) with the same Obsidian & Imperial Gold treatment.
  */
 
-export const skillIconMap: Record<string, React.ElementType> = {
+const skillIconMap: Record<string, React.ElementType> = {
   Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
 };
 

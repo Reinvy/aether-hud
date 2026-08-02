@@ -13,7 +13,7 @@
  */
 
 /** The AETHER-HUD easing curve — all transitions must use this. */
-export const EASE_HUD = [0.16, 1, 0.3, 1] as [number, number, number, number];
+const EASE_HUD = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 /** Standard fade-in-up for animate-based enter (dashboard pages). */
 export const fadeInUp = {
@@ -49,9 +49,4 @@ export const fadeInUpItem = {
   },
 } as const;
 
-/** Lightweight fade for micro-content blocks. */
-export const fadeIn = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  transition: { duration: 0.4, ease: EASE_HUD },
-} as const;
+
