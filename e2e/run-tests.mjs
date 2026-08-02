@@ -79,10 +79,7 @@ function run(cmd) {
 }
 
 function fetchUrl(url) {
-  try {
-    const { HTTPParser } = process.binding("http_parser");
-  } catch {}
-  // Use Node's built-in fetch
+  // Use Node's built-in fetch (HEAD request for liveness checks)
   return fetch(url, { method: "HEAD", signal: AbortSignal.timeout(10000) });
 }
 
@@ -141,6 +138,18 @@ async function main() {
         body.includes(PRODUCTION_URL),
         `${route} references the correct production domain (${PRODUCTION_URL})`
       );
+    } catch (e) {
+      assert(false, `${route} is reachable: ${e.message}`);
+    }
+  }
+
+  // Unknown routes must return the custom 404 page (not 200 or 500).
+  // Guards against catch-all routing misconfiguration that silently
+  // serves the wrong page for typos or stale links.
+  for (const route of ["/this-route-does-not-exist-xyz", "/dashboard/nonexistent-page-xyz"]) {
+    try {
+      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`);
+      assert(resp.status === 404, `${route} returns 404 (got ${resp.status})`);
     } catch (e) {
       assert(false, `${route} is reachable: ${e.message}`);
     }
