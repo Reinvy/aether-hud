@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
+import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 export const metadata: Metadata = {
   title: {
@@ -173,6 +174,8 @@ export default function RootLayout({
       </head>
       <body className="min-h-full bg-deep-space text-text-main font-body scanline">
         <AuthProvider>{children}</AuthProvider>
+        {/* Performance observability — renders nothing, beacons Core Web Vitals */}
+        <WebVitalsReporter />
       </body>
     </html>
   );
