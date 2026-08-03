@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Toggle } from "@/components/ui/toggle";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -196,15 +197,11 @@ export default function DashboardSettings() {
                     <p className="font-mono text-[9px] text-text-muted">Framer Motion effects</p>
                   </div>
                 </div>
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    type="checkbox"
-                    checked={form.animationsEnabled}
-                    onChange={(e) => updateField("animationsEnabled", e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div className="h-5 w-9 rounded-full border border-border-glass bg-deep-space after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-gold-400 after:transition-all peer-checked:after:translate-x-full peer-checked:bg-[rgba(242,201,76,0.2)]" />
-                </label>
+                <Toggle
+                  id="animations-toggle"
+                  checked={form.animationsEnabled}
+                  onChange={(v) => updateField("animationsEnabled", v)}
+                />
               </div>
             </CardContent>
           </Card>

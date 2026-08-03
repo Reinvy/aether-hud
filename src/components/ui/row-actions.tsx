@@ -33,7 +33,7 @@ export function RowActions({
         variant="ghost"
         size="sm"
         glow="none"
-        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-glass-200"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-glass-200 hover-scale-sm"
         onClick={onEdit}
         aria-label={editLabel}
         title={editLabel}
@@ -44,7 +44,7 @@ export function RowActions({
         variant="ghost"
         size="sm"
         glow="none"
-        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 text-hud-danger hover:bg-[rgba(255,0,85,0.08)] hover:text-hud-danger"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 text-hud-danger hover:bg-[rgba(255,0,85,0.08)] hover:text-hud-danger hover-scale-sm"
         onClick={onDelete}
         aria-label={deleteLabel}
         title={deleteLabel}

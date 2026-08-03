@@ -25,7 +25,7 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
         <section className="relative min-h-screen flex items-center justify-center py-28">
           <div className="pointer-events-none absolute inset-0 bg-deep-space" />
           <div className="text-center space-y-4">
-            <span className="h-2 w-2 rounded-full bg-gold-400 animate-pulse inline-block" />
+            <span className="h-2 w-2 rounded-full bg-gold-400 skeleton-hud inline-block" />
             <p className="sys-label text-xs text-text-muted mt-2">DEPLOYING HERO MODULE...</p>
           </div>
         </section>
@@ -54,12 +54,12 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="h-3 w-32 bg-glass-300 rounded-none animate-pulse" />
-                      <div className="h-3 w-16 bg-glass-300 rounded-none animate-pulse" />
+                      <div className="h-3 w-32 bg-glass-300 rounded-none skeleton-hud" />
+                      <div className="h-3 w-16 bg-glass-300 rounded-none skeleton-hud" />
                     </div>
                     <div className="segment-bar">
                       {Array.from({ length: 10 }).map((_, j) => (
-                        <div key={j} className="segment bg-glass-200 animate-pulse" />
+                        <div key={j} className="segment bg-glass-200 skeleton-hud" />
                       ))}
                     </div>
                   </div>
@@ -78,13 +78,13 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
             <div className="mt-14 space-y-8">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full border border-border-glass bg-glass-200 animate-pulse shrink-0" />
+                  <div className="h-10 w-10 rounded-full border border-border-glass bg-glass-200 skeleton-hud shrink-0" />
                   <div className="flex-1 glass-panel chamfered p-6">
                     <div className="space-y-3">
-                      <div className="h-4 w-1/3 bg-glass-300 rounded-none animate-pulse" />
-                      <div className="h-5 w-1/2 bg-glass-300 rounded-none animate-pulse" />
-                      <div className="h-3 w-full bg-glass-200 rounded-none animate-pulse" />
-                      <div className="h-3 w-5/6 bg-glass-200 rounded-none animate-pulse" />
+                      <div className="h-4 w-1/3 bg-glass-300 rounded-none skeleton-hud" />
+                      <div className="h-5 w-1/2 bg-glass-300 rounded-none skeleton-hud" />
+                      <div className="h-3 w-full bg-glass-200 rounded-none skeleton-hud" />
+                      <div className="h-3 w-5/6 bg-glass-200 rounded-none skeleton-hud" />
                     </div>
                   </div>
                 </div>
@@ -115,11 +115,11 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
             <div className="mt-14 mx-auto max-w-4xl">
               <div className="grid gap-6 lg:grid-cols-5">
                 <div className="lg:col-span-3">
-                  <div className="glass-panel chamfered p-8 h-80 animate-pulse" />
+                  <div className="glass-panel chamfered p-8 h-80 skeleton-hud" />
                 </div>
                 <div className="lg:col-span-2 space-y-4">
-                  <div className="glass-panel chamfered p-5 h-40 animate-pulse" />
-                  <div className="glass-panel chamfered p-5 h-32 animate-pulse" />
+                  <div className="glass-panel chamfered p-5 h-40 skeleton-hud" />
+                  <div className="glass-panel chamfered p-5 h-32 skeleton-hud" />
                 </div>
               </div>
             </div>

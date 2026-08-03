@@ -17,6 +17,7 @@ import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
+import { Select } from "@/components/ui/select";
 import { RowActions } from "@/components/ui/row-actions";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
@@ -297,20 +298,16 @@ export default function DashboardExperiences() {
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="sys-label mb-2 block text-text-muted">
-                FIELD_06 // TYPE
-              </label>
-              <select
-                className="input-recessed w-full px-4 py-2.5 text-sm font-body"
-                value={form.type}
-                onChange={(e) => updateField("type", e.target.value as FormData["type"])}
-              >
-                <option value="work">WORK</option>
-                <option value="education">EDUCATION</option>
-                <option value="freelance">FREELANCE</option>
-              </select>
-            </div>
+            <Select
+              label="FIELD_06 // TYPE"
+              value={form.type}
+              onChange={(e) => updateField("type", e.target.value as FormData["type"])}
+              options={[
+                { value: "work", label: "WORK" },
+                { value: "education", label: "EDUCATION" },
+                { value: "freelance", label: "FREELANCE" },
+              ]}
+            />
             <div className="sm:col-span-2">
               <Input
                 label="FIELD_07 // ORDER"
