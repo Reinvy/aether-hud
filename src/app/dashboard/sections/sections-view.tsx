@@ -123,7 +123,7 @@ export default function DashboardSections() {
 
       {/* Sections Table */}
       <motion.div {...fadeInUp}>
-        <Card variant="glass" hover="none">
+        <Card variant="glass" hover="none" diamond>
           <div className="overflow-x-auto">
             <table className="w-full">
               {/* Table Header */}
@@ -206,7 +206,7 @@ export default function DashboardSections() {
                       <button
                         onClick={() => handleToggle(section)}
                         className={cn(
-                          "inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all",
+                          "inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale",
                           section.enabled
                             ? "bg-[rgba(56,239,125,0.1)] text-stellar-400 hover:bg-[rgba(56,239,125,0.15)]"
                             : "bg-[rgba(239,68,68,0.1)] text-hud-danger hover:bg-[rgba(239,68,68,0.15)]"
@@ -231,7 +231,7 @@ export default function DashboardSections() {
                         variant="ghost"
                         size="sm"
                         glow="none"
-                        className="p-1.5"
+                        className="min-h-9 min-w-9 p-0 sm:p-1.5"
                         onClick={() => openEdit(section)}
                       >
                         <Pencil className="h-3.5 w-3.5" />

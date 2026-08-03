@@ -179,12 +179,12 @@ export default function DashboardSkills() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <Card variant="glass" hover="sweep" diamond>
+              <Card variant="glass" hover="sweep" diamond className="skillbar-hover">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <IconBox size="md">
-                        <Icon className="h-5 w-5 text-gold-400/60" />
+                        <Icon className="h-5 w-5 text-gold-400/60 transition-colors duration-300 group-hover:text-gold-400" />
                       </IconBox>
                       <div>
                         <p className="font-mono text-xs font-medium tracking-wider text-text-main">

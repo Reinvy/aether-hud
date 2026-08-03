@@ -646,6 +646,42 @@ body {
   transform: scale(0.96);
 }
 
+/* ─── HUD Skeleton Shimmer ────────────────────────────── */
+/* Design-system loading blocks: subtle opacity pulse + a gold energy-sweep
+   that travels across the skeleton (mirrors .energy-sweep / .btn-glow-sweep).
+   Apply on top of an existing bg-glass-* base — no rounded corners. */
+.skeleton-hud {
+  position: relative;
+  overflow: hidden;
+  animation: skeleton-pulse 2.2s ease-in-out infinite;
+}
+.skeleton-hud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(242, 201, 76, 0.08) 45%,
+    rgba(242, 201, 76, 0.16) 50%,
+    rgba(242, 201, 76, 0.08) 55%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: skeleton-sweep 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+@keyframes skeleton-sweep {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+
 /* ─── Dashboard Sub-page Skeleton ─────────────────────── */
 .dashboard-grid-bg {
   background-image:
