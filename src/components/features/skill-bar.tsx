@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Cpu, Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
+import { Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
 import { SegmentBar } from "@/components/ui/segment-bar";
 
 /**

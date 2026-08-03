@@ -4,6 +4,38 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-03] — C5 Performance & Code Maintenance
+
+### Dead code cleanup
+- **`src/components/ui/card.tsx`** — removed unused `CardDescription` and `CardFooter` exports (no importers anywhere in `src/`); dropped now-unused `ReactNode` type import.
+- **`src/components/ui/button.tsx`** — `ButtonProps` is now module-private (used only by `Button` itself; no external importers).
+- **`src/app/dashboard/experiences/page.tsx`** — removed unused `DashboardFormSkeleton` import.
+- **`src/app/dashboard/projects/page.tsx`** — removed dead `tags` parse IIFE inside the list row renderer (result was never consumed; the edit form already parses tags via `parseTagsDisplay`).
+- **`src/app/dashboard/sections/page.tsx`** — removed unused `ToggleLeft` / `ToggleRight` icon imports.
+- **`src/app/dashboard/settings/page.tsx`** — removed unused `Sun` / `Moon` icon imports.
+- **`src/components/features/skill-bar.tsx`** — removed unused `Cpu` icon import.
+- **`src/components/sections/contact-section.tsx`** — removed unused `FileText` icon import, unused `cn` import, and unused `Config` type.
+- **`src/components/sections/hero-section.tsx`** — removed unused `socials` fetch + `Social` type (hero does not render social links; contact section owns that) and unused `configLoading` from the config fetch.
+
+### Lint gate (was a silent no-op)
+- **`eslint.config.mjs`** — replaced the no-op config (only `ignores`, no rules — `npm run lint` exited 0 without linting anything) with a functional flat config using the already-installed `@eslint/js` recommended + `typescript-eslint` recommended. `npm run lint` now actually checks `src/` and surfaces unused imports/vars/dead code. First run surfaced 13 `no-unused-vars` errors — all fixed above; lint is now clean (0 errors).
+
+### Error handling
+- **`src/app/api/auth/route.ts`** — catch block now logs with the tagged `console.error("[AUTH_POST]", …)` pattern used by all other API routes (was a silent catch).
+
+### Audit (verified, no change needed)
+- **Build**: `npm run build` passes with zero errors/warnings (27 routes compile; static + dynamic as expected).
+- **Dependencies**: `npm outdated` — all packages within semver range. Only major-version jumps available (`@types/node` 20→26, `eslint` 9→10, `typescript` 5→7) — intentionally NOT applied in a maintenance patch (breaking changes, would require a dedicated upgrade PR).
+- **Security**: no secrets in tracked files; `.env` gitignored and not tracked; `.env.example` contains only placeholders; `DASHBOARD_SECRET` fails closed (HTTP 503) when unset; no hardcoded credentials in `src/`.
+- **Error handling**: all 16 API routes use structured try/catch with tagged `console.error` + JSON error responses.
+- **Design system**: no generic `rounded-xl`/`rounded-lg`/`rounded-2xl` outside the chamfered design tokens; color usage goes through AETHER-HUD CSS vars / token classes; the only inline hex (`#38EF7D`) is the sanctioned Stellar Green accent; `bg-starfield` + `bg-grid-hud` + `.scanline` present across all landing sections.
+
+### Verified
+- `npx eslint src/` — 0 errors, 0 warnings.
+- `npm run build` — passes with zero errors/warnings.
+
+---
+
 ## [2026-08-03] — C2 UI/UX Enhancement & Design System
 
 ### Refactor (reusable components)

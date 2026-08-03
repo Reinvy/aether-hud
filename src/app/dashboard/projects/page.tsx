@@ -209,14 +209,6 @@ export default function DashboardProjects() {
           <EmptyState message="No projects match your search criteria" />
         ) : (
           filtered.map((project, i) => {
-            const tags = (() => {
-              try {
-                const p = JSON.parse(project.tags);
-                return Array.isArray(p) ? p : [];
-              } catch {
-                return [];
-              }
-            })();
             return (
               <motion.div
                 key={project.id}

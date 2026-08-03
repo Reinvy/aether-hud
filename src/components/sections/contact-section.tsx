@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
-import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle, User, AtSign, Hash, FileText, ChevronRight } from "lucide-react";
+import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle, User, AtSign, Hash, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useData } from "@/lib/use-data";
-import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/features/section-heading";
 
 type Social = {
@@ -19,19 +18,6 @@ type Social = {
   icon: string;
   order: number;
 };
-
-type Config = {
-  id: string;
-  name: string;
-  tagline: string;
-  bio: string;
-  email: string;
-  location: string;
-  avatar: string;
-  status: string;
-  sysVersion: string;
-};
-
 
 const socialIcons: Record<string, React.ElementType> = {
   GitBranch, Globe, MessageCircle,

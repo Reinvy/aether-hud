@@ -19,17 +19,8 @@ type Config = {
   sysVersion: string;
 };
 
-type Social = {
-  id: string;
-  platform: string;
-  url: string;
-  icon: string;
-  order: number;
-};
-
 export function HeroSection() {
-  const { data: config, loading: configLoading } = useData<Config>("/api/config");
-  const { data: socials } = useData<Social[]>("/api/socials");
+  const { data: config } = useData<Config>("/api/config");
 
   const cfg = config || {
     name: "Bahrul Ulumul Haq",
