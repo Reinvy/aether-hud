@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     ).toString("base64");
 
     return NextResponse.json({ success: true, token });
-  } catch {
+  } catch (e) {
+    console.error("[AUTH_POST]", e instanceof Error ? e.message : e);
     return NextResponse.json(
       { success: false, error: "Authentication failed" },
       { status: 500 }

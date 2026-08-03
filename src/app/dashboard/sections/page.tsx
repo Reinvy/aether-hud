@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
   Blocks,
-  ToggleLeft,
-  ToggleRight,
   Pencil,
   Eye,
   EyeOff,

@@ -20,7 +20,7 @@ import { Modal } from "@/components/ui/modal";
 import { RowActions } from "@/components/ui/row-actions";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
-import { DashboardListSkeleton, DashboardFormSkeleton } from "@/components/ui/skeleton";
+import { DashboardListSkeleton } from "@/components/ui/skeleton";
 
 
 interface ApiExperience {

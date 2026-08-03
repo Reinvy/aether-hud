@@ -9,8 +9,6 @@ import {
   RefreshCw,
   Globe,
   Monitor,
-  Sun,
-  Moon,
   Code2,
   Eye,
   Palette,
