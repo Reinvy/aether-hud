@@ -139,9 +139,81 @@ console.log("\n📋 Test 4: Source File Integrity\n");
 const srcFiles = run("find src -name '*.tsx' -o -name '*.ts' | wc -l").trim();
 assert(parseInt(srcFiles) > 20, `Source has ${srcFiles} TypeScript files (expected 20+)`);
 
-// ─── Summary ──────────────────────────────────────────────────────
-console.log("\n" + "=".repeat(50));
-console.log(`📊 RESULTS: ${passed} passed, ${failed} failed, ${passed + failed} total`);
-console.log("=".repeat(50));
+// Test 5: Design System & Content Markers (live site)
+// Guards against silent content loss that HEAD liveness checks miss —
+// e.g. a server component dropping the JSON-LD, or a CSS refactor
+// stripping the AETHER-HUD design system classes from rendered HTML.
+async function testDesignSystem() {
+  console.log("\n📋 Test 5: Design System & Content Markers (live)\n");
+  const PRODUCTION_URL = "https://aether-hud-lyart.vercel.app";
+  const DESIGN_MARKERS = [
+    "glass-panel",
+    "chamfered",
+    "btn-glow-sweep",
+    "bg-deep-space",
+    "starfield",
+    "grid-hud",
+    "sys-label",
+  ];
 
-process.exit(failed > 0 ? 1 : 0);
+  for (const path of ["/", "/dashboard"]) {
+    try {
+      const resp = await fetch(`${PRODUCTION_URL}${path}`, {
+        method: "GET",
+        signal: AbortSignal.timeout(15000),
+      });
+      assert(resp.status === 200, `${path} renders HTTP 200 (got ${resp.status})`);
+      const body = await resp.text();
+      assert(body.length > 1000, `${path} returns non-trivial HTML (${body.length} bytes)`);
+      for (const m of DESIGN_MARKERS) {
+        assert(body.includes(m), `${path} includes design-system marker "${m}"`);
+      }
+    } catch (e: any) {
+      assert(false, `${path} is fetchable: ${e.message}`);
+    }
+  }
+
+  // JSON-LD structured data must render and parse cleanly on the homepage.
+  try {
+    const resp = await fetch(`${PRODUCTION_URL}/`, {
+      method: "GET",
+      signal: AbortSignal.timeout(15000),
+    });
+    const body = await resp.text();
+    const blocks: string[] = [];
+    const re = /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(body)) !== null) blocks.push(m[1]);
+    assert(blocks.length >= 1, `Homepage emits JSON-LD blocks (found ${blocks.length})`);
+    let parsedOk = 0;
+    let hasItemList = false;
+    for (let bi = 0; bi < blocks.length; bi++) {
+      try {
+        const data = JSON.parse(blocks[bi]);
+        parsedOk++;
+        if (data["@type"] === "ItemList") hasItemList = true;
+      } catch {}
+    }
+    assert(parsedOk === blocks.length, `All ${blocks.length} JSON-LD blocks parse cleanly`);
+    assert(hasItemList, "JSON-LD includes an ItemList (portfolio items render)");
+  } catch (e: any) {
+    assert(false, `Homepage JSON-LD is verifiable: ${e.message}`);
+  }
+}
+
+// ─── Run ───────────────────────────────────────────────────────────
+async function main() {
+  await testDesignSystem();
+
+  // ─── Summary ──────────────────────────────────────────────────────
+  console.log("\n" + "=".repeat(50));
+  console.log(`📊 RESULTS: ${passed} passed, ${failed} failed, ${passed + failed} total`);
+  console.log("=".repeat(50));
+
+  process.exit(failed > 0 ? 1 : 0);
+}
+
+main().catch((e) => {
+  console.error("Fatal:", e);
+  process.exit(1);
+});

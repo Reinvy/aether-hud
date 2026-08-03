@@ -177,6 +177,65 @@ async function main() {
   assert(!!pkg.dependencies.react, "React is in dependencies");
   assert(!!pkg.dependencies["framer-motion"], "Framer Motion is in dependencies");
 
+  // ===== TEST 5: Content & Design System Verification =====
+  // HEAD liveness checks above cannot detect SILENT content loss (e.g. a
+  // server component throwing and dropping the JSON-LD, or a CSS class
+  // refactor stripping the design system). GET the rendered HTML and assert
+  // on the actual content + design-system markers.
+  log("\n📋 TEST 5: Content & Design System Verification", CYAN);
+  const DESIGN_MARKERS = [
+    "glass-panel",
+    "chamfered",
+    "btn-glow-sweep",
+    "bg-deep-space",
+    "starfield",
+    "grid-hud",
+    "sys-label",
+  ];
+  for (const [path, markers] of [
+    ["/", DESIGN_MARKERS],
+    ["/dashboard", DESIGN_MARKERS],
+  ]) {
+    try {
+      const resp = await fetch(`${PRODUCTION_URL}${path}`, {
+        method: "GET",
+        signal: AbortSignal.timeout(15000),
+      });
+      assert(resp.status === 200, `${path} renders HTTP 200 (got ${resp.status})`);
+      const body = await resp.text();
+      assert(body.length > 1000, `${path} returns non-trivial HTML (${body.length} bytes)`);
+      for (const m of markers) {
+        assert(body.includes(m), `${path} includes design-system marker "${m}"`);
+      }
+    } catch (e) {
+      assert(false, `${path} is fetchable: ${e.message}`);
+    }
+  }
+
+  // JSON-LD structured data must render in the homepage HTML and parse cleanly.
+  try {
+    const resp = await fetch(`${PRODUCTION_URL}/`, {
+      method: "GET",
+      signal: AbortSignal.timeout(15000),
+    });
+    const body = await resp.text();
+    const blocks = [...body.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
+    assert(blocks.length >= 1, `Homepage emits JSON-LD blocks (found ${blocks.length})`);
+    let parsedOk = 0;
+    let hasItemList = false;
+    for (const [, raw] of blocks) {
+      try {
+        const data = JSON.parse(raw);
+        parsedOk++;
+        if (data["@type"] === "ItemList") hasItemList = true;
+      } catch {}
+    }
+    assert(parsedOk === blocks.length, `All ${blocks.length} JSON-LD blocks parse cleanly`);
+    assert(hasItemList, "JSON-LD includes an ItemList (portfolio items render)");
+  } catch (e) {
+    assert(false, `Homepage JSON-LD is verifiable: ${e.message}`);
+  }
+
   // ===== Summary =====
   const total = passed + failed;
   log("\n" + "=".repeat(50));
