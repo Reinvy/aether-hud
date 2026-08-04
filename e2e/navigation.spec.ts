@@ -54,7 +54,7 @@ function getNextBuildRoutes(): string[] {
     if (inRouteTable) {
       const trimmed = line.trim();
       if (trimmed.startsWith("┌") || trimmed.startsWith("├") || trimmed.startsWith("└") || trimmed.startsWith("○") || trimmed.startsWith("ƒ")) {
-        const match = trimmed.match(/\/\S+/);
+        const match = trimmed.match(/\/[^\s]*/);
         if (match) {
           routes.push(match[0]);
         }
@@ -123,6 +123,7 @@ const apiRoutes = [
   "/api/skills/[id]",
   "/api/socials",
   "/api/socials/[id]",
+  "/api/telemetry",
   "/api/testimonials",
   "/api/testimonials/[id]",
 ];

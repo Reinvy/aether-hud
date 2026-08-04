@@ -57,6 +57,7 @@ const API_ROUTES = [
   "/api/sections",
   "/api/skills",
   "/api/socials",
+  "/api/telemetry",
   "/api/testimonials",
 ];
 
