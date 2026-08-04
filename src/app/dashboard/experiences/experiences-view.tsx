@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
@@ -14,14 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Modal } from "@/components/ui/modal";
-import { Select } from "@/components/ui/select";
 import { RowActions } from "@/components/ui/row-actions";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import type { ExperienceFormRecord } from "@/components/features/experience-form-modal";
 
 
 interface ApiExperience {
@@ -34,26 +33,6 @@ interface ApiExperience {
   type: "work" | "education" | "freelance";
   order: number;
 }
-
-type FormData = {
-  company: string;
-  role: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  type: "work" | "education" | "freelance";
-  order: string;
-};
-
-const EMPTY_FORM: FormData = {
-  company: "",
-  role: "",
-  description: "",
-  startDate: "",
-  endDate: "",
-  type: "work",
-  order: "0",
-};
 
 const typeColors: Record<string, string> = {
   work: "border-gold-400/40 text-gold-400",
@@ -73,71 +52,37 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
 }
 
+// The create/edit form module is lazy-loaded as its own chunk — it only
+// renders when the operator opens the modal, keeping the log list's
+// initial bundle small. A HUD loader overlay is shown during the chunk
+// fetch.
+const ExperienceFormModal = dynamic(
+  () =>
+    import("@/components/features/experience-form-modal").then((m) => ({
+      default: m.ExperienceFormModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING EXPERIENCE MODULE" size="md" />
+      </div>
+    ),
+  }
+);
+
 export default function DashboardExperiences() {
   const { data: experiences, loading, refetch } = useData<ApiExperience[]>("/api/experiences");
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormData>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
+  const [editingExperience, setEditingExperience] = useState<ExperienceFormRecord | null>(null);
 
   function openNew() {
-    setEditingId(null);
-    setForm(EMPTY_FORM);
+    setEditingExperience(null);
     setModalOpen(true);
   }
 
   function openEdit(exp: ApiExperience) {
-    setEditingId(exp.id);
-    setForm({
-      company: exp.company,
-      role: exp.role,
-      description: exp.description,
-      startDate: exp.startDate ? exp.startDate.slice(0, 10) : "",
-      endDate: exp.endDate ? exp.endDate.slice(0, 10) : "",
-      type: exp.type,
-      order: String(exp.order),
-    });
+    setEditingExperience(exp);
     setModalOpen(true);
-  }
-
-  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSave() {
-    setSaving(true);
-    try {
-      const body = {
-        company: form.company,
-        role: form.role,
-        description: form.description,
-        startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
-        endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
-        type: form.type,
-        order: parseInt(form.order, 10) || 0,
-      };
-
-      if (editingId) {
-        await fetch("/api/experiences", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingId, ...body }),
-        });
-      } else {
-        await fetch("/api/experiences", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-
-      setModalOpen(false);
-      refetch();
-    } catch (e) {
-      console.error("Failed to save experience", e);
-    } finally {
-      setSaving(false);
-    }
   }
 
   async function handleDelete(id: string) {
@@ -239,87 +184,16 @@ export default function DashboardExperiences() {
         )}
       </motion.div>
 
-      {/* New / Edit Modal */}
-      <Modal
+      {/* New / Edit Modal — lazy-loaded chunk */}
+      <ExperienceFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingId ? "EDIT EXPERIENCE RECORD" : "NEW EXPERIENCE RECORD"}
-        sysId={editingId ? `DASH//04 // ${editingId.slice(0, 8)}` : "DASH//04 // NEW"}
-        size="lg"
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-              SAVE RECORD
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <Input
-            label="FIELD_01 // COMPANY"
-            placeholder="Enter company name..."
-            value={form.company}
-            onChange={(e) => updateField("company", e.target.value)}
-          />
-          <Input
-            label="FIELD_02 // ROLE"
-            placeholder="e.g., Senior Full-Stack Developer"
-            value={form.role}
-            onChange={(e) => updateField("role", e.target.value)}
-          />
-          <Textarea
-            label="FIELD_03 // DESCRIPTION"
-            placeholder="Describe your responsibilities and achievements..."
-            value={form.description}
-            onChange={(e) => updateField("description", e.target.value)}
-            rows={3}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="FIELD_04 // START DATE"
-              type="date"
-              value={form.startDate}
-              onChange={(e) => updateField("startDate", e.target.value)}
-            />
-            <Input
-              label="FIELD_05 // END DATE"
-              type="date"
-              value={form.endDate}
-              onChange={(e) => updateField("endDate", e.target.value)}
-              placeholder="Leave empty for present"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Select
-              label="FIELD_06 // TYPE"
-              value={form.type}
-              onChange={(e) => updateField("type", e.target.value as FormData["type"])}
-              options={[
-                { value: "work", label: "WORK" },
-                { value: "education", label: "EDUCATION" },
-                { value: "freelance", label: "FREELANCE" },
-              ]}
-            />
-            <div className="sm:col-span-2">
-              <Input
-                label="FIELD_07 // ORDER"
-                type="number"
-                placeholder="0"
-                value={form.order}
-                onChange={(e) => updateField("order", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-      </Modal>
+        experience={editingExperience}
+        onSaved={() => {
+          setModalOpen(false);
+          refetch();
+        }}
+      />
     </div>
   );
 }

@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
-import { Modal } from "@/components/ui/modal";
+import { FormModal } from "@/components/ui/form-modal";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
@@ -313,55 +313,43 @@ export default function DashboardContact() {
       </div>
 
       {/* Social Link Modal */}
-      <Modal
+      <FormModal
         open={socialModalOpen}
         onClose={() => setSocialModalOpen(false)}
         title={editingSocialId ? "EDIT SOCIAL LINK" : "NEW SOCIAL LINK"}
         sysId={editingSocialId ? `DASH//01 // ${editingSocialId.slice(0, 8)}` : "DASH//01 // NEW"}
+        saveLabel="SAVE LINK"
+        onSave={handleSaveSocial}
+        saving={savingSocial}
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="FIELD_01 // PLATFORM"
-              placeholder="GitHub"
-              value={socialForm.platform}
-              onChange={(e) => updateSocialField("platform", e.target.value)}
-            />
-            <Input
-              label="FIELD_02 // ICON"
-              placeholder="Github, Globe, Twitter..."
-              value={socialForm.icon}
-              onChange={(e) => updateSocialField("icon", e.target.value)}
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            label="FIELD_03 // URL"
-            placeholder="https://github.com/username"
-            value={socialForm.url}
-            onChange={(e) => updateSocialField("url", e.target.value)}
+            label="FIELD_01 // PLATFORM"
+            placeholder="GitHub"
+            value={socialForm.platform}
+            onChange={(e) => updateSocialField("platform", e.target.value)}
           />
           <Input
-            label="FIELD_04 // ORDER"
-            type="number"
-            placeholder="0"
-            value={socialForm.order}
-            onChange={(e) => updateSocialField("order", e.target.value)}
+            label="FIELD_02 // ICON"
+            placeholder="Github, Globe, Twitter..."
+            value={socialForm.icon}
+            onChange={(e) => updateSocialField("icon", e.target.value)}
           />
-          <div className="flex justify-end gap-3 pt-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setSocialModalOpen(false)}
-              disabled={savingSocial}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSaveSocial} loading={savingSocial}>
-              SAVE LINK
-            </Button>
-          </div>
         </div>
-      </Modal>
+        <Input
+          label="FIELD_03 // URL"
+          placeholder="https://github.com/username"
+          value={socialForm.url}
+          onChange={(e) => updateSocialField("url", e.target.value)}
+        />
+        <Input
+          label="FIELD_04 // ORDER"
+          type="number"
+          placeholder="0"
+          value={socialForm.order}
+          onChange={(e) => updateSocialField("order", e.target.value)}
+        />
+      </FormModal>
     </div>
   );
 }

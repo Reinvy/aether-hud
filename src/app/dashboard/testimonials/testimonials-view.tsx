@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
@@ -11,13 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Modal } from "@/components/ui/modal";
 import { RowActions } from "@/components/ui/row-actions";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import type { TestimonialFormRecord } from "@/components/features/testimonial-form-modal";
 
 
 interface ApiTestimonial {
@@ -29,83 +29,37 @@ interface ApiTestimonial {
   order: number;
 }
 
-type FormData = {
-  name: string;
-  role: string;
-  content: string;
-  avatar: string;
-  order: string;
-};
-
-const EMPTY_FORM: FormData = {
-  name: "",
-  role: "",
-  content: "",
-  avatar: "",
-  order: "0",
-};
+// The create/edit form module is lazy-loaded as its own chunk — it only
+// renders when the operator opens the modal, keeping the archive grid's
+// initial bundle small. A HUD loader overlay is shown during the chunk
+// fetch.
+const TestimonialFormModal = dynamic(
+  () =>
+    import("@/components/features/testimonial-form-modal").then((m) => ({
+      default: m.TestimonialFormModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING TESTIMONIAL MODULE" size="md" />
+      </div>
+    ),
+  }
+);
 
 export default function DashboardTestimonials() {
   const { data: testimonials, loading, refetch } = useData<ApiTestimonial[]>("/api/testimonials");
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormData>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
+  const [editingTestimonial, setEditingTestimonial] = useState<TestimonialFormRecord | null>(null);
 
   function openNew() {
-    setEditingId(null);
-    setForm(EMPTY_FORM);
+    setEditingTestimonial(null);
     setModalOpen(true);
   }
 
   function openEdit(t: ApiTestimonial) {
-    setEditingId(t.id);
-    setForm({
-      name: t.name,
-      role: t.role,
-      content: t.content,
-      avatar: t.avatar,
-      order: String(t.order),
-    });
+    setEditingTestimonial(t);
     setModalOpen(true);
-  }
-
-  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSave() {
-    setSaving(true);
-    try {
-      const body = {
-        name: form.name,
-        role: form.role,
-        content: form.content,
-        avatar: form.avatar,
-        order: parseInt(form.order, 10) || 0,
-      };
-
-      if (editingId) {
-        await fetch("/api/testimonials", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingId, ...body }),
-        });
-      } else {
-        await fetch("/api/testimonials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-
-      setModalOpen(false);
-      refetch();
-    } catch (e) {
-      console.error("Failed to save testimonial", e);
-    } finally {
-      setSaving(false);
-    }
   }
 
   async function handleDelete(id: string) {
@@ -196,65 +150,16 @@ export default function DashboardTestimonials() {
         )}
       </motion.div>
 
-      {/* New / Edit Modal */}
-      <Modal
+      {/* New / Edit Modal — lazy-loaded chunk */}
+      <TestimonialFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingId ? "EDIT TESTIMONIAL" : "NEW TESTIMONIAL"}
-        sysId={editingId ? `DASH//05 // ${editingId.slice(0, 8)}` : "DASH//05 // NEW"}
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-              SAVE TESTIMONIAL
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="FIELD_01 // NAME"
-              placeholder="Client or colleague name..."
-              value={form.name}
-              onChange={(e) => updateField("name", e.target.value)}
-            />
-            <Input
-              label="FIELD_02 // ROLE"
-              placeholder="e.g., CTO at Company"
-              value={form.role}
-              onChange={(e) => updateField("role", e.target.value)}
-            />
-          </div>
-          <Textarea
-            label="FIELD_03 // TESTIMONIAL CONTENT"
-            placeholder="What did they say about your work?..."
-            value={form.content}
-            onChange={(e) => updateField("content", e.target.value)}
-            rows={4}
-          />
-          <Input
-            label="FIELD_04 // AVATAR URL"
-            placeholder="https://example.com/avatar.jpg"
-            value={form.avatar}
-            onChange={(e) => updateField("avatar", e.target.value)}
-          />
-          <Input
-            label="FIELD_05 // ORDER"
-            type="number"
-            placeholder="0"
-            value={form.order}
-            onChange={(e) => updateField("order", e.target.value)}
-          />
-        </div>
-      </Modal>
+        testimonial={editingTestimonial}
+        onSaved={() => {
+          setModalOpen(false);
+          refetch();
+        }}
+      />
     </div>
   );
 }

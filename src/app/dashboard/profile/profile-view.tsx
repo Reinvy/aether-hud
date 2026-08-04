@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -179,13 +180,13 @@ export default function DashboardProfile() {
               </div>
             </CardHeader>
             <CardContent>
-              <label className="sys-label mb-2 block text-text-muted">FIELD_08 // BIO</label>
-              <textarea
-                className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
+              <Textarea
+                label="FIELD_08 // BIO"
                 rows={10}
                 value={form.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
                 placeholder="System bio..."
+                className="resize-none"
               />
               <p className="mt-2 sys-label text-[9px] text-text-muted">
                 Markdown supported. Displayed in the Hero terminal section.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
@@ -24,11 +25,11 @@ import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
 import { SegmentBar } from "@/components/ui/segment-bar";
 import { CategoryFilter } from "@/components/features/category-filter";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import type { SkillFormRecord } from "@/components/features/skill-form-modal";
 
 const iconMap: Record<string, React.ElementType> = {
   Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
@@ -43,80 +44,38 @@ interface ApiSkill {
   icon: string;
 }
 
-type FormData = {
-  name: string;
-  level: string;
-  category: string;
-  icon: string;
-};
-
-const EMPTY_FORM: FormData = {
-  name: "",
-  level: "85",
-  category: "",
-  icon: "Zap",
-};
+// The create/edit form module is lazy-loaded as its own chunk — it only
+// renders when the operator opens the modal, keeping the matrix list's
+// initial bundle small. A HUD loader overlay is shown during the chunk
+// fetch.
+const SkillFormModal = dynamic(
+  () =>
+    import("@/components/features/skill-form-modal").then((m) => ({
+      default: m.SkillFormModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING SKILL MODULE" size="md" />
+      </div>
+    ),
+  }
+);
 
 export default function DashboardSkills() {
   const { data: skills, loading, refetch } = useData<ApiSkill[]>("/api/skills");
   const [modalOpen, setModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormData>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
+  const [editingSkill, setEditingSkill] = useState<SkillFormRecord | null>(null);
 
   function openNew() {
-    setEditingId(null);
-    setForm(EMPTY_FORM);
+    setEditingSkill(null);
     setModalOpen(true);
   }
 
   function openEdit(skill: ApiSkill) {
-    setEditingId(skill.id);
-    setForm({
-      name: skill.name,
-      level: String(skill.level),
-      category: skill.category,
-      icon: skill.icon,
-    });
+    setEditingSkill(skill);
     setModalOpen(true);
-  }
-
-  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSave() {
-    setSaving(true);
-    try {
-      const body = {
-        name: form.name,
-        level: parseInt(form.level, 10) || 0,
-        category: form.category,
-        icon: form.icon,
-      };
-
-      if (editingId) {
-        await fetch("/api/skills", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingId, ...body }),
-        });
-      } else {
-        await fetch("/api/skills", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-
-      setModalOpen(false);
-      refetch();
-    } catch (e) {
-      console.error("Failed to save skill", e);
-    } finally {
-      setSaving(false);
-    }
   }
 
   async function handleDelete(id: string) {
@@ -217,60 +176,16 @@ export default function DashboardSkills() {
         })}
       </motion.div>
 
-      {/* Add / Edit Skill Modal */}
-      <Modal
+      {/* Add / Edit Skill Modal — lazy-loaded chunk */}
+      <SkillFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingId ? "EDIT SKILL MODULE" : "NEW SKILL MODULE"}
-        sysId={editingId ? `DASH//02 // ${editingId.slice(0, 8)}` : "DASH//02 // NEW"}
-        footer={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setModalOpen(false)}
-              disabled={saving}
-            >
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-              CALIBRATE
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <Input
-            label="FIELD_01 // SKILL NAME"
-            placeholder="e.g., React Native"
-            value={form.name}
-            onChange={(e) => updateField("name", e.target.value)}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="FIELD_02 // CATEGORY"
-              placeholder="Frontend"
-              value={form.category}
-              onChange={(e) => updateField("category", e.target.value)}
-            />
-            <Input
-              label="FIELD_03 // LEVEL (0-100)"
-              type="number"
-              min={0}
-              max={100}
-              placeholder="85"
-              value={form.level}
-              onChange={(e) => updateField("level", e.target.value)}
-            />
-          </div>
-          <Input
-            label="FIELD_04 // ICON"
-            placeholder="Zap, Globe, FileCode, Palette, Server, Database, Brain, Container, PenTool, Rocket"
-            value={form.icon}
-            onChange={(e) => updateField("icon", e.target.value)}
-          />
-        </div>
-      </Modal>
+        skill={editingSkill}
+        onSaved={() => {
+          setModalOpen(false);
+          refetch();
+        }}
+      />
     </div>
   );
 }
