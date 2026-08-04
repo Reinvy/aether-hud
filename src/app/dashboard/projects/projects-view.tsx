@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
+import { Input } from "@/components/ui/input";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
@@ -94,15 +95,13 @@ export default function DashboardProjects() {
 
       {/* Search */}
       <motion.div className="mb-6 max-w-md" {...fadeInUp}>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-          <input
-            className="input-recessed w-full pl-10 pr-4 py-2.5 text-sm font-body"
-            placeholder="Search project archives..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        <Input
+          prefix={<Search className="h-4 w-4" />}
+          placeholder="Search project archives..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Search project archives"
+        />
       </motion.div>
 
       {/* Projects Table/Card List */}

@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { IconBox } from "@/components/ui/icon-box";
-import { Modal } from "@/components/ui/modal";
+import { FormModal } from "@/components/ui/form-modal";
 import { Input } from "@/components/ui/input";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
@@ -256,60 +256,52 @@ export default function DashboardSections() {
       </motion.div>
 
       {/* Edit Section Modal */}
-      <Modal
+      <FormModal
         open={modalOpen}
         onClose={closeModal}
         title="EDIT SECTION"
         sysId={`DASH//SECT // ${editingSection?.key ?? "N/A"}`}
+        saveLabel="SAVE CHANGES"
+        onSave={handleSave}
+        saving={saving}
       >
-        <div className="space-y-4">
-          <Input
-            label="FIELD_01 // TITLE"
-            placeholder="e.g., Hero"
-            value={editForm.title}
-            onChange={(e) => updateField("title", e.target.value)}
-          />
-          <Input
-            label="FIELD_02 // SUBTITLE"
-            placeholder="e.g., Main introduction with terminal display"
-            value={editForm.subtitle}
-            onChange={(e) => updateField("subtitle", e.target.value)}
-          />
+        <Input
+          label="FIELD_01 // TITLE"
+          placeholder="e.g., Hero"
+          value={editForm.title}
+          onChange={(e) => updateField("title", e.target.value)}
+        />
+        <Input
+          label="FIELD_02 // SUBTITLE"
+          placeholder="e.g., Main introduction with terminal display"
+          value={editForm.subtitle}
+          onChange={(e) => updateField("subtitle", e.target.value)}
+        />
 
-          {editingSection && (
-            <div className="flex items-center gap-3 rounded border border-border-subtle bg-deep-space/50 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    editingSection.enabled ? "bg-hud-active" : "bg-hud-danger"
-                  )}
-                />
-                <span className="font-mono text-[10px] text-text-muted">
-                  {editingSection.enabled ? "ENABLED" : "DISABLED"}
-                </span>
-              </div>
-              <span className="text-text-muted/30">|</span>
+        {editingSection && (
+          <div className="flex flex-wrap items-center gap-3 rounded border border-border-subtle bg-deep-space/50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full",
+                  editingSection.enabled ? "bg-hud-active" : "bg-hud-danger"
+                )}
+              />
               <span className="font-mono text-[10px] text-text-muted">
-                ORDER: {editingSection.order}
-              </span>
-              <span className="text-text-muted/30">|</span>
-              <span className="font-mono text-[10px] text-text-muted">
-                KEY: {editingSection.key}
+                {editingSection.enabled ? "ENABLED" : "DISABLED"}
               </span>
             </div>
-          )}
-
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="secondary" size="sm" onClick={closeModal} disabled={saving}>
-              CANCEL
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-              SAVE CHANGES
-            </Button>
+            <span className="text-text-muted/30">|</span>
+            <span className="font-mono text-[10px] text-text-muted">
+              ORDER: {editingSection.order}
+            </span>
+            <span className="text-text-muted/30">|</span>
+            <span className="font-mono text-[10px] text-text-muted">
+              KEY: {editingSection.key}
+            </span>
           </div>
-        </div>
-      </Modal>
+        )}
+      </FormModal>
     </div>
   );
 }

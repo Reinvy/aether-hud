@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Toggle } from "@/components/ui/toggle";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
@@ -122,19 +123,17 @@ export default function DashboardSettings() {
                 onChange={(e) => updateField("siteName", e.target.value)}
                 placeholder="AETHER-HUD"
               />
-              <div>
-                <label className="sys-label mb-2 block text-text-muted">FIELD_02 // SITE DESCRIPTION</label>
-                <textarea
-                  className="input-recessed w-full resize-none px-4 py-2.5 text-sm font-body"
-                  rows={3}
-                  value={form.siteDescription}
-                  onChange={(e) => updateField("siteDescription", e.target.value)}
-                  placeholder="High-End Tactical Portfolio"
-                />
-                <p className="mt-1 sys-label text-[9px] text-text-muted">
-                  Used for SEO meta tags and social sharing
-                </p>
-              </div>
+              <Textarea
+                label="FIELD_02 // SITE DESCRIPTION"
+                rows={3}
+                value={form.siteDescription}
+                onChange={(e) => updateField("siteDescription", e.target.value)}
+                placeholder="High-End Tactical Portfolio"
+                className="resize-none"
+              />
+              <p className="mt-1 sys-label text-[9px] text-text-muted">
+                Used for SEO meta tags and social sharing
+              </p>
               <Input
                 label="FIELD_03 // SYS VERSION"
                 value={form.sysVersion}
@@ -164,7 +163,8 @@ export default function DashboardSettings() {
                       key={theme.key}
                       onClick={() => updateField("themePreset", theme.key)}
                       className={cn(
-                        "flex items-center gap-4 rounded border-2 px-4 py-3 text-left transition-all",
+                        "flex items-center gap-4 rounded border-2 px-4 py-3 text-left transition-all duration-300",
+                        "hover-scale-sm press-scale focus-ring-gold",
                         form.themePreset === theme.key
                           ? "border-gold-400 bg-[rgba(242,201,76,0.06)]"
                           : "border-border-subtle text-text-muted hover:border-border-glass"
