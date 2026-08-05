@@ -111,9 +111,15 @@ export default function DashboardTestimonials() {
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-glass bg-deep-space/50">
                       {t.avatar ? (
+                        // Raw img (not next/image): avatar URLs come from the
+                        // Prisma DB and may be arbitrary remote hosts, which
+                        // the image optimizer would reject. Native lazy loading
+                        // + async decoding still defer off-screen avatars.
                         <img
                           src={t.avatar}
                           alt={t.name}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full rounded-full object-cover"
                         />
                       ) : (

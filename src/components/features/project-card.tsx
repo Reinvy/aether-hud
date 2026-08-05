@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ExternalLink, GitBranch } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,8 @@ type ProjectCardProps = {
   id: string;
   title: string;
   description: string;
+  /** Local asset path (e.g. /placeholder.svg) or future optimized remote. */
+  image: string;
   /** JSON array stored as string (API format). */
   tags: string;
   category: string;
@@ -53,6 +56,19 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
       <Card variant="glass" hover="lift" className="group h-full overflow-hidden">
         {/* Project Image / Banner Area */}
         <div className="relative h-48 overflow-hidden bg-surface-primary border-b border-border-subtle">
+          {/* Optimized image layer — next/image (AVIF/WebP + responsive
+              sizes + lazy loading). Currently the local HUD placeholder;
+              swap the data-file path for a real screenshot and the card
+              stays optimized with zero markup changes. */}
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
+            />
+          ) : null}
           {/* Placeholder gradient — subtle zoom on hover */}
           <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-deep-space to-stellar-500/10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110" />
           <div className="absolute inset-0 bg-grid-hud opacity-30 transition-opacity duration-300 group-hover:opacity-50" />
