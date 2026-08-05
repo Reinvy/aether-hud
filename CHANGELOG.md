@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-05] — C3 Dynamic Content & Seed Orchestration
+
+### Portfolio content
+- **`src/data/portfolio.ts`** — added **AETHER Cortex** (proj-13, CLASS-S): autonomous AI agent orchestration hub with multi-agent planning, tool-call routing, memory persistence, and human-in-the-loop approval gates. Added **AETHER Mantle** (proj-14, CLASS-A): edge rendering mesh distributing SSR workloads across global PoPs with sub-50ms cold starts and smart cache tiering. Portfolio now carries 14 projects across AI Platform, No-Code, Education, Portfolio, AI Tooling, Infrastructure, Security, and Data Platform categories.
+- **Skill levels** — bumped `AI Agents / LLM Ops` 82 → 85 and `System Design / Architecture` 80 → 82 (reflecting active agent-orchestration and edge-architecture work).
+- **Social links** — added **Medium** (`https://medium.com/@reinvy`, icon `BookOpen`) and **GitLab** (`https://gitlab.com/reinvy`, icon `GitFork`); social roster is now 13 channels.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — new query capabilities without breaking the existing contract:
+  - `?section=summary` — aggregate counts (projectCount / skillCount / socialCount), average skill level, and distinct category list for dashboards/widgets.
+  - `?category=<name>` — filter projects by category (case-insensitive substring) on both the full and `?section=projects` responses.
+  - `?limit=<n>` — cap the number of projects returned (e.g. `?section=projects&limit=4`).
+
+### UI
+- **`src/components/sections/contact-section.tsx`** — registered `BookOpen` and `GitFork` icons in the `socialIcons` map so the new Medium/GitLab channels render their proper glyphs (previously unknown icons fell back to `Terminal`).
+
+### Design system
+- Verified all landing sections (hero / projects / skills / experience / testimonials / contact) still carry the AETHER-HUD markers (`glass-panel`, `chamfered`, `btn-glow-sweep`, `sys-label`, `bg-deep-space`, `starfield`, `grid-hud`) — no regressions.
+
+### Verified
+- `npx eslint src/` — clean.
+- `npm run build` — passes (27 routes; portfolio JSON-LD ItemList auto-extends to 14 items via `src/app/page.tsx`).
+
+---
+
 ## [2026-08-03] — C5 Performance & Code Maintenance
 
 ### Dead code cleanup
