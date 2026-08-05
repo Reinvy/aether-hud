@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
+import { recordTelemetry } from "@/lib/telemetry-store";
 
 /**
  * POST /api/telemetry — Web Vitals collector endpoint.
  *
  * Receives fire-and-forget beacons from the client WebVitalsReporter.
- * Validates the payload shape and acknowledges; the accepted metric can be
- * forwarded to an external analytics sink (Vercel Analytics, Grafana,
- * PostHog, ...) later without changing the client contract.
+ * Validates the payload shape and acknowledges; validated metrics are
+ * written to the in-memory sink (see src/lib/telemetry-store.ts) and can
+ * be inspected via GET /api/telemetry/summary. Swap `recordTelemetry` for
+ * an external analytics API (Vercel Analytics, Grafana, PostHog, ...)
+ * without changing the client contract.
  *
  * Returns 400 on malformed payloads and 200 { ok: true } otherwise.
  */
@@ -25,8 +28,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Collector hook — forward `body` to an external sink here when one is
-    // configured (e.g. stream to a metrics database or analytics API).
+    // Collector hook — write validated payloads to the in-memory sink so
+    // they're visible via GET /api/telemetry/summary. The sink never
+    // fails the beacon: telemetry must not break the app.
+    try {
+      recordTelemetry({
+        name,
+        value,
+        rating: typeof body?.rating === "string" ? body.rating : "unknown",
+        delta: typeof body?.delta === "number" ? body.delta : 0,
+        id: typeof body?.id === "string" ? body.id : "",
+        path: typeof body?.path === "string" ? body.path : "/",
+        recordedAt: new Date().toISOString(),
+      });
+    } catch (sinkErr) {
+      console.error("[TELEMETRY]", "sink error:", sinkErr);
+    }
 
     return NextResponse.json({
       ok: true,

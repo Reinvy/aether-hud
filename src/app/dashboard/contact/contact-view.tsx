@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
@@ -17,11 +18,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
-import { FormModal } from "@/components/ui/form-modal";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
+
+// Lazy-loaded social link form modal — own chunk, only loads on demand.
+// Mirrors the SkillFormModal/ExperienceFormModal/TestimonialFormModal
+// extraction pattern (PR #26). The loader overlay is fixed + z-50 so it
+// sits above the modal backdrop while the chunk streams in.
+const SocialFormModal = dynamic(
+  () =>
+    import("@/components/features/social-form-modal").then((m) => ({
+      default: m.SocialFormModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <HudLoader label="LOADING LINK MODULE" size="lg" />
+      </div>
+    ),
+  }
+);
 
 
 interface ApiSocial {
@@ -44,20 +62,6 @@ interface ApiConfig {
   sysVersion: string;
 }
 
-type SocialFormData = {
-  platform: string;
-  url: string;
-  icon: string;
-  order: string;
-};
-
-const EMPTY_SOCIAL_FORM: SocialFormData = {
-  platform: "",
-  url: "",
-  icon: "Globe",
-  order: "0",
-};
-
 const iconMap: Record<string, React.ElementType> = {
   Globe, GitBranch, MessageCircle, Mail, Link2,
 };
@@ -66,11 +70,11 @@ export default function DashboardContact() {
   const { data: socials, loading: socialsLoading, refetch: refetchSocials } = useData<ApiSocial[]>("/api/socials");
   const { data: config, loading: configLoading, refetch: refetchConfig } = useData<ApiConfig>("/api/config");
 
-  // Social Links state
-  const [socialModalOpen, setSocialModalOpen] = useState(false);
-  const [editingSocialId, setEditingSocialId] = useState<string | null>(null);
-  const [socialForm, setSocialForm] = useState<SocialFormData>(EMPTY_SOCIAL_FORM);
-  const [savingSocial, setSavingSocial] = useState(false);
+  // Social Links state — record is null when creating a new link
+  const [socialModal, setSocialModal] = useState<{
+    open: boolean;
+    record: ApiSocial | null;
+  }>({ open: false, record: null });
 
   // Config state
   const [editEmail, setEditEmail] = useState("");
@@ -84,57 +88,11 @@ export default function DashboardContact() {
   }
 
   function openNewSocial() {
-    setEditingSocialId(null);
-    setSocialForm(EMPTY_SOCIAL_FORM);
-    setSocialModalOpen(true);
+    setSocialModal({ open: true, record: null });
   }
 
   function openEditSocial(s: ApiSocial) {
-    setEditingSocialId(s.id);
-    setSocialForm({
-      platform: s.platform,
-      url: s.url,
-      icon: s.icon,
-      order: String(s.order),
-    });
-    setSocialModalOpen(true);
-  }
-
-  function updateSocialField<K extends keyof SocialFormData>(key: K, value: SocialFormData[K]) {
-    setSocialForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSaveSocial() {
-    setSavingSocial(true);
-    try {
-      const body = {
-        platform: socialForm.platform,
-        url: socialForm.url,
-        icon: socialForm.icon,
-        order: parseInt(socialForm.order, 10) || 0,
-      };
-
-      if (editingSocialId) {
-        await fetch("/api/socials", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingSocialId, ...body }),
-        });
-      } else {
-        await fetch("/api/socials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-
-      setSocialModalOpen(false);
-      refetchSocials();
-    } catch (e) {
-      console.error("Failed to save social link", e);
-    } finally {
-      setSavingSocial(false);
-    }
+    setSocialModal({ open: true, record: s });
   }
 
   async function handleDeleteSocial(id: string) {
@@ -312,44 +270,16 @@ export default function DashboardContact() {
         </motion.div>
       </div>
 
-      {/* Social Link Modal */}
-      <FormModal
-        open={socialModalOpen}
-        onClose={() => setSocialModalOpen(false)}
-        title={editingSocialId ? "EDIT SOCIAL LINK" : "NEW SOCIAL LINK"}
-        sysId={editingSocialId ? `DASH//01 // ${editingSocialId.slice(0, 8)}` : "DASH//01 // NEW"}
-        saveLabel="SAVE LINK"
-        onSave={handleSaveSocial}
-        saving={savingSocial}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="FIELD_01 // PLATFORM"
-            placeholder="GitHub"
-            value={socialForm.platform}
-            onChange={(e) => updateSocialField("platform", e.target.value)}
-          />
-          <Input
-            label="FIELD_02 // ICON"
-            placeholder="Github, Globe, Twitter..."
-            value={socialForm.icon}
-            onChange={(e) => updateSocialField("icon", e.target.value)}
-          />
-        </div>
-        <Input
-          label="FIELD_03 // URL"
-          placeholder="https://github.com/username"
-          value={socialForm.url}
-          onChange={(e) => updateSocialField("url", e.target.value)}
-        />
-        <Input
-          label="FIELD_04 // ORDER"
-          type="number"
-          placeholder="0"
-          value={socialForm.order}
-          onChange={(e) => updateSocialField("order", e.target.value)}
-        />
-      </FormModal>
+      {/* Social Link Modal — lazy-loaded chunk (own bundle) */}
+      <SocialFormModal
+        open={socialModal.open}
+        onClose={() => setSocialModal({ open: false, record: null })}
+        social={socialModal.record}
+        onSaved={() => {
+          setSocialModal({ open: false, record: null });
+          refetchSocials();
+        }}
+      />
     </div>
   );
 }
