@@ -10,7 +10,7 @@ import { CardSkeleton, SectionHeaderSkeleton } from "./skeleton";
  * no rounded corners, no flat shadows, segment-bar for skill progress.
  */
 
-export type SectionSkeletonVariant =
+type SectionSkeletonVariant =
   | "hero"
   | "projects"
   | "skills"

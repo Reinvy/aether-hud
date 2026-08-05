@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-05] — C5 Performance & Code Maintenance
+
+### Cleanup (dead code)
+- **`src/components/features/activity-feed.tsx`** — `ActivityItem` is now module-private (used only by `ActivityFeed`'s own props; no external importers).
+- **`src/components/ui/section-skeleton.tsx`** — `SectionSkeletonVariant` is now module-private (used only by `SectionSkeleton`'s `variant` prop; no external importers).
+
+### Error handling
+- **`src/app/api/telemetry/route.ts`** — catch block now logs with the tagged `console.error("[TELEMETRY]", …)` pattern used by all other 15 API routes (was a silent catch). Malformed-payload 400 contract unchanged.
+
+### Dependencies
+- **`next` 16.2.12 → 16.3.0**, **`eslint-config-next` 16.2.12 → 16.3.0** (same-major minor update). Build verified: 27 routes compile, zero errors/warnings.
+- **`npm audit` — 2 high → 0 vulnerabilities.** Safe `npm audit fix` cleared `brace-expansion` (DoS via unbounded intermediate arrays, GHSA-rgw5-rvv9-x895) and `fast-uri` (host confusion via backslash authority, GHSA-7p8r-x3mc-p8w7), both in dev tooling. `sharp`/`postcss` overrides still hold (0.35.3 / 8.5.25).
+- Major-version jumps (`@types/node` 20→26, `eslint` 9→10, `typescript` 5→7) intentionally NOT applied in a maintenance patch.
+
+### Audit (verified, no change needed)
+- **Security**: no secrets in tracked files; `.env` gitignored and untracked; `.env.example` contains only placeholders (`DATABASE_URL` / `DASHBOARD_SECRET` empty, auth fails closed HTTP 503 when unset); no token-like patterns in `src/` or `prisma/`.
+- **Design system**: no prohibited `rounded-xl`/`rounded-2xl` panel corners outside chamfered tokens (remaining `rounded-full` hits are sanctioned status dots / avatars / loader spinners); only inline hex is the deep-space `#030407` theme-color in `layout.tsx`; all UI components carry AETHER-HUD classes.
+- **Dead-file audit**: every `src/components/ui/*` has ≥1 importer; unreferenced files list = Next.js App Router convention files (`page.tsx` / `route.ts` / `loading.tsx`), not dead code.
+
+### Verified
+- `npx eslint src/` — 0 errors, 0 warnings.
+- `npm run build` — passes with zero errors/warnings (27 routes).
+
+---
+
 ## [2026-08-05] — C3 Dynamic Content & Seed Orchestration
 
 ### Portfolio content

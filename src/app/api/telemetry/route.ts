@@ -36,7 +36,10 @@ export async function POST(request: Request) {
         rating: typeof body?.rating === "string" ? body.rating : "unknown",
       },
     });
-  } catch {
+  } catch (err) {
+    // Keep the tagged console.error pattern used by every other API route;
+    // malformed JSON bodies are still rejected with 400 (client contract).
+    console.error("[TELEMETRY]", err);
     return NextResponse.json(
       { ok: false, error: "unparseable body" },
       { status: 400 }

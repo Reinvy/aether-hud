@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * duplicating the glass diamond card + sys-label markup.
  */
 
-export interface ActivityItem {
+interface ActivityItem {
   action: string;
   detail: string;
   time: string;
