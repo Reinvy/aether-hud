@@ -70,7 +70,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                     <summary className="cursor-pointer font-mono text-[10px] tracking-wider text-text-muted/50 hover:text-gold-400 transition-colors">
                       [ERROR_LOG // EXPAND]
                     </summary>
-                    <pre className="mt-2 max-h-24 overflow-auto rounded border border-border-subtle bg-deep-space p-3 text-left font-mono text-[10px] text-hud-danger/80">
+                    <pre className="mt-2 max-h-24 overflow-auto chamfered-sm border border-border-subtle bg-deep-space p-3 text-left font-mono text-[10px] text-hud-danger/80">
                       {this.state.error.message}
                     </pre>
                   </details>
