@@ -128,7 +128,7 @@ export function HudHeader() {
           {/* Right: Time + Menu Toggle */}
           <div className="flex items-center gap-4">
             <div className="hidden items-center gap-3 md:flex">
-              <div className="flex items-center gap-2 rounded border border-border-subtle bg-deep-space/50 px-3 py-1.5">
+              <div className="flex items-center gap-2 chamfered-sm border border-border-subtle bg-deep-space/50 px-3 py-1.5">
                 <span className="h-2 w-2 rounded-full bg-hud-active shadow-[0_0_4px_rgba(0,255,135,0.4)]" />
                 <span className="font-mono text-[10px] tracking-[0.15em] text-text-muted">
                   {time || "LOADING..."}
@@ -142,7 +142,7 @@ export function HudHeader() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex md:hidden rounded p-1.5 text-text-muted hover:text-gold-400 transition-colors"
+              className="flex md:hidden chamfered-sm p-1.5 text-text-muted hover:text-gold-400 transition-colors hover-scale-sm press-scale focus-ring-gold"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -168,7 +168,7 @@ export function HudHeader() {
                     key={item.sysId}
                     href={item.href}
                     className={cn(
-                      "flex items-center justify-between rounded px-4 py-3 text-xs font-mono tracking-widest transition-all",
+                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all",
                       isActive
                         ? "bg-[rgba(242,201,76,0.08)] text-gold-400 border-l-2 border-gold-400"
                         : "text-text-muted hover:bg-glass-200 hover:text-gold-400"

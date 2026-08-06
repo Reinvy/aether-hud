@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Toggle } from "@/components/ui/toggle";
+import { InfoRow } from "@/components/ui/info-row";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -163,7 +164,7 @@ export default function DashboardSettings() {
                       key={theme.key}
                       onClick={() => updateField("themePreset", theme.key)}
                       className={cn(
-                        "flex items-center gap-4 rounded border-2 px-4 py-3 text-left transition-all duration-300",
+                        "flex items-center gap-4 chamfered-sm border-2 px-4 py-3 text-left transition-all duration-300",
                         "hover-scale-sm press-scale focus-ring-gold",
                         form.themePreset === theme.key
                           ? "border-gold-400 bg-[rgba(242,201,76,0.06)]"
@@ -189,7 +190,7 @@ export default function DashboardSettings() {
               </div>
 
               {/* Animations Toggle */}
-              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
+              <div className="flex items-center justify-between chamfered-sm border border-border-subtle bg-deep-space/40 px-4 py-3 transition-colors duration-300 hover:border-border-glass hover:bg-[rgba(242,201,76,0.04)]">
                 <div className="flex items-center gap-3">
                   <Monitor className="h-4 w-4 text-gold-400/60" />
                   <div>
@@ -217,22 +218,24 @@ export default function DashboardSettings() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <span className="font-mono text-xs text-text-muted">FRAMEWORK</span>
-                <span className="font-mono text-xs text-text-main">Next.js 16</span>
-              </div>
-              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <span className="font-mono text-xs text-text-muted">DATABASE</span>
-                <span className="font-mono text-xs text-stellar-400">PostgreSQL</span>
-              </div>
-              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <span className="font-mono text-xs text-text-muted">DEPLOY</span>
-                <span className="font-mono text-xs text-text-main">Vercel</span>
-              </div>
-              <div className="flex items-center justify-between rounded border border-border-subtle px-4 py-3">
-                <span className="font-mono text-xs text-text-muted">DESIGN SYSTEM</span>
-                <span className="font-mono text-xs text-gold-400">AETHER-HUD v2</span>
-              </div>
+              <InfoRow
+                label="FRAMEWORK"
+                value="Next.js 16"
+              />
+              <InfoRow
+                label="DATABASE"
+                value="PostgreSQL"
+                tone="stellar"
+              />
+              <InfoRow
+                label="DEPLOY"
+                value="Vercel"
+              />
+              <InfoRow
+                label="DESIGN SYSTEM"
+                value="AETHER-HUD v2"
+                tone="gold"
+              />
             </CardContent>
           </Card>
         </motion.div>
@@ -250,7 +253,7 @@ export default function DashboardSettings() {
               <p className="font-mono text-[10px] text-text-muted leading-relaxed">
                 These actions are irreversible. Proceed with caution.
               </p>
-              <div className="flex items-center justify-between rounded border border-hud-danger/30 px-4 py-3">
+              <div className="flex items-center justify-between chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.04)] px-4 py-3">
                 <div>
                   <p className="font-mono text-xs tracking-wider text-text-main">RESET ALL DATA</p>
                   <p className="font-mono text-[9px] text-text-muted">Clear all portfolio content</p>

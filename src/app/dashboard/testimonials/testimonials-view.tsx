@@ -147,7 +147,7 @@ export default function DashboardTestimonials() {
                     </div>
                   </div>
 
-                  <div className="mt-3 rounded border border-border-subtle bg-deep-space/30 p-3">
+                  <div className="mt-3 chamfered-sm border border-border-subtle bg-deep-space/30 p-3">
                     <p className="font-mono text-[11px] leading-relaxed text-text-muted italic line-clamp-3">
                       &ldquo;{t.content}&rdquo;
                     </p>

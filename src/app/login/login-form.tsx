@@ -144,7 +144,7 @@ export default function LoginPage() {
                   >
                     <button
                       onClick={() => setStep("password")}
-                      className="btn-glow-sweep inline-flex items-center gap-2 rounded-none border border-gold-400/50 px-8 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)]"
+                      className="btn-glow-sweep inline-flex items-center gap-2 rounded-none border border-gold-400/50 px-8 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)] hover-scale-sm press-scale focus-ring-gold"
                     >
                       <Shield className="h-4 w-4" />
                       INITIALIZE ACCESS
@@ -169,7 +169,7 @@ export default function LoginPage() {
                   exit={{ opacity: 0, y: -10 }}
                 >
                   {/* Terminal prompt */}
-                  <div className="mb-6 flex items-center gap-2 rounded border border-border-subtle bg-deep-space/50 px-4 py-2.5">
+                  <div className="mb-6 flex items-center gap-2 chamfered-sm border border-border-subtle bg-deep-space/50 px-4 py-2.5">
                     <span className="text-gold-400 font-mono text-xs">[AETHER@DASH]</span>
                     <span className="text-text-muted/30">:~$</span>
                     <span className="text-stellar-400 font-mono text-xs">authenticate --level=admin</span>
@@ -210,7 +210,7 @@ export default function LoginPage() {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="flex items-center gap-2 rounded border border-hud-danger/30 bg-[rgba(255,0,85,0.06)] px-4 py-3"
+                          className="flex items-center gap-2 chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.06)] px-4 py-3"
                         >
                           <AlertCircle className="h-4 w-4 shrink-0 text-hud-danger" />
                           <span className="font-mono text-[11px] text-hud-danger">{error}</span>
@@ -227,7 +227,7 @@ export default function LoginPage() {
                           setError("");
                           setPassword("");
                         }}
-                        className="flex-1 rounded-none border border-border-subtle px-4 py-3 font-mono text-xs tracking-widest text-text-muted transition-colors hover:border-border-glass hover:text-gold-400"
+                        className="flex-1 rounded-none border border-border-subtle px-4 py-3 font-mono text-xs tracking-widest text-text-muted transition-colors hover:border-border-glass hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
                         disabled={loading}
                       >
                         ABORT
@@ -235,7 +235,7 @@ export default function LoginPage() {
                       <button
                         type="submit"
                         disabled={loading || !password.trim()}
-                        className="btn-glow-sweep flex-1 rounded-none border border-gold-400/50 px-4 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)] disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="btn-glow-sweep flex-1 rounded-none border border-gold-400/50 px-4 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)] hover-scale-sm press-scale focus-ring-gold disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         {loading ? (
                           <span className="flex items-center justify-center gap-2">
@@ -253,7 +253,7 @@ export default function LoginPage() {
                   </form>
 
                   {/* Access log */}
-                  <div className="mt-6 space-y-1 rounded border border-border-subtle bg-deep-space/30 px-4 py-3">
+                  <div className="mt-6 space-y-1 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="sys-label text-[8px]">[ACCESS_LOG]</span>
                       <span className="h-1 w-1 rounded-full bg-gold-400/30" />
