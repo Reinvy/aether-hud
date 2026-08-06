@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
@@ -51,6 +52,8 @@ export default function DashboardTestimonials() {
   const { data: testimonials, loading, refetch } = useData<ApiTestimonial[]>("/api/testimonials");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<TestimonialFormRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApiTestimonial | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function openNew() {
     setEditingTestimonial(null);
@@ -62,13 +65,17 @@ export default function DashboardTestimonials() {
     setModalOpen(true);
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("PURGE TESTIMONIAL? This action cannot be undone.")) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
+      await fetch(`/api/testimonials/${deleteTarget.id}`, { method: "DELETE" });
+      setDeleteTarget(null);
       refetch();
     } catch (e) {
       console.error("Failed to delete testimonial", e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -97,7 +104,11 @@ export default function DashboardTestimonials() {
       {/* Testimonials Grid */}
       <motion.div className="grid gap-4 sm:grid-cols-2" {...fadeInUp}>
         {list.length === 0 ? (
-          <EmptyState message="No testimonials recorded" />
+          <EmptyState
+            icon={<MessageCircle className="h-5 w-5" />}
+            title="ARCHIVE EMPTY"
+            message="No testimonials recorded — add the first transmission"
+          />
         ) : (
           list.map((t, i) => (
             <motion.div
@@ -146,7 +157,7 @@ export default function DashboardTestimonials() {
                     <span className="sys-label text-[8px]">ORDER: {t.order}</span>
                     <RowActions
                       onEdit={() => openEdit(t)}
-                      onDelete={() => handleDelete(t.id)}
+                      onDelete={() => setDeleteTarget(t)}
                     />
                   </div>
                 </CardContent>
@@ -165,6 +176,24 @@ export default function DashboardTestimonials() {
           setModalOpen(false);
           refetch();
         }}
+      />
+
+      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="PURGE TESTIMONIAL"
+        sysId={`DASH//TST // ${deleteTarget?.id ?? "N/A"}`}
+        message={
+          <>
+            Target: <span className="text-gold-400">{deleteTarget?.name ?? "—"}</span>
+            <br />
+            This testimonial record will be permanently removed from the archive.
+          </>
+        }
+        confirmLabel="PURGE"
+        onConfirm={handleDelete}
+        saving={deleting}
       />
     </div>
   );

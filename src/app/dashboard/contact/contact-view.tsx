@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
@@ -76,6 +77,10 @@ export default function DashboardContact() {
     record: ApiSocial | null;
   }>({ open: false, record: null });
 
+  // Delete confirmation state
+  const [deleteTarget, setDeleteTarget] = useState<ApiSocial | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   // Config state
   const [editEmail, setEditEmail] = useState("");
   const [editEmailDirty, setEditEmailDirty] = useState(false);
@@ -95,13 +100,17 @@ export default function DashboardContact() {
     setSocialModal({ open: true, record: s });
   }
 
-  async function handleDeleteSocial(id: string) {
-    if (!confirm("PURGE SOCIAL LINK? This action cannot be undone.")) return;
+  async function handleDeleteSocial() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await fetch(`/api/socials/${id}`, { method: "DELETE" });
+      await fetch(`/api/socials/${deleteTarget.id}`, { method: "DELETE" });
+      setDeleteTarget(null);
       refetchSocials();
     } catch (e) {
       console.error("Failed to delete social link", e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -159,7 +168,12 @@ export default function DashboardContact() {
             </CardHeader>
             <CardContent>
               {socialList.length === 0 ? (
-                <EmptyState message="No social links configured" className="sm:col-span-1" />
+                <EmptyState
+                  icon={<Link2 className="h-5 w-5" />}
+                  title="NETWORK OFFLINE"
+                  message="No social links configured"
+                  className="sm:col-span-1"
+                />
               ) : (
                 <div className="space-y-2">
                   {socialList.map((s, i) => {
@@ -170,9 +184,11 @@ export default function DashboardContact() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.04 }}
-                        className="group flex items-center justify-between rounded border border-border-subtle px-4 py-3 transition-all hover:border-border-glass hover:bg-glass-200"
+                        className="group relative flex items-center justify-between border border-border-subtle bg-deep-space/30 px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
                       >
-                        <div className="flex items-center gap-3">
+                        {/* Diamond accent on hover — mirrors Card micro-interaction */}
+                        <span className="pointer-events-none absolute -top-px -right-px h-2.5 w-2.5 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
+                        <div className="flex items-center gap-3 min-w-0">
                           <IconBox>
                             <Icon className="h-4 w-4 text-gold-400/60" />
                           </IconBox>
@@ -189,7 +205,7 @@ export default function DashboardContact() {
                           <span className="sys-label text-[8px]">#{s.order}</span>
                           <RowActions
                             onEdit={() => openEditSocial(s)}
-                            onDelete={() => handleDeleteSocial(s.id)}
+                            onDelete={() => setDeleteTarget(s)}
                           />
                         </div>
                       </motion.div>
@@ -279,6 +295,24 @@ export default function DashboardContact() {
           setSocialModal({ open: false, record: null });
           refetchSocials();
         }}
+      />
+
+      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="PURGE SOCIAL LINK"
+        sysId={`DASH//SOC // ${deleteTarget?.id ?? "N/A"}`}
+        message={
+          <>
+            Target: <span className="text-gold-400">{deleteTarget?.platform ?? "—"}</span>
+            <br />
+            This social link will be permanently removed from the network config.
+          </>
+        }
+        confirmLabel="PURGE"
+        onConfirm={handleDeleteSocial}
+        saving={deleting}
       />
     </div>
   );

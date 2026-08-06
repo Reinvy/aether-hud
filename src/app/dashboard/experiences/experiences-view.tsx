@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
@@ -74,6 +75,8 @@ export default function DashboardExperiences() {
   const { data: experiences, loading, refetch } = useData<ApiExperience[]>("/api/experiences");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingExperience, setEditingExperience] = useState<ExperienceFormRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApiExperience | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function openNew() {
     setEditingExperience(null);
@@ -85,13 +88,17 @@ export default function DashboardExperiences() {
     setModalOpen(true);
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("PURGE EXPERIENCE RECORD? This action cannot be undone.")) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await fetch(`/api/experiences/${id}`, { method: "DELETE" });
+      await fetch(`/api/experiences/${deleteTarget.id}`, { method: "DELETE" });
+      setDeleteTarget(null);
       refetch();
     } catch (e) {
       console.error("Failed to delete experience", e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -128,7 +135,11 @@ export default function DashboardExperiences() {
         </div>
 
         {list.length === 0 ? (
-          <EmptyState message="No experience records found" />
+          <EmptyState
+            icon={<Briefcase className="h-5 w-5" />}
+            title="LOG EMPTY"
+            message="No experience records — initialize the first log entry"
+          />
         ) : (
           list.map((exp, i) => {
             const TypeIcon = typeIcons[exp.type] || Briefcase;
@@ -173,7 +184,7 @@ export default function DashboardExperiences() {
                     <div className="flex w-20 items-center justify-end">
                       <RowActions
                         onEdit={() => openEdit(exp)}
-                        onDelete={() => handleDelete(exp.id)}
+                        onDelete={() => setDeleteTarget(exp)}
                       />
                     </div>
                   </div>
@@ -193,6 +204,25 @@ export default function DashboardExperiences() {
           setModalOpen(false);
           refetch();
         }}
+      />
+
+      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="PURGE EXPERIENCE RECORD"
+        sysId={`DASH//EXP // ${deleteTarget?.id ?? "N/A"}`}
+        message={
+          <>
+            Target: <span className="text-gold-400">{deleteTarget?.role ?? "—"}</span> @{" "}
+            {deleteTarget?.company ?? "—"}
+            <br />
+            This experience log entry will be permanently removed.
+          </>
+        }
+        confirmLabel="PURGE"
+        onConfirm={handleDelete}
+        saving={deleting}
       />
     </div>
   );
