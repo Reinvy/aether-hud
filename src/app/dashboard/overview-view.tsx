@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
 import { ProjectRow, type ProjectRowData } from "@/components/features/project-row";
 import { useData } from "@/lib/use-data";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 import { fadeInUp, fadeInUpItem, staggerContainer } from "@/lib/motion-variants";
@@ -117,75 +119,83 @@ export default function DashboardOverview() {
       />
 
       {/* Stats Grid — Stagger Animation */}
-      <motion.div
-        className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        {statCards.map((stat) => (
-          <motion.div key={stat.label} variants={fadeInUpItem}>
-            <StatCard label={stat.label} value={stat.value} icon={stat.icon} tone={stat.color} />
-          </motion.div>
-        ))}
-      </motion.div>
+      <ErrorBoundary section="stats" fallback={<WidgetError label="STATS GRID" />}>
+        <motion.div
+          className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          {statCards.map((stat) => (
+            <motion.div key={stat.label} variants={fadeInUpItem}>
+              <StatCard label={stat.label} value={stat.value} icon={stat.icon} tone={stat.color} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </ErrorBoundary>
 
       {/* Main Content Area */}
       <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Projects Quick Overview */}
-        <motion.div className="lg:col-span-2" {...fadeInUp}>
-          <Card variant="glass" hover="none" diamond>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Boxes className="h-4 w-4 text-gold-400" />
-                  <CardTitle>Deployed Archives</CardTitle>
+        <ErrorBoundary section="projects" fallback={<WidgetError label="PROJECT ARCHIVE" className="h-full" />}>
+          <motion.div className="lg:col-span-2" {...fadeInUp}>
+            <Card variant="glass" hover="none" diamond>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Boxes className="h-4 w-4 text-gold-400" />
+                    <CardTitle>Deployed Archives</CardTitle>
+                  </div>
+                  <Badge variant="gold" size="sm">
+                    {projectList.length} ACTIVE
+                  </Badge>
                 </div>
-                <Badge variant="gold" size="sm">
-                  {projectList.length} ACTIVE
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {projectList.length === 0 ? (
-                  <p className="py-4 text-center font-mono text-xs text-text-muted">
-                    [EMPTY] // No projects deployed
-                  </p>
-                ) : (
-                  projectList.map((project: ApiProject) => (
-                    <ProjectRow key={project.id} project={project} />
-                  ))
-                )}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {projectList.length === 0 ? (
+                    <p className="py-4 text-center font-mono text-xs text-text-muted">
+                      [EMPTY] // No projects deployed
+                    </p>
+                  ) : (
+                    projectList.map((project: ApiProject) => (
+                      <ProjectRow key={project.id} project={project} />
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </ErrorBoundary>
+
+        {/* Activity Feed — lazy-loaded */}
+        <ErrorBoundary section="activity" fallback={<WidgetError label="ACTIVITY FEED" className="h-full" />}>
+          <motion.div {...fadeInUp}>
+            <ActivityFeed items={recentActivity} />
+          </motion.div>
+        </ErrorBoundary>
+      </div>
+
+      {/* Quick Actions */}
+      <ErrorBoundary section="quick-actions" fallback={<WidgetError label="QUICK ACTIONS" className="mt-4 sm:mt-6" />}>
+        <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
+          <Card variant="glass" hover="none" diamond>
+            <CardContent className="p-4 sm:p-5">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="sys-label-gold text-[9px]">QUICK ACTIONS //</span>
+                <Button variant="secondary" size="sm">
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  SYNC DATA
+                </Button>
+                <Button variant="secondary" size="sm">
+                  <Users className="h-3.5 w-3.5" />
+                  VIEW ANALYTICS
+                </Button>
               </div>
             </CardContent>
           </Card>
         </motion.div>
-
-        {/* Activity Feed — lazy-loaded */}
-        <motion.div {...fadeInUp}>
-          <ActivityFeed items={recentActivity} />
-        </motion.div>
-      </div>
-
-      {/* Quick Actions */}
-      <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
-        <Card variant="glass" hover="none" diamond>
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="sys-label-gold text-[9px]">QUICK ACTIONS //</span>
-              <Button variant="secondary" size="sm">
-                <RefreshCw className="h-3.5 w-3.5" />
-                SYNC DATA
-              </Button>
-              <Button variant="secondary" size="sm">
-                <Users className="h-3.5 w-3.5" />
-                VIEW ANALYTICS
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      </ErrorBoundary>
     </div>
   );
 }

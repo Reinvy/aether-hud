@@ -17,6 +17,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
+import { ListTableHeader } from "@/components/ui/list-table-header";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
@@ -113,13 +114,15 @@ export default function DashboardProjects() {
 
       {/* Projects Table/Card List */}
       <motion.div className="space-y-3" {...fadeInUp}>
-        <div className="flex items-center gap-4 border-b border-border-subtle px-4 py-2">
-          <span className="sys-label w-8 text-center">#</span>
-          <span className="sys-label flex-1">PROJECT NAME</span>
-          <span className="sys-label hidden w-24 sm:block">CATEGORY</span>
-          <span className="sys-label hidden w-20 md:block">STATUS</span>
-          <span className="sys-label w-20 text-center">ACTIONS</span>
-        </div>
+        <ListTableHeader
+          columns={[
+            { label: "#", className: "w-8", align: "center" },
+            { label: "PROJECT NAME", className: "flex-1" },
+            { label: "CATEGORY", className: "hidden w-24 sm:block" },
+            { label: "STATUS", className: "hidden w-20 md:block" },
+            { label: "ACTIONS", className: "w-20", align: "center" },
+          ]}
+        />
 
         {filtered.length === 0 ? (
           <EmptyState
