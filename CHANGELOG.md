@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-06] — C3 Dynamic Content & Seed Orchestration
+
+### Portfolio content
+- **`src/data/portfolio.ts`** — added **AETHER Pulse** (proj-15, CLASS-S): real-time event analytics engine with streaming aggregation, anomaly detection, and instant alerting. Added **AETHER Relay** (proj-16, CLASS-A): realtime event streaming gateway with pub/sub fan-out, backpressure handling, and dead-letter queues. Portfolio now carries **16 projects** across 8 categories.
+- **Skill levels** — bumped `WebSockets / Realtime` 88 → 90, `Redis / Queues` 80 → 83, and `PostgreSQL` 86 → 87 (reflecting realtime streaming and queue-driven infrastructure work).
+- **Social links** — added **Reddit** (`https://reddit.com/u/reinvy`, icon `MessageSquare`) and **RSS** (`https://aether-hud.dev/feed.xml`, icon `Rss`); social roster is now **15 channels**.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — extended the query surface with three new filters (shared `filterProjects` helper keeps `?section=projects` and full-portfolio responses consistent):
+  - `?tags=<tag1,tag2>` — filter projects matching ANY of the given tags (case-insensitive, comma-separated).
+  - `?complexity=<class-s|class-a|class-b>` — filter by complexity class (case-insensitive).
+  - `?sort=<year|title|performance>` — sort projects by year (desc), title (asc), or performance (desc).
+  - `?section=summary` now also returns `complexityClasses` (distinct sorted list) for dashboard widget consumption.
+
+### UI
+- **`src/components/sections/contact-section.tsx`** — registered `MessageSquare` and `Rss` in the `socialIcons` map so the new Reddit/RSS channels render their proper glyphs.
+
+### Design system
+- Verified landing sections still carry the AETHER-HUD markers (`glass-panel`, `chamfered`, `btn-glow-sweep`, `sys-label`, `bg-deep-space`, `starfield`, `grid-hud`) — no regressions. All data remains sourced from `src/data/portfolio.ts`; nothing hardcoded.
+
+### Verified
+- `npm run build` — passes (27 routes; portfolio JSON-LD ItemList auto-extends to 16 items via `src/app/page.tsx`).
+- `node e2e/run-tests.mjs` — all checks green post-deploy.
+
+---
+
 ## [2026-08-05] — C5 Performance & Code Maintenance
 
 ### Cleanup (dead code)
