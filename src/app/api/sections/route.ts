@@ -1,12 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
+// The homepage fetches /api/sections on every visit; the section config
+// only changes through the dashboard, so a short CDN TTL (same values as
+// /api/dashboard/stats) cuts DB load without visible staleness.
+const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" };
+
 export async function GET() {
   try {
     const sections = await prisma.section.findMany({
       orderBy: { order: "asc" },
     });
-    return NextResponse.json(sections);
+    return NextResponse.json(sections, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error("[SECTIONS_GET]", error);
     return NextResponse.json(
