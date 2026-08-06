@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,8 @@ export default function DashboardProjects() {
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectFormRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ProjectFormRecord | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function openNew() {
     setEditingProject(null);
@@ -57,13 +60,17 @@ export default function DashboardProjects() {
     setModalOpen(true);
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("PURGE DOSSIER? This action cannot be undone.")) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      await fetch(`/api/projects/${deleteTarget.id}`, { method: "DELETE" });
+      setDeleteTarget(null);
       refetch();
     } catch (e) {
       console.error("Failed to delete project", e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -115,7 +122,23 @@ export default function DashboardProjects() {
         </div>
 
         {filtered.length === 0 ? (
-          <EmptyState message="No projects match your search criteria" />
+          <EmptyState
+            icon={<Boxes className="h-5 w-5" />}
+            title={search ? "NO MATCH" : "ARCHIVE EMPTY"}
+            message={
+              search
+                ? `No projects match "${search}"`
+                : "No projects deployed — initialize the first dossier"
+            }
+            action={
+              !search ? (
+                <Button variant="primary" size="sm" onClick={openNew}>
+                  <Plus className="h-4 w-4" />
+                  NEW DOSSIER
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           filtered.map((project, i) => {
             return (
@@ -156,7 +179,7 @@ export default function DashboardProjects() {
                     <div className="flex w-20 items-center justify-end">
                       <RowActions
                         onEdit={() => openEdit(project)}
-                        onDelete={() => handleDelete(project.id)}
+                        onDelete={() => setDeleteTarget(project)}
                         leading={
                           project.liveUrl ? (
                             <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
@@ -185,6 +208,24 @@ export default function DashboardProjects() {
           setModalOpen(false);
           refetch();
         }}
+      />
+
+      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="PURGE DOSSIER"
+        sysId={`DASH//PRJ // ${deleteTarget?.id ?? "N/A"}`}
+        message={
+          <>
+            Target: <span className="text-gold-400">{deleteTarget?.title ?? "—"}</span>
+            <br />
+            This project dossier will be permanently removed from the archive.
+          </>
+        }
+        confirmLabel="PURGE"
+        onConfirm={handleDelete}
+        saving={deleting}
       />
     </div>
   );

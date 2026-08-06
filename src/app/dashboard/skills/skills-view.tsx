@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
 import { SegmentBar } from "@/components/ui/segment-bar";
@@ -67,6 +68,8 @@ export default function DashboardSkills() {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [editingSkill, setEditingSkill] = useState<SkillFormRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApiSkill | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function openNew() {
     setEditingSkill(null);
@@ -78,13 +81,17 @@ export default function DashboardSkills() {
     setModalOpen(true);
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("PURGE SKILL MODULE? This action cannot be undone.")) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await fetch(`/api/skills/${id}`, { method: "DELETE" });
+      await fetch(`/api/skills/${deleteTarget.id}`, { method: "DELETE" });
+      setDeleteTarget(null);
       refetch();
     } catch (e) {
       console.error("Failed to delete skill", e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -166,7 +173,7 @@ export default function DashboardSkills() {
                   <div className="mt-4 flex items-center justify-end border-t border-border-subtle pt-3">
                     <RowActions
                       onEdit={() => openEdit(skill)}
-                      onDelete={() => handleDelete(skill.id)}
+                      onDelete={() => setDeleteTarget(skill)}
                     />
                   </div>
                 </CardContent>
@@ -185,6 +192,24 @@ export default function DashboardSkills() {
           setModalOpen(false);
           refetch();
         }}
+      />
+
+      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="PURGE SKILL MODULE"
+        sysId={`DASH//SKL // ${deleteTarget?.id ?? "N/A"}`}
+        message={
+          <>
+            Target: <span className="text-gold-400">{deleteTarget?.name ?? "—"}</span>
+            <br />
+            This proficiency module and its segment data will be permanently removed.
+          </>
+        }
+        confirmLabel="PURGE"
+        onConfirm={handleDelete}
+        saving={deleting}
       />
     </div>
   );
