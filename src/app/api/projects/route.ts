@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ok, fail } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
     const projects = await prisma.project.findMany({ orderBy: { order: "asc" } });
-    return NextResponse.json(projects);
+    return ok(projects);
   } catch (e) {
-    console.error("[PROJECTS_GET]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
+    return fail("Failed to fetch projects", "PROJECTS_GET");
   }
 }
 
@@ -17,10 +17,9 @@ export async function POST(req: NextRequest) {
     const project = await prisma.project.create({
       data: { ...body, tags: typeof body.tags === "string" ? body.tags : JSON.stringify(body.tags || []) },
     });
-    return NextResponse.json(project, { status: 201 });
+    return ok(project, { status: 201 });
   } catch (e) {
-    console.error("[PROJECTS_POST]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to create project" }, { status: 500 });
+    return fail("Failed to create project", "PROJECTS_POST");
   }
 }
 
@@ -32,9 +31,8 @@ export async function PUT(req: NextRequest) {
       where: { id },
       data: { ...data, tags: typeof data.tags === "string" ? data.tags : JSON.stringify(data.tags || []) },
     });
-    return NextResponse.json(project);
+    return ok(project);
   } catch (e) {
-    console.error("[PROJECTS_PUT]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to update project" }, { status: 500 });
+    return fail("Failed to update project", "PROJECTS_PUT");
   }
 }

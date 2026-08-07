@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ok, fail } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
     const items = await prisma.socialLink.findMany({ orderBy: { order: "asc" } });
-    return NextResponse.json(items);
+    return ok(items);
   } catch (e) {
-    console.error("[SOCIALS_GET]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to fetch social links" }, { status: 500 });
+    return fail("Failed to fetch social links", "SOCIALS_GET");
   }
 }
 
@@ -15,10 +15,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const item = await prisma.socialLink.create({ data: body });
-    return NextResponse.json(item, { status: 201 });
+    return ok(item, { status: 201 });
   } catch (e) {
-    console.error("[SOCIALS_POST]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to create social link" }, { status: 500 });
+    return fail("Failed to create social link", "SOCIALS_POST");
   }
 }
 
@@ -27,9 +26,8 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const { id, ...data } = body;
     const item = await prisma.socialLink.update({ where: { id }, data });
-    return NextResponse.json(item);
+    return ok(item);
   } catch (e) {
-    console.error("[SOCIALS_PUT]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to update social link" }, { status: 500 });
+    return fail("Failed to update social link", "SOCIALS_PUT");
   }
 }

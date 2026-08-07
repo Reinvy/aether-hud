@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ok, fail } from "@/lib/api-helpers";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await prisma.project.delete({ where: { id } });
-    return NextResponse.json({ success: true });
+    return ok({ success: true });
   } catch (e) {
-    console.error("[PROJECTS_DELETE]", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Failed to delete project" }, { status: 500 });
+    return fail("Failed to delete project", "PROJECTS_DELETE");
   }
 }

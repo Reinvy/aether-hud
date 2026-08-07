@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { recordTelemetry } from "@/lib/telemetry-store";
+import { recordTelemetry, persistTelemetry } from "@/lib/telemetry-store";
 
 /**
  * POST /api/telemetry — Web Vitals collector endpoint.
@@ -29,10 +29,11 @@ export async function POST(request: Request) {
     }
 
     // Collector hook — write validated payloads to the in-memory sink so
-    // they're visible via GET /api/telemetry/summary. The sink never
-    // fails the beacon: telemetry must not break the app.
+    // they're visible via GET /api/telemetry/summary, then durably
+    // persist to PostgreSQL (pruned, bounded). Neither sink may fail the
+    // beacon: telemetry must not break the app.
     try {
-      recordTelemetry({
+      const sample = {
         name,
         value,
         rating: typeof body?.rating === "string" ? body.rating : "unknown",
@@ -40,7 +41,9 @@ export async function POST(request: Request) {
         id: typeof body?.id === "string" ? body.id : "",
         path: typeof body?.path === "string" ? body.path : "/",
         recordedAt: new Date().toISOString(),
-      });
+      };
+      recordTelemetry(sample);
+      await persistTelemetry(sample);
     } catch (sinkErr) {
       console.error("[TELEMETRY]", "sink error:", sinkErr);
     }
