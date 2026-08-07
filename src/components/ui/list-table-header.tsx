@@ -10,7 +10,7 @@
  */
 import { cn } from "@/lib/utils";
 
-export interface ListColumn {
+interface ListColumn {
   label: string;
   /** Tailwind classes for width + responsive visibility (e.g. "hidden w-24 sm:block"). */
   className?: string;

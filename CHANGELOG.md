@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-07] — C5 Performance Optimization & Code Maintenance
+
+### Cleanup
+- **`src/components/features/social-form-modal.tsx`** — removed 5 unused lucide-react icon imports (`Globe`, `GitBranch`, `MessageCircle`, `Mail`, `Link2`); made `SocialFormRecord` interface module-private (was exported but never imported outside the file).
+- **`src/components/ui/list-table-header.tsx`** — `ListColumn` interface made module-private (only consumed by `ListTableHeader` itself).
+- **`src/lib/telemetry-store.ts`** — `TelemetrySample` and `MetricSummary` interfaces made module-private (internal to the store; only `recordTelemetry` / `telemetrySummary` are consumed externally).
+
+### Dependencies
+- **`lucide-react`** 1.28.0 → **1.30.0** (minor update; icon set additions, no breaking changes — build verified).
+- **Deliberately skipped (major versions — need dedicated upgrade PRs):** `eslint` 9→10, `typescript` 5→7, `framer-motion` 12→13, `@types/node` 20→26.
+- **Known advisory:** `js-yaml` 4.3.0 (CVE-2026-59870, high, via `@eslint/eslintrc` ← eslint devDep) — fix not backported to 3.x/4.x lines; `npm audit fix` has no resolution. Dev-tooling only, no runtime exposure.
+
+### Audit (verified, no change needed)
+- **Build** — `npm run build` passes (route table compiles clean; 31 routes).
+- **Lint** — `npx eslint src/` 0 errors (previously 5 unused-import errors).
+- **Security** — `.env` not tracked (`git ls-files` shows only `.env.example` + `.cron/VERCEL_DOMAIN.env`); `.env.example` contains placeholders only; no `vcp_`/`ghp_`/`sk-`/connection-string secrets in `src/` or `prisma/`.
+- **Error handling** — structured throughout: 16/16 API routes use try/catch with JSON error responses; fetch hooks use AbortController + stale-guards (`src/lib/use-data.ts`); client-side errors tagged `console.error("Failed to ...")`; ErrorBoundary present.
+- **Design system** — no `rounded-xl`/`rounded-lg`/`rounded-2xl` (chamfered corners enforced); hardcoded colors only as design-token gold glows (#F2C94C low-alpha); all data sourced from `src/data/portfolio.ts`.
+
+### Verified
+- Dead-export audit: 0 unused exports, 0 unreferenced files (after cleanup).
+- `npm run build` — passes post-cleanup.
+
+---
+
 ## [2026-08-07] — C3 Dynamic Content & Seed Orchestration
 
 ### Portfolio content

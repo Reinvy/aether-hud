@@ -13,7 +13,7 @@
  * contract and to power GET /api/telemetry/summary.
  */
 
-export interface TelemetrySample {
+interface TelemetrySample {
   name: string;
   value: number;
   rating: string;
@@ -38,7 +38,7 @@ export function recordTelemetry(entry: TelemetrySample): void {
   totalRecorded += 1;
 }
 
-export interface MetricSummary {
+interface MetricSummary {
   count: number;
   min: number | null;
   max: number | null;
