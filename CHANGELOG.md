@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-07] — C3 Dynamic Content & Seed Orchestration
+
+### Portfolio content
+- **`src/data/portfolio.ts`** — added **AETHER Signal** (proj-17, CLASS-A): AI-powered market intelligence engine with real-time sentiment analysis, social listening, and predictive trend scoring across global feeds. Added **AETHER Circuit** (proj-18, CLASS-S): CI/CD pipeline orchestration platform with visual build graphs, incremental caching, and automated security gating (introduces the **Developer Tools** category). Portfolio now carries **18 projects** across 9 categories.
+- **Skill levels** — bumped `Go / Rust` 72 → 76, `Kubernetes / Orchestration` 74 → 78, and `AI Agents / LLM Ops` 85 → 87 (reflecting systems/agentic infrastructure work).
+- **Social links** — added **Twitch** (`https://twitch.tv/reinvy`, icon `MonitorPlay`) and **Dribbble** (`https://dribbble.com/reinvy`, icon `Palette`); social roster is now **17 channels**.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — new **`?year=<YYYY>`** filter (exact match on project year) added to the shared `filterProjects` helper, so both `?section=projects` and the full-portfolio branch honor it consistently (alongside `search` / `category` / `tags` / `complexity` / `sort` / `limit`).
+
+### UI
+- **`src/components/sections/contact-section.tsx`** — registered `MonitorPlay` and `Palette` in the `socialIcons` map so the new channels render their proper glyphs (no silent `Terminal` fallback). Dashboard contact `iconMap` registers the same icons for DB-driven socials.
+
+### Design system
+- Verified landing sections still carry the AETHER-HUD markers (`glass-panel`, `chamfered`, `btn-glow-sweep`, `sys-label`, `bg-deep-space`, `starfield`, `grid-hud`) — no regressions. All data remains sourced from `src/data/portfolio.ts`; nothing hardcoded.
+
+### Verified
+- `npm run build` — passes (route table compiles clean; portfolio JSON-LD ItemList auto-extends to 18 items via `src/app/page.tsx`).
+- `node e2e/run-tests.mjs` — all checks green post-deploy.
+
+---
+
 ## [2026-08-06] — C3 Dynamic Content & Seed Orchestration
 
 ### Portfolio content
