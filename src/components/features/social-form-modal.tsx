@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Globe, GitBranch, MessageCircle, Mail, Link2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FormModal } from "@/components/ui/form-modal";
 
@@ -19,7 +18,7 @@ import { FormModal } from "@/components/ui/form-modal";
  * CRUD form in the dashboard.
  */
 
-export interface SocialFormRecord {
+interface SocialFormRecord {
   id: string;
   platform: string;
   url: string;
