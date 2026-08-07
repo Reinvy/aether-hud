@@ -22,7 +22,32 @@ const HTTP_ERROR_MESSAGES: Record<number, string> = {
 };
 
 /**
- * Generic data fetching hook with AbortController support,
+ * In-flight request dedup: multiple components mounting simultaneously and
+ * fetching the SAME url (e.g. the homepage mounts hud-header + home-content,
+ * both fetching /api/sections) share ONE network request instead of N.
+ *
+ * The first caller starts the fetch; concurrent callers attach to the same
+ * promise. When it settles (success or failure) the entry is evicted so the
+ * next mount/refetch starts a fresh request — no stale caching, just
+ * request coalescing. This cuts duplicate homepage fetches (e.g. 3×
+ * /api/sections + 3× /api/config → 1× each).
+ */
+const inflight = new Map<string, Promise<Response>>();
+
+function dedupFetch(url: string, init?: RequestInit): Promise<Response> {
+  const existing = inflight.get(url);
+  if (existing) return existing;
+
+  const promise = fetch(url, init).finally(() => {
+    // Evict only our own entry — a later refetch may have replaced it.
+    if (inflight.get(url) === promise) inflight.delete(url);
+  });
+  inflight.set(url, promise);
+  return promise;
+}
+
+/**
+ * Generic data fetching hook with in-flight request deduplication,
  * structured error handling, and refetch capability.
  */
 export function useData<T>(url: string): UseDataResult<T> {
@@ -32,23 +57,19 @@ export function useData<T>(url: string): UseDataResult<T> {
 
   // Ref counter to prevent stale state updates
   const fetchIdRef = useRef(0);
-  // AbortController ref for cleanup
-  const abortRef = useRef<AbortController | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Cancel any in-flight request
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     const fetchId = ++fetchIdRef.current;
 
     try {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(url, {
-        signal: controller.signal,
+      // Shared request — aborts are intentionally NOT supported here:
+      // cancelling one subscriber's wait must not kill the request other
+      // components are still awaiting. Stale responses are dropped by the
+      // fetchId guard below instead.
+      const res = await dedupFetch(url, {
         headers: { Accept: "application/json" },
       });
 
@@ -70,8 +91,6 @@ export function useData<T>(url: string): UseDataResult<T> {
       setData(result);
       setError(null);
     } catch (e: unknown) {
-      // Ignore aborted requests — they're intentional cleanup
-      if (e instanceof DOMException && e.name === "AbortError") return;
       // Ignore stale responses
       if (fetchId !== fetchIdRef.current) return;
 
@@ -89,8 +108,10 @@ export function useData<T>(url: string): UseDataResult<T> {
     fetchData();
 
     return () => {
-      // Cleanup: abort in-flight request on unmount
-      abortRef.current?.abort();
+      // Bump the ref so a late response can't setState on an unmounted
+      // component. The shared network request itself keeps running for
+      // any remaining subscribers.
+      fetchIdRef.current += 1;
     };
   }, [fetchData]);
 

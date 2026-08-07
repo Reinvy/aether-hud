@@ -17,6 +17,24 @@ model Section {
   updatedAt DateTime @updatedAt
 }
 
+// Durable Web Vitals sink — persists validated /api/telemetry beacons so
+// real-user performance survives serverless instance recycling (the
+// in-memory ring buffer in src/lib/telemetry-store.ts is per-instance
+// only). Pruned to the newest MAX_SAMPLES_PER_METRIC rows per metric on
+// write; see persistTelemetry() in telemetry-store.ts.
+model TelemetryEvent {
+  id         String   @id @default(cuid())
+  name       String
+  value      Float
+  rating     String   @default("unknown")
+  delta      Float    @default(0)
+  clientId   String   @default("")
+  path       String   @default("/")
+  recordedAt DateTime @default(now())
+
+  @@index([name, recordedAt])
+}
+
 model Project {
   id          String   @id @default(cuid())
   title       String
