@@ -76,7 +76,7 @@ export function ExperienceSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {/* Timeline node */}
-                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-full border border-border-glass bg-surface-primary transition-all duration-300 group-hover:border-gold-400/40 group-hover:shadow-[0_0_16px_rgba(242,201,76,0.25)] group-hover:scale-110">
+                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary transition-all duration-300 group-hover:border-gold-400/40 group-hover:shadow-[0_0_16px_rgba(242,201,76,0.25)] group-hover:scale-110">
                   <TypeIcon className="h-4 w-4 text-gold-400 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(242,201,76,0.6)]" />
                 </div>
 

@@ -41,7 +41,9 @@ export const ProjectRow = memo(function ProjectRow({
   const tags = parseTags(project.tags);
 
   return (
-    <div className="group flex items-center justify-between rounded-sm border border-border-subtle px-3 sm:px-4 py-3 transition-all duration-200 hover:border-border-glass hover:bg-glass-200 hover-scale-sm">
+    <div className="group relative flex items-center justify-between chamfered-xs border border-border-subtle px-3 sm:px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm press-scale">
+      {/* Diamond hover indicator */}
+      <span className="pointer-events-none absolute -left-px top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border border-gold-400/40 bg-deep-space opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgba(242,201,76,0.5)]" />
       <div className="flex items-center gap-3 min-w-0">
         <IconBox>
           <span className="font-mono text-[9px] text-gold-400">

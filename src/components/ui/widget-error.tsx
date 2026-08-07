@@ -25,7 +25,7 @@ export function WidgetError({ label = "WIDGET", className }: WidgetErrorProps) {
         className
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-full border border-hud-danger/30 bg-hud-danger/5">
+      <div className="flex h-10 w-10 items-center justify-center chamfered-sm border border-hud-danger/30 bg-hud-danger/5">
         <AlertTriangle className="h-4 w-4 text-hud-danger" />
       </div>
       <span className="sys-label-gold text-[9px] tracking-[0.2em]">

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -207,7 +208,7 @@ export default function DashboardProfile() {
             <CardContent>
               <div className="flex flex-wrap items-center gap-6">
                 {/* Avatar placeholder */}
-                <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold-400/30 bg-deep-space">
+                <div className="flex h-16 w-16 items-center justify-center chamfered border-2 border-gold-400/30 bg-deep-space">
                   <User className="h-7 w-7 text-gold-400/50" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -234,7 +235,11 @@ export default function DashboardProfile() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${form.status === "ONLINE" ? "bg-hud-active" : "bg-hud-warning"}`} />
+                  <StatusDot
+                    tone={form.status === "ONLINE" ? "active" : "warning"}
+                    pulse={form.status === "ONLINE"}
+                    label={form.status || "ONLINE"}
+                  />
                   <span className="sys-label-active text-[9px]">{form.status || "ONLINE"}</span>
                 </div>
               </div>

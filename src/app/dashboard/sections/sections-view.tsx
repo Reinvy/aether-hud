@@ -16,6 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { IconBox } from "@/components/ui/icon-box";
 import { FormModal } from "@/components/ui/form-modal";
 import { Input } from "@/components/ui/input";
+import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
@@ -281,11 +282,10 @@ export default function DashboardSections() {
         {editingSection && (
           <div className="flex flex-wrap items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "h-2 w-2 rounded-full",
-                  editingSection.enabled ? "bg-hud-active" : "bg-hud-danger"
-                )}
+              <StatusDot
+                tone={editingSection.enabled ? "active" : "danger"}
+                pulse={editingSection.enabled}
+                label={editingSection.enabled ? "Enabled" : "Disabled"}
               />
               <span className="font-mono text-[10px] text-text-muted">
                 {editingSection.enabled ? "ENABLED" : "DISABLED"}

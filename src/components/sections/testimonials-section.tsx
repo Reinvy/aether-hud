@@ -80,7 +80,7 @@ export function TestimonialsSection() {
                   {/* Author */}
                   <div className="mt-6 flex items-center gap-4">
                     {/* Avatar placeholder */}
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border-glass bg-surface-primary">
+                    <div className="flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary">
                       <span className="font-mono text-xs text-gold-400">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>

@@ -25,7 +25,7 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
         <section className="relative min-h-screen flex items-center justify-center py-28">
           <div className="pointer-events-none absolute inset-0 bg-deep-space" />
           <div className="text-center space-y-4">
-            <span className="h-2 w-2 rounded-full bg-gold-400 skeleton-hud inline-block" />
+            <span className="h-2 w-2 rotate-45 bg-gold-400 skeleton-hud inline-block" />
             <p className="sys-label text-xs text-text-muted mt-2">DEPLOYING HERO MODULE...</p>
           </div>
         </section>
@@ -78,7 +78,7 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
             <div className="mt-14 space-y-8">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full border border-border-glass bg-glass-200 skeleton-hud shrink-0" />
+                  <div className="h-10 w-10 chamfered-sm border border-border-glass bg-glass-200 skeleton-hud shrink-0" />
                   <div className="flex-1 glass-panel chamfered p-6">
                     <div className="space-y-3">
                       <div className="h-4 w-1/3 bg-glass-300 rounded-none skeleton-hud" />

@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { RefreshCw, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusDot, type StatusTone } from "@/components/ui/status-dot";
 
 /**
  * ActivityFeed — reusable HUD activity log panel.
@@ -19,10 +20,10 @@ interface ActivityItem {
   type: "deploy" | "update" | "calibrate";
 }
 
-const DOT_TONE: Record<ActivityItem["type"], string> = {
-  deploy: "bg-hud-active",
-  update: "bg-gold-400",
-  calibrate: "bg-stellar-400",
+const DOT_TONE: Record<ActivityItem["type"], StatusTone> = {
+  deploy: "active",
+  update: "gold",
+  calibrate: "stellar",
 };
 
 export const ActivityFeed = memo(function ActivityFeed({
@@ -50,8 +51,10 @@ export const ActivityFeed = memo(function ActivityFeed({
           ) : (
             items.map((activity, i) => (
               <div key={i} className="flex gap-3 group">
-                <div
-                  className={`mt-0.5 h-2 w-2 rounded-full transition-transform duration-200 group-hover:scale-125 ${DOT_TONE[activity.type]}`}
+                <StatusDot
+                  tone={DOT_TONE[activity.type]}
+                  label={activity.action}
+                  className="mt-0.5 transition-transform duration-200 group-hover:scale-125"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">

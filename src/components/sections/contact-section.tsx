@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -69,7 +70,7 @@ export function ContactSection() {
                     <Lock className="h-4 w-4 text-gold-400" />
                     <span className="sys-label-gold">ENCRYPTED TRANSMISSION // AES-256</span>
                     <span className="ml-auto flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-hud-active" />
+                      <StatusDot tone="active" pulse label="Secure channel" />
                       <span className="sys-label-active text-[9px]">SECURE</span>
                     </span>
                   </div>
