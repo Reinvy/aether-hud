@@ -79,9 +79,20 @@ function run(cmd) {
   }
 }
 
-function fetchUrl(url) {
-  // Use Node's built-in fetch (HEAD request for liveness checks)
-  return fetch(url, { method: "HEAD", signal: AbortSignal.timeout(10000) });
+async function fetchUrl(url, method = "HEAD", retries = 3) {
+  // Retry transient network failures (edge cold starts, rate-limit blips)
+  // before declaring a route dead. HTTP status codes are NOT retried —
+  // a 404/500 is a real result, only fetch-level errors/timeouts are.
+  let lastErr;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fetch(url, { method, signal: AbortSignal.timeout(10000) });
+    } catch (e) {
+      lastErr = e;
+      if (i < retries - 1) await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
+    }
+  }
+  throw lastErr;
 }
 
 // ─── Main ──────────────────────────────────────────────────
@@ -129,10 +140,7 @@ async function main() {
   // SEO files: live AND reference the correct production domain.
   for (const route of SEO_ROUTES) {
     try {
-      const resp = await fetch(`${PRODUCTION_URL}${route}`, {
-        method: "GET",
-        signal: AbortSignal.timeout(10000),
-      });
+      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`, "GET");
       assert(resp.status === 200, `${route} is live (got ${resp.status})`);
       const body = await resp.text();
       assert(
@@ -198,10 +206,7 @@ async function main() {
     ["/dashboard", DESIGN_MARKERS],
   ]) {
     try {
-      const resp = await fetch(`${PRODUCTION_URL}${path}`, {
-        method: "GET",
-        signal: AbortSignal.timeout(15000),
-      });
+      const resp = await fetchUrl(`${PRODUCTION_URL}${path}`, "GET");
       assert(resp.status === 200, `${path} renders HTTP 200 (got ${resp.status})`);
       const body = await resp.text();
       assert(body.length > 1000, `${path} returns non-trivial HTML (${body.length} bytes)`);
@@ -215,10 +220,7 @@ async function main() {
 
   // JSON-LD structured data must render in the homepage HTML and parse cleanly.
   try {
-    const resp = await fetch(`${PRODUCTION_URL}/`, {
-      method: "GET",
-      signal: AbortSignal.timeout(15000),
-    });
+    const resp = await fetchUrl(`${PRODUCTION_URL}/`, "GET");
     const body = await resp.text();
     const blocks = [...body.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
     assert(blocks.length >= 1, `Homepage emits JSON-LD blocks (found ${blocks.length})`);
