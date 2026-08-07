@@ -8,6 +8,7 @@ import { Menu, X, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { useData } from "@/lib/use-data";
+import { StatusDot } from "@/components/ui/status-dot";
 
 interface Section {
   id: string;
@@ -78,7 +79,7 @@ export function HudHeader() {
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative">
                 <Activity className="h-5 w-5 text-gold-400 transition-transform group-hover:scale-110" />
-                <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-hud-active shadow-[0_0_6px_rgba(0,255,135,0.6)] animate-energy-pulse" />
+                <StatusDot tone="active" pulse label="System online" className="absolute -top-1 -right-1" />
               </div>
               <span className="font-display text-sm font-bold tracking-[0.15em] text-text-main hidden sm:block">
                 AETHER
@@ -129,7 +130,7 @@ export function HudHeader() {
           <div className="flex items-center gap-4">
             <div className="hidden items-center gap-3 md:flex">
               <div className="flex items-center gap-2 chamfered-sm border border-border-subtle bg-deep-space/50 px-3 py-1.5">
-                <span className="h-2 w-2 rounded-full bg-hud-active shadow-[0_0_4px_rgba(0,255,135,0.4)]" />
+                <StatusDot tone="active" label="Clock online" />
                 <span className="font-mono text-[10px] tracking-[0.15em] text-text-muted">
                   {time || "LOADING..."}
                 </span>

@@ -120,7 +120,7 @@ export default function DashboardTestimonials() {
               <Card variant="glass" hover="sweep" diamond>
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-glass bg-deep-space/50">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center chamfered-sm overflow-hidden border border-border-glass bg-deep-space/50">
                       {t.avatar ? (
                         // Raw img (not next/image): avatar URLs come from the
                         // Prisma DB and may be arbitrary remote hosts, which
@@ -131,7 +131,7 @@ export default function DashboardTestimonials() {
                           alt={t.name}
                           loading="lazy"
                           decoding="async"
-                          className="h-full w-full rounded-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       ) : (
                         <Quote className="h-5 w-5 text-gold-400/60" />

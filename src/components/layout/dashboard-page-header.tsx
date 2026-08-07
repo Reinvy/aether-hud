@@ -7,6 +7,7 @@
 import { type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { StatusDot } from "@/components/ui/status-dot";
 
 interface DashboardPageHeaderProps {
   icon: React.ElementType;
@@ -56,11 +57,11 @@ export function DashboardPageHeader({
           {actions}
           {(statusLabel || statusActive !== undefined) && (
             <>
-              <span
-                className={cn(
-                  "h-1.5 w-1.5 rounded-full",
-                  statusActive ? "bg-hud-active animate-energy-pulse" : "bg-hud-danger"
-                )}
+              <StatusDot
+                tone={statusActive ? "active" : "danger"}
+                pulse={statusActive}
+                label={statusLabel}
+                className="h-1.5 w-1.5"
               />
               <span className="sys-label-active hidden text-[10px] sm:inline">{statusLabel}</span>
             </>

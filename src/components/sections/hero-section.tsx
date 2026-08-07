@@ -5,6 +5,7 @@ import { Sparkles, ArrowRight, ChevronRight, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
 
 type Config = {
@@ -141,12 +142,12 @@ export function HeroSection() {
             {/* Terminal-style header */}
             <div className="flex items-center gap-2 border-b border-border-subtle px-4 py-3">
               <div className="flex gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-hud-danger shadow-[0_0_6px_rgba(255,0,85,0.5)]" />
-                <div className="h-3 w-3 rounded-full bg-hud-warning shadow-[0_0_6px_rgba(255,153,0,0.5)]" />
-                <div className="h-3 w-3 rounded-full bg-hud-active shadow-[0_0_6px_rgba(0,255,135,0.5)]" />
+                <StatusDot tone="danger" label="Terminal closed" className="h-3 w-3" />
+                <StatusDot tone="warning" label="Terminal minimized" className="h-3 w-3" />
+                <StatusDot tone="active" label="Terminal open" className="h-3 w-3" />
               </div>
               <div className="ml-4 flex gap-1 sys-label">
-                <span className="rounded bg-[rgba(242,201,76,0.1)] px-2 py-0.5 text-gold-400">
+                <span className="chamfered-xs bg-[rgba(242,201,76,0.1)] px-2 py-0.5 text-gold-400">
                   aether
                 </span>
                 <span className="text-text-muted/30">/</span>

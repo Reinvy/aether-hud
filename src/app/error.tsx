@@ -24,7 +24,7 @@ export default function RootError({
       <div className="glass-panel chamfered relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           {/* Error icon */}
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-hud-danger/30 bg-hud-danger/5">
+          <div className="flex h-14 w-14 items-center justify-center chamfered border border-hud-danger/30 bg-hud-danger/5">
             <AlertTriangle className="h-6 w-6 text-hud-danger" />
           </div>
 

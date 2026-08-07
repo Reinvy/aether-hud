@@ -37,7 +37,7 @@ const ActivityFeed = dynamic(
         <CardContent className="space-y-4 p-5">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="mt-1 h-2 w-2 rounded-full bg-glass-300 skeleton-hud" />
+              <div className="mt-1 h-2 w-2 rotate-45 bg-glass-300 skeleton-hud" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3 w-3/4 bg-glass-200 rounded-none skeleton-hud" />
                 <div className="h-2 w-1/2 bg-glass-200 rounded-none skeleton-hud" />

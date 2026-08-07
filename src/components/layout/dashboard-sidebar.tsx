@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
 import { useSidebar } from "@/lib/sidebar-context";
+import { StatusDot } from "@/components/ui/status-dot";
 
 const iconMap: Record<string, React.ElementType> = {
   Activity,
@@ -43,7 +44,7 @@ export function DashboardSidebar() {
       <div className="angled-bar flex items-center gap-3 border-b border-border-subtle px-6 py-5">
         <div className="relative">
           <LayoutDashboard className="h-5 w-5 text-gold-400" />
-          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-hud-active shadow-[0_0_6px_rgba(0,255,135,0.6)]" />
+          <StatusDot tone="active" label="Dashboard online" className="absolute -top-1 -right-1" />
         </div>
         <div className="flex-1">
           <h1 className="font-display text-xs font-bold tracking-[0.15em] text-text-main">
@@ -53,7 +54,8 @@ export function DashboardSidebar() {
         </div>
         <button
           onClick={close}
-          className="rounded p-1 text-text-muted transition-colors hover:text-gold-400 lg:hidden"
+          className="chamfered-sm p-1.5 text-text-muted transition-colors hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold lg:hidden"
+          aria-label="Close sidebar"
         >
           <X className="h-4 w-4" />
         </button>

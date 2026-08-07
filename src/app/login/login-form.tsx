@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Activity, Shield, Eye, EyeOff, KeyRound, AlertCircle, Terminal, ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { StatusDot } from "@/components/ui/status-dot";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -81,9 +82,9 @@ export default function LoginPage() {
           {/* Terminal header */}
           <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-3">
             <div className="flex gap-1.5">
-              <div className="h-2.5 w-2.5 rounded-full bg-hud-danger shadow-[0_0_6px_rgba(255,0,85,0.5)]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-hud-warning shadow-[0_0_6px_rgba(255,153,0,0.5)]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-hud-active shadow-[0_0_6px_rgba(0,255,135,0.5)]" />
+              <StatusDot tone="danger" label="Terminal closed" className="h-2.5 w-2.5" />
+              <StatusDot tone="warning" label="Terminal minimized" className="h-2.5 w-2.5" />
+              <StatusDot tone="active" label="Terminal open" className="h-2.5 w-2.5" />
             </div>
             <div className="ml-3 flex items-center gap-1 sys-label text-[10px]">
               <Shield className="h-3 w-3 text-gold-400" />
@@ -92,7 +93,7 @@ export default function LoginPage() {
               <span className="text-text-muted/50">auth_node</span>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-hud-active animate-energy-pulse" />
+              <StatusDot tone="active" pulse label="Encrypted" className="h-1.5 w-1.5" />
               <span className="sys-label-active text-[8px]">ENCRYPTED</span>
             </div>
           </div>
@@ -113,7 +114,7 @@ export default function LoginPage() {
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, duration: 0.4 }}
-                    className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-gold-400/30 bg-deep-space"
+                    className="mx-auto flex h-20 w-20 items-center justify-center chamfered border-2 border-gold-400/30 bg-deep-space"
                   >
                     <Activity className="h-10 w-10 text-gold-400" />
                   </motion.div>
@@ -256,7 +257,7 @@ export default function LoginPage() {
                   <div className="mt-6 space-y-1 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="sys-label text-[8px]">[ACCESS_LOG]</span>
-                      <span className="h-1 w-1 rounded-full bg-gold-400/30" />
+                      <StatusDot tone="gold" label="Access log live" className="h-1 w-1 opacity-30" glow={false} />
                     </div>
                     <p className="font-mono text-[9px] text-text-muted/50">
                       {new Date().toLocaleString("en-US", {

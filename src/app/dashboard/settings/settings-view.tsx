@@ -171,7 +171,7 @@ export default function DashboardSettings() {
                           : "border-border-subtle text-text-muted hover:border-border-glass"
                       )}
                     >
-                      <span className={cn("h-4 w-4 rounded-full", theme.color)} />
+                      <span className={cn("h-4 w-4 rotate-45 border border-border-glass/40", theme.color)} />
                       <div className="flex-1">
                         <p className={cn(
                           "font-mono text-xs font-medium tracking-wider",
