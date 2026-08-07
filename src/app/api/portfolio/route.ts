@@ -13,6 +13,7 @@ type ProjectFilter = {
   category?: string;
   tags?: string[];
   complexity?: string;
+  year?: string;
   sort?: string;
   limit?: number;
 };
@@ -41,6 +42,10 @@ function filterProjects(projects: Project[], f: ProjectFilter): Project[] {
 
   if (f.complexity) {
     data = data.filter((p) => p.complexity.toLowerCase() === f.complexity!);
+  }
+
+  if (f.year) {
+    data = data.filter((p) => p.year === f.year);
   }
 
   if (f.sort) {
@@ -83,6 +88,7 @@ export async function GET(request: Request) {
           .filter(Boolean)
       : undefined;
     const complexity = searchParams.get("complexity")?.toLowerCase().trim();
+    const year = searchParams.get("year")?.trim();
     const sort = searchParams.get("sort")?.toLowerCase().trim();
     const limitParam = searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam, 10) : undefined;
@@ -119,6 +125,7 @@ export async function GET(request: Request) {
           category,
           tags,
           complexity,
+          year,
           sort,
           limit: limit && !Number.isNaN(limit) ? limit : undefined,
         });
@@ -127,12 +134,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ [key]: data }, { headers: CACHE_HEADERS });
     }
 
-    // Full portfolio — optionally narrow projects via search/category/tags/complexity/sort/limit
+    // Full portfolio — optionally narrow projects via search/category/tags/complexity/year/sort/limit
     const hasProjectFilters =
       Boolean(search) ||
       Boolean(category) ||
       Boolean(tags && tags.length > 0) ||
       Boolean(complexity) ||
+      Boolean(year) ||
       Boolean(sort) ||
       Boolean(limitParam);
 
@@ -143,6 +151,7 @@ export async function GET(request: Request) {
         category,
         tags,
         complexity,
+        year,
         sort,
         limit: limit && !Number.isNaN(limit) ? limit : undefined,
       });

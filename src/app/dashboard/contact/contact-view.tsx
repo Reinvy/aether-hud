@@ -12,6 +12,8 @@ import {
   Globe,
   GitBranch,
   MessageCircle,
+  MonitorPlay,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,7 +66,7 @@ interface ApiConfig {
 }
 
 const iconMap: Record<string, React.ElementType> = {
-  Globe, GitBranch, MessageCircle, Mail, Link2,
+  Globe, GitBranch, MessageCircle, Mail, Link2, MonitorPlay, Palette,
 };
 
 export default function DashboardContact() {
