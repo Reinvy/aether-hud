@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-08] — C4 E2E Navigation & UI Integration Testing
+
+### E2E Coverage Expansion (111 → 142 checks)
+- **`e2e/run-tests.mjs`** — new **sitemap ↔ robots consistency** test: every `<loc>` in `sitemap.xml` must not be disallowed by `robots.txt` (guards the silent SEO contradiction where auth-gated routes get listed as indexable). Also asserts `robots.txt` declares Disallow rules and the sitemap lists ≥1 URL.
+- **`e2e/run-tests.mjs`** — **JSON-LD ItemList count == data file**: parses `src/data/portfolio.ts` for `id: "proj-` occurrences and requires the live ItemList to enumerate exactly that many items (18). Catches a server component throwing mid-render or a data refactor silently dropping projects while the block still parses.
+- **`e2e/run-tests.mjs`** — design-system marker coverage extended from `/` + `/dashboard` to include **`/login`** (all 7 markers: glass-panel, chamfered, btn-glow-sweep, bg-deep-space, starfield, grid-hud, sys-label).
+- **`e2e/navigation.test.mjs`** — new **TEST 5: Dashboard SEO Gate** — all 9 dashboard pages must declare `<meta name="robots" content="noindex, nofollow">`. A lost per-page metadata wrapper silently opens the gate (auth-gated pages become indexable); this locks it as a permanent regression test.
+
+### Verified
+- Live production health: 22 routes (2 public + 9 dashboard + 11 API) all live; 404 probes pass; auth boundary fail-closed (401 on wrong/empty creds); internal link crawl clean; robots/sitemap reference `aether-hud-lyart.vercel.app`.
+- `npm run build` — passes (31 routes, 0 errors).
+
+---
+
 ## [2026-08-07] — C5 Performance Optimization & Code Maintenance
 
 ### Cleanup
