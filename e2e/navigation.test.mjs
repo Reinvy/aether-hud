@@ -218,6 +218,25 @@ async function main() {
     }
   }
 
+  // ===== TEST 5: Dashboard SEO Gate (noindex on auth-gated pages) =====
+  // Dashboard pages are the private area — they must carry `noindex, nofollow`
+  // robots meta so search engines never index auth-gated content. A lost
+  // per-page metadata wrapper silently opens the gate (pages become indexable).
+  log("TEST 5: Dashboard SEO Gate (noindex, nofollow on auth-gated pages)");
+  for (const route of DASHBOARD_PAGES) {
+    try {
+      const { status, body } = await getText(route);
+      assert(status === 200, `${route} renders for SEO gate check (got ${status})`);
+      const robotsMeta = body.match(/<meta\s+name="robots"[^>]*>/i)?.[0] || "";
+      assert(
+        robotsMeta.includes("noindex") && robotsMeta.includes("nofollow"),
+        `${route} declares robots noindex, nofollow (got: ${robotsMeta || "NO robots meta"})`
+      );
+    } catch (e) {
+      assert(false, `${route} is checkable: ${e.message}`);
+    }
+  }
+
   // ===== Summary =====
   const total = passed + failed;
   console.log("\n" + "=".repeat(50));

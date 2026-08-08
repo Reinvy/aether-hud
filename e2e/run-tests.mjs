@@ -152,6 +152,35 @@ async function main() {
     }
   }
 
+  // Sitemap ↔ robots consistency: every URL listed in sitemap.xml must NOT be
+  // disallowed by robots.txt. Crawlers that honor robots never fetch disallowed
+  // URLs, so listing them signals auth-gated routes as indexable content — a
+  // silent SEO contradiction (see vercel-deployment skill pitfalls).
+  try {
+    const robotsResp = await fetchUrl(`${PRODUCTION_URL}/robots.txt`, "GET");
+    const robotsBody = await robotsResp.text();
+    const disallowed = robotsBody
+      .split("\n")
+      .filter((l) => l.trim().startsWith("Disallow:"))
+      .map((l) => l.trim().replace(/^Disallow:\s*/, ""))
+      .filter((p) => p.length > 0);
+    assert(disallowed.length > 0, `robots.txt declares Disallow rules (found ${disallowed.length})`);
+    const sitemapResp = await fetchUrl(`${PRODUCTION_URL}/sitemap.xml`, "GET");
+    const sitemapBody = await sitemapResp.text();
+    const locs = [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    assert(locs.length >= 1, `sitemap.xml lists at least one URL (found ${locs.length})`);
+    const violations = locs.filter((loc) => {
+      const path = loc.replace(PRODUCTION_URL, "").replace(/\/+$/, "") || "/";
+      return disallowed.some((d) => d === "/" || path === d.replace(/\/+$/, "") || path.startsWith(d.replace(/\/+$/, "") + "/"));
+    });
+    assert(
+      violations.length === 0,
+      `sitemap.xml lists NO robots-disallowed routes${violations.length ? ` (violations: ${violations.join(", ")})` : ""}`
+    );
+  } catch (e) {
+    assert(false, `sitemap/robots consistency is checkable: ${e.message}`);
+  }
+
   // Unknown routes must return the custom 404 page (not 200 or 500).
   // Guards against catch-all routing misconfiguration that silently
   // serves the wrong page for typos or stale links.
@@ -203,6 +232,7 @@ async function main() {
   ];
   for (const [path, markers] of [
     ["/", DESIGN_MARKERS],
+    ["/login", DESIGN_MARKERS],
     ["/dashboard", DESIGN_MARKERS],
   ]) {
     try {
@@ -235,6 +265,26 @@ async function main() {
     }
     assert(parsedOk === blocks.length, `All ${blocks.length} JSON-LD blocks parse cleanly`);
     assert(hasItemList, "JSON-LD includes an ItemList (portfolio items render)");
+    // The ItemList must enumerate ALL projects from the data file — a server
+    // component throwing mid-render (or a data-file refactor) silently drops
+    // items while the block still parses. Count `id: "proj-` in portfolio.ts
+    // and require the live list to match.
+    try {
+      const dataSrc = readFileSync("src/data/portfolio.ts", "utf-8");
+      const expectedCount = (dataSrc.match(/id:\s*"proj-/g) || []).length;
+      for (const [, raw] of blocks) {
+        const data = JSON.parse(raw);
+        if (data["@type"] === "ItemList") {
+          const liveCount = (data.itemListElement || []).length;
+          assert(
+            liveCount === expectedCount,
+            `JSON-LD ItemList count matches data file (${liveCount} === ${expectedCount} projects)`
+          );
+        }
+      }
+    } catch (e) {
+      assert(false, `JSON-LD item count is verifiable: ${e.message}`);
+    }
   } catch (e) {
     assert(false, `Homepage JSON-LD is verifiable: ${e.message}`);
   }
