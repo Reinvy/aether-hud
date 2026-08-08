@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Activity, Shield, Eye, EyeOff, KeyRound, AlertCircle, Terminal, ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { StatusDot } from "@/components/ui/status-dot";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -143,14 +144,17 @@ export default function LoginPage() {
                     transition={{ delay: 0.5 }}
                     className="mt-8"
                   >
-                    <button
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="md"
                       onClick={() => setStep("password")}
-                      className="btn-glow-sweep inline-flex items-center gap-2 rounded-none border border-gold-400/50 px-8 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)] hover-scale-sm press-scale focus-ring-gold"
+                      className="border-gold-400/50 px-8 py-3 font-mono text-xs tracking-widest text-gold-400 hover:bg-[rgba(242,201,76,0.08)] hover:border-gold-400/50 hover-scale-sm"
                     >
                       <Shield className="h-4 w-4" />
                       INITIALIZE ACCESS
                       <ChevronRight className="h-3.5 w-3.5" />
-                    </button>
+                    </Button>
                   </motion.div>
 
                   <motion.p
@@ -221,26 +225,30 @@ export default function LoginPage() {
 
                     {/* Buttons */}
                     <div className="flex items-center gap-3">
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
+                        size="md"
                         onClick={() => {
                           setStep("init");
                           setError("");
                           setPassword("");
                         }}
-                        className="flex-1 rounded-none border border-border-subtle px-4 py-3 font-mono text-xs tracking-widest text-text-muted transition-colors hover:border-border-glass hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
+                        className="flex-1 px-4 py-3 font-mono text-xs tracking-widest text-text-muted hover:bg-transparent hover:text-gold-400 hover-scale-sm"
                         disabled={loading}
                       >
                         ABORT
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="submit"
-                        disabled={loading || !password.trim()}
-                        className="btn-glow-sweep flex-1 rounded-none border border-gold-400/50 px-4 py-3 font-mono text-xs font-medium tracking-widest text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.08)] hover-scale-sm press-scale focus-ring-gold disabled:opacity-40 disabled:cursor-not-allowed"
+                        variant="outline"
+                        size="md"
+                        loading={loading}
+                        disabled={!password.trim()}
+                        className="flex-1 border-gold-400/50 px-4 py-3 font-mono text-xs tracking-widest text-gold-400 hover:bg-[rgba(242,201,76,0.08)] hover:border-gold-400/50 hover-scale-sm"
                       >
                         {loading ? (
                           <span className="flex items-center justify-center gap-2">
-                            <span className="hud-spinner h-3.5 w-3.5" />
                             AUTHENTICATING...
                           </span>
                         ) : (
@@ -249,7 +257,7 @@ export default function LoginPage() {
                             UNLOCK
                           </span>
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </form>
 

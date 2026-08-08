@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Root error boundary — catches uncaught render errors for the entire
@@ -47,13 +48,15 @@ export default function RootError({
             </span>
           )}
 
-          <button
+          <Button
+            variant="secondary"
+            size="md"
             onClick={reset}
-            className="btn-glow-sweep tactical-btn inline-flex items-center gap-2 border border-border-glass bg-glass-card px-6 py-2.5 text-xs font-mono tracking-wider text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.12)]"
+            className="font-mono tracking-wider"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             REINITIALIZE INTERFACE
-          </button>
+          </Button>
 
           <span className="absolute bottom-3 right-3 sys-label text-[8px] text-text-muted/20">
             [ERR_NODE]

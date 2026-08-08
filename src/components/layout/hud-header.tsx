@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { NAV_ITEMS, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { useData } from "@/lib/use-data";
 import { StatusDot } from "@/components/ui/status-dot";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface Section {
   id: string;
@@ -141,12 +142,14 @@ export function HudHeader() {
             </div>
 
             {/* Mobile toggle */}
-            <button
+            <IconButton
+              size="sm"
+              label={mobileOpen ? "Close menu" : "Open menu"}
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex md:hidden chamfered-sm p-1.5 text-text-muted hover:text-gold-400 transition-colors hover-scale-sm press-scale focus-ring-gold"
+              className="md:hidden"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            </IconButton>
           </div>
         </div>
       </nav>
