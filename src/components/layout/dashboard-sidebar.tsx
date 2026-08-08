@@ -16,6 +16,7 @@ import {
   MessageCircle,
   Layout,
   Globe,
+  Gauge,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
@@ -32,6 +33,7 @@ const iconMap: Record<string, React.ElementType> = {
   MessageCircle,
   Layout,
   Globe,
+  Gauge,
 };
 
 export function DashboardSidebar() {

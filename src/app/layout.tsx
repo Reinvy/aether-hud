@@ -1,8 +1,44 @@
 import type { Metadata, Viewport } from "next";
+import { Chakra_Petch, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
+
+/**
+ * Self-hosted typography — replaces the Google Fonts CDN <link> (render-
+ * blocking stylesheet) with build-time font downloads served from the
+ * same origin. Removes the external connection (preconnect + css2 fetch)
+ * from the critical path: a clean LCP win. The CSS variables below feed
+ * the Tailwind v4 `@theme inline` font tokens in globals.css.
+ */
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  variable: "--font-orbitron",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
+const chakraPetch = Chakra_Petch({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-chakra",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -147,14 +183,12 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="h-full antialiased dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased dark`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Chakra+Petch:wght@600;700&display=swap"
-          rel="stylesheet"
-        />
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
