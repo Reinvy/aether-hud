@@ -44,6 +44,7 @@ const ALL_ROUTES = [
   "/dashboard/sections",
   "/dashboard/settings",
   "/dashboard/skills",
+  "/dashboard/telemetry",
   "/dashboard/testimonials",
 ];
 
@@ -58,6 +59,7 @@ const API_ROUTES = [
   "/api/skills",
   "/api/socials",
   "/api/telemetry",
+  "/api/telemetry/summary",
   "/api/testimonials",
 ];
 

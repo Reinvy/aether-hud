@@ -46,6 +46,7 @@ const DASHBOARD_PAGES = [
   "/dashboard/sections",
   "/dashboard/settings",
   "/dashboard/skills",
+  "/dashboard/telemetry",
   "/dashboard/testimonials",
 ];
 // POST-only routes correctly reject HEAD with 405 — 405 proves the route is mounted.
@@ -60,6 +61,7 @@ const API_ROUTES = [
   "/api/skills",
   "/api/socials",
   "/api/telemetry",
+  "/api/telemetry/summary",
   "/api/testimonials",
 ];
 const SEO_FILES = ["/robots.txt", "/sitemap.xml"];

@@ -64,10 +64,13 @@
   /* Accent energy pulse */
   --color-accent-pulse: #4a00e0;
 
-  /* Fonts */
-  --font-display: "Orbitron", "Chakra Petch", "Syne", system-ui, sans-serif;
-  --font-body: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Share Tech Mono", monospace;
+  /* Fonts — self-hosted via next/font (see layout.tsx). The fallback
+     stacks are preserved so a font-load failure still renders the
+     design intent; the primary families now resolve to same-origin
+     next/font files instead of the Google Fonts CDN. */
+  --font-display: var(--font-orbitron), "Chakra Petch", "Syne", system-ui, sans-serif;
+  --font-body: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "Share Tech Mono", monospace;
 }
 
 /* ─── Global Styles ────────────────────────────────────────── */
