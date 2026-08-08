@@ -57,7 +57,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && (
           <span
-            className="hud-spinner shrink-0"
+            className="hud-spinner h-3.5 w-3.5 shrink-0"
             aria-hidden="true"
           />
         )}

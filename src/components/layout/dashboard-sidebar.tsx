@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
 import { useSidebar } from "@/lib/sidebar-context";
 import { StatusDot } from "@/components/ui/status-dot";
+import { IconButton } from "@/components/ui/icon-button";
 
 const iconMap: Record<string, React.ElementType> = {
   Activity,
@@ -54,13 +55,14 @@ export function DashboardSidebar() {
           </h1>
           <p className="sys-label text-[9px]">CONTROL PANEL // v2.4</p>
         </div>
-        <button
+        <IconButton
+          size="sm"
+          label="Close sidebar"
           onClick={close}
-          className="chamfered-sm p-1.5 text-text-muted transition-colors hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold lg:hidden"
-          aria-label="Close sidebar"
+          className="lg:hidden"
         >
           <X className="h-4 w-4" />
-        </button>
+        </IconButton>
       </div>
 
       {/* Navigation */}
