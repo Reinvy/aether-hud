@@ -31,7 +31,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
+    <section id="hero" className="relative min-h-screen overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
       {/* Background layers */}
       <div className="pointer-events-none absolute inset-0 bg-deep-space" />
       <div className="pointer-events-none absolute inset-0 bg-starfield" />

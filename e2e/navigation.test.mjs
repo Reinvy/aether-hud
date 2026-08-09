@@ -14,7 +14,8 @@
  * Run: node e2e/navigation.test.mjs   (also wired into `npm run test:e2e`)
  */
 
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, readdirSync } from "fs";
+import { join } from "path";
 
 // aether-hud.vercel.app is TAKEN by another project — the real production
 // domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
@@ -237,6 +238,52 @@ async function main() {
     } catch (e) {
       assert(false, `${route} is checkable: ${e.message}`);
     }
+  }
+
+  // ===== TEST 6: Source-Level Nav Integrity =====
+  // The header/sidebar nav is rendered from constants (src/lib/constants.ts).
+  // Every nav href must resolve: plain paths to a real app route, anchors to a
+  // real section id. A missing anchor (e.g. /#hero with no id="hero" in the
+  // hero section) silently breaks the nav — the link renders but scrolls
+  // nowhere. Live HTTP checks cannot catch this (sections are lazy-loaded
+  // client components), so assert against the source directly.
+  log("TEST 6: Source-Level Nav Integrity (nav hrefs resolve)");
+  try {
+    const constantsSrc = readFileSync("src/lib/constants.ts", "utf-8");
+    const sectionsDir = "src/components/sections";
+    const sectionFiles = readdirSync(sectionsDir).filter((f) => f.endsWith(".tsx"));
+    const sectionsHtml = sectionFiles
+      .map((f) => readFileSync(join(sectionsDir, f), "utf-8"))
+      .join("\n");
+
+    const navBlocks = [
+      ...constantsSrc.matchAll(/export const (?:NAV_ITEMS|DASHBOARD_NAV) = \[([\s\S]*?)\] as const;/g),
+    ];
+    const navHrefs = [];
+    for (const [, block] of navBlocks) {
+      for (const m of block.matchAll(/href:\s*"([^"]+)"/g)) {
+        navHrefs.push(m[1]);
+      }
+    }
+    assert(navHrefs.length > 0, `Extracted nav hrefs from constants (found ${navHrefs.length})`);
+
+    for (const href of [...new Set(navHrefs)]) {
+      const anchorMatch = href.match(/^\/?#(.+)$/);
+      if (anchorMatch) {
+        const anchorId = anchorMatch[1];
+        assert(
+          new RegExp(`id=["']${anchorId}["']`).test(sectionsHtml),
+          `Nav anchor ${href} has matching section id="${anchorId}"`
+        );
+      } else {
+        // Plain path — strip leading/trailing slashes, resolve to src/app
+        const rel = href.replace(/^\/+/, "").replace(/\/+$/, "");
+        const pagePath = join("src/app", rel, "page.tsx");
+        assert(existsSync(pagePath), `Nav path ${href} has page component (${rel}/page.tsx)`);
+      }
+    }
+  } catch (e) {
+    assert(false, `Nav integrity is checkable: ${e.message}`);
   }
 
   // ===== Summary =====
