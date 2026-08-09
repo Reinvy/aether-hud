@@ -24,6 +24,7 @@ import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
+import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 
@@ -151,11 +152,7 @@ export default function DashboardContact() {
   }
 
   if (socialsLoading || configLoading) {
-    return (
-      <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
-        <HudLoader label="LOADING CONTROLS" size="lg" />
-      </div>
-    );
+    return <DashboardListSkeleton rows={4} />;
   }
 
   const socialList = socials ?? [];

@@ -141,9 +141,11 @@ export function HudHeader() {
               </span>
             </div>
 
-            {/* Mobile toggle */}
+            {/* Mobile toggle — md size gives a 40px touch target (the
+                dashboard hamburger already uses size="md"; the header
+                previously used sm, an inconsistent ~28px hit area). */}
             <IconButton
-              size="sm"
+              size="md"
               label={mobileOpen ? "Close menu" : "Open menu"}
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden"
@@ -172,7 +174,7 @@ export function HudHeader() {
                     key={item.sysId}
                     href={item.href}
                     className={cn(
-                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all",
+                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale",
                       isActive
                         ? "bg-[rgba(242,201,76,0.08)] text-gold-400 border-l-2 border-gold-400"
                         : "text-text-muted hover:bg-glass-200 hover:text-gold-400"
