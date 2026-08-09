@@ -17,8 +17,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { RowActions } from "@/components/ui/row-actions";
@@ -39,6 +40,23 @@ const SocialFormModal = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <HudLoader label="LOADING LINK MODULE" size="lg" />
+      </div>
+    ),
+  }
+);
+
+// Deferred purge dialog — the confirm-dialog chunk is only fetched when
+// the operator clicks a delete action, keeping it out of the initial
+// controls bundle (mirrors the form-modal split above).
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
       </div>
     ),
   }
@@ -152,6 +170,9 @@ export default function DashboardContact() {
         titleHighlight="Contact Configuration"
       />
 
+      {/* Social + Config panels — widget-level error boundary keeps a
+          failing panel from blanking the whole view. */}
+      <ErrorBoundary section="contact-panels" fallback={<WidgetError label="CONTACT CONFIG" />}>
       <div className="grid gap-8 lg:grid-cols-2">
         {/* === SOCIAL LINKS === */}
         <motion.div {...fadeInUp}>
@@ -287,6 +308,7 @@ export default function DashboardContact() {
           </Card>
         </motion.div>
       </div>
+      </ErrorBoundary>
 
       {/* Social Link Modal — lazy-loaded chunk (own bundle) */}
       <SocialFormModal
@@ -299,23 +321,25 @@ export default function DashboardContact() {
         }}
       />
 
-      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="PURGE SOCIAL LINK"
-        sysId={`DASH//SOC // ${deleteTarget?.id ?? "N/A"}`}
-        message={
-          <>
-            Target: <span className="text-gold-400">{deleteTarget?.platform ?? "—"}</span>
-            <br />
-            This social link will be permanently removed from the network config.
-          </>
-        }
-        confirmLabel="PURGE"
-        onConfirm={handleDeleteSocial}
-        saving={deleting}
-      />
+      {/* Purge confirmation — deferred chunk, mounted only on delete */}
+      {deleteTarget && (
+        <ConfirmDialog
+          open
+          onClose={() => setDeleteTarget(null)}
+          title="PURGE SOCIAL LINK"
+          sysId={`DASH//SOC // ${deleteTarget.id}`}
+          message={
+            <>
+              Target: <span className="text-gold-400">{deleteTarget.platform}</span>
+              <br />
+              This social link will be permanently removed from the network config.
+            </>
+          }
+          confirmLabel="PURGE"
+          onConfirm={handleDeleteSocial}
+          saving={deleting}
+        />
+      )}
     </div>
   );
 }

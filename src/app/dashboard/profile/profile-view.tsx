@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusDot } from "@/components/ui/status-dot";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -109,6 +111,9 @@ export default function DashboardProfile() {
         }
       />
 
+      {/* Profile panels — widget-level error boundary keeps a failing
+          panel from blanking the whole view. */}
+      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="PROFILE CONFIG" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Personal Info */}
         <motion.div {...fadeInUp}>
@@ -247,6 +252,7 @@ export default function DashboardProfile() {
           </Card>
         </motion.div>
       </div>
+      </ErrorBoundary>
 
       {/* Deploy Button */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>

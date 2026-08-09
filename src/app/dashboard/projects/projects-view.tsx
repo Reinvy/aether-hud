@@ -13,8 +13,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { ListTableHeader } from "@/components/ui/list-table-header";
@@ -38,6 +39,24 @@ const ProjectFormModal = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
         <HudLoader label="LOADING DOSSIER MODULE" size="md" />
+      </div>
+    ),
+  }
+);
+
+// The purge confirmation dialog is only needed once the operator clicks a
+// delete action, so it is deferred: unlike the always-mounted form modal,
+// this chunk is fetched on the first PURGE click and unmounted on close —
+// the delete flow never ships in the view's initial bundle.
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
       </div>
     ),
   }
@@ -101,16 +120,20 @@ export default function DashboardProjects() {
         }
       />
 
-      {/* Search */}
-      <motion.div className="mb-6 max-w-md" {...fadeInUp}>
-        <Input
-          prefix={<Search className="h-4 w-4" />}
-          placeholder="Search project archives..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Search project archives"
-        />
-      </motion.div>
+      {/* Search + Archive — widget-level error boundary keeps a failing
+          list from blanking the whole dashboard view (shell boundary is
+          the last line of defense). */}
+      <ErrorBoundary section="projects-list" fallback={<WidgetError label="PROJECT ARCHIVE" />}>
+        {/* Search */}
+        <motion.div className="mb-6 max-w-md" {...fadeInUp}>
+          <Input
+            prefix={<Search className="h-4 w-4" />}
+            placeholder="Search project archives..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search project archives"
+          />
+        </motion.div>
 
       {/* Projects Table/Card List */}
       <motion.div className="space-y-3" {...fadeInUp}>
@@ -201,6 +224,7 @@ export default function DashboardProjects() {
           })
         )}
       </motion.div>
+      </ErrorBoundary>
 
       {/* Edit / New Modal — lazy-loaded chunk */}
       <ProjectFormModal
@@ -213,23 +237,25 @@ export default function DashboardProjects() {
         }}
       />
 
-      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="PURGE DOSSIER"
-        sysId={`DASH//PRJ // ${deleteTarget?.id ?? "N/A"}`}
-        message={
-          <>
-            Target: <span className="text-gold-400">{deleteTarget?.title ?? "—"}</span>
-            <br />
-            This project dossier will be permanently removed from the archive.
-          </>
-        }
-        confirmLabel="PURGE"
-        onConfirm={handleDelete}
-        saving={deleting}
-      />
+      {/* Purge confirmation — deferred chunk, mounted only on delete */}
+      {deleteTarget && (
+        <ConfirmDialog
+          open
+          onClose={() => setDeleteTarget(null)}
+          title="PURGE DOSSIER"
+          sysId={`DASH//PRJ // ${deleteTarget.id}`}
+          message={
+            <>
+              Target: <span className="text-gold-400">{deleteTarget.title}</span>
+              <br />
+              This project dossier will be permanently removed from the archive.
+            </>
+          }
+          confirmLabel="PURGE"
+          onConfirm={handleDelete}
+          saving={deleting}
+        />
+      )}
     </div>
   );
 }

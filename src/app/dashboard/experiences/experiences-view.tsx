@@ -13,8 +13,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { IconBox } from "@/components/ui/icon-box";
 import { ListTableHeader } from "@/components/ui/list-table-header";
 import { RowActions } from "@/components/ui/row-actions";
@@ -67,6 +68,23 @@ const ExperienceFormModal = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
         <HudLoader label="LOADING EXPERIENCE MODULE" size="md" />
+      </div>
+    ),
+  }
+);
+
+// Deferred purge dialog — the confirm-dialog chunk is only fetched when
+// the operator clicks a delete action, keeping it out of the initial
+// log bundle (mirrors the form-modal split above).
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
       </div>
     ),
   }
@@ -125,7 +143,9 @@ export default function DashboardExperiences() {
         }
       />
 
-      {/* Experience List */}
+      {/* Experience List — widget-level error boundary keeps a failing
+          log from blanking the whole dashboard view. */}
+      <ErrorBoundary section="experiences-list" fallback={<WidgetError label="EXPERIENCE LOG" />}>
       <motion.div className="space-y-3" {...fadeInUp}>
         <ListTableHeader
           columns={[
@@ -197,6 +217,7 @@ export default function DashboardExperiences() {
           })
         )}
       </motion.div>
+      </ErrorBoundary>
 
       {/* New / Edit Modal — lazy-loaded chunk */}
       <ExperienceFormModal
@@ -209,24 +230,26 @@ export default function DashboardExperiences() {
         }}
       />
 
-      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="PURGE EXPERIENCE RECORD"
-        sysId={`DASH//EXP // ${deleteTarget?.id ?? "N/A"}`}
-        message={
-          <>
-            Target: <span className="text-gold-400">{deleteTarget?.role ?? "—"}</span> @{" "}
-            {deleteTarget?.company ?? "—"}
-            <br />
-            This experience log entry will be permanently removed.
-          </>
-        }
-        confirmLabel="PURGE"
-        onConfirm={handleDelete}
-        saving={deleting}
-      />
+      {/* Purge confirmation — deferred chunk, mounted only on delete */}
+      {deleteTarget && (
+        <ConfirmDialog
+          open
+          onClose={() => setDeleteTarget(null)}
+          title="PURGE EXPERIENCE RECORD"
+          sysId={`DASH//EXP // ${deleteTarget.id}`}
+          message={
+            <>
+              Target: <span className="text-gold-400">{deleteTarget.role}</span> @{" "}
+              {deleteTarget.company}
+              <br />
+              This experience log entry will be permanently removed.
+            </>
+          }
+          confirmLabel="PURGE"
+          onConfirm={handleDelete}
+          saving={deleting}
+        />
+      )}
     </div>
   );
 }

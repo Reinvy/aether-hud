@@ -1,12 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, ChevronRight, Activity } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
+import { HeroStatusBadge } from "@/components/features/hero/hero-status-badge";
+import { HeroCtaRow } from "@/components/features/hero/hero-cta-row";
+import { HeroTerminalPanel } from "@/components/features/hero/hero-terminal-panel";
 
 type Config = {
   id: string;
@@ -20,6 +18,16 @@ type Config = {
   sysVersion: string;
 };
 
+/**
+ * HeroSection — landing hero orchestrator.
+ *
+ * Composes the reusable hero sub-components (status badge, CTA row,
+ * terminal panel) around the title block. Every sub-component lives in
+ * src/components/features/hero/ and follows the AETHER-HUD design
+ * system (chamfered panels, gold gradient CTAs, sys-label typography).
+ * All copy comes from /api/config with a static fallback so the hero
+ * never blanks while the config endpoint resolves.
+ */
 export function HeroSection() {
   const { data: config } = useData<Config>("/api/config");
 
@@ -53,23 +61,8 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Status Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            className="flex justify-center"
-          >
-            <div className="inline-flex items-center gap-2 rounded-none border border-border-glass bg-[rgba(242,201,76,0.06)] px-4 py-1.5 tactical-btn">
-              <span className="led-active" />
-              <span className="sys-label-active text-[10px]">
-                STATUS: {cfg.status} // SYS_READY
-              </span>
-              <span className="sys-label text-[10px]">
-                {cfg.sysVersion}
-              </span>
-            </div>
-          </motion.div>
+          {/* Status Badge — reusable HUD status pill */}
+          <HeroStatusBadge status={cfg.status} sysVersion={cfg.sysVersion} />
 
           {/* Main Title */}
           <h1 className="mt-8 text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
@@ -95,98 +88,12 @@ export function HeroSection() {
             <span className="text-gold-400"> full-stack engineering</span>.
           </motion.p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.4 }}
-          >
-            <Link href="#projects">
-              <Button size="lg" variant="primary" glow="gold" className="gap-2 crosshair-ring">
-                <Sparkles className="h-5 w-5" />
-                VIEW PROJECTS
-              </Button>
-            </Link>
-            <Link href="#contact">
-              <Button variant="secondary" size="lg" className="gap-2">
-                CONTACT NODE
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Call to action subtext */}
-          <motion.div
-            className="mt-8 flex items-center justify-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <Activity className="h-3 w-3 text-gold-400/50" />
-            <span className="sys-label">
-              SCROLL TO EXPLORE // {new Date().getFullYear()} ARCHIVE
-            </span>
-            <ArrowRight className="h-3 w-3 text-gold-400/50 animate-float-drift" />
-          </motion.div>
+          {/* CTA Buttons — reusable primary/secondary cluster */}
+          <HeroCtaRow />
         </motion.div>
 
-        {/* Hero Terminal Panel */}
-        <motion.div
-          className="relative mx-auto mt-16 max-w-4xl"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-        >
-          <div className="glass-panel chamfered overflow-hidden corner-brackets transition-all duration-300 hover:border-border-glass hover:shadow-[0_0_30px_rgba(242,201,76,0.08)]">
-            {/* Terminal-style header */}
-            <div className="flex items-center gap-2 border-b border-border-subtle px-4 py-3">
-              <div className="flex gap-1.5">
-                <StatusDot tone="danger" label="Terminal closed" className="h-3 w-3" />
-                <StatusDot tone="warning" label="Terminal minimized" className="h-3 w-3" />
-                <StatusDot tone="active" label="Terminal open" className="h-3 w-3" />
-              </div>
-              <div className="ml-4 flex gap-1 sys-label">
-                <span className="chamfered-xs bg-[rgba(242,201,76,0.1)] px-2 py-0.5 text-gold-400">
-                  aether
-                </span>
-                <span className="text-text-muted/30">/</span>
-                <span className="text-text-muted/50">$(whoami)</span>
-              </div>
-              <span className="ml-auto sys-label text-text-muted/20">NODE//01 // ACTIVE</span>
-            </div>
-
-            {/* Terminal content */}
-            <div className="p-6 sm:p-10">
-              <div className="space-y-3 font-mono text-sm">
-                <p className="text-text-muted">
-                  <span className="text-gold-400">[AETHER@HUD]</span>
-                  <span className="text-text-muted/30">:~$</span> cat /etc/profile
-                </p>
-                <p className="text-text-main/80">
-                  {">"} Full-Stack Developer specializing in AI-driven applications
-                </p>
-                <p className="text-text-main/80">
-                  {">"} Core Stack: Next.js · TypeScript · Prisma · Python
-                </p>
-                <p className="text-text-main/80">
-                  {">"} Design Philosophy: AAA Game HUD Aesthetics · Luxury Cybernetics
-                </p>
-                <p className="text-gold-400/70">
-                  {">"} <span className="animate-energy-pulse">_</span> Ready for deployment
-                </p>
-              </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Badge variant="gold" size="sm">Next.js</Badge>
-                <Badge variant="gold" size="sm">TypeScript</Badge>
-                <Badge variant="stellar" size="sm">AI</Badge>
-                <Badge variant="gold" size="sm">Prisma</Badge>
-                <Badge variant="default" size="sm">Tailwind v4</Badge>
-                <Badge variant="default" size="sm">Framer Motion</Badge>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Terminal Panel — reusable system readout */}
+        <HeroTerminalPanel />
       </div>
     </section>
   );

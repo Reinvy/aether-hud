@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
@@ -14,9 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { IconBox } from "@/components/ui/icon-box";
-import { FormModal } from "@/components/ui/form-modal";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { Input } from "@/components/ui/input";
 import { StatusDot } from "@/components/ui/status-dot";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
@@ -30,6 +33,24 @@ interface Section {
   enabled: boolean;
   order: number;
 }
+
+// The edit form is a generic field-builder modal (title/subtitle inputs).
+// It only renders when the operator opens it, so the chunk is deferred —
+// fetched on the first EDIT click, never shipped in the section-control
+// bundle. A HUD loader overlay is shown during the chunk fetch.
+const FormModal = dynamic(
+  () =>
+    import("@/components/ui/form-modal").then((m) => ({
+      default: m.FormModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING SECTION MODULE" size="md" />
+      </div>
+    ),
+  }
+);
 
 
 export default function DashboardSections() {
@@ -110,6 +131,8 @@ export default function DashboardSections() {
         statusActive={sectionList.length > 0}
       />
 
+      {/* Info Banner + Sections Table — widget-level error boundary */}
+      <ErrorBoundary section="sections-table" fallback={<WidgetError label="SECTION CONTROL" />}>
       {/* Info Banner */}
       <motion.div className="mb-6" {...fadeInUp}>
         <Card variant="bordered" hover="none">
@@ -255,10 +278,12 @@ export default function DashboardSections() {
           </div>
         </Card>
       </motion.div>
+      </ErrorBoundary>
 
-      {/* Edit Section Modal */}
+      {/* Edit Section Modal — deferred chunk, mounted only on edit */}
+      {modalOpen && (
       <FormModal
-        open={modalOpen}
+        open
         onClose={closeModal}
         title="EDIT SECTION"
         sysId={`DASH//SECT // ${editingSection?.key ?? "N/A"}`}
@@ -302,6 +327,7 @@ export default function DashboardSections() {
           </div>
         )}
       </FormModal>
+      )}
     </div>
   );
 }
