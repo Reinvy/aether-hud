@@ -7,7 +7,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const { id } = await params;
     await prisma.experience.delete({ where: { id } });
     return ok({ success: true });
-  } catch (e) {
+  } catch {
     return fail("Failed to delete experience", "EXPERIENCES_DELETE");
   }
 }

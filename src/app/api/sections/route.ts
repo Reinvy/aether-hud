@@ -14,7 +14,7 @@ export async function GET() {
       orderBy: { order: "asc" },
     });
     return ok(sections, { headers: CACHE_HEADERS });
-  } catch (error) {
+  } catch {
     return fail("Failed to fetch sections", "SECTIONS_GET");
   }
 }
@@ -39,7 +39,7 @@ export async function PUT(request: Request) {
     });
 
     return ok(updated);
-  } catch (error) {
+  } catch {
     return fail("Failed to update section", "SECTIONS_PUT");
   }
 }
