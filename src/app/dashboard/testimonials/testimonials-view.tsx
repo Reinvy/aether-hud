@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
@@ -43,6 +44,23 @@ const TestimonialFormModal = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
         <HudLoader label="LOADING TESTIMONIAL MODULE" size="md" />
+      </div>
+    ),
+  }
+);
+
+// Deferred purge dialog — the confirm-dialog chunk is only fetched when
+// the operator clicks a delete action, keeping it out of the initial
+// archive bundle (mirrors the form-modal split above).
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
       </div>
     ),
   }
@@ -101,7 +119,9 @@ export default function DashboardTestimonials() {
         }
       />
 
-      {/* Testimonials Grid */}
+      {/* Testimonials Grid — widget-level error boundary keeps a failing
+          archive from blanking the whole dashboard view. */}
+      <ErrorBoundary section="testimonials-grid" fallback={<WidgetError label="TESTIMONIAL ARCHIVE" />}>
       <motion.div className="grid gap-4 sm:grid-cols-2" {...fadeInUp}>
         {list.length === 0 ? (
           <EmptyState
@@ -166,6 +186,7 @@ export default function DashboardTestimonials() {
           ))
         )}
       </motion.div>
+      </ErrorBoundary>
 
       {/* New / Edit Modal — lazy-loaded chunk */}
       <TestimonialFormModal
@@ -178,23 +199,25 @@ export default function DashboardTestimonials() {
         }}
       />
 
-      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="PURGE TESTIMONIAL"
-        sysId={`DASH//TST // ${deleteTarget?.id ?? "N/A"}`}
-        message={
-          <>
-            Target: <span className="text-gold-400">{deleteTarget?.name ?? "—"}</span>
-            <br />
-            This testimonial record will be permanently removed from the archive.
-          </>
-        }
-        confirmLabel="PURGE"
-        onConfirm={handleDelete}
-        saving={deleting}
-      />
+      {/* Purge confirmation — deferred chunk, mounted only on delete */}
+      {deleteTarget && (
+        <ConfirmDialog
+          open
+          onClose={() => setDeleteTarget(null)}
+          title="PURGE TESTIMONIAL"
+          sysId={`DASH//TST // ${deleteTarget.id}`}
+          message={
+            <>
+              Target: <span className="text-gold-400">{deleteTarget.name}</span>
+              <br />
+              This testimonial record will be permanently removed from the archive.
+            </>
+          }
+          confirmLabel="PURGE"
+          onConfirm={handleDelete}
+          saving={deleting}
+        />
+      )}
     </div>
   );
 }

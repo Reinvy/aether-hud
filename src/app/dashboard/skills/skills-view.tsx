@@ -21,7 +21,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { WidgetError } from "@/components/ui/widget-error";
 import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
 import { SegmentBar } from "@/components/ui/segment-bar";
@@ -58,6 +59,23 @@ const SkillFormModal = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
         <HudLoader label="LOADING SKILL MODULE" size="md" />
+      </div>
+    ),
+  }
+);
+
+// Deferred purge dialog — the confirm-dialog chunk is only fetched when
+// the operator clicks a delete action, keeping it out of the initial
+// matrix bundle (mirrors the form-modal split above).
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
       </div>
     ),
   }
@@ -121,8 +139,10 @@ export default function DashboardSkills() {
         }
       />
 
-      {/* Category Filters */}
-      <motion.div className="mb-6" {...fadeInUp}>
+      {/* Category Filters + Skills Grid — widget-level error boundary */}
+      <ErrorBoundary section="skills-grid" fallback={<WidgetError label="SKILL MATRIX" />}>
+        {/* Category Filters */}
+        <motion.div className="mb-6" {...fadeInUp}>
         <CategoryFilter
           categories={categories}
           active={activeCategory}
@@ -182,6 +202,7 @@ export default function DashboardSkills() {
           );
         })}
       </motion.div>
+      </ErrorBoundary>
 
       {/* Add / Edit Skill Modal — lazy-loaded chunk */}
       <SkillFormModal
@@ -194,23 +215,25 @@ export default function DashboardSkills() {
         }}
       />
 
-      {/* Purge confirmation — HUD danger modal replaces native confirm() */}
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title="PURGE SKILL MODULE"
-        sysId={`DASH//SKL // ${deleteTarget?.id ?? "N/A"}`}
-        message={
-          <>
-            Target: <span className="text-gold-400">{deleteTarget?.name ?? "—"}</span>
-            <br />
-            This proficiency module and its segment data will be permanently removed.
-          </>
-        }
-        confirmLabel="PURGE"
-        onConfirm={handleDelete}
-        saving={deleting}
-      />
+      {/* Purge confirmation — deferred chunk, mounted only on delete */}
+      {deleteTarget && (
+        <ConfirmDialog
+          open
+          onClose={() => setDeleteTarget(null)}
+          title="PURGE SKILL MODULE"
+          sysId={`DASH//SKL // ${deleteTarget.id}`}
+          message={
+            <>
+              Target: <span className="text-gold-400">{deleteTarget.name}</span>
+              <br />
+              This proficiency module and its segment data will be permanently removed.
+            </>
+          }
+          confirmLabel="PURGE"
+          onConfirm={handleDelete}
+          saving={deleting}
+        />
+      )}
     </div>
   );
 }
