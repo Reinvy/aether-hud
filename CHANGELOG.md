@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-09] — C3 Dynamic Content Update
+
+### Portfolio Content
+- **`src/data/portfolio.ts`** — **+2 projects** (total 20):
+  - `AETHER Orbit` (proj-19, CLASS-S) — satellite constellation mission-control platform: real-time telemetry streaming, orbital path visualization, automated anomaly detection, ground-station scheduling.
+  - `AETHER Halo` (proj-20, CLASS-A) — zero-trust edge identity mesh: mTLS service-to-service auth, WebAuthn passkeys, device posture checks, adaptive access policies.
+- **Skills** — **+2 new** (total 20): `Rust / Systems Programming` (74), `MLOps / Model Serving` (81); all 18 existing skill levels incremented (+1).
+- **Socials** — **+2 new** (total 19): Bluesky (`@reinvy.dev`), Hashnode.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — `GET /api/portfolio?section=skills&sort=level|name` — skills section now supports sorting by level (descending) or name (alphabetical).
+
+### Verified
+- Design system compliance re-checked: sections render via AETHER-HUD (glass-panel chamfered, sys-label, bg-deep-space + starfield + grid-hud, gold #F2C94C); no `rounded-*` regressions.
+- `npm run build` passes (31 routes, 0 errors).
+
+---
+
 ## [2026-08-08] — C4 E2E Navigation & UI Integration Testing
 
 ### E2E Coverage Expansion (111 → 142 checks)

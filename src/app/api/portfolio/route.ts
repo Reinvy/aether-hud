@@ -129,6 +129,12 @@ export async function GET(request: Request) {
           sort,
           limit: limit && !Number.isNaN(limit) ? limit : undefined,
         });
+      } else if (key === "skills" && sort) {
+        const skills = data as typeof portfolioData.skills;
+        data =
+          sort === "level"
+            ? [...skills].sort((a, b) => b.level - a.level)
+            : [...skills].sort((a, b) => a.name.localeCompare(b.name));
       }
 
       return NextResponse.json({ [key]: data }, { headers: CACHE_HEADERS });
