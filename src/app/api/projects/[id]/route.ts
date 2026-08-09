@@ -7,7 +7,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const { id } = await params;
     await prisma.project.delete({ where: { id } });
     return ok({ success: true });
-  } catch (e) {
+  } catch {
     return fail("Failed to delete project", "PROJECTS_DELETE");
   }
 }

@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const items = await prisma.experience.findMany({ orderBy: { order: "asc" } });
     return ok(items);
-  } catch (e) {
+  } catch {
     return fail("Failed to fetch experiences", "EXPERIENCES_GET");
   }
 }
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const item = await prisma.experience.create({ data: body });
     return ok(item, { status: 201 });
-  } catch (e) {
+  } catch {
     return fail("Failed to create experience", "EXPERIENCES_POST");
   }
 }
@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest) {
     const { id, ...data } = body;
     const item = await prisma.experience.update({ where: { id }, data });
     return ok(item);
-  } catch (e) {
+  } catch {
     return fail("Failed to update experience", "EXPERIENCES_PUT");
   }
 }

@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const projects = await prisma.project.findMany({ orderBy: { order: "asc" } });
     return ok(projects);
-  } catch (e) {
+  } catch {
     return fail("Failed to fetch projects", "PROJECTS_GET");
   }
 }
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       data: { ...body, tags: typeof body.tags === "string" ? body.tags : JSON.stringify(body.tags || []) },
     });
     return ok(project, { status: 201 });
-  } catch (e) {
+  } catch {
     return fail("Failed to create project", "PROJECTS_POST");
   }
 }
@@ -32,7 +32,7 @@ export async function PUT(req: NextRequest) {
       data: { ...data, tags: typeof data.tags === "string" ? data.tags : JSON.stringify(data.tags || []) },
     });
     return ok(project);
-  } catch (e) {
+  } catch {
     return fail("Failed to update project", "PROJECTS_PUT");
   }
 }

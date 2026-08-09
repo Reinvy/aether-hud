@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-09] — C5 Performance & Code Maintenance
+
+### Lint gate (dead code — 22 errors → 0)
+- **11 API route files** — converted unused catch-clause bindings to optional catch binding (`catch (e) {` → `catch {`): `experiences`, `projects`, `sections`, `skills`, `socials`, `testimonials` (list + `[id]` variants). The error variable was never referenced in those catch blocks — `fail()` already returns a structured JSON error — so the binding was pure dead weight. Routes that DO consume the error (`auth`, `config`, `dashboard/stats`, `portfolio` log it via `console.error("[PREFIX]", e)`) keep `catch (e)`.
+- `npx eslint src/` — 22 errors → **0 errors, 0 warnings**.
+
+### Dependencies
+- **`pg`** 8.22.0 → **8.23.0** (same-major minor update; verified no OSV exposure — the pg advisory GHSA-wc9v-mj63-m9g5/CVE-2017-16082 affects ≤7.1.2 only, 8.x unaffected).
+- **`npm audit` — 2 high → 0 vulnerabilities.** Added `overrides` for both, each a same-major patch fix:
+  - `nanoid` → **^3.3.18** (GHSA-2v37-7h3g-55p8 — custom generators loop when size is zero; via `@tailwindcss/postcss` → `postcss`).
+  - `js-yaml` → **^4.3.1** (GHSA-5p4m-2wfm-xmqj / CVE-2026-59870 — quadratic CPU in `!!omap` resolution; via `eslint` → `@eslint/eslintrc`. 4.3.1 now exists with the fix backported).
+- Deliberately skipped (major versions — need dedicated upgrade PRs): `eslint` 9→10, `typescript` 5→7, `framer-motion` 12→13, `@types/node` 20→26.
+
+### Audit (verified, no change needed)
+- **Dead code** — 0 unreferenced source files (every `src/components/**` has ≥1 importer).
+- **Security** — `.env` untracked & gitignored; only `.env.example` tracked with placeholders; no `vcp_`/`ghp_`/connection-string/token patterns in `src/` or `prisma/` (matches in `portfolio.ts` are skill IDs, documented false positive).
+- **Design system** — no `rounded-xl`/`rounded-lg`/`rounded-2xl`/`rounded-md` regressions (chamfered corners enforced); no hardcoded hex outside sanctioned tokens (#F2C94C gold, #030407 deep-space, #38EF7D stellar green, #E0E6ED titanium); all data sourced from `src/data/portfolio.ts`.
+- **Error handling** — 16/16 API routes use try/catch with structured JSON error responses via `fail()` helper.
+
+### Verified
+- `npm run build` — passes (31 routes, 0 errors, 0 warnings).
+- `npx eslint src/` — 0 errors, 0 warnings.
+
+---
+
 ## [2026-08-09] — C3 Dynamic Content Update
 
 ### Portfolio Content
