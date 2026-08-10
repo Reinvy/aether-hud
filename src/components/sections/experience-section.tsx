@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { HudLoader } from "@/components/ui/hud-loader";
+import { ExperienceTimelineSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -58,8 +58,8 @@ export function ExperienceSection() {
           <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-gold-400/40 via-gold-400/20 to-transparent" />
 
           {loading && (
-            <div className="flex justify-center py-12">
-              <HudLoader label="LOADING TIMELINE" size="md" />
+            <div className="pt-2">
+              <ExperienceTimelineSkeleton rows={3} />
             </div>
           )}
 
