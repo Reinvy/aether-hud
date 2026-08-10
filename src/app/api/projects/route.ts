@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ok, fail } from "@/lib/api-helpers";
+import { ok, fail, serializeTags } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const project = await prisma.project.create({
-      data: { ...body, tags: typeof body.tags === "string" ? body.tags : JSON.stringify(body.tags || []) },
+      data: { ...body, tags: serializeTags(body.tags) },
     });
     return ok(project, { status: 201 });
   } catch {
@@ -29,7 +29,7 @@ export async function PUT(req: NextRequest) {
     const { id, ...data } = body;
     const project = await prisma.project.update({
       where: { id },
-      data: { ...data, tags: typeof data.tags === "string" ? data.tags : JSON.stringify(data.tags || []) },
+      data: { ...data, tags: serializeTags(data.tags) },
     });
     return ok(project);
   } catch {

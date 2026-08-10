@@ -108,7 +108,7 @@ function summarizeSamples(samples: TelemetrySample[]): MetricSummary {
   };
 }
 
-export function telemetrySummary(): {
+function telemetrySummary(): {
   ok: boolean;
   source: "memory";
   startedAt: string;
