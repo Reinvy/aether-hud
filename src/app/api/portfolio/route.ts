@@ -102,14 +102,29 @@ export async function GET(request: Request) {
       const complexityClasses = Array.from(
         new Set(portfolioData.projects.map((p) => p.complexity))
       ).sort();
+      const projectCountByCategory = portfolioData.projects.reduce<Record<string, number>>(
+        (acc, p) => {
+          acc[p.category] = (acc[p.category] || 0) + 1;
+          return acc;
+        },
+        {}
+      );
+      const avgPerformance = Math.round(
+        portfolioData.projects.reduce(
+          (sum, p) => sum + parseInt(p.performance.replace("%", ""), 10),
+          0
+        ) / portfolioData.projects.length
+      );
       return NextResponse.json(
         {
           projectCount: portfolioData.projects.length,
           skillCount: portfolioData.skills.length,
           socialCount: portfolioData.socials.length,
           avgSkillLevel,
+          avgPerformance,
           categories,
           complexityClasses,
+          projectCountByCategory,
         },
         { headers: CACHE_HEADERS }
       );
