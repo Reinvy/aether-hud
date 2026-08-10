@@ -4,17 +4,8 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import {
-  Blocks,
-  Pencil,
-  Eye,
-  EyeOff,
-  GripVertical,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Blocks } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { IconBox } from "@/components/ui/icon-box";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { Input } from "@/components/ui/input";
@@ -23,16 +14,10 @@ import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-
-interface Section {
-  id: string;
-  key: string;
-  title: string;
-  subtitle: string | null;
-  enabled: boolean;
-  order: number;
-}
+import {
+  SectionRow,
+  type Section,
+} from "@/components/features/section-row";
 
 // The edit form is a generic field-builder modal (title/subtitle inputs).
 // It only renders when the operator opens it, so the chunk is deferred —
@@ -52,7 +37,13 @@ const FormModal = dynamic(
   }
 );
 
-
+/**
+ * DashboardSections — thin orchestrator for the section control page.
+ *
+ * Each table row renders through the reusable <SectionRow /> sub-component
+ * (src/components/features/section-row.tsx); this view owns data fetching,
+ * the toggle/save handlers and the deferred edit modal.
+ */
 export default function DashboardSections() {
   const { data: sections, loading, refetch } = useData<Section[]>("/api/sections");
   const [editingSection, setEditingSection] = useState<Section | null>(null);
@@ -176,92 +167,13 @@ export default function DashboardSections() {
               {/* Table Body */}
               <tbody>
                 {sectionList.map((section, i) => (
-                  <motion.tr
+                  <SectionRow
                     key={section.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    className={cn(
-                      "border-b border-border-subtle/50 transition-colors hover:bg-glass-200/40",
-                      !section.enabled && "opacity-60"
-                    )}
-                  >
-                    {/* Order */}
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <GripVertical className="h-3.5 w-3.5 text-text-muted/30" />
-                        <span className="font-mono text-[11px] text-text-muted">
-                          {String(section.order).padStart(2, "0")}
-                        </span>
-                      </div>
-                    </td>
-                    {/* Title */}
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <IconBox>
-                          <span className="font-mono text-[10px] text-gold-400">
-                            {String(section.order + 1).padStart(2, "0")}
-                          </span>
-                        </IconBox>
-                        <div>
-                          <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-                            {section.title}
-                          </p>
-                          <p className="font-mono text-[9px] tracking-wider text-text-muted/60">
-                            sec-{section.key}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    {/* Key */}
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      <Badge variant="default" size="sm">
-                        {section.key}
-                      </Badge>
-                    </td>
-                    {/* Subtitle */}
-                    <td className="px-4 py-4 hidden sm:table-cell">
-                      <span className="font-mono text-[10px] text-text-muted">
-                        {section.subtitle || "—"}
-                      </span>
-                    </td>
-                    {/* Status */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        onClick={() => handleToggle(section)}
-                        className={cn(
-                          "inline-flex items-center gap-1.5 chamfered-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale",
-                          section.enabled
-                            ? "bg-[rgba(56,239,125,0.1)] text-stellar-400 hover:bg-[rgba(56,239,125,0.15)]"
-                            : "bg-[rgba(239,68,68,0.1)] text-hud-danger hover:bg-[rgba(239,68,68,0.15)]"
-                        )}
-                      >
-                        {section.enabled ? (
-                          <>
-                            <Eye className="h-3 w-3" />
-                            ACTIVE
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="h-3 w-3" />
-                            HIDDEN
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    {/* Actions */}
-                    <td className="px-4 py-4 text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        glow="none"
-                        className="min-h-9 min-w-9 p-0 sm:p-1.5"
-                        onClick={() => openEdit(section)}
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                    </td>
-                  </motion.tr>
+                    section={section}
+                    index={i}
+                    onToggle={handleToggle}
+                    onEdit={openEdit}
+                  />
                 ))}
 
                 {sectionList.length === 0 && (

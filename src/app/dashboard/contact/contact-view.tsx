@@ -4,29 +4,21 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import {
-  User,
-  Plus,
-  Link2,
-  Mail,
-  Globe,
-  GitBranch,
-  MessageCircle,
-  MonitorPlay,
-  Palette,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
+import { User } from "lucide-react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
-import { IconBox } from "@/components/ui/icon-box";
-import { Input } from "@/components/ui/input";
-import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
+import {
+  SocialLinksCard,
+  type ApiSocial,
+} from "@/components/features/contact/social-links-card";
+import {
+  ContactConfigCard,
+  type ApiConfig,
+} from "@/components/features/contact/contact-config-card";
 
 // Lazy-loaded social link form modal — own chunk, only loads on demand.
 // Mirrors the SkillFormModal/ExperienceFormModal/TestimonialFormModal
@@ -63,31 +55,13 @@ const ConfirmDialog = dynamic(
   }
 );
 
-
-interface ApiSocial {
-  id: string;
-  platform: string;
-  url: string;
-  icon: string;
-  order: number;
-}
-
-interface ApiConfig {
-  id: string;
-  name: string;
-  tagline: string;
-  bio: string;
-  email: string;
-  location: string;
-  avatar: string;
-  status: string;
-  sysVersion: string;
-}
-
-const iconMap: Record<string, React.ElementType> = {
-  Globe, GitBranch, MessageCircle, Mail, Link2, MonitorPlay, Palette,
-};
-
+/**
+ * DashboardContact — thin orchestrator for the hero & contact control page.
+ *
+ * The two panels (social links list + contact config form) live in reusable
+ * sub-components under src/components/features/contact/; this view owns the
+ * data fetching, modal/delete state and the panel grid layout.
+ */
 export default function DashboardContact() {
   const { data: socials, loading: socialsLoading, refetch: refetchSocials } = useData<ApiSocial[]>("/api/socials");
   const { data: config, loading: configLoading, refetch: refetchConfig } = useData<ApiConfig>("/api/config");
@@ -173,136 +147,26 @@ export default function DashboardContact() {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* === SOCIAL LINKS === */}
         <motion.div {...fadeInUp}>
-          <Card variant="glass" hover="none" className="h-full">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Link2 className="h-4 w-4 text-gold-400" />
-                  <CardTitle>Social Links</CardTitle>
-                </div>
-                <Button variant="primary" size="sm" onClick={openNewSocial}>
-                  <Plus className="h-4 w-4" />
-                  ADD LINK
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {socialList.length === 0 ? (
-                <EmptyState
-                  icon={<Link2 className="h-5 w-5" />}
-                  title="NETWORK OFFLINE"
-                  message="No social links configured"
-                  className="sm:col-span-1"
-                />
-              ) : (
-                <div className="space-y-2">
-                  {socialList.map((s, i) => {
-                    const Icon = iconMap[s.icon] || Link2;
-                    return (
-                      <motion.div
-                        key={s.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.04 }}
-                        className="group relative flex items-center justify-between border border-border-subtle bg-deep-space/30 px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
-                      >
-                        {/* Diamond accent on hover — mirrors Card micro-interaction */}
-                        <span className="pointer-events-none absolute -top-px -right-px h-2.5 w-2.5 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
-                        <div className="flex items-center gap-3 min-w-0">
-                          <IconBox>
-                            <Icon className="h-4 w-4 text-gold-400/60" />
-                          </IconBox>
-                          <div>
-                            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-                              {s.platform}
-                            </p>
-                            <p className="mt-0.5 font-mono text-[9px] text-text-muted truncate max-w-[200px]">
-                              {s.url}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="sys-label text-[8px]">#{s.order}</span>
-                          <RowActions
-                            onEdit={() => openEditSocial(s)}
-                            onDelete={() => setDeleteTarget(s)}
-                          />
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <SocialLinksCard
+            socials={socialList}
+            onAdd={openNewSocial}
+            onEdit={openEditSocial}
+            onDelete={setDeleteTarget}
+          />
         </motion.div>
 
         {/* === CONTACT CONFIG === */}
         <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
-          <Card variant="glass" hover="none" className="h-full">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-gold-400" />
-                <CardTitle>Contact Config</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input
-                label="FIELD_01 // DISPLAY NAME"
-                value={config?.name ?? ""}
-                disabled
-              />
-              <Input
-                label="FIELD_02 // TAGLINE"
-                value={config?.tagline ?? ""}
-                disabled
-              />
-              <Input
-                label="FIELD_03 // EMAIL ADDRESS"
-                type="email"
-                placeholder="hello@aether-hud.dev"
-                value={editEmail}
-                onChange={(e) => {
-                  setEditEmail(e.target.value);
-                  setEditEmailDirty(true);
-                }}
-              />
-              <Input
-                label="FIELD_04 // LOCATION"
-                value={config?.location ?? ""}
-                disabled
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="sys-label mb-2 block text-text-muted">
-                    FIELD_05 // STATUS
-                  </label>
-                  <div className="input-recessed flex items-center gap-2 px-4 py-2.5">
-                    <span className="led-active" />
-                    <span className="font-mono text-xs text-stellar-400">{config?.status ?? "ONLINE"}</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="sys-label mb-2 block text-text-muted">
-                    FIELD_06 // SYS VERSION
-                  </label>
-                  <div className="input-recessed flex items-center px-4 py-2.5">
-                    <span className="font-mono text-xs text-text-muted">{config?.sysVersion ?? "v2.4.1"}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end pt-2">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handleSaveConfig}
-                  loading={savingConfig}
-                >
-                  UPDATE EMAIL
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ContactConfigCard
+            config={config}
+            email={editEmail}
+            onEmailChange={(value) => {
+              setEditEmail(value);
+              setEditEmailDirty(true);
+            }}
+            onSave={handleSaveConfig}
+            saving={savingConfig}
+          />
         </motion.div>
       </div>
       </ErrorBoundary>
