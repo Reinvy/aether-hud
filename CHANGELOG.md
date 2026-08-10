@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-10] — C5 Performance & Code Maintenance
+
+### Lint gate
+- `npx eslint src/` — **0 errors, 0 warnings** (baseline clean, no new findings).
+
+### Dead code / unused exports
+- **`src/lib/api-helpers.ts`** — removed `NO_STORE_HEADERS` (exported but never imported anywhere; live-operational routes already define their own cache headers). Added **`serializeTags()`** helper — centralizes the tags-string normalization previously hand-rolled twice in `src/app/api/projects/route.ts` (`typeof x === "string" ? x : JSON.stringify(x || [])`); accepts a JSON string, array, or `undefined` and always returns a valid Prisma string value.
+- **`src/lib/telemetry-store.ts`** — dropped the `export` keyword from `telemetrySummary()` (only consumed internally by `durableTelemetrySummary()` as the memory fallback; no external importer). Reduced public API surface.
+- Dead-file audit: **0 unreferenced source files** (every `src/components/**` + `src/lib/**` has ≥1 importer; convention files `page.tsx`/`route.ts`/`loading.tsx` exempt).
+
+### Dependencies
+- **`lucide-react`** 1.30.0 → **1.31.0** (same-major minor update — new icons/fixes; API-compatible, build verified).
+- **`npm audit` — 0 vulnerabilities** (unchanged from last cycle; `nanoid`/`js-yaml` overrides still in effect).
+- Deliberately skipped (major versions — need dedicated upgrade PRs): `eslint` 9→10, `typescript` 5→7, `framer-motion` 12→13, `@types/node` 20→26.
+
+### Audit (verified, no change needed)
+- **Security** — `.env` untracked & gitignored; only `.env.example` (placeholders) + `.cron/VERCEL_DOMAIN.env` (no secrets) tracked; no `vcp_`/`sk-`/`AKIA`/PEM/token patterns in `src/` or `.cron/`; `DASHBOARD_SECRET`/`DATABASE_URL` have no defaults (auth fails closed).
+- **Design system** — no `rounded-xl/lg/2xl/md` regressions in `src/`; hardcoded hex limited to palette (`#F2C94C`, `#030407`, `#38EF7D`, `#E0E6ED`); all data still sourced from `src/data/portfolio.ts`.
+- **Code hygiene** — no `@ts-ignore`/`@ts-expect-error`/`eslint-disable` suppressions; no namespace imports (`import * as`); no `console.log` leftovers; no `any` types; no TODO/FIXME markers.
+
+### Verified
+- `npm run build` — passes (31 routes: 7 static pages + 19 API + not-found + icon/robots/sitemap; ~20s).
+- `node e2e/run-tests.mjs` + `node e2e/navigation.test.mjs` — green (post-deploy).
+
+---
+
 ## [2026-08-10] — C3 Dynamic Content & Seed Orchestration
 
 ### Portfolio content

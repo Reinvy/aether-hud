@@ -40,7 +40,11 @@ export const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
 } as const;
 
-/** Cache-Control header for live operational data (never cached). */
-export const NO_STORE_HEADERS = {
-  "Cache-Control": "no-store",
-} as const;
+/**
+ * Serialize a tags field for Prisma string columns. Accepts a JSON string
+ * (already-serialized payload), an array, or undefined → always returns a
+ * string so the DB column never receives a non-string value.
+ */
+export function serializeTags(tags: unknown): string {
+  return typeof tags === "string" ? tags : JSON.stringify(tags ?? []);
+}
