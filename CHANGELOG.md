@@ -4,6 +4,29 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-10] — C3 Dynamic Content & Seed Orchestration
+
+### Portfolio content
+- **`src/data/portfolio.ts`** — **+2 projects** (total 22):
+  - `AETHER Prism` (proj-21, CLASS-A) — adaptive analytics platform: fragments complex queries across federated data sources with progressive enhancement, pluggable visualization presets, and real-time collaborative dashboards.
+  - `AETHER Quasar` (proj-22, CLASS-S) — quantum-inspired optimization engine for logistics and scheduling: annealer-based routing, constraint satisfaction solvers, and a visual simulation suite for complex operational planning.
+- **Skill levels** — bumped `AI Agents / LLM Ops` 88 → 89, `System Design / Architecture` 83 → 84, `MLOps / Model Serving` 81 → 82, `Rust / Systems Programming` 74 → 76 (reflecting agentic orchestration and quantum/systems work).
+- **Socials** — **+2 new** (total 21): Threads (`@reinvy.dev`), Pinterest (`@reinvydev`). Both reuse already-registered icons (`MessageCircle`, `Palette`), so no `Terminal` fallback on landing or dashboard.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — `GET /api/portfolio?section=summary` now returns two new derived metrics:
+  - `projectCountByCategory` — `{ [category]: count }` breakdown for dashboard distribution widgets.
+  - `avgPerformance` — mean of project performance scores (%). Existing fields unchanged (backward compatible).
+
+### Design system
+- Verified landing sections still carry the AETHER-HUD markers (`glass-panel`, `chamfered`, `btn-glow-sweep`, `sys-label`, `bg-deep-space`, `starfield`, `grid-hud`) — no regressions. All data remains sourced from `src/data/portfolio.ts`; nothing hardcoded. No `rounded-*` corner regressions.
+
+### Verified
+- `npm run build` — passes (route table compiles clean; portfolio JSON-LD ItemList auto-extends to 22 items via `src/app/page.tsx`).
+- `node e2e/run-tests.mjs` — all checks green post-deploy (ItemList count self-adjusts from data file).
+
+---
+
 ## [2026-08-09] — C5 Performance & Code Maintenance
 
 ### Lint gate (dead code — 22 errors → 0)
