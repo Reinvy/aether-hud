@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { MessageCircle, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { HudLoader } from "@/components/ui/hud-loader";
+import { TestimonialsGridSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -47,8 +47,8 @@ export function TestimonialsSection() {
           {...stagger}
         >
           {loading && (
-            <div className="col-span-full flex justify-center py-12">
-              <HudLoader label="LOADING REPORTS" size="md" />
+            <div className="col-span-full">
+              <TestimonialsGridSkeleton />
             </div>
           )}
 

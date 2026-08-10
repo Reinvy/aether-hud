@@ -77,7 +77,7 @@ export function DashboardSidebar() {
               href={item.href}
               onClick={close}
               className={cn(
-                "flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider transition-all duration-200 hover-scale-sm press-scale",
+                "flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider transition-all duration-200 hover-scale-sm press-scale focus-ring-gold",
                 isActive
                   ? "bg-[rgba(242,201,76,0.08)] text-gold-400 border-l-2 border-gold-400"
                   : "text-text-muted hover:bg-glass-200 hover:text-gold-400 border-l-2 border-transparent"
@@ -96,7 +96,7 @@ export function DashboardSidebar() {
         <Link
           href="/"
           onClick={close}
-          className="flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-colors hover:bg-glass-200 hover:text-gold-400"
+          className="flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-colors hover:bg-glass-200 hover:text-gold-400 focus-ring-gold"
         >
           <LogOut className="h-4 w-4" />
           <span>RETURN TO PORTAL</span>

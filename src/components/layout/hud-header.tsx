@@ -106,7 +106,7 @@ export function HudHeader() {
                   key={item.sysId}
                   href={item.href}
                   className={cn(
-                    "group relative px-4 py-2 text-xs font-mono tracking-widest transition-all duration-300",
+                    "group relative px-4 py-2 text-xs font-mono tracking-widest transition-all duration-300 focus-ring-gold",
                     isActive
                       ? "text-gold-400"
                       : "text-text-muted hover:text-gold-400"
@@ -174,7 +174,7 @@ export function HudHeader() {
                     key={item.sysId}
                     href={item.href}
                     className={cn(
-                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale",
+                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale focus-ring-gold",
                       isActive
                         ? "bg-[rgba(242,201,76,0.08)] text-gold-400 border-l-2 border-gold-400"
                         : "text-text-muted hover:bg-glass-200 hover:text-gold-400"

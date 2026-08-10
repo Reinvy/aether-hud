@@ -162,7 +162,7 @@ export function ContactSection() {
                           href={social.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group/channel flex items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200"
+                          className="group/channel flex items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 focus-ring-gold"
                         >
                           <Icon className="h-4 w-4 text-gold-400/60 transition-transform duration-300 group-hover/channel:scale-110 group-hover/channel:text-gold-400" />
                           <span className="flex-1">{social.platform}</span>
@@ -184,7 +184,7 @@ export function ContactSection() {
                   </div>
                   <a
                     href="mailto:hello@aether-hud.dev"
-                    className="group/channel flex items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200"
+                    className="group/channel flex items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 focus-ring-gold"
                   >
                     <Mail className="h-4 w-4 text-gold-400/60 transition-transform duration-300 group-hover/channel:scale-110 group-hover/channel:text-gold-400" />
                     <span className="font-mono text-[11px]">

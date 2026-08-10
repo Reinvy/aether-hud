@@ -6,7 +6,7 @@ import { Cpu, Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
-import { HudLoader } from "@/components/ui/hud-loader";
+import { SkillsArraySkeleton } from "@/components/ui/section-skeleton";
 
 type Skill = {
   id: string;
@@ -59,9 +59,7 @@ export function SkillsSection() {
             </div>
 
             {loading && (
-              <div className="flex justify-center py-8">
-                <HudLoader label="LOADING SKILLS" size="sm" />
-              </div>
+              <SkillsArraySkeleton rows={6} />
             )}
 
             <div className="grid gap-6 sm:grid-cols-2">

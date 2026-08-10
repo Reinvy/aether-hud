@@ -1,4 +1,5 @@
 import { CardSkeleton, SectionHeaderSkeleton } from "./skeleton";
+import { cn } from "@/lib/utils";
 
 /**
  * SectionSkeleton — reusable HUD loading placeholder for lazy-loaded
@@ -8,6 +9,13 @@ import { CardSkeleton, SectionHeaderSkeleton } from "./skeleton";
  * home-content.tsx's next/dynamic() loading callbacks. Every section gets
  * a consistent, chamfered HUD loading state (Obsidian & Imperial Gold) —
  * no rounded corners, no flat shadows, segment-bar for skill progress.
+ *
+ * The *Body* components below (SkillsArraySkeleton, ExperienceTimelineSkeleton,
+ * ProjectsGridSkeleton, TestimonialsGridSkeleton) are the same markup the
+ * full-section variants render, exported separately so each section can use
+ * them for its own /api/* data-loading state too — no more centered
+ * HudLoader spinner during data fetch, the layout stays stable while the
+ * content streams in.
  */
 
 type SectionSkeletonVariant =
@@ -17,6 +25,70 @@ type SectionSkeletonVariant =
   | "experience"
   | "testimonials"
   | "contact";
+
+/* ─── Reusable body skeletons (section data-loading states) ─── */
+
+/** Skill-matrix body: label rows + segment-bar placeholders. */
+export function SkillsArraySkeleton({ rows = 6, className }: { rows?: number; className?: string }) {
+  return (
+    <div className={cn("space-y-6", className)}>
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="h-3 w-32 bg-glass-300 rounded-none skeleton-hud" />
+            <div className="h-3 w-16 bg-glass-300 rounded-none skeleton-hud" />
+          </div>
+          <div className="segment-bar">
+            {Array.from({ length: 10 }).map((_, j) => (
+              <div key={j} className="segment bg-glass-200 skeleton-hud" />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Experience timeline body: node diamond + content card placeholders. */
+export function ExperienceTimelineSkeleton({ rows = 3, className }: { rows?: number; className?: string }) {
+  return (
+    <div className={cn("space-y-8", className)}>
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex gap-4">
+          <div className="h-10 w-10 chamfered-sm border border-border-glass bg-glass-200 skeleton-hud shrink-0" />
+          <div className="flex-1 glass-panel chamfered p-6">
+            <div className="space-y-3">
+              <div className="h-4 w-1/3 bg-glass-300 rounded-none skeleton-hud" />
+              <div className="h-5 w-1/2 bg-glass-300 rounded-none skeleton-hud" />
+              <div className="h-3 w-full bg-glass-200 rounded-none skeleton-hud" />
+              <div className="h-3 w-5/6 bg-glass-200 rounded-none skeleton-hud" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Projects archive body: 2 dossier card placeholders. */
+export function ProjectsGridSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("grid gap-6 sm:grid-cols-2 lg:grid-cols-2", className)}>
+      <CardSkeleton />
+      <CardSkeleton />
+    </div>
+  );
+}
+
+/** Testimonials body: 2 report card placeholders. */
+export function TestimonialsGridSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("grid gap-6 sm:grid-cols-2", className)}>
+      <CardSkeleton />
+      <CardSkeleton />
+    </div>
+  );
+}
 
 export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }) {
   switch (variant) {
@@ -36,9 +108,8 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
         <section className="relative py-20 sm:py-28">
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeaderSkeleton />
-            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-              <CardSkeleton />
-              <CardSkeleton />
+            <div className="mt-14">
+              <ProjectsGridSkeleton />
             </div>
           </div>
         </section>
@@ -50,21 +121,7 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
           <div className="relative mx-auto max-w-4xl px-4">
             <SectionHeaderSkeleton />
             <div className="mt-14 glass-panel chamfered p-8">
-              <div className="space-y-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="h-3 w-32 bg-glass-300 rounded-none skeleton-hud" />
-                      <div className="h-3 w-16 bg-glass-300 rounded-none skeleton-hud" />
-                    </div>
-                    <div className="segment-bar">
-                      {Array.from({ length: 10 }).map((_, j) => (
-                        <div key={j} className="segment bg-glass-200 skeleton-hud" />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <SkillsArraySkeleton />
             </div>
           </div>
         </section>
@@ -75,20 +132,8 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
         <section className="relative py-20 sm:py-28">
           <div className="relative mx-auto max-w-5xl px-4">
             <SectionHeaderSkeleton />
-            <div className="mt-14 space-y-8">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="h-10 w-10 chamfered-sm border border-border-glass bg-glass-200 skeleton-hud shrink-0" />
-                  <div className="flex-1 glass-panel chamfered p-6">
-                    <div className="space-y-3">
-                      <div className="h-4 w-1/3 bg-glass-300 rounded-none skeleton-hud" />
-                      <div className="h-5 w-1/2 bg-glass-300 rounded-none skeleton-hud" />
-                      <div className="h-3 w-full bg-glass-200 rounded-none skeleton-hud" />
-                      <div className="h-3 w-5/6 bg-glass-200 rounded-none skeleton-hud" />
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="mt-14">
+              <ExperienceTimelineSkeleton />
             </div>
           </div>
         </section>
@@ -99,9 +144,8 @@ export function SectionSkeleton({ variant }: { variant: SectionSkeletonVariant }
         <section className="relative py-20 sm:py-28">
           <div className="relative mx-auto max-w-7xl px-4">
             <SectionHeaderSkeleton />
-            <div className="mt-14 grid gap-6 sm:grid-cols-2">
-              <CardSkeleton />
-              <CardSkeleton />
+            <div className="mt-14">
+              <TestimonialsGridSkeleton />
             </div>
           </div>
         </section>
