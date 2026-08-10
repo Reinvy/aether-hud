@@ -14,7 +14,7 @@
  * Run: node e2e/navigation.test.mjs   (also wired into `npm run test:e2e`)
  */
 
-import { readFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 
 // aether-hud.vercel.app is TAKEN by another project — the real production
@@ -281,6 +281,44 @@ async function main() {
         const pagePath = join("src/app", rel, "page.tsx");
         assert(existsSync(pagePath), `Nav path ${href} has page component (${rel}/page.tsx)`);
       }
+    }
+
+    // DB-driven nav keys: the header renders nav from /api/sections (key →
+    // /#<key>) whenever sections exist, so keys NOT in NAV_ITEMS (experience,
+    // testimonials) must still resolve to real section ids. Validate every
+    // seed key — a missing id here silently breaks the header scroll link.
+    const seedSrc = readFileSync("prisma/seed.ts", "utf-8");
+    const sectionKeys = [...seedSrc.matchAll(/key:\s*"([^"]+)"/g)].map((m) => m[1]);
+    assert(
+      sectionKeys.length > 0,
+      `Extracted DB section keys from seed (found ${sectionKeys.length})`
+    );
+    for (const key of new Set(sectionKeys)) {
+      assert(
+        new RegExp(`id=["']${key}["']`).test(sectionsHtml),
+        `DB section key "${key}" has matching section id="${key}"`
+      );
+    }
+
+    // All literal anchor hrefs across src/ (#x or /#x) must resolve to a
+    // section id — catches hero CTA buttons (#projects, #contact) and any
+    // future anchor additions the nav constants don't enumerate.
+    const srcFiles = [];
+    const walk = (dir) => {
+      for (const f of readdirSync(dir)) {
+        const p = join(dir, f);
+        if (statSync(p).isDirectory()) walk(p);
+        else if (f.endsWith(".tsx") || f.endsWith(".ts")) srcFiles.push(p);
+      }
+    };
+    walk("src");
+    const allSrc = srcFiles.map((f) => readFileSync(f, "utf-8")).join("\n");
+    const anchorIds = [...allSrc.matchAll(/href=["'](?:#|\/#)([^"'#]+)["']/g)].map((m) => m[1]);
+    for (const anchorId of new Set(anchorIds)) {
+      assert(
+        new RegExp(`id=["']${anchorId}["']`).test(sectionsHtml),
+        `Anchor #${anchorId} has matching section id="${anchorId}"`
+      );
     }
   } catch (e) {
     assert(false, `Nav integrity is checkable: ${e.message}`);
