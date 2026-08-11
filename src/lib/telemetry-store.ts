@@ -21,7 +21,7 @@
 
 import { prisma } from "@/lib/prisma";
 
-export interface TelemetrySample {
+interface TelemetrySample {
   name: string;
   value: number;
   rating: string;
@@ -84,7 +84,7 @@ export async function persistTelemetry(entry: TelemetrySample): Promise<void> {
   }
 }
 
-export interface MetricSummary {
+interface MetricSummary {
   count: number;
   min: number | null;
   max: number | null;

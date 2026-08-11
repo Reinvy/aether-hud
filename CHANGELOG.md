@@ -4,6 +4,35 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-11] — C5 Performance & Code Maintenance
+
+### Lint gate
+- `npx eslint src/` — **0 errors, 0 warnings** (baseline clean, no new findings).
+- `npx tsc --noEmit` — **0 errors** (strict mode clean).
+
+### Dead code / unused exports
+- **`src/lib/telemetry-store.ts`** — dropped the `export` keyword from two interfaces consumed only inside the module:
+  - `TelemetrySample` — the beacon payload shape; used by `recordTelemetry()`, `persistTelemetry()`, `summarizeSamples()`, `durableTelemetrySummary()` but never imported by any route/component (API routes consume the functions, not the type).
+  - `MetricSummary` — the summary shape; used by `summarizeSamples()` + the two summary functions but never imported externally. Note: the dashboard's `TelemetryMetricSummary` in `telemetry-metric-card.tsx` is a **separate** type (UI-facing) — untouched.
+  - Reduced public API surface; behavior unchanged.
+- Dead-file audit: **0 unreferenced source files** (every `src/components/**` + `src/lib/**` has ≥1 importer; convention files `page.tsx`/`route.ts`/`loading.tsx` exempt). No unused exports remain in `src/components/**` or `src/lib/**`.
+
+### Dependencies
+- `npm outdated` — only major-version jumps available; **deliberately skipped** (need dedicated upgrade PRs): `eslint` 9→10, `typescript` 5→7, `framer-motion` 12→13, `@types/node` 20→26.
+- `npm audit` — **0 vulnerabilities** (unchanged; `nanoid`/`js-yaml` overrides still in effect).
+
+### Audit (verified, no change needed)
+- **Security** — `.env` untracked & gitignored; only `.env.example` (placeholders) + `.cron/VERCEL_DOMAIN.env` (no secrets) tracked; no `vcp_`/`ghp_`/`github_pat_`/long-`sk-`/`postgres://user:pass@` patterns in `src/` or `prisma/`; `DATABASE_URL` + `DASHBOARD_SECRET` have no defaults (auth fails closed with 503 when unset).
+- **Structured error handling** — all API routes use try/catch with tagged `console.error("[PREFIX]", e)` + structured JSON error responses; `catch (e)` bindings in `auth`, `config`, `dashboard/stats`, `portfolio` routes all consume `e` (verified) — no unused bindings remain.
+- **Design system** — no `rounded-xl/lg/2xl/md` regressions in `src/`; no `animate-spin` usage (only doc comments in `hud-loader.tsx`/`globals.css`); no `HudLoader` in landing sections; hardcoded hex limited to palette tokens (`#030407`, `#38EF7D`).
+- **Code hygiene** — no `@ts-ignore`/`@ts-expect-error`/`eslint-disable` suppressions; no `console.log` leftovers; no TODO/FIXME/HACK markers.
+
+### Verified
+- `npm run build` — passes (32 routes: 8 static pages + 20 API + not-found + icon/robots/sitemap).
+- `node e2e/run-tests.mjs` + `node e2e/navigation.test.mjs` — green (post-deploy).
+
+---
+
 ## [2026-08-11] — C3 Dynamic Content Update
 
 ### Portfolio content
