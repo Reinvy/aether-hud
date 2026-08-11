@@ -324,6 +324,57 @@ async function main() {
     assert(false, `Nav integrity is checkable: ${e.message}`);
   }
 
+  // ===== TEST 7: API Response Shape Verification =====
+  // HEAD liveness checks (TEST 1) cannot detect SILENT API breakage: a route
+  // handler that throws and returns an HTML error page with HTTP 200, or a
+  // data-source refactor that empties a list, still passes a HEAD check.
+  // GET each endpoint and assert the JSON shape + non-trivial payload.
+  log("TEST 7: API Response Shape Verification (GET + JSON parse)");
+  const API_SHAPES = [
+    // [path, expectedType, requiredKeys]
+    ["/api/config", "object", ["name", "tagline", "email"]],
+    ["/api/dashboard/stats", "object", ["projectCount", "skillCount", "source"]],
+    ["/api/experiences", "array", ["id", "company", "role"]],
+    ["/api/portfolio", "object", ["name", "projects", "skills", "socials"]],
+    ["/api/projects", "array", ["id", "title"]],
+    ["/api/sections", "array", ["id", "key", "title"]],
+    ["/api/skills", "array", ["id", "name", "level"]],
+    ["/api/socials", "array", ["id", "platform", "url"]],
+    ["/api/telemetry/summary", "object", ["ok", "source"]],
+    ["/api/testimonials", "array", ["id", "name"]],
+  ];
+  for (const [path, expectedType, requiredKeys] of API_SHAPES) {
+    try {
+      const resp = await fetchRetry(`${PRODUCTION_URL}${path}`, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        timeout: 10000,
+      });
+      assert(resp.status === 200, `${path} returns HTTP 200 (got ${resp.status})`);
+      const ctype = resp.headers.get("content-type") || "";
+      assert(ctype.includes("application/json"), `${path} returns JSON content-type (got "${ctype}")`);
+      const data = await resp.json();
+      const isArray = Array.isArray(data);
+      assert(
+        (expectedType === "array" && isArray) || (expectedType === "object" && !isArray && typeof data === "object" && data !== null),
+        `${path} returns ${expectedType} (got ${isArray ? "array" : typeof data})`
+      );
+      if (isArray) {
+        assert(data.length > 0, `${path} returns non-empty array (${data.length} items)`);
+        const first = data[0] || {};
+        for (const k of requiredKeys) {
+          assert(k in first, `${path}[0] has key "${k}"`);
+        }
+      } else {
+        for (const k of requiredKeys) {
+          assert(k in data, `${path} has key "${k}"`);
+        }
+      }
+    } catch (e) {
+      assert(false, `${path} is checkable: ${e.message}`);
+    }
+  }
+
   // ===== Summary =====
   const total = passed + failed;
   console.log("\n" + "=".repeat(50));
