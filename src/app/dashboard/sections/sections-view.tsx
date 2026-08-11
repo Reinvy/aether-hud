@@ -111,7 +111,7 @@ export default function DashboardSections() {
   const sectionList = sections ?? [];
 
   return (
-    <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
+    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
         icon={Blocks}

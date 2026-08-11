@@ -77,7 +77,7 @@ export function ConfirmDialog({
     >
       <div className="space-y-4">
         <div className="flex items-start gap-3">
-          <div className="shrink-0 border border-hud-danger/30 bg-[rgba(255,0,85,0.08)] p-2.5">
+          <div className="shrink-0 chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.08)] p-2.5">
             <AlertTriangle className="h-5 w-5 text-hud-danger" />
           </div>
           <div className="min-w-0 space-y-1.5">
