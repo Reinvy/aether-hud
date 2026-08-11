@@ -7,10 +7,6 @@ import {
   User,
   Save,
   RefreshCw,
-  Globe,
-  MapPin,
-  Tag,
-  Mail,
   Code2,
   Smile,
 } from "lucide-react";
@@ -18,9 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { StatusDot } from "@/components/ui/status-dot";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
+import { ProfilePreviewCard } from "@/components/features/profile/profile-preview-card";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -201,55 +197,18 @@ export default function DashboardProfile() {
           </Card>
         </motion.div>
 
-        {/* Preview Card */}
+        {/* Preview Card — reusable live identity readout */}
         <motion.div className="lg:col-span-2" {...fadeInUp} transition={{ delay: 0.2 }}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-gold-400" />
-                <CardTitle>Profile Preview</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap items-center gap-6">
-                {/* Avatar placeholder */}
-                <div className="flex h-16 w-16 items-center justify-center chamfered border-2 border-gold-400/30 bg-deep-space">
-                  <User className="h-7 w-7 text-gold-400/50" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-display text-lg font-bold tracking-[0.08em] text-text-main">
-                    {form.name || "DISPLAY NAME"}
-                  </h3>
-                  <p className="font-mono text-xs text-gold-400/80">{form.tagline || "TAGLINE"}</p>
-                  <div className="mt-2 flex flex-wrap gap-4">
-                    {form.location && (
-                      <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted">
-                        <MapPin className="h-3 w-3" /> {form.location}
-                      </span>
-                    )}
-                    {form.email && (
-                      <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted">
-                        <Mail className="h-3 w-3" /> {form.email}
-                      </span>
-                    )}
-                    {form.sysVersion && (
-                      <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted">
-                        <Tag className="h-3 w-3" /> {form.sysVersion}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <StatusDot
-                    tone={form.status === "ONLINE" ? "active" : "warning"}
-                    pulse={form.status === "ONLINE"}
-                    label={form.status || "ONLINE"}
-                  />
-                  <span className="sys-label-active text-[9px]">{form.status || "ONLINE"}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ProfilePreviewCard
+            data={{
+              name: form.name,
+              tagline: form.tagline,
+              location: form.location,
+              email: form.email,
+              sysVersion: form.sysVersion,
+              status: form.status,
+            }}
+          />
         </motion.div>
       </div>
       </ErrorBoundary>
