@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-11] — C3 Dynamic Content Update
+
+### Portfolio content
+- **`src/data/portfolio.ts`** — **+2 projects** (total 24):
+  - `AETHER Nova` (proj-23, CLASS-A) — serverless edge inference mesh: compiles ML models to WebGPU/WASM, distributes inference across a global edge fleet with sub-50ms cold starts, and autoscales per-region on demand.
+  - `AETHER Sentinel` (proj-24, CLASS-S) — autonomous threat-hunting SOC platform: real-time intrusion detection, self-tuning ML detection models, MITRE ATT&CK mapping, and automated incident-response playbooks.
+- **Skill levels** — bumped `Docker / DevOps` 85 → 86, `WebSockets / Realtime` 91 → 92, `AI Agents / LLM Ops` 89 → 90, `Rust / Systems Programming` 76 → 78 (reflecting edge-fleet ops, real-time telemetry, and WebGPU/WASM systems work).
+- **Socials** — **+2 new** (total 23): Behance (`@reinvy`), Kick (`@reinvy`). Both reuse already-registered icons (`Palette`, `MonitorPlay`), so no `Terminal`/`Link2` fallback on landing or dashboard.
+
+### API
+- **`src/app/api/portfolio/route.ts`** — `GET /api/portfolio?section=summary` now returns one new derived metric:
+  - `skillCountByCategory` — `{ [category]: count }` breakdown of skills, mirroring `projectCountByCategory` for the skills dashboard widget. Existing fields unchanged (backward compatible).
+
+### Design system
+- Verified landing sections still carry the AETHER-HUD markers (`glass-panel`, `chamfered`, `btn-glow-sweep`, `sys-label`, `bg-deep-space`, `starfield`, `grid-hud`) — no regressions. All data remains sourced from `src/data/portfolio.ts`; nothing hardcoded. No `rounded-*` corner regressions in `src/components/sections/`.
+
+### Verified
+- `npm run build` — passes (portfolio JSON-LD ItemList auto-extends to 24 items via `src/app/page.tsx`).
+- `node e2e/run-tests.mjs` — all checks green post-deploy (ItemList count self-adjusts from data file).
+
+---
+
 ## [2026-08-10] — C5 Performance & Code Maintenance
 
 ### Lint gate
