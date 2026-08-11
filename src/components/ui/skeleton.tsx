@@ -87,7 +87,7 @@ function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps) {
 
 export function DashboardPageSkeleton() {
   return (
-    <div className="dashboard-grid-bg min-h-full p-6 lg:p-8">
+    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -156,7 +156,7 @@ interface ListSkeletonProps {
 
 export function DashboardListSkeleton({ rows = 5, className }: ListSkeletonProps) {
   return (
-    <div className={cn("dashboard-grid-bg min-h-full p-6 lg:p-8", className)}>
+    <div className={cn("dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
       {/* Header */}
       <div className={cn("mb-6 flex items-center justify-between", pulseClass)}>
         <div>
@@ -211,7 +211,7 @@ export function DashboardListSkeleton({ rows = 5, className }: ListSkeletonProps
 
 export function DashboardFormSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("dashboard-grid-bg min-h-full p-6 lg:p-8", className)}>
+    <div className={cn("dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
       <div className={cn("mb-6", pulseClass)}>
         <div className="mb-1 flex items-center gap-2">
           <div className="h-4 w-4 bg-glass-300 rounded-none skeleton-hud" />

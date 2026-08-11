@@ -33,7 +33,7 @@ export function EmptyState({ message, title, icon, action, className }: EmptySta
         <span className="pointer-events-none absolute bottom-3 right-3 h-1.5 w-1.5 rotate-45 border border-border-glass" />
 
         {icon && (
-          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center border border-border-subtle bg-deep-space/50 text-gold-400/60">
+          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center chamfered-xs border border-border-subtle bg-deep-space/50 text-gold-400/60">
             {icon}
           </div>
         )}

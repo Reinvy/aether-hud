@@ -8,10 +8,16 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix
   prefix?: ReactNode;
   /** Icon or element rendered on the right side of the input */
   suffix?: ReactNode;
+  /**
+   * Allow pointer events on the suffix content (e.g. a clickable eye
+   * toggle). Decorative icons stay `pointer-events-none` by default so
+   * clicks pass through to the input.
+   */
+  suffixInteractive?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, id, prefix, suffix, ...props }, ref) => {
+  ({ className, label, error, id, prefix, suffix, suffixInteractive = false, ...props }, ref) => {
     return (
       <div className="w-full">
         {label && (
@@ -42,7 +48,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {suffix && (
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted">
+            <div
+              className={cn(
+                "absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted",
+                !suffixInteractive && "pointer-events-none"
+              )}
+            >
               {suffix}
             </div>
           )}

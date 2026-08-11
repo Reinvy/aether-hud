@@ -7,6 +7,7 @@ import { Activity, Shield, Eye, EyeOff, KeyRound, AlertCircle, Terminal, Chevron
 import { useAuth } from "@/lib/auth-context";
 import { StatusDot } from "@/components/ui/status-dot";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -182,31 +183,31 @@ export default function LoginPage() {
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Password field */}
-                    <div>
-                      <label className="sys-label mb-2 block text-text-muted">
-                        PASSWORD // 8-32 characters
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="Enter security credentials..."
-                          className="input-recessed w-full pr-20 font-mono text-sm tracking-widest"
-                          autoFocus
-                          disabled={loading}
-                        />
+                    {/* Password field — reusable Input with interactive
+                        eye-toggle suffix (suffixInteractive keeps the
+                        toggle clickable; pr-20 reserves room for it). */}
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      label="PASSWORD // 8-32 characters"
+                      placeholder="Enter security credentials..."
+                      className="pr-20 font-mono text-sm tracking-widest"
+                      autoFocus
+                      disabled={loading}
+                      suffixInteractive
+                      suffix={
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label={showPassword ? "Hide password" : "Show password"}
-                          className="absolute right-1.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center chamfered-xs text-text-muted transition-all duration-300 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
+                          className="flex h-9 w-9 items-center justify-center chamfered-xs text-text-muted transition-all duration-300 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
-                      </div>
-                    </div>
+                      }
+                    />
 
                     {/* Error message */}
                     <AnimatePresence>
