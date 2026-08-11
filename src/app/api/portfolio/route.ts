@@ -115,6 +115,13 @@ export async function GET(request: Request) {
           0
         ) / portfolioData.projects.length
       );
+      const skillCountByCategory = portfolioData.skills.reduce<Record<string, number>>(
+        (acc, s) => {
+          acc[s.category] = (acc[s.category] || 0) + 1;
+          return acc;
+        },
+        {}
+      );
       return NextResponse.json(
         {
           projectCount: portfolioData.projects.length,
@@ -125,6 +132,7 @@ export async function GET(request: Request) {
           categories,
           complexityClasses,
           projectCountByCategory,
+          skillCountByCategory,
         },
         { headers: CACHE_HEADERS }
       );
