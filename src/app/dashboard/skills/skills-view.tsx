@@ -7,44 +7,17 @@ import { fadeInUp } from "@/lib/motion-variants";
 import {
   Cpu,
   Plus,
-  Globe,
-  FileCode,
-  Server,
-  Database,
-  Brain,
-  Zap,
-  Container,
-  PenTool,
-  Rocket,
-  Palette,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
-import { IconBox } from "@/components/ui/icon-box";
-import { RowActions } from "@/components/ui/row-actions";
-import { SegmentBar } from "@/components/ui/segment-bar";
 import { CategoryFilter } from "@/components/features/category-filter";
 import { HudLoader } from "@/components/ui/hud-loader";
+import { SkillCard, type SkillCardData } from "@/components/features/skills/skill-card";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import type { SkillFormRecord } from "@/components/features/skill-form-modal";
-
-const iconMap: Record<string, React.ElementType> = {
-  Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
-};
-
-
-interface ApiSkill {
-  id: string;
-  name: string;
-  level: number;
-  category: string;
-  icon: string;
-}
 
 // The create/edit form module is lazy-loaded as its own chunk — it only
 // renders when the operator opens the modal, keeping the matrix list's
@@ -82,11 +55,11 @@ const ConfirmDialog = dynamic(
 );
 
 export default function DashboardSkills() {
-  const { data: skills, loading, refetch } = useData<ApiSkill[]>("/api/skills");
+  const { data: skills, loading, refetch } = useData<SkillCardData[]>("/api/skills");
   const [modalOpen, setModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [editingSkill, setEditingSkill] = useState<SkillFormRecord | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<ApiSkill | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SkillCardData | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   function openNew() {
@@ -94,7 +67,7 @@ export default function DashboardSkills() {
     setModalOpen(true);
   }
 
-  function openEdit(skill: ApiSkill) {
+  function openEdit(skill: SkillCardData) {
     setEditingSkill(skill);
     setModalOpen(true);
   }
@@ -154,53 +127,17 @@ export default function DashboardSkills() {
         />
       </motion.div>
 
-      {/* Skills Grid */}
+      {/* Skills Grid — each module is a reusable SkillCard */}
       <motion.div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" {...fadeInUp}>
-        {filtered.map((skill, i) => {
-          const Icon = iconMap[skill.icon] || Cpu;
-          return (
-            <motion.div
-              key={skill.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-            >
-              <Card variant="glass" hover="sweep" diamond className="skillbar-hover">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <IconBox size="md">
-                        <Icon className="h-5 w-5 text-gold-400/60 transition-colors duration-300 group-hover:text-gold-400" />
-                      </IconBox>
-                      <div>
-                        <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-                          {skill.name}
-                        </p>
-                        <Badge variant="default" size="sm" className="mt-1">
-                          {skill.category}
-                        </Badge>
-                      </div>
-                    </div>
-                    <span className="font-display text-xl font-bold tabular-nums text-gold-400">
-                      {skill.level}%
-                    </span>
-                  </div>
-
-                  {/* Segment bar */}
-                  <SegmentBar value={skill.level} className="mt-4" />
-
-                  {/* Actions */}
-                  <div className="mt-4 flex items-center justify-end border-t border-border-subtle pt-3">
-                    <RowActions
-                      onEdit={() => openEdit(skill)}
-                      onDelete={() => setDeleteTarget(skill)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
+        {filtered.map((skill, i) => (
+          <SkillCard
+            key={skill.id}
+            skill={skill}
+            index={i}
+            onEdit={openEdit}
+            onDelete={setDeleteTarget}
+          />
+        ))}
       </motion.div>
       </ErrorBoundary>
 
