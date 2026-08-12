@@ -4,7 +4,7 @@ import { Globe, Mail, MapPin, Tag, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusDot } from "@/components/ui/status-dot";
 
-export interface ProfilePreviewData {
+interface ProfilePreviewData {
   name: string;
   tagline: string;
   location: string;
