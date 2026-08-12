@@ -3,29 +3,17 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import {
-  Settings2,
-  Save,
-  RefreshCw,
-  Globe,
-  Monitor,
-  Code2,
-  Eye,
-  Palette,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Eye, RefreshCw, Save, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Toggle } from "@/components/ui/toggle";
-import { InfoRow } from "@/components/ui/info-row";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { SiteIdentityCard } from "@/components/features/settings/site-identity-card";
+import { ThemeAppearanceCard } from "@/components/features/settings/theme-appearance-card";
+import { SystemInfoCard } from "@/components/features/settings/system-info-card";
+import { DangerZoneCard } from "@/components/features/settings/danger-zone-card";
 
 
 interface ApiConfig {
@@ -36,12 +24,6 @@ interface ApiConfig {
   sysVersion: string;
   id: string;
 }
-
-const THEME_PRESETS = [
-  { key: "obsidian", name: "OBSIDIAN", desc: "Deep space & imperial gold", color: "bg-gold-400" },
-  { key: "night-ops", name: "NIGHT OPS", desc: "Dark tactical & stellar blue", color: "bg-stellar-400" },
-  { key: "titanium", name: "TITANIUM", desc: "Platinum & silver frost", color: "bg-platinum-100" },
-];
 
 export default function DashboardSettings() {
   const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
@@ -110,167 +92,29 @@ export default function DashboardSettings() {
       />
 
       {/* Settings panels — widget-level error boundary keeps a failing
-          panel from blanking the whole view. */}
+          panel from blanking the whole view. Each panel is a reusable
+          sub-component; the view is the thin orchestrator (state + save). */}
       <ErrorBoundary section="settings-panels" fallback={<WidgetError label="WEB CONFIG" />}>
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Site Identity */}
-        <motion.div {...fadeInUp}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-gold-400" />
-                <CardTitle>Site Identity</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input
-                label="FIELD_01 // SITE NAME"
-                value={form.siteName}
-                onChange={(e) => updateField("siteName", e.target.value)}
-                placeholder="AETHER-HUD"
-              />
-              <Textarea
-                label="FIELD_02 // SITE DESCRIPTION"
-                rows={3}
-                value={form.siteDescription}
-                onChange={(e) => updateField("siteDescription", e.target.value)}
-                placeholder="High-End Tactical Portfolio"
-                className="resize-none"
-              />
-              <p className="mt-1 sys-label text-[9px] text-text-muted">
-                Used for SEO meta tags and social sharing
-              </p>
-              <Input
-                label="FIELD_03 // SYS VERSION"
-                value={form.sysVersion}
-                onChange={(e) => updateField("sysVersion", e.target.value)}
-                placeholder="v2.4.1"
-              />
-            </CardContent>
-          </Card>
-        </motion.div>
+        <SiteIdentityCard
+          values={{
+            siteName: form.siteName,
+            siteDescription: form.siteDescription,
+            sysVersion: form.sysVersion,
+          }}
+          onChange={(field, value) => updateField(field, value)}
+        />
 
-        {/* Theme & Appearance */}
-        <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Palette className="h-4 w-4 text-gold-400" />
-                <CardTitle>Theme & Appearance</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Theme Presets */}
-              <div>
-                <span className="sys-label mb-3 block">FIELD_04 // THEME PRESET</span>
-                <div className="grid grid-cols-1 gap-3">
-                  {THEME_PRESETS.map((theme) => (
-                    <button
-                      key={theme.key}
-                      onClick={() => updateField("themePreset", theme.key)}
-                      className={cn(
-                        "flex items-center gap-4 chamfered-sm border-2 px-4 py-3 text-left transition-all duration-300",
-                        "hover-scale-sm press-scale focus-ring-gold",
-                        form.themePreset === theme.key
-                          ? "border-gold-400 bg-[rgba(242,201,76,0.06)]"
-                          : "border-border-subtle text-text-muted hover:border-border-glass"
-                      )}
-                    >
-                      <span className={cn("h-4 w-4 rotate-45 border border-border-glass/40", theme.color)} />
-                      <div className="flex-1">
-                        <p className={cn(
-                          "font-mono text-xs font-medium tracking-wider",
-                          form.themePreset === theme.key ? "text-gold-400" : "text-text-main"
-                        )}>
-                          {theme.name}
-                        </p>
-                        <p className="font-mono text-[9px] text-text-muted">{theme.desc}</p>
-                      </div>
-                      {form.themePreset === theme.key && (
-                        <Badge variant="gold" size="sm">ACTIVE</Badge>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
+        <ThemeAppearanceCard
+          themePreset={form.themePreset}
+          animationsEnabled={form.animationsEnabled}
+          onChange={(field, value) => updateField(field, value)}
+          delay={0.1}
+        />
 
-              {/* Animations Toggle */}
-              <div className="flex items-center justify-between chamfered-sm border border-border-subtle bg-deep-space/40 px-4 py-3 transition-colors duration-300 hover:border-border-glass hover:bg-[rgba(242,201,76,0.04)]">
-                <div className="flex items-center gap-3">
-                  <Monitor className="h-4 w-4 text-gold-400/60" />
-                  <div>
-                    <p className="font-mono text-xs tracking-wider text-text-main">FIELD_05 // ANIMATIONS</p>
-                    <p className="font-mono text-[9px] text-text-muted">Framer Motion effects</p>
-                  </div>
-                </div>
-                <Toggle
-                  id="animations-toggle"
-                  checked={form.animationsEnabled}
-                  onChange={(v) => updateField("animationsEnabled", v)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <SystemInfoCard delay={0.2} />
 
-        {/* System Info */}
-        <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Code2 className="h-4 w-4 text-gold-400" />
-                <CardTitle>System Info</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <InfoRow
-                label="FRAMEWORK"
-                value="Next.js 16"
-              />
-              <InfoRow
-                label="DATABASE"
-                value="PostgreSQL"
-                tone="stellar"
-              />
-              <InfoRow
-                label="DEPLOY"
-                value="Vercel"
-              />
-              <InfoRow
-                label="DESIGN SYSTEM"
-                value="AETHER-HUD v2"
-                tone="gold"
-              />
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Danger Zone */}
-        <motion.div {...fadeInUp} transition={{ delay: 0.3 }}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Settings2 className="h-4 w-4 text-hud-danger" />
-                <CardTitle className="text-hud-danger">Danger Zone</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="font-mono text-[10px] text-text-muted leading-relaxed">
-                These actions are irreversible. Proceed with caution.
-              </p>
-              <div className="flex items-center justify-between chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.04)] px-4 py-3">
-                <div>
-                  <p className="font-mono text-xs tracking-wider text-text-main">RESET ALL DATA</p>
-                  <p className="font-mono text-[9px] text-text-muted">Clear all portfolio content</p>
-                </div>
-                <Button variant="secondary" size="sm" glow="none" className="text-hud-danger border-hud-danger/30">
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  RESET
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <DangerZoneCard delay={0.3} />
       </div>
       </ErrorBoundary>
 

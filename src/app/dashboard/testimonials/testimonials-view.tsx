@@ -4,32 +4,21 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import {
-  MessageCircle,
-  Plus,
-  Quote,
-} from "lucide-react";
+import { MessageCircle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
-import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import {
+  TestimonialCard,
+  type TestimonialCardData,
+} from "@/components/features/testimonials/testimonial-card";
 import type { TestimonialFormRecord } from "@/components/features/testimonial-form-modal";
 
-
-interface ApiTestimonial {
-  id: string;
-  name: string;
-  role: string;
-  content: string;
-  avatar: string;
-  order: number;
-}
 
 // The create/edit form module is lazy-loaded as its own chunk — it only
 // renders when the operator opens the modal, keeping the archive grid's
@@ -67,10 +56,10 @@ const ConfirmDialog = dynamic(
 );
 
 export default function DashboardTestimonials() {
-  const { data: testimonials, loading, refetch } = useData<ApiTestimonial[]>("/api/testimonials");
+  const { data: testimonials, loading, refetch } = useData<TestimonialCardData[]>("/api/testimonials");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<TestimonialFormRecord | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<ApiTestimonial | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<TestimonialCardData | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   function openNew() {
@@ -78,7 +67,7 @@ export default function DashboardTestimonials() {
     setModalOpen(true);
   }
 
-  function openEdit(t: ApiTestimonial) {
+  function openEdit(t: TestimonialCardData) {
     setEditingTestimonial(t);
     setModalOpen(true);
   }
@@ -120,7 +109,8 @@ export default function DashboardTestimonials() {
       />
 
       {/* Testimonials Grid — widget-level error boundary keeps a failing
-          archive from blanking the whole dashboard view. */}
+          archive from blanking the whole dashboard view. Entries render
+          via the reusable TestimonialCard; the view maps data + state. */}
       <ErrorBoundary section="testimonials-grid" fallback={<WidgetError label="TESTIMONIAL ARCHIVE" />}>
       <motion.div className="grid gap-4 sm:grid-cols-2" {...fadeInUp}>
         {list.length === 0 ? (
@@ -131,58 +121,13 @@ export default function DashboardTestimonials() {
           />
         ) : (
           list.map((t, i) => (
-            <motion.div
+            <TestimonialCard
               key={t.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-            >
-              <Card variant="glass" hover="sweep" diamond>
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center chamfered-sm overflow-hidden border border-border-glass bg-deep-space/50">
-                      {t.avatar ? (
-                        // Raw img (not next/image): avatar URLs come from the
-                        // Prisma DB and may be arbitrary remote hosts, which
-                        // the image optimizer would reject. Native lazy loading
-                        // + async decoding still defer off-screen avatars.
-                        <img
-                          src={t.avatar}
-                          alt={t.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <Quote className="h-5 w-5 text-gold-400/60" />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-                        {t.name}
-                      </p>
-                      <p className="mt-0.5 font-mono text-[9px] text-text-muted">
-                        {t.role}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 chamfered-sm border border-border-subtle bg-deep-space/30 p-3">
-                    <p className="font-mono text-[11px] leading-relaxed text-text-muted italic line-clamp-3">
-                      &ldquo;{t.content}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="sys-label text-[8px]">ORDER: {t.order}</span>
-                    <RowActions
-                      onEdit={() => openEdit(t)}
-                      onDelete={() => setDeleteTarget(t)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+              testimonial={t}
+              index={i}
+              onEdit={openEdit}
+              onDelete={setDeleteTarget}
+            />
           ))
         )}
       </motion.div>
