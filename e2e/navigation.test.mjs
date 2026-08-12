@@ -375,6 +375,60 @@ async function main() {
     }
   }
 
+  // ===== TEST 8: Social Icon Registry Sync (landing + dashboard) =====
+  // Every `icon: "X"` in the socials data must be registered in BOTH icon
+  // maps: the landing `socialIcons` (src/components/sections/contact-section.tsx)
+  // and the dashboard `iconMap` (src/components/features/contact/social-links-card.tsx).
+  // A social added with an unregistered icon silently renders the fallback
+  // (Terminal on landing, Link2 in dashboard) — PR #57 added GitHub Sponsors
+  // (Heart) + Ko-fi (Coffee) unregistered; C4 2026-08-12 fixed and locks it here.
+  log("TEST 8: Social Icon Registry Sync (data icons registered in both maps)");
+  try {
+    const portfolioSrc = readFileSync("src/data/portfolio.ts", "utf-8");
+    const socialIconsData = [
+      ...portfolioSrc.matchAll(/platform: "[^"]+", url: "[^"]*", icon: "([^"]+)"/g),
+    ].map((m) => m[1]);
+    assert(
+      socialIconsData.length > 0,
+      `Extracted social icons from data (found ${socialIconsData.length})`
+    );
+
+    const landingSrc = readFileSync("src/components/sections/contact-section.tsx", "utf-8");
+    const landingMapMatch = landingSrc.match(
+      /const socialIcons: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
+    );
+    assert(landingMapMatch !== null, "Landing socialIcons map is parseable");
+    const landingIcons = new Set(
+      landingMapMatch
+        ? landingMapMatch[1].split(/[\s,]+/).filter(Boolean)
+        : []
+    );
+
+    const dashSrc = readFileSync("src/components/features/contact/social-links-card.tsx", "utf-8");
+    const dashMapMatch = dashSrc.match(
+      /const iconMap: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
+    );
+    assert(dashMapMatch !== null, "Dashboard iconMap is parseable");
+    const dashIcons = new Set(
+      dashMapMatch
+        ? dashMapMatch[1].split(/[\s,]+/).filter(Boolean)
+        : []
+    );
+
+    for (const icon of new Set(socialIconsData)) {
+      assert(
+        landingIcons.has(icon),
+        `Social icon "${icon}" registered in landing socialIcons map`
+      );
+      assert(
+        dashIcons.has(icon),
+        `Social icon "${icon}" registered in dashboard iconMap`
+      );
+    }
+  } catch (e) {
+    assert(false, `Social icon registry is checkable: ${e.message}`);
+  }
+
   // ===== Summary =====
   const total = passed + failed;
   console.log("\n" + "=".repeat(50));
