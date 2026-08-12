@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-12] — C3 Dynamic Content Update
+
+### Portfolio content
+- **New projects (2):**
+  - `AETHER Zenith` — progressive delivery orchestrator with canary analysis, feature-flag management, and automated rollback (Developer Tools, CLASS-S).
+  - `AETHER Bastion` — hardened zero-trust perimeter with AI-driven threat modeling and continuous compliance scanning (Security, CLASS-A).
+- **Data hygiene:** renamed duplicate `AETHER Sentinel` (proj-24) → `AETHER Vanguard` to eliminate the title collision with proj-11; updated its live/github links to the new identity.
+- **Skill recalibration:** Docker/DevOps 86→88, Go/Rust 77→80, Kubernetes 79→82, Rust/Systems 81, MLOps 82→85.
+- **Socials (+2):** GitHub Sponsors, Ko-fi — portfolio now exposes 25 channels.
+
+### Data pipeline
+- `/api/portfolio` + `/api/dashboard/stats` remain the single source of truth (data file with DB-first fallback on stats) — no code change required for the new entries; e2e ItemList count derives from the data file and self-adjusts.
+
+### Verified
+- `tsc --noEmit` — 0 errors; `next build` — passes (26 projects, 20 skills, 25 socials).
+
+---
+
 ## [2026-08-11] — C5 Performance & Code Maintenance
 
 ### Lint gate
