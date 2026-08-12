@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-12] — C5 Performance & Code Maintenance
+
+### Lint gate
+- `npx eslint src/` → 0 errors; `npx tsc --noEmit` → 0 errors; `npm run build` → 32 routes, no warnings.
+
+### Dead code
+- `ProfilePreviewData` interface in `profile-preview-card.tsx` was exported but never imported outside the module (only `ProfilePreviewCard` is consumed by profile-view). Dropped the `export` keyword — module-private, same pattern as the PR #54 `TelemetrySample`/`MetricSummary` cleanup.
+
+### DRY consolidation
+- **Shared skill-icon registry (`src/lib/skill-icons.ts`, new):** the landing `SkillBar` and dashboard `SkillCard` each shipped an identical 10-icon map (`skillIconMap` / `iconMap`) that had to be kept in sync by hand. Both now resolve icons through one `skillIcons` registry; per-component fallbacks (`Zap` for SkillBar, `Cpu` for SkillCard) stay local to preserve existing behavior. Adding a new skill icon now touches exactly one file.
+
+### Dependencies
+- `npm audit` → 0 vulnerabilities (sharp/postcss/nanoid/js-yaml overrides still in effect).
+- `npm outdated` → majors only: eslint 9→10, typescript 5→7, framer-motion 12→13, @types/node 20→26. **Deliberately skipped** in a maintenance PR (breaking changes, no user-facing benefit); revisit as a dedicated upgrade cycle.
+
+### Audit (verified, no change needed)
+- **Security:** `.env` untracked (only `.env.example` + `.cron/VERCEL_DOMAIN.env` tracked); no `vcp_`/`ghp_`/`gho_` tokens in `src/`/`prisma/`; `sk-` matches in portfolio.ts are skill IDs, not secrets; `.env.example` has no real values (DATABASE_URL/DASHBOARD_SECRET empty — auth fails closed 503).
+- **Error handling:** all 16 API routes have try/catch (auth, config, experiences, projects, sections, skills, socials, telemetry, testimonials + `[id]` variants). `GET /api/telemetry/summary` is intentionally unwrapped — `durableTelemetrySummary()` is exception-safe by design (internal try/catch with in-memory fallback, never throws).
+- **Design system:** no `rounded-xl/lg/2xl/md` regressions; `animate-spin` only in doc comments; no `HudLoader` in landing sections; dashboard padding mobile-first (`p-4 sm:p-6 lg:p-8`).
+- **Dead deps:** `dotenv` is imported by `prisma.config.ts` (not dead); clsx/tailwind-merge/lucide-react all referenced.
+
+### Verified
+- Pre-push `npm run build` green on the maintenance branch; post-merge build + Vercel deploy + route checks green (see report).
+
+---
+
 ## [2026-08-12] — C4 E2E & UI Integration Testing
 
 ### Fixes

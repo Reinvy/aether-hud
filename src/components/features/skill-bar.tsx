@@ -1,8 +1,9 @@
 "use client";
 
 import { memo } from "react";
-import { Zap, Globe, FileCode, Server, Database, Brain, Palette, PenTool, Container, Rocket } from "lucide-react";
+import { Zap } from "lucide-react";
 import { SegmentBar } from "@/components/ui/segment-bar";
+import { skillIcons } from "@/lib/skill-icons";
 
 /**
  * SkillBar — reusable HUD segmented skill bar.
@@ -11,10 +12,6 @@ import { SegmentBar } from "@/components/ui/segment-bar";
  * be reused across the site (landing skills matrix, dashboard skills
  * module) with the same Obsidian & Imperial Gold treatment.
  */
-
-const skillIconMap: Record<string, React.ElementType> = {
-  Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
-};
 
 interface SkillBarProps {
   name: string;
@@ -26,7 +23,7 @@ interface SkillBarProps {
 }
 
 export const SkillBar = memo(function SkillBar({ name, level, icon, category, segments = 10 }: SkillBarProps) {
-  const Icon = skillIconMap[icon] || Zap;
+  const Icon = skillIcons[icon] || Zap;
 
   return (
     <div className="group skillbar-hover">

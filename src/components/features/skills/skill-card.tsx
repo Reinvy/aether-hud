@@ -1,24 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Cpu,
-  Globe,
-  FileCode,
-  Server,
-  Database,
-  Brain,
-  Zap,
-  Container,
-  PenTool,
-  Rocket,
-  Palette,
-} from "lucide-react";
+import { Cpu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
 import { SegmentBar } from "@/components/ui/segment-bar";
+import { skillIcons } from "@/lib/skill-icons";
 
 export interface SkillCardData {
   id: string;
@@ -27,10 +16,6 @@ export interface SkillCardData {
   category: string;
   icon: string;
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  Globe, FileCode, Palette, Server, Database, Brain, Zap, Container, PenTool, Rocket,
-};
 
 interface SkillCardProps {
   skill: SkillCardData;
@@ -50,7 +35,7 @@ interface SkillCardProps {
  * place that renders a proficiency module.
  */
 export function SkillCard({ skill, index = 0, onEdit, onDelete }: SkillCardProps) {
-  const Icon = iconMap[skill.icon] || Cpu;
+  const Icon = skillIcons[skill.icon] || Cpu;
 
   return (
     <motion.div
