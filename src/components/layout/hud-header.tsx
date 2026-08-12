@@ -77,7 +77,7 @@ export function HudHeader() {
         <div className="flex items-center justify-between">
           {/* Left: Logo + Status */}
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-3 group focus-ring-gold">
               <div className="relative">
                 <Activity className="h-5 w-5 text-gold-400 transition-transform group-hover:scale-110" />
                 <StatusDot tone="active" pulse label="System online" className="absolute -top-1 -right-1" />
@@ -106,7 +106,7 @@ export function HudHeader() {
                   key={item.sysId}
                   href={item.href}
                   className={cn(
-                    "group relative px-4 py-2 text-xs font-mono tracking-widest transition-all duration-300 focus-ring-gold",
+                    "group relative px-4 py-2 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale focus-ring-gold",
                     isActive
                       ? "text-gold-400"
                       : "text-text-muted hover:text-gold-400"

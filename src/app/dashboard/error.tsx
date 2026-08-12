@@ -17,7 +17,7 @@ export default function DashboardError({
   reset: () => void;
 }) {
   return (
-    <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-6 lg:p-8">
+    <div className="dashboard-grid-bg flex min-h-full items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="glass-panel chamfered w-full max-w-md p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-14 w-14 items-center justify-center chamfered border border-hud-danger/30 bg-hud-danger/5">

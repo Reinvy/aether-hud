@@ -292,7 +292,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center">
           <a
             href="/"
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] text-text-muted/40 transition-colors hover:text-gold-400/60 hover-scale-sm focus-ring-gold"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] text-text-muted/40 transition-colors hover:text-gold-400/60 hover-scale-sm press-scale focus-ring-gold"
           >
             <Terminal className="h-3 w-3" />
             RETURN TO PORTAL

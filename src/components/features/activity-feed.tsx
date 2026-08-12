@@ -39,7 +39,7 @@ export const ActivityFeed = memo(function ActivityFeed({
             <TrendingUp className="h-4 w-4 text-gold-400" />
             <CardTitle>Activity Log</CardTitle>
           </div>
-          <RefreshCw className="h-3.5 w-3.5 cursor-pointer text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm" />
+          <RefreshCw className="h-3.5 w-3.5 text-text-muted/60" aria-hidden="true" />
         </div>
       </CardHeader>
       <CardContent>

@@ -68,7 +68,7 @@ export const ProjectRow = memo(function ProjectRow({
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover-scale-sm block p-1"
+            className="hover-scale-sm press-scale focus-ring-gold block p-2"
           >
             <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors hover:text-gold-400" />
           </a>

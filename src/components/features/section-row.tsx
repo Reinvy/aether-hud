@@ -91,7 +91,7 @@ export function SectionRow({
         <button
           onClick={() => onToggle(section)}
           className={cn(
-            "inline-flex items-center gap-1.5 chamfered-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale",
+            "inline-flex items-center gap-1.5 chamfered-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale focus-ring-gold",
             section.enabled
               ? "bg-[rgba(56,239,125,0.1)] text-stellar-400 hover:bg-[rgba(56,239,125,0.15)]"
               : "bg-[rgba(239,68,68,0.1)] text-hud-danger hover:bg-[rgba(239,68,68,0.15)]"
