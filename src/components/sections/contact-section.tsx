@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
-import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle, User, AtSign, Hash, ChevronRight, BookOpen, GitFork, MessageSquare, Rss, MonitorPlay, Palette } from "lucide-react";
+import { Send, Lock, Terminal, GitBranch, Globe, MessageCircle, Mail, CheckCircle, User, AtSign, Hash, ChevronRight, BookOpen, GitFork, MessageSquare, Rss, MonitorPlay, Palette, Heart, Coffee, Video, Camera, Code, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,7 @@ type Social = {
 
 const socialIcons: Record<string, React.ElementType> = {
   GitBranch, Globe, MessageCircle, BookOpen, GitFork, MessageSquare, Rss, MonitorPlay, Palette,
+  Heart, Coffee, Video, Camera, Mail, Send, Code, Music, AtSign,
 };
 
 const defaultSocials: Social[] = [

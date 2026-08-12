@@ -10,6 +10,18 @@ import {
   MessageCircle,
   MonitorPlay,
   Palette,
+  Heart,
+  Coffee,
+  Video,
+  Camera,
+  Send,
+  Code,
+  Music,
+  AtSign,
+  BookOpen,
+  GitFork,
+  MessageSquare,
+  Rss,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,6 +55,18 @@ const iconMap: Record<string, React.ElementType> = {
   Link2,
   MonitorPlay,
   Palette,
+  Heart,
+  Coffee,
+  Video,
+  Camera,
+  Send,
+  Code,
+  Music,
+  AtSign,
+  BookOpen,
+  GitFork,
+  MessageSquare,
+  Rss,
 };
 
 interface SocialLinksCardProps {

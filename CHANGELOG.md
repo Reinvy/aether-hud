@@ -4,6 +4,26 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-12] — C4 E2E & UI Integration Testing
+
+### Fixes
+- **Social icon registry sync (silent fallback bug class):** social icons are rendered
+  from per-file icon maps (`socialIcons` on landing, `iconMap` in dashboard) with a
+  fallback icon for unknown names. The data file shipped 25 socials but the maps only
+  registered ~9 — GitHub Sponsors (Heart), Ko-fi (Coffee), YouTube (Video), Instagram
+  (Camera), Telegram (Send), Dev.to/Hashnode (Code), TikTok (Music), Mastodon/Bluesky
+  (AtSign), and Email (Mail, landing only) all silently rendered the fallback
+  (Terminal on landing, Link2 in dashboard). Both maps now register all 18 unique
+  icons used by the data.
+
+### Tests
+- **TEST 8 (new, +39 assertions → 184 nav tests):** Social Icon Registry Sync —
+  every `icon:` name in the socials data must be registered in BOTH the landing
+  `socialIcons` map and the dashboard `iconMap`. Prevents the silent-fallback
+  regression class from shipping again.
+
+---
+
 ## [2026-08-12] — C3 Dynamic Content Update
 
 ### Portfolio content
