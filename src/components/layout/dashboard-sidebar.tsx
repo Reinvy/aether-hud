@@ -96,7 +96,7 @@ export function DashboardSidebar() {
         <Link
           href="/"
           onClick={close}
-          className="flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-colors hover:bg-glass-200 hover:text-gold-400 focus-ring-gold"
+          className="flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all duration-200 hover:bg-glass-200 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
         >
           <LogOut className="h-4 w-4" />
           <span>RETURN TO PORTAL</span>
