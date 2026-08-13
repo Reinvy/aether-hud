@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { IconBox } from "@/components/ui/icon-box";
 import { RowActions } from "@/components/ui/row-actions";
 
-export type ExperienceType = "work" | "education" | "freelance";
+type ExperienceType = "work" | "education" | "freelance";
 
 export interface ExperienceCardData {
   id: string;

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export interface SiteIdentityValues {
+interface SiteIdentityValues {
   siteName: string;
   siteDescription: string;
   sysVersion: string;

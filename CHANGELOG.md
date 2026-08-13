@@ -4,6 +4,33 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-13] — C5 Performance & Code Maintenance
+
+### Lint gate
+- `npx eslint src/` → 0 errors; `npx tsc --noEmit` → 0 errors; `npm run build` → 32 routes, passes clean.
+
+### Dead code — unused exports
+- Module-private cleanup (same pattern as PR #55 `ProfilePreviewData`): 4 exported symbols had zero importers anywhere in `src/` and were only referenced inside their defining files — dropped the `export` keyword:
+  - `ExperienceType` (`experience-card.tsx`) — internal type union.
+  - `SiteIdentityValues` (`settings/site-identity-card.tsx`) — internal form-values interface.
+  - `ThemePreset` + `THEME_PRESETS` (`settings/theme-appearance-card.tsx`) — registry is consumed only by the card itself; the "exported for reuse" doc comment was stale and is now corrected.
+- Full-scan method: scripted export→import cross-reference over all `src/**/*.{ts,tsx}` (121 exported symbols → 4 unused). All UI components, lib modules, and feature components remain referenced (verified `confirm-dialog` is consumed via `next/dynamic` in 5 dashboard views — not dead).
+
+### Design system
+- Audit: no `rounded-*` generic-border regressions in `src/`; only sanctioned palette hexes outside `globals.css` (`#38EF7D` Stellar Green in `experience-card.tsx`, `#030407` deep-space in `layout.tsx` theme-color meta).
+
+### Security
+- `.env.example` holds placeholders only (`DATABASE_URL`/`DASHBOARD_SECRET` empty — auth fails closed 503). No `vcp_`/`ghp_`/long-`sk-`/connection-string patterns in `src/`, `prisma/`, or `.cron/`; `.env` untracked & gitignored.
+
+### Dependencies
+- `npm audit` → 0 vulnerabilities (sharp/postcss/nanoid/js-yaml overrides still in effect).
+- `npm outdated` → all packages at Wanted (no patch/minor pending). Majors only: eslint 9→10, typescript 5→7, framer-motion 12→13, @types/node 20→26 — deliberately skipped (breaking, no user-facing benefit).
+
+### Verified
+- `tsc --noEmit` — 0 errors; `eslint src/` — 0 errors; `next build` — passes.
+
+---
+
 ## [2026-08-13] — C3 Dynamic Content Update
 
 ### Portfolio content
