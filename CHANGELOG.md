@@ -4,6 +4,26 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-13] — C3 Dynamic Content Update
+
+### Portfolio content
+- **New projects (2):**
+  - `AETHER Rift` — cross-region data replication mesh with conflict-free CRDT synchronization, geo-aware routing, and sub-100ms eventual consistency (Infrastructure, CLASS-S).
+  - `AETHER Catalyst` — autonomous experimentation engine with self-optimizing traffic allocation and Bayesian significance scoring (AI Platform, CLASS-A).
+- **Skill recalibration:** Kubernetes/Orchestration 82→83, System Design/Architecture 84→85, MLOps/Model Serving 85→86.
+- **Socials (+3):** Rumble, Vimeo, Farcaster — portfolio now exposes 28 channels. Fixed the Twitter placeholder URL (`https://twitter.com` → `https://x.com/reinvy_dev`).
+
+### Data pipeline
+- `/api/portfolio` + `/api/dashboard/stats` remain the single source of truth (data file with DB-first fallback on stats) — no code change required for the new entries; e2e ItemList count derives from the data file and self-adjusts (26→28 projects).
+
+### Design system
+- Audit: no `rounded-*` generic-border regressions in `src/`; new content renders through the existing data-driven components (project-card, skill-bar, social icon registry) — no hardcoded markup added.
+
+### Verified
+- `tsc --noEmit` — 0 errors; `next build` — passes (28 projects, 20 skills, 28 socials).
+
+---
+
 ## [2026-08-12] — C5 Performance & Code Maintenance
 
 ### Lint gate
