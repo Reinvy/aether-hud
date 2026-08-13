@@ -66,6 +66,9 @@ const API_ROUTES = [
   "/api/testimonials",
 ];
 const SEO_FILES = ["/robots.txt", "/sitemap.xml"];
+// Static assets that power PWA install (manifest), favicon (brand icon) and
+// the project-card/avatar placeholder — must all be served by production.
+const ASSET_FILES = ["/manifest.json", "/icon.svg", "/placeholder.svg"];
 const BOGUS_ROUTES = ["/this-route-does-not-exist-xyz", "/dashboard/nonexistent-page-xyz"];
 
 let passed = 0;
@@ -153,6 +156,15 @@ async function main() {
     try {
       const { status } = await getText(route);
       assert(status === 200, `${route} is live (got ${status})`);
+    } catch (e) {
+      assert(false, `${route} is reachable: ${e.message}`);
+    }
+  }
+
+  for (const route of ASSET_FILES) {
+    try {
+      const { status } = await getText(route);
+      assert(status === 200, `${route} asset is live (got ${status})`);
     } catch (e) {
       assert(false, `${route} is reachable: ${e.message}`);
     }
@@ -427,6 +439,57 @@ async function main() {
     }
   } catch (e) {
     assert(false, `Social icon registry is checkable: ${e.message}`);
+  }
+
+  // ===== TEST 9: PWA Manifest & Icon Integrity (source-level) =====
+  // The manifest drives the installable-PWA icon. C4 2026-08-13 (PR #63)
+  // fixed the manifest icons pointing at the 800x400 dossier placeholder
+  // (/placeholder.svg — also used as the project-card/avatar image) instead
+  // of the brand chamfered-A icon (/icon.svg). This locks:
+  //   - manifest parses + carries the required PWA fields
+  //   - every manifest icon src resolves to a real file/route
+  //   - icons never reference placeholder.svg (brand-icon regression)
+  //   - layout metadata icons + JSON-LD logo resolve to a real file/route
+  log("TEST 9: PWA Manifest & Icon Integrity (source-level)");
+  try {
+    const manifestSrc = readFileSync("public/manifest.json", "utf-8");
+    const manifest = JSON.parse(manifestSrc);
+    assert(true, "public/manifest.json parses as valid JSON");
+    for (const k of ["name", "short_name", "start_url", "display", "icons"]) {
+      assert(k in manifest, `manifest has "${k}"`);
+    }
+    assert(Array.isArray(manifest.icons) && manifest.icons.length > 0, `manifest declares icons (${manifest.icons?.length || 0})`);
+
+    const publicFiles = readdirSync("public");
+    const iconResolves = (src) => {
+      const file = src.replace(/^\//, "");
+      return publicFiles.includes(file) || existsSync(join("src/app", file));
+    };
+    for (const icon of manifest.icons) {
+      const src = icon.src || "";
+      assert(src.startsWith("/"), `manifest icon src "${src}" is absolute`);
+      assert(iconResolves(src), `manifest icon src "${src}" resolves (public/ or src/app route)`);
+      assert(!src.includes("placeholder"), `manifest icon "${src}" is NOT the dossier placeholder`);
+    }
+
+    const layoutSrc = readFileSync("src/app/layout.tsx", "utf-8");
+    const iconRefs = [
+      ...layoutSrc.matchAll(/icon:\s*"([^"]+)"/g),
+      ...layoutSrc.matchAll(/shortcut:\s*"([^"]+)"/g),
+      ...layoutSrc.matchAll(/apple:\s*"([^"]+)"/g),
+    ].map((m) => m[1]);
+    assert(iconRefs.length > 0, `Extracted layout icon refs (found ${iconRefs.length})`);
+    for (const ref of new Set(iconRefs)) {
+      assert(iconResolves(ref), `layout icon ref "${ref}" resolves (public/ or src/app route)`);
+    }
+
+    const logoMatch = layoutSrc.match(/logo:\s*`\$\{APP_URL\}([^`]+)`/);
+    assert(logoMatch !== null, "JSON-LD logo uses APP_URL + static path");
+    if (logoMatch) {
+      assert(iconResolves(logoMatch[1]), `JSON-LD logo path "${logoMatch[1]}" resolves`);
+    }
+  } catch (e) {
+    assert(false, `Manifest & icon integrity is checkable: ${e.message}`);
   }
 
   // ===== Summary =====
