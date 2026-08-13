@@ -8,14 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 
-export interface ThemePreset {
+interface ThemePreset {
   key: string;
   name: string;
   desc: string;
   color: string;
 }
 
-export const THEME_PRESETS: ThemePreset[] = [
+const THEME_PRESETS: ThemePreset[] = [
   { key: "obsidian", name: "OBSIDIAN", desc: "Deep space & imperial gold", color: "bg-gold-400" },
   { key: "night-ops", name: "NIGHT OPS", desc: "Dark tactical & stellar blue", color: "bg-stellar-400" },
   { key: "titanium", name: "TITANIUM", desc: "Platinum & silver frost", color: "bg-platinum-100" },
@@ -33,9 +33,9 @@ interface ThemeAppearanceCardProps {
  * ThemeAppearanceCard — theme preset selector + animation toggle for the
  * dashboard settings page.
  *
- * Extracted from settings-view. Owns the THEME_PRESETS registry (exported
- * for reuse) and renders the hexagonal-color preset rows plus the
- * animations switch. The view feeds current form values in and receives
+ * Extracted from settings-view. Owns the THEME_PRESETS registry and
+ * renders the hexagonal-color preset rows plus the animations switch.
+ * The view feeds current form values in and receives
  * updates through onChange — the card stays presentation-only.
  */
 export function ThemeAppearanceCard({
