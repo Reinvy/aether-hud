@@ -7,16 +7,13 @@ import {
   User,
   Save,
   RefreshCw,
-  Code2,
-  Smile,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { ProfilePreviewCard } from "@/components/features/profile/profile-preview-card";
+import { PersonalInfoCard } from "@/components/features/profile/personal-info-card";
+import { BioCard } from "@/components/features/profile/bio-card";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
@@ -111,90 +108,14 @@ export default function DashboardProfile() {
           panel from blanking the whole view. */}
       <ErrorBoundary section="profile-panels" fallback={<WidgetError label="PROFILE CONFIG" />}>
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Personal Info */}
+        {/* Personal Info — reusable identity fields card */}
         <motion.div {...fadeInUp}>
-          <Card variant="glass" hover="none">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Smile className="h-4 w-4 text-gold-400" />
-                <CardTitle>Personal Info</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input
-                label="FIELD_01 // DISPLAY NAME"
-                value={form.name}
-                onChange={(e) => updateField("name", e.target.value)}
-                placeholder="Your name"
-              />
-              <Input
-                label="FIELD_02 // TAGLINE"
-                value={form.tagline}
-                onChange={(e) => updateField("tagline", e.target.value)}
-                placeholder="Full-Stack Developer & AI Engineer"
-              />
-              <Input
-                label="FIELD_03 // EMAIL NODE"
-                type="email"
-                value={form.email}
-                onChange={(e) => updateField("email", e.target.value)}
-                placeholder="hello@aether-hud.dev"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="FIELD_04 // LOCATION"
-                  value={form.location}
-                  onChange={(e) => updateField("location", e.target.value)}
-                  placeholder="Jakarta, Indonesia"
-                />
-                <Input
-                  label="FIELD_05 // SYS VERSION"
-                  value={form.sysVersion}
-                  onChange={(e) => updateField("sysVersion", e.target.value)}
-                  placeholder="v2.4.1"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="FIELD_06 // STATUS"
-                  value={form.status}
-                  onChange={(e) => updateField("status", e.target.value)}
-                  placeholder="ONLINE"
-                />
-                <Input
-                  label="FIELD_07 // AVATAR URL"
-                  value={form.avatar}
-                  onChange={(e) => updateField("avatar", e.target.value)}
-                  placeholder="/placeholder.svg"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <PersonalInfoCard form={form} onFieldChange={updateField} />
         </motion.div>
 
-        {/* Bio */}
+        {/* Bio — reusable markdown editor card */}
         <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
-          <Card variant="glass" hover="none" className="h-full">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Code2 className="h-4 w-4 text-gold-400" />
-                <CardTitle>Bio / Summary</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                label="FIELD_08 // BIO"
-                rows={10}
-                value={form.bio}
-                onChange={(e) => updateField("bio", e.target.value)}
-                placeholder="System bio..."
-                className="resize-none"
-              />
-              <p className="mt-2 sys-label text-[9px] text-text-muted">
-                Markdown supported. Displayed in the Hero terminal section.
-              </p>
-            </CardContent>
-          </Card>
+          <BioCard value={form.bio} onChange={(value) => updateField("bio", value)} />
         </motion.div>
 
         {/* Preview Card — reusable live identity readout */}
