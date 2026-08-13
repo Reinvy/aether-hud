@@ -80,6 +80,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: `${APP_NAME} — Tactical Portfolio`,
       },
     ],
@@ -88,7 +89,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${APP_NAME} — High-End Tactical Portfolio`,
     description: APP_DESCRIPTION,
-    images: ["/og-image.png"],
+    creator: "@reinvy",
+    site: "@reinvy",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: `${APP_NAME} — Tactical Portfolio`,
+      },
+    ],
   },
   robots: {
     index: true,

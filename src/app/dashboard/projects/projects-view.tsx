@@ -7,23 +7,21 @@ import { fadeInUp } from "@/lib/motion-variants";
 import {
   Boxes,
   Plus,
-  ExternalLink,
   Search,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
-import { IconBox } from "@/components/ui/icon-box";
 import { Input } from "@/components/ui/input";
 import { ListTableHeader } from "@/components/ui/list-table-header";
-import { RowActions } from "@/components/ui/row-actions";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import {
+  ProjectArchiveRow,
+} from "@/components/features/projects/project-archive-row";
 import type { ProjectFormRecord } from "@/components/features/project-form-modal";
 
 // The create/edit dossier form is heavy (9 fields + modal chrome). It only
@@ -166,62 +164,15 @@ export default function DashboardProjects() {
             }
           />
         ) : (
-          filtered.map((project, i) => {
-            return (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Card variant="glass" hover="sweep" diamond>
-                  <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
-                    <IconBox>
-                      <span className="font-mono text-[10px] text-gold-400">
-                        {project.complexity.slice(-1)}
-                      </span>
-                    </IconBox>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
-                        {project.title}
-                      </p>
-                      <p className="mt-0.5 truncate font-mono text-[9px] text-text-muted">
-                        {project.description.slice(0, 80)}...
-                      </p>
-                    </div>
-
-                    <div className="hidden w-24 sm:block">
-                      <Badge variant="default" size="sm">
-                        {project.category}
-                      </Badge>
-                    </div>
-
-                    <div className="hidden w-20 items-center gap-2 md:flex">
-                      <span className="led-active" />
-                      <span className="sys-label-active text-[8px]">DEPLOYED</span>
-                    </div>
-
-                    <div className="flex w-20 items-center justify-end">
-                      <RowActions
-                        onEdit={() => openEdit(project)}
-                        onDelete={() => setDeleteTarget(project)}
-                        leading={
-                          project.liveUrl ? (
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                              <Button variant="ghost" size="sm" glow="none" className="p-1.5 sm:p-2">
-                                <ExternalLink className="h-3.5 w-3.5" />
-                              </Button>
-                            </a>
-                          ) : undefined
-                        }
-                      />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })
+          filtered.map((project, i) => (
+            <ProjectArchiveRow
+              key={project.id}
+              project={project}
+              index={i}
+              onEdit={openEdit}
+              onDelete={setDeleteTarget}
+            />
+          ))
         )}
       </motion.div>
       </ErrorBoundary>
