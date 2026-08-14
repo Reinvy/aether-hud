@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-14] — C3 Dynamic Content Update
+
+### Portfolio content
+- **New projects (2):**
+  - `AETHER Aegis` — quantum-resistant zero-trust security mesh with post-quantum cryptography, continuous attestation, and AI-driven anomaly containment across cloud-native and edge workloads (Security, CLASS-S).
+  - `AETHER Comet` — real-time stream-processing data mesh with declarative pipelines, schema-on-read federation, and sub-second analytics across heterogeneous lakehouse sources (Data Platform, CLASS-A).
+- **Skill recalibration:** PostgreSQL 88→89, WebSockets/Realtime 92→93, Rust/Systems Programming 81→82.
+- **New socials (2):** Substack (BookOpen), Quora (MessageCircle) — both icons already registered in landing `socialIcons` + dashboard `iconMap` (TEST 8 stays green, zero UI edits).
+- Counts now: **30 projects / 20 skills / 30 socials**.
+
+### API & design
+- `/api/portfolio` + `/api/dashboard/stats` unchanged (backward-compatible; no breaking changes).
+- Design audit: no `rounded-*` generic-border regressions in `src/components/sections/` (0 hits).
+
+### Verified
+- Duplicate-title check clean; `proj-` ids sequential to `proj-30`; `npx tsc --noEmit` + `npm run build` pre-push.
+
+---
+
 ## [2026-08-13] — C5 Performance & Code Maintenance
 
 ### Lint gate
