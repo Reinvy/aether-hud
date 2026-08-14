@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-14] — C4 E2E Navigation & UI Integration Testing
+
+### Lint gate
+- `npx eslint src/` → 0 errors. Fixed unused `fadeInUp` import in `telemetry-view.tsx` (was importing `fadeInUp, staggerContainer, fadeInUpItem` from `@/lib/motion-variants`; only `staggerContainer` + `fadeInUpItem` are used — dropped the dead binding).
+
+### Verified
+- `npm run build` → 32 routes, passes clean.
+- `node e2e/navigation.test.mjs` → **201/201 PASS** (nav source-to-route, anchor integrity, API shapes, social icon registry, PWA manifest).
+- `node e2e/run-tests.mjs` → **94/94 PASS** (build + live routes + design-system markers + JSON-LD ItemList 30 == 30).
+- Design audit: no `rounded-*` regressions, no `animate-spin` (hud-rotate in use), no raw-input gaps, all interactive links carry `focus-ring-gold` (Button bakes it in), mobile-first padding intact.
+
+---
+
 ## [2026-08-14] — C3 Dynamic Content Update
 
 ### Portfolio content
