@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +34,7 @@ interface ContactConfigCardProps {
   saving: boolean;
 }
 
-export function ContactConfigCard({
+export const ContactConfigCard = memo(function ContactConfigCard({
   config,
   email,
   onEmailChange,
@@ -103,4 +104,4 @@ export function ContactConfigCard({
       </CardContent>
     </Card>
   );
-}
+});

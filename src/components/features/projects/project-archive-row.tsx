@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,11 @@ import { RowActions } from "@/components/ui/row-actions";
  * DEPLOYED led + edit/delete/purge actions) can be reused anywhere a
  * project archive is rendered. The parent owns data fetching, the edit
  * modal and the delete-target state.
+ *
+ * Memoized: with stable onEdit/onDelete callbacks (useCallback in the
+ * parent), a keystroke in the archive search only re-renders rows whose
+ * props actually changed — the untouched rows skip reconciliation entirely.
+ * This keeps large archives responsive while filtering.
  */
 
 export interface ProjectArchiveRowData {
@@ -34,7 +40,7 @@ interface ProjectArchiveRowProps<T extends ProjectArchiveRowData> {
   onDelete: (project: T) => void;
 }
 
-export function ProjectArchiveRow<T extends ProjectArchiveRowData>({
+function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
   project,
   index,
   onEdit,
@@ -95,3 +101,7 @@ export function ProjectArchiveRow<T extends ProjectArchiveRowData>({
     </motion.div>
   );
 }
+
+// Preserve the generic signature via the cast — memo's shallow prop compare
+// skips unchanged rows when the parent keeps callbacks stable.
+export const ProjectArchiveRow = memo(ProjectArchiveRowInner) as typeof ProjectArchiveRowInner;

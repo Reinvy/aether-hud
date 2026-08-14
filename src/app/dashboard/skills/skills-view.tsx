@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -62,17 +62,20 @@ export default function DashboardSkills() {
   const [deleteTarget, setDeleteTarget] = useState<SkillCardData | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  function openNew() {
+  // Handlers are referentially stable (useCallback) so the memoized
+  // SkillCard rows skip re-rendering when the view re-renders for
+  // unrelated state (modal open/close, category filter).
+  const openNew = useCallback(() => {
     setEditingSkill(null);
     setModalOpen(true);
-  }
+  }, []);
 
-  function openEdit(skill: SkillCardData) {
+  const openEdit = useCallback((skill: SkillCardData) => {
     setEditingSkill(skill);
     setModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete() {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
@@ -84,7 +87,7 @@ export default function DashboardSkills() {
     } finally {
       setDeleting(false);
     }
-  }
+  }, [deleteTarget, refetch]);
 
   const skillList = skills ?? [];
   const categories = [...new Set(skillList.map((s) => s.category))];

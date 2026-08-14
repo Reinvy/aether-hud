@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -87,15 +87,18 @@ export default function DashboardContact() {
     setEditEmailDirty(true); // mark as dirty to prevent re-sync
   }
 
-  function openNewSocial() {
+  // Handlers are referentially stable (useCallback) so the memoized
+  // SocialLinksCard / ContactConfigCard panels skip re-rendering on
+  // unrelated view state changes.
+  const openNewSocial = useCallback(() => {
     setSocialModal({ open: true, record: null });
-  }
+  }, []);
 
-  function openEditSocial(s: ApiSocial) {
+  const openEditSocial = useCallback((s: ApiSocial) => {
     setSocialModal({ open: true, record: s });
-  }
+  }, []);
 
-  async function handleDeleteSocial() {
+  const handleDeleteSocial = useCallback(async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
@@ -107,9 +110,9 @@ export default function DashboardContact() {
     } finally {
       setDeleting(false);
     }
-  }
+  }, [deleteTarget, refetchSocials]);
 
-  async function handleSaveConfig() {
+  const handleSaveConfig = useCallback(async () => {
     setSavingConfig(true);
     try {
       await fetch("/api/config", {
@@ -123,7 +126,12 @@ export default function DashboardContact() {
     } finally {
       setSavingConfig(false);
     }
-  }
+  }, [editEmail, refetchConfig]);
+
+  const handleEmailChange = useCallback((value: string) => {
+    setEditEmail(value);
+    setEditEmailDirty(true);
+  }, []);
 
   if (socialsLoading || configLoading) {
     return <DashboardListSkeleton rows={4} />;
@@ -160,10 +168,7 @@ export default function DashboardContact() {
           <ContactConfigCard
             config={config}
             email={editEmail}
-            onEmailChange={(value) => {
-              setEditEmail(value);
-              setEditEmailDirty(true);
-            }}
+            onEmailChange={handleEmailChange}
             onSave={handleSaveConfig}
             saving={savingConfig}
           />

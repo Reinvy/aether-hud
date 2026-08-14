@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,7 +33,7 @@ interface TestimonialCardProps {
  * TestimonialCardData record. The view just maps the list into cards and
  * owns the edit/delete state.
  */
-export function TestimonialCard({ testimonial: t, index = 0, onEdit, onDelete }: TestimonialCardProps) {
+export const TestimonialCard = memo(function TestimonialCard({ testimonial: t, index = 0, onEdit, onDelete }: TestimonialCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -86,4 +87,4 @@ export function TestimonialCard({ testimonial: t, index = 0, onEdit, onDelete }:
       </Card>
     </motion.div>
   );
-}
+});
