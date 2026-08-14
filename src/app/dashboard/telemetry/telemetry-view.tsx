@@ -14,7 +14,7 @@ import {
   type TelemetryMetricSummary,
 } from "@/components/features/telemetry-metric-card";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { fadeInUp, staggerContainer, fadeInUpItem } from "@/lib/motion-variants";
+import { staggerContainer, fadeInUpItem } from "@/lib/motion-variants";
 import { cn } from "@/lib/utils";
 
 /**
