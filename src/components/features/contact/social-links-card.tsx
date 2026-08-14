@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import {
   Link2,
@@ -76,7 +77,7 @@ interface SocialLinksCardProps {
   onDelete: (social: ApiSocial) => void;
 }
 
-export function SocialLinksCard({
+export const SocialLinksCard = memo(function SocialLinksCard({
   socials,
   onAdd,
   onEdit,
@@ -145,4 +146,4 @@ export function SocialLinksCard({
       </CardContent>
     </Card>
   );
-}
+});

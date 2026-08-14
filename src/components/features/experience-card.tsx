@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, Globe, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +56,7 @@ interface ExperienceCardProps {
  * render from one ExperienceCardData record. The view just maps the list
  * into cards and owns the edit/delete state.
  */
-export function ExperienceCard({ experience: exp, index = 0, onEdit, onDelete }: ExperienceCardProps) {
+export const ExperienceCard = memo(function ExperienceCard({ experience: exp, index = 0, onEdit, onDelete }: ExperienceCardProps) {
   const TypeIcon = typeIcons[exp.type] || Briefcase;
 
   return (
@@ -105,4 +106,4 @@ export function ExperienceCard({ experience: exp, index = 0, onEdit, onDelete }:
       </Card>
     </motion.div>
   );
-}
+});

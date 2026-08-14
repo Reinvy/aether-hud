@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Cpu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +35,7 @@ interface SkillCardProps {
  * matrix view stays a thin data orchestrator; this card is the single
  * place that renders a proficiency module.
  */
-export function SkillCard({ skill, index = 0, onEdit, onDelete }: SkillCardProps) {
+export const SkillCard = memo(function SkillCard({ skill, index = 0, onEdit, onDelete }: SkillCardProps) {
   const Icon = skillIcons[skill.icon] || Cpu;
 
   return (
@@ -78,4 +79,4 @@ export function SkillCard({ skill, index = 0, onEdit, onDelete }: SkillCardProps
       </Card>
     </motion.div>
   );
-}
+});

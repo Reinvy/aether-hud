@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -62,17 +62,19 @@ export default function DashboardTestimonials() {
   const [deleteTarget, setDeleteTarget] = useState<TestimonialCardData | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  function openNew() {
+  // Handlers are referentially stable (useCallback) so the memoized
+  // TestimonialCard rows skip re-rendering on unrelated view state changes.
+  const openNew = useCallback(() => {
     setEditingTestimonial(null);
     setModalOpen(true);
-  }
+  }, []);
 
-  function openEdit(t: TestimonialCardData) {
+  const openEdit = useCallback((t: TestimonialCardData) => {
     setEditingTestimonial(t);
     setModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete() {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
@@ -84,7 +86,7 @@ export default function DashboardTestimonials() {
     } finally {
       setDeleting(false);
     }
-  }
+  }, [deleteTarget, refetch]);
 
   if (loading) {
     return <DashboardListSkeleton rows={4} />;

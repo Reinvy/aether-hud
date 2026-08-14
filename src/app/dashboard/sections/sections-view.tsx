@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -51,25 +51,28 @@ export default function DashboardSections() {
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ title: "", subtitle: "" });
 
-  function openEdit(section: Section) {
+  // Handlers are referentially stable (useCallback) so the memoized
+  // SectionRow rows skip re-rendering on unrelated view state changes
+  // (modal open/close, form edits).
+  const openEdit = useCallback((section: Section) => {
     setEditingSection(section);
     setEditForm({
       title: section.title,
       subtitle: section.subtitle ?? "",
     });
     setModalOpen(true);
-  }
+  }, []);
 
-  function closeModal() {
+  const closeModal = useCallback(() => {
     setModalOpen(false);
     setEditingSection(null);
-  }
+  }, []);
 
-  function updateField(key: "title" | "subtitle", value: string) {
+  const updateField = useCallback((key: "title" | "subtitle", value: string) => {
     setEditForm((prev) => ({ ...prev, [key]: value }));
-  }
+  }, []);
 
-  async function handleToggle(section: Section) {
+  const handleToggle = useCallback(async (section: Section) => {
     try {
       await fetch("/api/sections", {
         method: "PUT",
@@ -80,9 +83,9 @@ export default function DashboardSections() {
     } catch (e) {
       console.error("Failed to toggle section", e);
     }
-  }
+  }, [refetch]);
 
-  async function handleSave() {
+  const handleSave = useCallback(async () => {
     if (!editingSection) return;
     setSaving(true);
     try {
@@ -102,7 +105,7 @@ export default function DashboardSections() {
     } finally {
       setSaving(false);
     }
-  }
+  }, [editingSection, editForm.title, editForm.subtitle, closeModal, refetch]);
 
   if (loading) {
     return <DashboardListSkeleton rows={5} />;

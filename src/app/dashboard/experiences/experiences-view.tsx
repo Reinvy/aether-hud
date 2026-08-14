@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -63,17 +63,19 @@ export default function DashboardExperiences() {
   const [deleteTarget, setDeleteTarget] = useState<ExperienceCardData | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  function openNew() {
+  // Handlers are referentially stable (useCallback) so the memoized
+  // ExperienceCard rows skip re-rendering on unrelated view state changes.
+  const openNew = useCallback(() => {
     setEditingExperience(null);
     setModalOpen(true);
-  }
+  }, []);
 
-  function openEdit(exp: ExperienceCardData) {
+  const openEdit = useCallback((exp: ExperienceCardData) => {
     setEditingExperience(exp);
     setModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete() {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
@@ -85,7 +87,7 @@ export default function DashboardExperiences() {
     } finally {
       setDeleting(false);
     }
-  }
+  }, [deleteTarget, refetch]);
 
   if (loading) {
     return <DashboardListSkeleton rows={4} />;

@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
   Boxes,
   Plus,
-  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
-import { Input } from "@/components/ui/input";
+import { ArchiveSearch } from "@/components/features/archive-search";
 import { ListTableHeader } from "@/components/ui/list-table-header";
 import { HudLoader } from "@/components/ui/hud-loader";
 import { useData } from "@/lib/use-data";
@@ -62,23 +61,27 @@ const ConfirmDialog = dynamic(
 
 export default function DashboardProjects() {
   const { data: projects, loading, refetch } = useData<ProjectFormRecord[]>("/api/projects");
+  // Raw query drives immediate UI copy (empty-state message); the deferred
+  // query (fed by ArchiveSearch's useDeferredValue) drives the actual
+  // filtering so typing stays responsive as the archive grows.
   const [search, setSearch] = useState("");
+  const [filterQuery, setFilterQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectFormRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProjectFormRecord | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  function openNew() {
+  const openNew = useCallback(() => {
     setEditingProject(null);
     setModalOpen(true);
-  }
+  }, []);
 
-  function openEdit(project: ProjectFormRecord) {
+  const openEdit = useCallback((project: ProjectFormRecord) => {
     setEditingProject(project);
     setModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete() {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
@@ -90,11 +93,11 @@ export default function DashboardProjects() {
     } finally {
       setDeleting(false);
     }
-  }
+  }, [deleteTarget, refetch]);
 
   const filtered = projects
     ? projects.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase())
+        p.title.toLowerCase().includes(filterQuery.toLowerCase())
       )
     : [];
 
@@ -122,14 +125,15 @@ export default function DashboardProjects() {
           list from blanking the whole dashboard view (shell boundary is
           the last line of defense). */}
       <ErrorBoundary section="projects-list" fallback={<WidgetError label="PROJECT ARCHIVE" />}>
-        {/* Search */}
-        <motion.div className="mb-6 max-w-md" {...fadeInUp}>
-          <Input
-            prefix={<Search className="h-4 w-4" />}
+        {/* Search — reusable deferred archive search (raw query for the
+            empty-state copy, deferred query for filtering, live counter) */}
+        <motion.div className="mb-6 max-w-xl" {...fadeInUp}>
+          <ArchiveSearch
             placeholder="Search project archives..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search project archives"
+            ariaLabel="Search project archives"
+            onQueryChange={setFilterQuery}
+            onRawQueryChange={setSearch}
+            resultCount={filtered.length}
           />
         </motion.div>
 

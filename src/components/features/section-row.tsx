@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, GripVertical, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +32,7 @@ interface SectionRowProps {
   onEdit: (section: Section) => void;
 }
 
-export function SectionRow({
+export const SectionRow = memo(function SectionRow({
   section,
   index,
   onToggle,
@@ -124,4 +125,4 @@ export function SectionRow({
       </td>
     </motion.tr>
   );
-}
+});
