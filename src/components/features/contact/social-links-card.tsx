@@ -102,7 +102,6 @@ export function SocialLinksCard({
             icon={<Link2 className="h-5 w-5" />}
             title="NETWORK OFFLINE"
             message="No social links configured"
-            className="sm:col-span-1"
           />
         ) : (
           <div className="space-y-2">

@@ -59,8 +59,8 @@ interface DashboardStats {
 }
 
 export default function DashboardOverview() {
-  const { data: stats, loading: statsLoading } = useData<DashboardStats>("/api/dashboard/stats");
-  const { data: projects, loading: projectsLoading } = useData<ArchiveProject[]>("/api/projects");
+  const { data: stats, loading: statsLoading, refetch: refetchStats } = useData<DashboardStats>("/api/dashboard/stats");
+  const { data: projects, loading: projectsLoading, refetch: refetchProjects } = useData<ArchiveProject[]>("/api/projects");
 
   if (statsLoading || projectsLoading) {
     return <DashboardPageSkeleton />;
@@ -144,10 +144,15 @@ export default function DashboardOverview() {
         </ErrorBoundary>
       </div>
 
-      {/* Quick Actions — reusable shortcut panel */}
+      {/* Quick Actions — reusable shortcut panel (SYNC DATA refetches the
+          stats + project feeds; VIEW ANALYTICS opens the telemetry node) */}
       <ErrorBoundary section="quick-actions" fallback={<WidgetError label="QUICK ACTIONS" className="mt-4 sm:mt-6" />}>
         <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
-          <QuickActionsPanel />
+          <QuickActionsPanel
+            onSync={async () => {
+              await Promise.all([refetchStats(), refetchProjects()]);
+            }}
+          />
         </motion.div>
       </ErrorBoundary>
     </div>

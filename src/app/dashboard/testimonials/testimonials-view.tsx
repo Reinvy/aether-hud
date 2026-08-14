@@ -118,6 +118,7 @@ export default function DashboardTestimonials() {
             icon={<MessageCircle className="h-5 w-5" />}
             title="ARCHIVE EMPTY"
             message="No testimonials recorded — add the first transmission"
+            className="sm:col-span-2"
           />
         ) : (
           list.map((t, i) => (
