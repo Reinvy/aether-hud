@@ -1,6 +1,7 @@
 "use client";
 
 import { Gauge, Database, MemoryStick, RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
 import { useData } from "@/lib/use-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
   type TelemetryMetricSummary,
 } from "@/components/features/telemetry-metric-card";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { fadeInUp, staggerContainer, fadeInUpItem } from "@/lib/motion-variants";
 import { cn } from "@/lib/utils";
 
 /**
@@ -113,16 +115,16 @@ export function TelemetryView() {
         <TelemetrySkeleton />
       ) : (
         <ErrorBoundary section="telemetry" fallback={<WidgetError label="TELEMETRY" />}>
-          <div className="space-y-6">
+          <motion.div className="space-y-6" variants={staggerContainer} initial="initial" animate="animate">
             {/* Source + overview stat row */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <motion.div variants={fadeInUpItem} className="flex flex-wrap items-center justify-between gap-3">
               <SourceBadge source={data.source} />
               <span className="font-mono text-[10px] text-text-muted">
                 SINCE {new Date(data.startedAt).toLocaleString("en-GB", { hour12: false })}
               </span>
-            </div>
+            </motion.div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <motion.div variants={fadeInUpItem} className="grid gap-4 sm:grid-cols-3">
               <StatCard
                 label="TOTAL SAMPLES"
                 value={String(data.totalRecorded)}
@@ -141,10 +143,10 @@ export function TelemetryView() {
                 icon={MemoryStick}
                 tone={data.source === "database" ? "stellar" : "gold"}
               />
-            </div>
+            </motion.div>
 
             {/* Metric cards — stable order, unknown metrics appended */}
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <motion.div variants={fadeInUpItem} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {METRIC_ORDER.filter((m) => data.metrics[m]).map((name) => (
                 <TelemetryMetricCard key={name} name={name} summary={data.metrics[name]} />
               ))}
@@ -153,10 +155,10 @@ export function TelemetryView() {
                 .map((name) => (
                   <TelemetryMetricCard key={name} name={name} summary={data.metrics[name]} />
                 ))}
-            </div>
+            </motion.div>
 
             {Object.keys(data.metrics).length === 0 && (
-              <div className="glass-panel chamfered corner-decor flex flex-col items-center gap-3 p-10 text-center">
+              <motion.div variants={fadeInUpItem} className="glass-panel chamfered corner-decor flex flex-col items-center gap-3 p-10 text-center">
                 <Gauge className="h-6 w-6 text-gold-400/40" />
                 <span className="sys-label text-[10px]">NO TELEMETRY CAPTURED</span>
                 <p className="max-w-md font-mono text-[11px] text-text-muted">
@@ -164,9 +166,9 @@ export function TelemetryView() {
                   and interact — samples will populate this node automatically.
                 </p>
                 <HudLoader label="AWAITING BEACONS" size="sm" className="mt-2" />
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </ErrorBoundary>
       )}
     </div>

@@ -32,7 +32,7 @@ export function Toggle({
     <label
       htmlFor={id}
       className={cn(
-        "relative inline-flex cursor-pointer items-center",
+        "relative inline-flex cursor-pointer items-center after:absolute after:-inset-1.5 after:content-['']",
         disabled && "cursor-not-allowed opacity-50",
         className
       )}

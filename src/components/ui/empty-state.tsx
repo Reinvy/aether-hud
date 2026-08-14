@@ -26,7 +26,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ message, title, icon, action, className }: EmptyStateProps) {
   return (
-    <Card variant="glass" hover="none" className={cn("sm:col-span-2", className)}>
+    <Card variant="glass" hover="none" className={cn(className)}>
       <CardContent className="relative p-8 text-center">
         {/* Diamond corner decor */}
         <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rotate-45 border border-border-glass" />
