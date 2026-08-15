@@ -492,6 +492,56 @@ async function main() {
     assert(false, `Manifest & icon integrity is checkable: ${e.message}`);
   }
 
+  // ===== TEST 10: Dashboard Nav Icon Registry Sync (source-level) =====
+  // The sidebar renders DASHBOARD_NAV icons via `iconMap[item.icon] || Activity`
+  // (src/components/layout/dashboard-sidebar.tsx). An icon name added to
+  // DASHBOARD_NAV without being registered in the map silently renders the
+  // Activity fallback — same silent-fallback bug class TEST 8 locks for socials.
+  // This locks: every `icon: "X"` in DASHBOARD_NAV must be a key of the
+  // sidebar iconMap, so the fallback never fires.
+  log("TEST 10: Dashboard Nav Icon Registry Sync (DASHBOARD_NAV icons registered)");
+  try {
+    const constantsSrc = readFileSync("src/lib/constants.ts", "utf-8");
+    const navBlock = constantsSrc.match(
+      /export const DASHBOARD_NAV = \[([\s\S]*?)\] as const;/
+    );
+    assert(navBlock !== null, "DASHBOARD_NAV block is parseable in constants.ts");
+    const navIcons = navBlock
+      ? [...navBlock[1].matchAll(/icon:\s*"([^"]+)"/g)].map((m) => m[1])
+      : [];
+    assert(
+      navIcons.length > 0,
+      `Extracted DASHBOARD_NAV icons (found ${navIcons.length})`
+    );
+
+    const sidebarSrc = readFileSync(
+      "src/components/layout/dashboard-sidebar.tsx",
+      "utf-8"
+    );
+    const iconMapMatch = sidebarSrc.match(
+      /const iconMap: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
+    );
+    assert(iconMapMatch !== null, "Sidebar iconMap is parseable");
+    const iconMapKeys = new Set(
+      iconMapMatch
+        ? iconMapMatch[1].split(/[\s,]+/).filter(Boolean)
+        : []
+    );
+    assert(
+      iconMapMatch !== null && iconMapKeys.size > 0,
+      `Sidebar iconMap has registered icons (found ${iconMapKeys.size})`
+    );
+
+    for (const icon of new Set(navIcons)) {
+      assert(
+        iconMapKeys.has(icon),
+        `Dashboard nav icon "${icon}" registered in sidebar iconMap`
+      );
+    }
+  } catch (e) {
+    assert(false, `Dashboard nav icon registry is checkable: ${e.message}`);
+  }
+
   // ===== Summary =====
   const total = passed + failed;
   console.log("\n" + "=".repeat(50));
