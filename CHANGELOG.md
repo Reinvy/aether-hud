@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-15] — C3 Dynamic Content Update
+
+### Portfolio content
+- **New projects (2):**
+  - `AETHER Aurora` — AI-assisted real-time rendering intelligence platform that compiles shader pipelines to WebGPU, previews VFX frames collaboratively, and auto-optimizes GPU workloads across edge fleets (AI Platform, CLASS-S).
+  - `AETHER Nebula` — federated knowledge-graph intelligence platform with semantic entity resolution, cross-source relationship inference, and interactive graph exploration for enterprise data discovery (Data Platform, CLASS-A).
+- **Skill recalibration:** Kubernetes/Orchestration 83→84, AI Agents/LLM Ops 90→91, MLOps/Model Serving 86→87.
+- **New socials (2):** Patreon (Heart), Buy Me a Coffee (Coffee) — both icons already registered in landing `socialIcons` + dashboard `iconMap` (TEST 8 stays green, zero UI edits).
+- Counts now: **32 projects / 20 skills / 32 socials**.
+
+### API & design
+- `/api/portfolio` + `/api/dashboard/stats` unchanged (backward-compatible; no breaking changes — both already serve the data file, so new projects/socials flow through automatically).
+- Design audit: no `rounded-*` generic-border regressions in `src/components/sections/` (0 hits).
+
+### Verified
+- Duplicate-title check clean; `proj-` ids sequential to `proj-32`; `npx tsc --noEmit` + `npm run build` pre-push; `node e2e/navigation.test.mjs` + `node e2e/run-tests.mjs` green.
+
+---
+
 ## [2026-08-14] — C4 E2E Navigation & UI Integration Testing
 
 ### Lint gate
