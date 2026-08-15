@@ -27,7 +27,7 @@ export function CategoryFilter<T extends string>({
 }: CategoryFilterProps<T>) {
   const badgeClass = (isActive: boolean) =>
     cn(
-      "tech-badge px-3 py-1.5 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale",
+      "tech-badge px-3 py-1.5 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale focus-ring-gold",
       isActive
         ? "border-border-glass bg-[rgba(242,201,76,0.12)] text-gold-400"
         : "border-border-subtle text-text-muted hover:border-border-glass hover:text-gold-400"

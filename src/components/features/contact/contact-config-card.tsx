@@ -73,23 +73,22 @@ export const ContactConfigCard = memo(function ContactConfigCard({
           disabled
         />
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="sys-label mb-2 block text-text-muted">
-              FIELD_05 // STATUS
-            </label>
-            <div className="input-recessed flex items-center gap-2 px-4 py-2.5">
-              <span className="led-active" />
-              <span className="font-mono text-xs text-stellar-400">{config?.status ?? "ONLINE"}</span>
-            </div>
-          </div>
-          <div>
-            <label className="sys-label mb-2 block text-text-muted">
-              FIELD_06 // SYS VERSION
-            </label>
-            <div className="input-recessed flex items-center px-4 py-2.5">
-              <span className="font-mono text-xs text-text-muted">{config?.sysVersion ?? "v2.4.1"}</span>
-            </div>
-          </div>
+          <Input
+            label="FIELD_05 // STATUS"
+            value={config?.status ?? "ONLINE"}
+            disabled
+            prefix={<span className="led-active" aria-hidden="true" />}
+            /* .input-recessed is unlayered CSS so it beats Tailwind utility
+               classes in v4's cascade layers — inline style is the only way
+               to tint a disabled input's value text. */
+            style={{ color: "var(--color-stellar-400)" }}
+          />
+          <Input
+            label="FIELD_06 // SYS VERSION"
+            value={config?.sysVersion ?? "v2.4.1"}
+            disabled
+            style={{ color: "var(--color-text-muted)" }}
+          />
         </div>
         <div className="flex justify-end pt-2">
           <Button
