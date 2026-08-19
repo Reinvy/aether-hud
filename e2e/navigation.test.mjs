@@ -16,20 +16,9 @@
 
 import { readFileSync, existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { startTestServer, resolveTargetUrl } from "./test-server.mjs";
 
-// aether-hud.vercel.app is TAKEN by another project — the real production
-// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
-function resolveProductionUrl() {
-  try {
-    if (existsSync(".cron/VERCEL_DOMAIN.env")) {
-      const env = readFileSync(".cron/VERCEL_DOMAIN.env", "utf-8");
-      const match = env.match(/^PRODUCTION_URL="([^"]+)"/m);
-      if (match) return match[1];
-    }
-  } catch {}
-  return "https://aether-hud-lyart.vercel.app";
-}
-const PRODUCTION_URL = resolveProductionUrl();
+let targetUrl = resolveTargetUrl();
 
 const RED = "\x1b[31m";
 const GREEN = "\x1b[32m";
@@ -103,7 +92,7 @@ async function fetchRetry(url, options = {}, retries = 3) {
 }
 
 async function getText(path) {
-  const resp = await fetchRetry(`${PRODUCTION_URL}${path}`, { method: "GET" });
+  const resp = await fetchRetry(`${targetUrl}${path}`, { method: "GET" });
   const body = await resp.text();
   return { status: resp.status, body };
 }
@@ -129,25 +118,29 @@ function extractNavLinks(html, origin) {
 }
 
 async function main() {
-  // ===== TEST 1: Page-Load Health =====
-  log("TEST 1: Page-Load Health (live)");
-  console.log(`  ${YELLOW}Target: ${PRODUCTION_URL}${RESET}`);
+  const server = await startTestServer();
+  targetUrl = server.url;
 
-  for (const route of [...PUBLIC_PAGES, ...DASHBOARD_PAGES]) {
-    try {
-      const { status } = await getText(route);
-      assert(status === 200, `${route} loads with HTTP 200 (got ${status})`);
-    } catch (e) {
-      assert(false, `${route} is reachable: ${e.message}`);
+  try {
+    // ===== TEST 1: Page-Load Health =====
+    log(`TEST 1: Page-Load Health (${server.isLive ? "live" : "local"})`);
+    console.log(`  ${YELLOW}Target: ${targetUrl}${RESET}`);
+
+    for (const route of [...PUBLIC_PAGES, ...DASHBOARD_PAGES]) {
+      try {
+        const { status } = await getText(route);
+        assert(status === 200, `${route} loads with HTTP 200 (got ${status})`);
+      } catch (e) {
+        assert(false, `${route} is reachable: ${e.message}`);
+      }
     }
-  }
 
-  for (const route of API_ROUTES) {
-    try {
-      const resp = await fetchRetry(`${PRODUCTION_URL}${route}`, { method: "HEAD", timeout: 10000 });
-      const ok = resp.status === 200 || resp.status === 405;
-      assert(ok, `${route} is mounted (got ${resp.status})`);
-    } catch (e) {
+    for (const route of API_ROUTES) {
+      try {
+        const resp = await fetchRetry(`${targetUrl}${route}`, { method: "HEAD", timeout: 10000 });
+        const ok = resp.status === 200 || resp.status === 405;
+        assert(ok, `${route} is mounted (got ${resp.status})`);
+      } catch (e) {
       assert(false, `${route} is reachable: ${e.message}`);
     }
   }
@@ -174,8 +167,8 @@ async function main() {
   // Extracts same-origin nav links from rendered pages and asserts each
   // resolves — catches dead links, stale anchors and routing regressions
   // that liveness checks on a fixed route list would miss.
-  log("TEST 2: Internal Navigation Link Crawl (live)");
-  const origin = PRODUCTION_URL;
+  log(`TEST 2: Internal Navigation Link Crawl (${server.isLive ? "live" : "local"})`);
+  const origin = targetUrl;
   for (const page of ["/", "/login"]) {
     try {
       const { status, body } = await getText(page);
@@ -205,7 +198,7 @@ async function main() {
   log("TEST 3: Unknown Routes Return 404 (no catch-all misrouting)");
   for (const route of BOGUS_ROUTES) {
     try {
-      const resp = await fetchRetry(`${PRODUCTION_URL}${route}`, { method: "HEAD", timeout: 10000 });
+      const resp = await fetchRetry(`${targetUrl}${route}`, { method: "HEAD", timeout: 10000 });
       assert(resp.status === 404, `${route} returns 404 (got ${resp.status})`);
     } catch (e) {
       assert(false, `${route} is reachable: ${e.message}`);
@@ -221,7 +214,7 @@ async function main() {
     ["empty payload", {}],
   ]) {
     try {
-      const resp = await fetchRetry(`${PRODUCTION_URL}/api/auth`, {
+      const resp = await fetchRetry(`${targetUrl}/api/auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -362,7 +355,7 @@ async function main() {
   ];
   for (const [path, expectedType, requiredKeys] of API_SHAPES) {
     try {
-      const resp = await fetchRetry(`${PRODUCTION_URL}${path}`, {
+      const resp = await fetchRetry(`${targetUrl}${path}`, {
         method: "GET",
         headers: { Accept: "application/json" },
         timeout: 10000,
@@ -548,15 +541,18 @@ async function main() {
   }
 
   // ===== Summary =====
-  const total = passed + failed;
-  console.log("\n" + "=".repeat(50));
-  if (failed === 0) {
-    console.log(`${GREEN}📊 ALL ${total} NAVIGATION TESTS PASSED 🎉${RESET}`);
-  } else {
-    console.log(`${RED}📊 ${passed} passed, ${failed} failed, ${total} total${RESET}`);
+    const total = passed + failed;
+    console.log("\n" + "=".repeat(50));
+    if (failed === 0) {
+      console.log(`${GREEN}📊 ALL ${total} NAVIGATION TESTS PASSED 🎉${RESET}`);
+    } else {
+      console.log(`${RED}📊 ${passed} passed, ${failed} failed, ${total} total${RESET}`);
+    }
+    console.log("=".repeat(50));
+    process.exitCode = failed > 0 ? 1 : 0;
+  } finally {
+    await server.stop();
   }
-  console.log("=".repeat(50));
-  process.exit(failed > 0 ? 1 : 0);
 }
 
 main().catch((e) => {

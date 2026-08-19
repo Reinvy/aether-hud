@@ -8,20 +8,9 @@
 
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
+import { startTestServer, resolveTargetUrl, resolveProductionUrl } from "./test-server.mjs";
 
-// aether-hud.vercel.app is TAKEN by another project — the real production
-// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
-function resolveProductionUrl() {
-  try {
-    if (existsSync(".cron/VERCEL_DOMAIN.env")) {
-      const env = readFileSync(".cron/VERCEL_DOMAIN.env", "utf-8");
-      const match = env.match(/^PRODUCTION_URL="([^"]+)"/m);
-      if (match) return match[1];
-    }
-  } catch {}
-  return "https://aether-hud-lyart.vercel.app";
-}
-const PRODUCTION_URL = resolveProductionUrl();
+let targetUrl = resolveTargetUrl();
 
 // ─── Color helpers ──────────────────────────────────────────
 const RED = "\x1b[31m";
@@ -123,77 +112,91 @@ async function main() {
     assert(buildOut.includes(route), `Build includes route ${route}`);
   }
 
-  // ===== TEST 2: Live Page Check =====
-  log("\n📋 TEST 2: Production Page Accessibility", CYAN);
-  log(`  Target: ${PRODUCTION_URL}`, YELLOW);
-  // Verify ALL expected routes (pages + APIs) are live, not just the homepage.
-  // 405 is acceptable for API routes that are POST-only (e.g. /api/auth) —
-  // it proves the route is mounted even though HEAD is not allowed.
-  for (const route of [...ALL_ROUTES, ...API_ROUTES]) {
-    try {
-      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`);
-      const ok = resp.status === 200 || (resp.status === 405 && route.startsWith("/api/"));
-      assert(ok, `${route} is live (got ${resp.status})`);
-    } catch (e) {
-      assert(false, `${route} is reachable: ${e.message}`);
-    }
-  }
+  // ===== TEST 2: Page & Route Accessibility =====
+  const server = await startTestServer();
+  targetUrl = server.url;
 
-  // SEO files: live AND reference the correct production domain.
-  for (const route of SEO_ROUTES) {
+  try {
+    log(`\n📋 TEST 2: Route Accessibility (${server.isLive ? "live" : "local"})`, CYAN);
+    log(`  Target: ${targetUrl}`, YELLOW);
+    // Verify ALL expected routes (pages + APIs) are live, not just the homepage.
+    // 405 is acceptable for API routes that are POST-only (e.g. /api/auth) —
+    // it proves the route is mounted even though HEAD is not allowed.
+    for (const route of [...ALL_ROUTES, ...API_ROUTES]) {
+      try {
+        const resp = await fetchUrl(`${targetUrl}${route}`);
+        const ok = resp.status === 200 || (resp.status === 405 && route.startsWith("/api/"));
+        assert(ok, `${route} is live (got ${resp.status})`);
+      } catch (e) {
+        assert(false, `${route} is reachable: ${e.message}`);
+      }
+    }
+
+    // SEO files: live AND reference the target domain or production domain without stale domain regressions.
+    const prodUrl = resolveProductionUrl();
+    for (const route of SEO_ROUTES) {
+      try {
+        const resp = await fetchUrl(`${targetUrl}${route}`, "GET");
+        assert(resp.status === 200, `${route} is live (got ${resp.status})`);
+        const body = await resp.text();
+        const hasNoStaleDomain = !body.includes("https://aether-hud.vercel.app");
+        const matchesValidDomain = server.isLive
+          ? body.includes(prodUrl)
+          : body.includes("localhost") || body.includes(prodUrl) || body.includes(targetUrl);
+        assert(
+          hasNoStaleDomain && matchesValidDomain,
+          `${route} references the correct domain (${server.isLive ? prodUrl : "valid local/prod domain"})`
+        );
+      } catch (e) {
+        assert(false, `${route} is reachable: ${e.message}`);
+      }
+    }
+
+    // Sitemap ↔ robots consistency: every URL listed in sitemap.xml must NOT be
+    // disallowed by robots.txt. Crawlers that honor robots never fetch disallowed
+    // URLs, so listing them signals auth-gated routes as indexable content — a
+    // silent SEO contradiction (see vercel-deployment skill pitfalls).
     try {
-      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`, "GET");
-      assert(resp.status === 200, `${route} is live (got ${resp.status})`);
-      const body = await resp.text();
+      const robotsResp = await fetchUrl(`${targetUrl}/robots.txt`, "GET");
+      const robotsBody = await robotsResp.text();
+      const disallowed = robotsBody
+        .split("\n")
+        .filter((l) => l.trim().startsWith("Disallow:"))
+        .map((l) => l.trim().replace(/^Disallow:\s*/, ""))
+        .filter((p) => p.length > 0);
+      assert(disallowed.length > 0, `robots.txt declares Disallow rules (found ${disallowed.length})`);
+      const sitemapResp = await fetchUrl(`${targetUrl}/sitemap.xml`, "GET");
+      const sitemapBody = await sitemapResp.text();
+      const locs = [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+      assert(locs.length >= 1, `sitemap.xml lists at least one URL (found ${locs.length})`);
+      const violations = locs.filter((loc) => {
+        const path = loc
+          .replace(targetUrl, "")
+          .replace(prodUrl, "")
+          .replace(/https?:\/\/localhost:\d+/, "")
+          .replace(/https?:\/\/[^/]+/, "")
+          .replace(/\/+$/, "") || "/";
+        return disallowed.some((d) => d === "/" || path === d.replace(/\/+$/, "") || path.startsWith(d.replace(/\/+$/, "") + "/"));
+      });
       assert(
-        body.includes(PRODUCTION_URL),
-        `${route} references the correct production domain (${PRODUCTION_URL})`
+        violations.length === 0,
+        `sitemap.xml lists NO robots-disallowed routes${violations.length ? ` (violations: ${violations.join(", ")})` : ""}`
       );
     } catch (e) {
-      assert(false, `${route} is reachable: ${e.message}`);
+      assert(false, `sitemap/robots consistency is checkable: ${e.message}`);
     }
-  }
 
-  // Sitemap ↔ robots consistency: every URL listed in sitemap.xml must NOT be
-  // disallowed by robots.txt. Crawlers that honor robots never fetch disallowed
-  // URLs, so listing them signals auth-gated routes as indexable content — a
-  // silent SEO contradiction (see vercel-deployment skill pitfalls).
-  try {
-    const robotsResp = await fetchUrl(`${PRODUCTION_URL}/robots.txt`, "GET");
-    const robotsBody = await robotsResp.text();
-    const disallowed = robotsBody
-      .split("\n")
-      .filter((l) => l.trim().startsWith("Disallow:"))
-      .map((l) => l.trim().replace(/^Disallow:\s*/, ""))
-      .filter((p) => p.length > 0);
-    assert(disallowed.length > 0, `robots.txt declares Disallow rules (found ${disallowed.length})`);
-    const sitemapResp = await fetchUrl(`${PRODUCTION_URL}/sitemap.xml`, "GET");
-    const sitemapBody = await sitemapResp.text();
-    const locs = [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-    assert(locs.length >= 1, `sitemap.xml lists at least one URL (found ${locs.length})`);
-    const violations = locs.filter((loc) => {
-      const path = loc.replace(PRODUCTION_URL, "").replace(/\/+$/, "") || "/";
-      return disallowed.some((d) => d === "/" || path === d.replace(/\/+$/, "") || path.startsWith(d.replace(/\/+$/, "") + "/"));
-    });
-    assert(
-      violations.length === 0,
-      `sitemap.xml lists NO robots-disallowed routes${violations.length ? ` (violations: ${violations.join(", ")})` : ""}`
-    );
-  } catch (e) {
-    assert(false, `sitemap/robots consistency is checkable: ${e.message}`);
-  }
-
-  // Unknown routes must return the custom 404 page (not 200 or 500).
-  // Guards against catch-all routing misconfiguration that silently
-  // serves the wrong page for typos or stale links.
-  for (const route of ["/this-route-does-not-exist-xyz", "/dashboard/nonexistent-page-xyz"]) {
-    try {
-      const resp = await fetchUrl(`${PRODUCTION_URL}${route}`);
-      assert(resp.status === 404, `${route} returns 404 (got ${resp.status})`);
-    } catch (e) {
-      assert(false, `${route} is reachable: ${e.message}`);
+    // Unknown routes must return the custom 404 page (not 200 or 500).
+    // Guards against catch-all routing misconfiguration that silently
+    // serves the wrong page for typos or stale links.
+    for (const route of ["/this-route-does-not-exist-xyz", "/dashboard/nonexistent-page-xyz"]) {
+      try {
+        const resp = await fetchUrl(`${targetUrl}${route}`);
+        assert(resp.status === 404, `${route} returns 404 (got ${resp.status})`);
+      } catch (e) {
+        assert(false, `${route} is reachable: ${e.message}`);
+      }
     }
-  }
 
   // ===== TEST 3: Git Health =====
   log("\n📋 TEST 3: Git Health", CYAN);
@@ -232,76 +235,79 @@ async function main() {
     "grid-hud",
     "sys-label",
   ];
-  for (const [path, markers] of [
-    ["/", DESIGN_MARKERS],
-    ["/login", DESIGN_MARKERS],
-    ["/dashboard", DESIGN_MARKERS],
-  ]) {
-    try {
-      const resp = await fetchUrl(`${PRODUCTION_URL}${path}`, "GET");
-      assert(resp.status === 200, `${path} renders HTTP 200 (got ${resp.status})`);
-      const body = await resp.text();
-      assert(body.length > 1000, `${path} returns non-trivial HTML (${body.length} bytes)`);
-      for (const m of markers) {
-        assert(body.includes(m), `${path} includes design-system marker "${m}"`);
-      }
-    } catch (e) {
-      assert(false, `${path} is fetchable: ${e.message}`);
-    }
-  }
-
-  // JSON-LD structured data must render in the homepage HTML and parse cleanly.
-  try {
-    const resp = await fetchUrl(`${PRODUCTION_URL}/`, "GET");
-    const body = await resp.text();
-    const blocks = [...body.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
-    assert(blocks.length >= 1, `Homepage emits JSON-LD blocks (found ${blocks.length})`);
-    let parsedOk = 0;
-    let hasItemList = false;
-    for (const [, raw] of blocks) {
+    for (const [path, markers] of [
+      ["/", DESIGN_MARKERS],
+      ["/login", DESIGN_MARKERS],
+      ["/dashboard", DESIGN_MARKERS],
+    ]) {
       try {
-        const data = JSON.parse(raw);
-        parsedOk++;
-        if (data["@type"] === "ItemList") hasItemList = true;
-      } catch {}
-    }
-    assert(parsedOk === blocks.length, `All ${blocks.length} JSON-LD blocks parse cleanly`);
-    assert(hasItemList, "JSON-LD includes an ItemList (portfolio items render)");
-    // The ItemList must enumerate ALL projects from the data file — a server
-    // component throwing mid-render (or a data-file refactor) silently drops
-    // items while the block still parses. Count `id: "proj-` in portfolio.ts
-    // and require the live list to match.
-    try {
-      const dataSrc = readFileSync("src/data/portfolio.ts", "utf-8");
-      const expectedCount = (dataSrc.match(/id:\s*"proj-/g) || []).length;
-      for (const [, raw] of blocks) {
-        const data = JSON.parse(raw);
-        if (data["@type"] === "ItemList") {
-          const liveCount = (data.itemListElement || []).length;
-          assert(
-            liveCount === expectedCount,
-            `JSON-LD ItemList count matches data file (${liveCount} === ${expectedCount} projects)`
-          );
+        const resp = await fetchUrl(`${targetUrl}${path}`, "GET");
+        assert(resp.status === 200, `${path} renders HTTP 200 (got ${resp.status})`);
+        const body = await resp.text();
+        assert(body.length > 1000, `${path} returns non-trivial HTML (${body.length} bytes)`);
+        for (const m of markers) {
+          assert(body.includes(m), `${path} includes design-system marker "${m}"`);
         }
+      } catch (e) {
+        assert(false, `${path} is fetchable: ${e.message}`);
+      }
+    }
+
+    // JSON-LD structured data must render in the homepage HTML and parse cleanly.
+    try {
+      const resp = await fetchUrl(`${targetUrl}/`, "GET");
+      const body = await resp.text();
+      const blocks = [...body.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
+      assert(blocks.length >= 1, `Homepage emits JSON-LD blocks (found ${blocks.length})`);
+      let parsedOk = 0;
+      let hasItemList = false;
+      for (const [, raw] of blocks) {
+        try {
+          const data = JSON.parse(raw);
+          parsedOk++;
+          if (data["@type"] === "ItemList") hasItemList = true;
+        } catch {}
+      }
+      assert(parsedOk === blocks.length, `All ${blocks.length} JSON-LD blocks parse cleanly`);
+      assert(hasItemList, "JSON-LD includes an ItemList (portfolio items render)");
+      // The ItemList must enumerate ALL projects from the data file — a server
+      // component throwing mid-render (or a data-file refactor) silently drops
+      // items while the block still parses. Count `id: "proj-` in portfolio.ts
+      // and require the live list to match.
+      try {
+        const dataSrc = readFileSync("src/data/portfolio.ts", "utf-8");
+        const expectedCount = (dataSrc.match(/id:\s*"proj-/g) || []).length;
+        for (const [, raw] of blocks) {
+          const data = JSON.parse(raw);
+          if (data["@type"] === "ItemList") {
+            const liveCount = (data.itemListElement || []).length;
+            assert(
+              liveCount === expectedCount,
+              `JSON-LD ItemList count matches data file (${liveCount} === ${expectedCount} projects)`
+            );
+          }
+        }
+      } catch (e) {
+        assert(false, `JSON-LD item count is verifiable: ${e.message}`);
       }
     } catch (e) {
-      assert(false, `JSON-LD item count is verifiable: ${e.message}`);
+      assert(false, `Homepage JSON-LD is verifiable: ${e.message}`);
     }
-  } catch (e) {
-    assert(false, `Homepage JSON-LD is verifiable: ${e.message}`);
-  }
 
-  // ===== Summary =====
-  const total = passed + failed;
-  log("\n" + "=".repeat(50));
-  if (failed === 0) {
-    log(`📊 ALL ${total} TESTS PASSED 🎉`, GREEN);
-  } else {
-    log(`📊 ${passed} passed, ${failed} failed, ${total} total`, failed > 0 ? RED : GREEN);
-  }
-  log("=".repeat(50));
+    // ===== Summary =====
+    const total = passed + failed;
+    log("\n" + "=".repeat(50));
+    if (failed === 0) {
+      log(`📊 ALL ${total} TESTS PASSED 🎉`, GREEN);
+    } else {
+      log(`📊 ${passed} passed, ${failed} failed, ${total} total`, failed > 0 ? RED : GREEN);
+    }
+    log("=".repeat(50));
 
-  process.exit(failed > 0 ? 1 : 0);
+    process.exitCode = failed > 0 ? 1 : 0;
+  } finally {
+    await server.stop();
+  }
 }
 
 main().catch((e) => {
