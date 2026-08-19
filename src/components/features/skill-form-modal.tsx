@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
 
 /**
@@ -138,11 +139,28 @@ export function SkillFormModal({
           onChange={(e) => updateField("level", e.target.value)}
         />
       </div>
-      <Input
+      <Select
         label="FIELD_04 // ICON"
-        placeholder="Zap, Globe, FileCode, Palette, Server, Database, Brain, Container, PenTool, Rocket"
         value={form.icon}
         onChange={(e) => updateField("icon", e.target.value)}
+        options={[
+          { value: "Zap", label: "Zap // Energy & Speed" },
+          { value: "Globe", label: "Globe // Web & Frontend" },
+          { value: "FileCode", label: "FileCode // Languages" },
+          { value: "Palette", label: "Palette // Styling & CSS" },
+          { value: "Server", label: "Server // Backend & APIs" },
+          { value: "Database", label: "Database // Data & SQL" },
+          { value: "Brain", label: "Brain // AI & Machine Learning" },
+          { value: "Bot", label: "Bot // AI Agents & LLMs" },
+          { value: "Terminal", label: "Terminal // Systems & CLI" },
+          { value: "Radio", label: "Radio // Realtime & WebSockets" },
+          { value: "Network", label: "Network // Architecture" },
+          { value: "Container", label: "Container // Docker & K8s" },
+          { value: "Rocket", label: "Rocket // DevOps & Cloud" },
+          { value: "PenTool", label: "PenTool // Design & Figma" },
+          { value: "Code", label: "Code // General Development" },
+          { value: "Cpu", label: "Cpu // Compute Core" },
+        ]}
       />
     </FormModal>
   );

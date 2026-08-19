@@ -34,6 +34,8 @@ export function ContactSection() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const { data: socials } = useData<Social[]>("/api/socials");
+  const { data: config } = useData<{ email?: string }>("/api/config");
+  const directEmail = config?.email || "hello@aether-hud.dev";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,12 +186,12 @@ export function ContactSection() {
                     <span className="sys-label-gold">DIRECT // NODE</span>
                   </div>
                   <a
-                    href="mailto:hello@aether-hud.dev"
+                    href={`mailto:${directEmail}`}
                     className="group/channel flex items-center gap-3 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all hover:border-border-glass hover:text-gold-400 hover:bg-glass-200 hover-scale-sm press-scale focus-ring-gold"
                   >
                     <Mail className="h-4 w-4 text-gold-400/60 transition-transform duration-300 group-hover/channel:scale-110 group-hover/channel:text-gold-400" />
                     <span className="font-mono text-[11px]">
-                      hello@aether-hud.dev
+                      {directEmail}
                     </span>
                     <span className="ml-auto sys-label text-[8px] transition-colors duration-300 group-hover/channel:text-gold-400/60">[SEND]</span>
                     <ChevronRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-300 group-hover/channel:translate-x-0 group-hover/channel:opacity-100 text-gold-400" />

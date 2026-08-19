@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
 import { Cpu, Globe } from "lucide-react";
@@ -17,7 +18,6 @@ type Skill = {
   order: number;
 };
 
-
 const stagger = {
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
@@ -27,6 +27,29 @@ const stagger = {
 
 export function SkillsSection() {
   const { data: skills, loading } = useData<Skill[]>("/api/skills");
+
+  const categoryStats = useMemo(() => {
+    if (!skills || skills.length === 0) {
+      return [
+        { label: "Frontend", pct: 92 },
+        { label: "Backend", pct: 86 },
+        { label: "AI/ML", pct: 88 },
+        { label: "DevOps", pct: 82 },
+        { label: "Language", pct: 85 },
+      ];
+    }
+    const map: Record<string, { total: number; count: number }> = {};
+    for (const s of skills) {
+      const cat = s.category === "AI" ? "AI/ML" : s.category;
+      if (!map[cat]) map[cat] = { total: 0, count: 0 };
+      map[cat].total += s.level;
+      map[cat].count += 1;
+    }
+    return Object.entries(map).map(([cat, val]) => ({
+      label: cat,
+      pct: Math.round(val.total / val.count),
+    }));
+  }, [skills]);
 
   return (
     <section id="skills" className="relative py-20 sm:py-28">
@@ -90,9 +113,9 @@ export function SkillsSection() {
           </div>
         </motion.div>
 
-        {/* Radar / Hex graph placeholder */}
+        {/* Radar / Hex graph overview */}
         <motion.div
-          className="mt-12 mx-auto max-w-md text-center"
+          className="mt-12 mx-auto max-w-2xl text-center"
           {...fadeInView}
         >
           <div className="glass-panel chamfered-sm p-6">
@@ -100,13 +123,13 @@ export function SkillsSection() {
               <Globe className="h-4 w-4 text-gold-400" />
               <span className="sys-label-gold">SYSTEM OVERVIEW // ACTIVE</span>
             </div>
-            <div className="flex flex-wrap justify-center gap-3">
-              {["Frontend", "Backend", "AI/ML", "DevOps", "Design"].map((cat) => (
-                <div key={cat} className="text-center">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              {categoryStats.map((stat) => (
+                <div key={stat.label} className="text-center min-w-[70px]">
                   <div className="text-2xl font-bold text-gradient-gold font-display">
-                    {cat === "Frontend" ? "92" : cat === "Backend" ? "86" : cat === "AI/ML" ? "80" : cat === "DevOps" ? "82" : "85"}
+                    {stat.pct}
                   </div>
-                  <div className="sys-label text-[9px]">{cat} // PCT</div>
+                  <div className="sys-label text-[9px]">{stat.label} // PCT</div>
                 </div>
               ))}
             </div>

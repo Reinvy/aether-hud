@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Activity, Shield, Eye, EyeOff, KeyRound, AlertCircle, Terminal, ChevronRight } from "lucide-react";
@@ -290,13 +291,13 @@ export default function LoginPage() {
 
         {/* Bottom link */}
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-1.5 font-mono text-[10px] text-text-muted/40 transition-colors hover:text-gold-400/60 hover-scale-sm press-scale focus-ring-gold"
           >
             <Terminal className="h-3 w-3" />
             RETURN TO PORTAL
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>

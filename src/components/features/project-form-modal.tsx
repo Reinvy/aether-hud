@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 
@@ -187,11 +188,16 @@ export function ProjectFormModal({
           rows={3}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
+          <Select
             label="FIELD_03 // COMPLEXITY"
-            placeholder="CLASS-B"
             value={form.complexity}
             onChange={(e) => updateField("complexity", e.target.value)}
+            options={[
+              { value: "CLASS-S", label: "CLASS-S // APEX" },
+              { value: "CLASS-A", label: "CLASS-A // HIGH" },
+              { value: "CLASS-B", label: "CLASS-B // STANDARD" },
+              { value: "CLASS-C", label: "CLASS-C // BASIC" },
+            ]}
           />
           <Input
             label="FIELD_04 // CATEGORY"
