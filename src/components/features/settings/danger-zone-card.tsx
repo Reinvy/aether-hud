@@ -9,16 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface DangerZoneCardProps {
   /** Panel grid position — drives the staggered enter animation delay. */
   delay?: number;
+  onReset?: () => void;
+  resetting?: boolean;
 }
 
 /**
  * DangerZoneCard — irreversible-action warning panel for the dashboard
  * settings page.
- *
- * Extracted from settings-view. Pure presentation: the reset entry is a
- * static (non-wired) control, kept byte-identical to the original view.
  */
-export function DangerZoneCard({ delay = 0 }: DangerZoneCardProps) {
+export function DangerZoneCard({ delay = 0, onReset, resetting = false }: DangerZoneCardProps) {
   return (
     <motion.div {...fadeInUp} transition={{ delay }}>
       <Card variant="glass" hover="none">
@@ -35,10 +34,18 @@ export function DangerZoneCard({ delay = 0 }: DangerZoneCardProps) {
           <div className="flex items-center justify-between chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.04)] px-4 py-3">
             <div>
               <p className="font-mono text-xs tracking-wider text-text-main">RESET ALL DATA</p>
-              <p className="font-mono text-[9px] text-text-muted">Clear all portfolio content</p>
+              <p className="font-mono text-[9px] text-text-muted">Restore initial defaults and seed</p>
             </div>
-            <Button variant="secondary" size="sm" glow="none" className="text-hud-danger border-hud-danger/30">
-              <RefreshCw className="h-3.5 w-3.5" />
+            <Button
+              variant="secondary"
+              size="sm"
+              glow="none"
+              onClick={onReset}
+              disabled={resetting || !onReset}
+              loading={resetting}
+              className="text-hud-danger border-hud-danger/30 hover:bg-[rgba(255,0,85,0.1)]"
+            >
+              {!resetting && <RefreshCw className="h-3.5 w-3.5" />}
               RESET
             </Button>
           </div>

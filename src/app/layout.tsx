@@ -3,6 +3,7 @@ import { Chakra_Petch, Inter, JetBrains_Mono, Orbitron } from "next/font/google"
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider } from "@/components/theme-provider";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
@@ -218,7 +219,9 @@ export default function RootLayout({
         <meta name="application-name" content={APP_NAME} />
       </head>
       <body className="min-h-full bg-deep-space text-text-main font-body scanline">
-        <AuthProvider>{children}</AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
         {/* Performance observability — renders nothing, beacons Core Web Vitals */}
         <WebVitalsReporter />
       </body>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
@@ -82,10 +82,11 @@ export default function DashboardContact() {
   const [savingConfig, setSavingConfig] = useState(false);
 
   // Sync config email when loaded
-  if (config && !editEmailDirty) {
-    setEditEmail(config.email);
-    setEditEmailDirty(true); // mark as dirty to prevent re-sync
-  }
+  useEffect(() => {
+    if (config && !editEmailDirty) {
+      setEditEmail(config.email || "");
+    }
+  }, [config, editEmailDirty]);
 
   // Handlers are referentially stable (useCallback) so the memoized
   // SocialLinksCard / ContactConfigCard panels skip re-rendering on

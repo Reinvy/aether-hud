@@ -1,4 +1,5 @@
-import { Activity } from "lucide-react";
+import Link from "next/link";
+import { Activity, ArrowUp, Shield } from "lucide-react";
 import { PORTFOLIO_CONFIG } from "@/lib/constants";
 
 export function HudFooter() {
@@ -19,10 +20,24 @@ export function HudFooter() {
           </div>
 
           {/* Center links */}
-          <div className="flex items-center gap-6">
-            <span className="sys-label">
-              [SYS_NODE//00] // ALL RIGHTS RESERVED
+          <div className="flex items-center gap-5">
+            <span className="sys-label hidden md:inline">
+              [SYS_NODE//00]
             </span>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-1.5 sys-label text-text-muted hover:text-gold-400 transition-colors duration-200"
+            >
+              <Shield className="h-3 w-3" />
+              PORTAL_AUTH
+            </Link>
+            <a
+              href="#hero"
+              className="inline-flex items-center gap-1 sys-label text-text-muted hover:text-gold-400 transition-colors duration-200"
+            >
+              <ArrowUp className="h-3 w-3" />
+              TOP
+            </a>
           </div>
 
           {/* Copyright */}

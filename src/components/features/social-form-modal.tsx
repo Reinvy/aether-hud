@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
 
 /**
@@ -18,7 +19,7 @@ import { FormModal } from "@/components/ui/form-modal";
  * CRUD form in the dashboard.
  */
 
-interface SocialFormRecord {
+export interface SocialFormRecord {
   id: string;
   platform: string;
   url: string;
@@ -122,15 +123,35 @@ export function SocialFormModal({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="FIELD_01 // PLATFORM"
-          placeholder="GitHub"
+          placeholder="e.g., GitHub"
           value={form.platform}
           onChange={(e) => updateField("platform", e.target.value)}
         />
-        <Input
+        <Select
           label="FIELD_02 // ICON"
-          placeholder="Github, Globe, Twitter..."
           value={form.icon}
           onChange={(e) => updateField("icon", e.target.value)}
+          options={[
+            { value: "Globe", label: "Globe // Website / LinkedIn" },
+            { value: "GitBranch", label: "GitBranch // GitHub" },
+            { value: "GitFork", label: "GitFork // GitLab" },
+            { value: "MessageCircle", label: "MessageCircle // Twitter / Discord / Threads" },
+            { value: "MessageSquare", label: "MessageSquare // Reddit / Forum" },
+            { value: "Mail", label: "Mail // Direct Email" },
+            { value: "Send", label: "Send // Telegram" },
+            { value: "Video", label: "Video // YouTube / Vimeo" },
+            { value: "Camera", label: "Camera // Instagram" },
+            { value: "Music", label: "Music // TikTok" },
+            { value: "Code", label: "Code // Dev.to / Hashnode" },
+            { value: "BookOpen", label: "BookOpen // Medium / Substack" },
+            { value: "MonitorPlay", label: "MonitorPlay // Twitch / Kick" },
+            { value: "Palette", label: "Palette // Dribbble / Behance" },
+            { value: "Heart", label: "Heart // Sponsors / Patreon" },
+            { value: "Coffee", label: "Coffee // Ko-fi / Buy Me a Coffee" },
+            { value: "AtSign", label: "AtSign // Bluesky / Mastodon / Farcaster" },
+            { value: "Rss", label: "Rss // RSS Feed" },
+            { value: "Link2", label: "Link2 // Generic Link" },
+          ]}
         />
       </div>
       <Input

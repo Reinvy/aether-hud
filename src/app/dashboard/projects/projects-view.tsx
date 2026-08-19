@@ -96,9 +96,14 @@ export default function DashboardProjects() {
   }, [deleteTarget, refetch]);
 
   const filtered = projects
-    ? projects.filter((p) =>
-        p.title.toLowerCase().includes(filterQuery.toLowerCase())
-      )
+    ? projects.filter((p) => {
+        const q = filterQuery.toLowerCase().trim();
+        if (!q) return true;
+        const matchesTitle = p.title.toLowerCase().includes(q);
+        const matchesCategory = p.category.toLowerCase().includes(q);
+        const matchesTags = p.tags.toLowerCase().includes(q);
+        return matchesTitle || matchesCategory || matchesTags;
+      })
     : [];
 
   if (loading) {

@@ -78,6 +78,47 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ─── Theme Presets ────────────────────────────────────────── */
+[data-theme="night-ops"] {
+  --color-border-glass: rgba(56, 239, 125, 0.35);
+  --color-border-active: #38ef7d;
+  --color-accent-pulse: #00d2ff;
+}
+[data-theme="night-ops"] .text-gradient-gold {
+  background: linear-gradient(135deg, #f8fafc 0%, #38ef7d 40%, #00a8cc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-theme="night-ops"] .bg-ambient-gold {
+  background: radial-gradient(ellipse at 50% 0%, rgba(56, 239, 125, 0.08) 0%, transparent 60%);
+}
+
+[data-theme="titanium"] {
+  --color-border-glass: rgba(224, 230, 237, 0.35);
+  --color-border-active: #e0e6ed;
+  --color-accent-pulse: #adb6c4;
+}
+[data-theme="titanium"] .text-gradient-gold {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e6ed 50%, #adb6c4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-theme="titanium"] .bg-ambient-gold {
+  background: radial-gradient(ellipse at 50% 0%, rgba(224, 230, 237, 0.08) 0%, transparent 60%);
+}
+
+/* ─── Disabled Animations Override ─────────────────────────── */
+.no-animations *,
+.no-animations *::before,
+.no-animations *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+}
+
 body {
   background: var(--color-deep-space);
   color: var(--color-text-main);

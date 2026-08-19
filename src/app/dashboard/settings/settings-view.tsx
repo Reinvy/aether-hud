@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import { Eye, RefreshCw, Save, Settings2 } from "lucide-react";
@@ -8,13 +9,28 @@ import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
+import { useTheme } from "@/components/theme-provider";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
+import { HudLoader } from "@/components/ui/hud-loader";
 import { SiteIdentityCard } from "@/components/features/settings/site-identity-card";
 import { ThemeAppearanceCard } from "@/components/features/settings/theme-appearance-card";
 import { SystemInfoCard } from "@/components/features/settings/system-info-card";
 import { DangerZoneCard } from "@/components/features/settings/danger-zone-card";
 
+const ConfirmDialog = dynamic(
+  () =>
+    import("@/components/ui/confirm-dialog").then((m) => ({
+      default: m.ConfirmDialog,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+        <HudLoader label="LOADING PURGE MODULE" size="md" />
+      </div>
+    ),
+  }
+);
 
 interface ApiConfig {
   siteName: string;
@@ -27,7 +43,10 @@ interface ApiConfig {
 
 export default function DashboardSettings() {
   const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
+  const { setThemePreset, setAnimationsEnabled } = useTheme();
   const [saving, setSaving] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
   const [form, setForm] = useState({
@@ -63,6 +82,8 @@ export default function DashboardSettings() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      setThemePreset(form.themePreset);
+      setAnimationsEnabled(form.animationsEnabled);
       refetch();
     } catch (e) {
       console.error("Failed to save web config", e);
@@ -70,6 +91,24 @@ export default function DashboardSettings() {
       setSaving(false);
     }
   }
+
+  const handleResetData = useCallback(async () => {
+    setResetting(true);
+    try {
+      await fetch("/api/config/reset", {
+        method: "POST",
+      });
+      setConfirmResetOpen(false);
+      setThemePreset("obsidian");
+      setAnimationsEnabled(true);
+      setInitialized(false);
+      refetch();
+    } catch (e) {
+      console.error("Failed to reset portfolio data", e);
+    } finally {
+      setResetting(false);
+    }
+  }, [refetch, setThemePreset, setAnimationsEnabled]);
 
   if (loading) {
     return <DashboardFormSkeleton />;
@@ -114,7 +153,11 @@ export default function DashboardSettings() {
 
         <SystemInfoCard delay={0.2} />
 
-        <DangerZoneCard delay={0.3} />
+        <DangerZoneCard
+          delay={0.3}
+          onReset={() => setConfirmResetOpen(true)}
+          resetting={resetting}
+        />
       </div>
       </ErrorBoundary>
 
@@ -136,6 +179,27 @@ export default function DashboardSettings() {
           </Button>
         </div>
       </motion.div>
+
+      {/* Reset Confirmation Dialog */}
+      {confirmResetOpen && (
+        <ConfirmDialog
+          open
+          onClose={() => setConfirmResetOpen(false)}
+          title="RESET ALL PORTFOLIO DATA"
+          sysId="DASH//DANGER // PURGE_ALL"
+          message={
+            <>
+              Warning: This operation will <span className="text-hud-danger font-bold">PURGE</span> all custom records
+              and restore default projects, skills, sections, and configuration from the tactical dossier seed.
+              <br />
+              This action cannot be undone.
+            </>
+          }
+          confirmLabel="PURGE & RE-SEED"
+          onConfirm={handleResetData}
+          saving={resetting}
+        />
+      )}
     </div>
   );
 }
