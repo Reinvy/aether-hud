@@ -30,13 +30,7 @@ export function SkillsSection() {
 
   const categoryStats = useMemo(() => {
     if (!skills || skills.length === 0) {
-      return [
-        { label: "Frontend", pct: 92 },
-        { label: "Backend", pct: 86 },
-        { label: "AI/ML", pct: 88 },
-        { label: "DevOps", pct: 82 },
-        { label: "Language", pct: 85 },
-      ];
+      return [];
     }
     const map: Record<string, { total: number; count: number }> = {};
     for (const s of skills) {
@@ -59,7 +53,7 @@ export function SkillsSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="SKILLS MATRIX // ATTRIBUTE"
-          icon={<Cpu className="mr-1.5 h-3.5 w-3.5" />}
+          icon={<Cpu className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
           title="Combat"
           highlight="Proficiencies"
           subtitle="Technical attributes and system capabilities — HUD segment display."
@@ -70,14 +64,14 @@ export function SkillsSection() {
           className="mt-14 mx-auto max-w-4xl"
           {...stagger}
         >
-          <div className="glass-panel chamfered p-8">
+          <div className="glass-panel chamfered p-6 sm:p-8">
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-subtle">
-              <Cpu className="h-4 w-4 text-gold-400" />
+              <Cpu className="h-4 w-4 text-gold-400" aria-hidden="true" />
               <span className="sys-label-gold">
                 SKILL ARRAY // SEGMENTED DATA
               </span>
-              <span className="ml-auto sys-label">
-                {skills ? `${skills.length} MODULES LOADED` : "LOADING..."}
+              <span className="ml-auto sys-label font-mono tabular-nums">
+                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} MODULES LOADED`}
               </span>
             </div>
 
@@ -113,28 +107,30 @@ export function SkillsSection() {
           </div>
         </motion.div>
 
-        {/* Radar / Hex graph overview */}
-        <motion.div
-          className="mt-12 mx-auto max-w-2xl text-center"
-          {...fadeInView}
-        >
-          <div className="glass-panel chamfered-sm p-6">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Globe className="h-4 w-4 text-gold-400" />
-              <span className="sys-label-gold">SYSTEM OVERVIEW // ACTIVE</span>
-            </div>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              {categoryStats.map((stat) => (
-                <div key={stat.label} className="text-center min-w-[70px]">
-                  <div className="text-2xl font-bold text-gradient-gold font-display">
-                    {stat.pct}
+        {/* Radar / Category Summary Overview */}
+        {categoryStats.length > 0 && (
+          <motion.div
+            className="mt-12 mx-auto max-w-2xl text-center"
+            {...fadeInView}
+          >
+            <div className="glass-panel chamfered-sm p-6">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
+                <span className="sys-label-gold">SYSTEM OVERVIEW // ATTRIBUTE AVERAGE</span>
+              </div>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                {categoryStats.map((stat) => (
+                  <div key={stat.label} className="text-center min-w-[70px]">
+                    <div className="text-2xl font-bold text-gradient-gold font-display tabular-nums">
+                      {stat.pct}%
+                    </div>
+                    <div className="sys-label text-[9px]">{stat.label} // AVG</div>
                   </div>
-                  <div className="sys-label text-[9px]">{stat.label} // PCT</div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV } from "@/lib/constants";
 import { useSidebar } from "@/lib/sidebar-context";
+import { useData } from "@/lib/use-data";
 import { StatusDot } from "@/components/ui/status-dot";
 import { IconButton } from "@/components/ui/icon-button";
 
@@ -37,36 +38,44 @@ const iconMap: Record<string, React.ElementType> = {
   Gauge,
 };
 
+interface SiteConfig {
+  siteName: string;
+  sysVersion: string;
+}
+
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
+  const { data: config } = useData<SiteConfig>("/api/config");
+
+  const sysVersion = config?.sysVersion || "v2.4.1";
 
   const sidebarContent = (
     <>
       {/* Logo */}
       <div className="angled-bar flex items-center gap-3 border-b border-border-subtle px-6 py-5">
         <div className="relative">
-          <LayoutDashboard className="h-5 w-5 text-gold-400" />
+          <LayoutDashboard className="h-5 w-5 text-gold-400" aria-hidden="true" />
           <StatusDot tone="active" label="Dashboard online" className="absolute -top-1 -right-1" />
         </div>
         <div className="flex-1">
           <h1 className="font-display text-xs font-bold tracking-[0.15em] text-text-main">
             AETHER // DASH
           </h1>
-          <p className="sys-label text-[9px]">CONTROL PANEL // v2.4</p>
+          <p className="sys-label text-[9px] font-mono tabular-nums">CONTROL PANEL // {sysVersion}</p>
         </div>
         <IconButton
           size="sm"
-          label="Close sidebar"
+          label="Close dashboard sidebar"
           onClick={close}
           className="lg:hidden"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" aria-hidden="true" />
         </IconButton>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-6">
+      <nav aria-label="Dashboard Navigation" className="flex-1 space-y-1 px-3 py-6">
         {DASHBOARD_NAV.map((item) => {
           const Icon = iconMap[item.icon] || Activity;
           const isActive = pathname === item.href;
@@ -83,9 +92,9 @@ export function DashboardSidebar() {
                   : "text-text-muted hover:bg-glass-200 hover:text-gold-400 border-l-2 border-transparent"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="flex-1">{item.label}</span>
-              <span className="sys-label text-[8px] opacity-50">{item.sysId}</span>
+              <span className="sys-label text-[8px] opacity-50 font-mono">{item.sysId}</span>
             </Link>
           );
         })}
@@ -98,12 +107,12 @@ export function DashboardSidebar() {
           onClick={close}
           className="flex items-center gap-3 chamfered-sm px-4 py-3 text-xs font-mono tracking-wider text-text-muted transition-all duration-200 hover:bg-glass-200 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4" aria-hidden="true" />
           <span>RETURN TO PORTAL</span>
         </Link>
         <div className="mt-3 px-4">
           <div className="flex items-center gap-2">
-            <span className="led-active" />
+            <span className="led-active" aria-hidden="true" />
             <span className="sys-label-active text-[9px]">SYS_READY</span>
           </div>
         </div>
@@ -114,7 +123,7 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Desktop sidebar — always visible on lg+ */}
-      <aside className="fixed left-0 top-0 z-30 hidden h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:flex">
+      <aside aria-label="Dashboard Navigation Sidebar" className="fixed left-0 top-0 z-30 hidden h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:flex">
         {sidebarContent}
       </aside>
 
@@ -130,6 +139,7 @@ export function DashboardSidebar() {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-40 bg-deep-space/60 backdrop-blur-sm lg:hidden"
               onClick={close}
+              aria-hidden="true"
             />
             {/* Sidebar panel */}
             <motion.aside
@@ -137,6 +147,7 @@ export function DashboardSidebar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              aria-label="Mobile Navigation Sidebar"
               className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:hidden"
             >
               {sidebarContent}

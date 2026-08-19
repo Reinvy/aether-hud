@@ -85,7 +85,7 @@ export function HomeContent() {
     return (
       <>
         <HudHeader />
-        <main>
+        <main id="main-content" tabIndex={-1} className="outline-none">
           <ErrorBoundary section="hero">
             <HeroSection />
           </ErrorBoundary>
@@ -113,7 +113,7 @@ export function HomeContent() {
   return (
     <>
       <HudHeader />
-      <main>
+      <main id="main-content" tabIndex={-1} className="outline-none">
         {sectionList.map((section) => {
           const SectionComponent = SECTION_MAP[section.key];
           if (!SectionComponent) return null;

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { MessageCircle, Quote } from "lucide-react";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { TestimonialsGridSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
@@ -35,7 +36,7 @@ export function TestimonialsSection() {
         {/* Section Header */}
         <SectionHeading
           badge="TESTIMONIALS // FEEDBACK"
-          icon={<MessageCircle className="mr-1.5 h-3.5 w-3.5" />}
+          icon={<MessageCircle className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
           title="Verified"
           highlight="Reports"
           subtitle="After-action reports from collaborators, clients, and peers."
@@ -69,22 +70,32 @@ export function TestimonialsSection() {
                 <CardContent className="p-6">
                   {/* Quote icon */}
                   <div className="mb-4">
-                    <Quote className="h-8 w-8 text-gold-400/20" />
+                    <Quote className="h-8 w-8 text-gold-400/20" aria-hidden="true" />
                   </div>
 
-                  {/* Content */}
-                  <p className="text-sm leading-relaxed text-text-muted font-body italic">
-                    &ldquo;{testimonial.content}&rdquo;
-                  </p>
+                  {/* Content as semantic blockquote */}
+                  <blockquote className="text-sm leading-relaxed text-text-muted font-body italic text-pretty">
+                    “{testimonial.content}”
+                  </blockquote>
 
                   {/* Author */}
                   <div className="mt-6 flex items-center gap-4">
-                    {/* Avatar placeholder */}
-                    <div className="flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary">
-                      <span className="font-mono text-xs text-gold-400">
-                        {testimonial.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
+                    {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
+                      <div className="relative h-10 w-10 overflow-hidden chamfered-sm border border-border-glass">
+                        <Image
+                          src={testimonial.avatar}
+                          alt={testimonial.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary">
+                        <span className="font-mono text-xs text-gold-400">
+                          {testimonial.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
 
                     <div>
                       <p className="font-display text-sm font-bold tracking-wider text-text-main">
@@ -103,7 +114,7 @@ export function TestimonialsSection() {
 
                   {/* Corner decoration */}
                   <div className="absolute bottom-3 right-3">
-                    <span className="sys-label text-[8px] text-text-muted/20">
+                    <span className="sys-label text-[8px] text-text-muted/20 font-mono tabular-nums">
                       NODE//{testimonial.id.slice(0, 4).toUpperCase()}
                     </span>
                   </div>

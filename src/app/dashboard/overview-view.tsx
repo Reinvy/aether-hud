@@ -22,6 +22,7 @@ import { WidgetError } from "@/components/ui/widget-error";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 import { fadeInUp, fadeInUpItem, staggerContainer } from "@/lib/motion-variants";
+import type { ActivityItem } from "@/components/features/activity-feed";
 
 // Lazy-load the ActivityFeed widget — it is below-the-fold on the overview
 // and only renders after stats/projects resolve, so deferring its chunk
@@ -58,11 +59,16 @@ interface DashboardStats {
   uptime: string;
 }
 
+interface ActivityResponse {
+  activities: ActivityItem[];
+}
+
 export default function DashboardOverview() {
   const { data: stats, loading: statsLoading, refetch: refetchStats } = useData<DashboardStats>("/api/dashboard/stats");
   const { data: projects, loading: projectsLoading, refetch: refetchProjects } = useData<ArchiveProject[]>("/api/projects");
+  const { data: activityData, loading: activityLoading, refetch: refetchActivity } = useData<ActivityResponse>("/api/dashboard/activity");
 
-  if (statsLoading || projectsLoading) {
+  if (statsLoading || projectsLoading || activityLoading) {
     return <DashboardPageSkeleton />;
   }
 
@@ -94,12 +100,7 @@ export default function DashboardOverview() {
   ];
 
   const projectList = projects ?? [];
-
-  const recentActivity = [
-    { action: "Portfolio deployed", detail: "AETHER-HUD v2.4.1", time: "2m ago", type: "deploy" as const },
-    { action: "System online", detail: "All modules operational", time: "1h ago", type: "update" as const },
-    { action: "Data synchronized", detail: `${projectList.length} projects indexed`, time: "3h ago", type: "calibrate" as const },
-  ];
+  const activities = activityData?.activities ?? [];
 
   return (
     <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
@@ -136,21 +137,20 @@ export default function DashboardOverview() {
           </motion.div>
         </ErrorBoundary>
 
-        {/* Activity Feed — lazy-loaded */}
+        {/* Activity Feed — lazy-loaded & dynamic */}
         <ErrorBoundary section="activity" fallback={<WidgetError label="ACTIVITY FEED" className="h-full" />}>
           <motion.div {...fadeInUp}>
-            <ActivityFeed items={recentActivity} />
+            <ActivityFeed items={activities} />
           </motion.div>
         </ErrorBoundary>
       </div>
 
-      {/* Quick Actions — reusable shortcut panel (SYNC DATA refetches the
-          stats + project feeds; VIEW ANALYTICS opens the telemetry node) */}
+      {/* Quick Actions — reusable shortcut panel */}
       <ErrorBoundary section="quick-actions" fallback={<WidgetError label="QUICK ACTIONS" className="mt-4 sm:mt-6" />}>
         <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
           <QuickActionsPanel
             onSync={async () => {
-              await Promise.all([refetchStats(), refetchProjects()]);
+              await Promise.all([refetchStats(), refetchProjects(), refetchActivity()]);
             }}
           />
         </motion.div>

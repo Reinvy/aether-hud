@@ -3,16 +3,61 @@
 import { motion } from "framer-motion";
 import { StatusDot } from "@/components/ui/status-dot";
 import { Badge } from "@/components/ui/badge";
+import { useData } from "@/lib/use-data";
+
+interface TerminalConfig {
+  tagline?: string;
+  bio?: string;
+  location?: string;
+  status?: string;
+  sysVersion?: string;
+  siteName?: string;
+}
+
+interface SkillItem {
+  id: string;
+  name: string;
+  level: number;
+  category: string;
+}
+
+interface HeroTerminalPanelProps {
+  config?: TerminalConfig;
+  skills?: SkillItem[];
+}
 
 /**
  * HeroTerminalPanel — the hero's terminal-style dossier card.
  *
- * Extracted from the hero section: a chamfered glass panel with the
- * classic terminal chrome (traffic dots, `$ whoami` prompt, mono log
- * lines) and the core-stack tech badges. Reusable wherever a
- * "system readout" panel is needed (about sections, profile headers).
+ * Chamfered glass panel with terminal chrome, dynamic profile telemetry
+ * lines derived from live database config, and dynamic core stack badges
+ * mapped from the skills matrix.
  */
-export function HeroTerminalPanel() {
+export function HeroTerminalPanel({ config: propConfig, skills: propSkills }: HeroTerminalPanelProps) {
+  const { data: fetchedSkills } = useData<SkillItem[]>("/api/skills");
+  const { data: fetchedConfig } = useData<TerminalConfig>("/api/config");
+
+  const config = propConfig || fetchedConfig || {
+    tagline: "Full-Stack Developer & AI Engineer",
+    location: "Jakarta, Indonesia",
+    status: "ONLINE",
+    sysVersion: "v2.4.1",
+  };
+
+  const skillsList = propSkills || fetchedSkills || [];
+  const topSkills = skillsList.length > 0
+    ? skillsList.slice(0, 6)
+    : [
+        { id: "s1", name: "Next.js", level: 95, category: "Frontend" },
+        { id: "s2", name: "TypeScript", level: 92, category: "Language" },
+        { id: "s3", name: "Python", level: 88, category: "AI" },
+        { id: "s4", name: "Prisma", level: 85, category: "Backend" },
+        { id: "s5", name: "Tailwind v4", level: 90, category: "Frontend" },
+        { id: "s6", name: "Framer Motion", level: 85, category: "Frontend" },
+      ];
+
+  const coreStackNames = topSkills.slice(0, 4).map((s) => s.name).join(" · ");
+
   return (
     <motion.div
       className="relative mx-auto mt-16 max-w-4xl"
@@ -35,7 +80,9 @@ export function HeroTerminalPanel() {
             <span className="text-text-muted/30">/</span>
             <span className="text-text-muted/50">$(whoami)</span>
           </div>
-          <span className="ml-auto sys-label text-text-muted/20">NODE//01 // ACTIVE</span>
+          <span className="ml-auto sys-label text-text-muted/40 font-mono tabular-nums">
+            NODE//01 // {config.status || "ACTIVE"}
+          </span>
         </div>
 
         {/* Terminal content */}
@@ -45,26 +92,30 @@ export function HeroTerminalPanel() {
               <span className="text-gold-400">[AETHER@HUD]</span>
               <span className="text-text-muted/30">:~$</span> cat /etc/profile
             </p>
-            <p className="text-text-main/80">
-              {">"} Full-Stack Developer specializing in AI-driven applications
+            <p className="text-text-main/90">
+              {">"} {config.tagline || "Full-Stack Developer specializing in AI & modern web systems"}
             </p>
             <p className="text-text-main/80">
-              {">"} Core Stack: Next.js · TypeScript · Prisma · Python
+              {">"} Core Stack: {coreStackNames || "Next.js · TypeScript · Prisma · Python"}
             </p>
             <p className="text-text-main/80">
-              {">"} Design Philosophy: AAA Game HUD Aesthetics · Luxury Cybernetics
+              {">"} Deployment Node: {config.location || "Jakarta, Indonesia // Global Edge"}
             </p>
-            <p className="text-gold-400/70">
-              {">"} <span className="animate-energy-pulse">_</span> Ready for deployment
+            <p className="text-gold-400/80">
+              {">"} <span className="animate-energy-pulse">_</span> System {config.status || "ONLINE"} // {config.sysVersion || "v2.4.1"} — Ready for mission deployment
             </p>
           </div>
-          <div className="mt-6 flex flex-wrap gap-2">
-            <Badge variant="gold" size="sm">Next.js</Badge>
-            <Badge variant="gold" size="sm">TypeScript</Badge>
-            <Badge variant="stellar" size="sm">AI</Badge>
-            <Badge variant="gold" size="sm">Prisma</Badge>
-            <Badge variant="default" size="sm">Tailwind v4</Badge>
-            <Badge variant="default" size="sm">Framer Motion</Badge>
+
+          {/* Dynamic Core Stack Badges */}
+          <div className="mt-6 flex flex-wrap gap-2" aria-label="Core stack proficiencies">
+            {topSkills.map((skill) => {
+              const variant = skill.category === "AI" ? "stellar" : skill.level >= 90 ? "gold" : "default";
+              return (
+                <Badge key={skill.id} variant={variant} size="sm">
+                  {skill.name}
+                </Badge>
+              );
+            })}
           </div>
         </div>
       </div>

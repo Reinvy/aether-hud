@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { portfolioData } from "../../../data/portfolio";
-import type { Project } from "../../../lib/constants";
+import { prisma } from "@/lib/prisma";
+import { portfolioData } from "@/data/portfolio";
+import type { Project, Skill } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
-const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" };
+const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" };
 
 const SECTION_KEYS = ["projects", "skills", "socials"] as const;
 
@@ -17,6 +18,76 @@ type ProjectFilter = {
   sort?: string;
   limit?: number;
 };
+
+function parseTags(tagsStr: string | string[]): string[] {
+  if (Array.isArray(tagsStr)) return tagsStr;
+  try {
+    const parsed = JSON.parse(tagsStr);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return tagsStr ? tagsStr.split(",").map((t) => t.trim()).filter(Boolean) : [];
+  }
+}
+
+async function getDynamicPortfolio() {
+  try {
+    const [config, dbProjects, dbSkills, dbSocials] = await Promise.all([
+      prisma.portfolioConfig.findUnique({ where: { id: "main" } }),
+      prisma.project.findMany({ orderBy: { order: "asc" } }),
+      prisma.skill.findMany({ orderBy: { order: "asc" } }),
+      prisma.socialLink.findMany({ orderBy: { order: "asc" } }),
+    ]);
+
+    const projects: Project[] = (dbProjects && dbProjects.length > 0)
+      ? dbProjects.map((p) => ({
+          id: p.id,
+          title: p.title,
+          description: p.description,
+          image: p.image,
+          tags: parseTags(p.tags),
+          category: p.category,
+          complexity: p.complexity,
+          performance: p.performance,
+          year: p.year,
+          links: {
+            live: p.liveUrl || undefined,
+            github: p.githubUrl || undefined,
+          },
+        }))
+      : portfolioData.projects;
+
+    const skills: Skill[] = (dbSkills && dbSkills.length > 0)
+      ? dbSkills.map((s) => ({
+          id: s.id,
+          name: s.name,
+          level: s.level,
+          category: s.category,
+          icon: s.icon,
+        }))
+      : portfolioData.skills;
+
+    const socials = (dbSocials && dbSocials.length > 0)
+      ? dbSocials.map((s) => ({
+          platform: s.platform,
+          url: s.url,
+          icon: s.icon,
+        }))
+      : portfolioData.socials;
+
+    return {
+      name: config?.name || portfolioData.name,
+      tagline: config?.tagline || portfolioData.tagline,
+      bio: config?.bio || portfolioData.bio,
+      avatar: config?.avatar || portfolioData.avatar,
+      projects,
+      skills,
+      socials,
+    };
+  } catch (err) {
+    console.warn("[PORTFOLIO_DB_FALLBACK]", err instanceof Error ? err.message : err);
+    return portfolioData;
+  }
+}
 
 function filterProjects(projects: Project[], f: ProjectFilter): Project[] {
   let data = projects;
@@ -31,7 +102,7 @@ function filterProjects(projects: Project[], f: ProjectFilter): Project[] {
   }
 
   if (f.category) {
-    data = data.filter((p) => p.category.toLowerCase().includes(f.category!));
+    data = data.filter((p) => p.category.toLowerCase() === f.category);
   }
 
   if (f.tags && f.tags.length > 0) {
@@ -41,7 +112,7 @@ function filterProjects(projects: Project[], f: ProjectFilter): Project[] {
   }
 
   if (f.complexity) {
-    data = data.filter((p) => p.complexity.toLowerCase() === f.complexity!);
+    data = data.filter((p) => p.complexity.toLowerCase() === f.complexity);
   }
 
   if (f.year) {
@@ -56,8 +127,8 @@ function filterProjects(projects: Project[], f: ProjectFilter): Project[] {
       case "performance":
         data = [...data].sort(
           (a, b) =>
-            parseInt(b.performance.replace("%", ""), 10) -
-            parseInt(a.performance.replace("%", ""), 10)
+            parseInt(b.performance.replace("%", "") || "0", 10) -
+            parseInt(a.performance.replace("%", "") || "0", 10)
         );
         break;
       case "year":
@@ -93,29 +164,33 @@ export async function GET(request: Request) {
     const limitParam = searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
+    const data = await getDynamicPortfolio();
+
     // Summary endpoint: aggregate counts + derived stats (used by dashboards/widgets)
     if (section === "summary") {
-      const avgSkillLevel = Math.round(
-        portfolioData.skills.reduce((sum, s) => sum + s.level, 0) / portfolioData.skills.length
-      );
-      const categories = Array.from(new Set(portfolioData.projects.map((p) => p.category)));
+      const avgSkillLevel = data.skills.length > 0
+        ? Math.round(data.skills.reduce((sum, s) => sum + s.level, 0) / data.skills.length)
+        : 0;
+      const categories = Array.from(new Set(data.projects.map((p) => p.category)));
       const complexityClasses = Array.from(
-        new Set(portfolioData.projects.map((p) => p.complexity))
+        new Set(data.projects.map((p) => p.complexity))
       ).sort();
-      const projectCountByCategory = portfolioData.projects.reduce<Record<string, number>>(
+      const projectCountByCategory = data.projects.reduce<Record<string, number>>(
         (acc, p) => {
           acc[p.category] = (acc[p.category] || 0) + 1;
           return acc;
         },
         {}
       );
-      const avgPerformance = Math.round(
-        portfolioData.projects.reduce(
-          (sum, p) => sum + parseInt(p.performance.replace("%", ""), 10),
-          0
-        ) / portfolioData.projects.length
-      );
-      const skillCountByCategory = portfolioData.skills.reduce<Record<string, number>>(
+      const avgPerformance = data.projects.length > 0
+        ? Math.round(
+            data.projects.reduce(
+              (sum, p) => sum + parseInt(p.performance.replace("%", "") || "0", 10),
+              0
+            ) / data.projects.length
+          )
+        : 0;
+      const skillCountByCategory = data.skills.reduce<Record<string, number>>(
         (acc, s) => {
           acc[s.category] = (acc[s.category] || 0) + 1;
           return acc;
@@ -124,9 +199,9 @@ export async function GET(request: Request) {
       );
       return NextResponse.json(
         {
-          projectCount: portfolioData.projects.length,
-          skillCount: portfolioData.skills.length,
-          socialCount: portfolioData.socials.length,
+          projectCount: data.projects.length,
+          skillCount: data.skills.length,
+          socialCount: data.socials.length,
           avgSkillLevel,
           avgPerformance,
           categories,
@@ -140,10 +215,10 @@ export async function GET(request: Request) {
 
     if (section && SECTION_KEYS.includes(section as (typeof SECTION_KEYS)[number])) {
       const key = section as (typeof SECTION_KEYS)[number];
-      let data = portfolioData[key];
+      let sectionData = data[key];
 
       if (key === "projects") {
-        data = filterProjects(data as Project[], {
+        sectionData = filterProjects(sectionData as Project[], {
           search,
           category,
           tags,
@@ -153,14 +228,14 @@ export async function GET(request: Request) {
           limit: limit && !Number.isNaN(limit) ? limit : undefined,
         });
       } else if (key === "skills" && sort) {
-        const skills = data as typeof portfolioData.skills;
-        data =
+        const skills = sectionData as typeof data.skills;
+        sectionData =
           sort === "level"
             ? [...skills].sort((a, b) => b.level - a.level)
             : [...skills].sort((a, b) => a.name.localeCompare(b.name));
       }
 
-      return NextResponse.json({ [key]: data }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ [key]: sectionData }, { headers: CACHE_HEADERS });
     }
 
     // Full portfolio — optionally narrow projects via search/category/tags/complexity/year/sort/limit
@@ -173,7 +248,7 @@ export async function GET(request: Request) {
       Boolean(sort) ||
       Boolean(limitParam);
 
-    let projects = portfolioData.projects;
+    let projects = data.projects;
     if (hasProjectFilters) {
       projects = filterProjects(projects, {
         search,
@@ -184,10 +259,10 @@ export async function GET(request: Request) {
         sort,
         limit: limit && !Number.isNaN(limit) ? limit : undefined,
       });
-      return NextResponse.json({ ...portfolioData, projects }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ ...data, projects }, { headers: CACHE_HEADERS });
     }
 
-    return NextResponse.json(portfolioData, { headers: CACHE_HEADERS });
+    return NextResponse.json(data, { headers: CACHE_HEADERS });
   } catch (e) {
     console.error("[PORTFOLIO_GET]", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: "Failed to fetch portfolio data" }, { status: 500 });

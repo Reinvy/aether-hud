@@ -43,7 +43,7 @@ export function ExperienceSection() {
         {/* Section Header */}
         <SectionHeading
           badge="EXPERIENCE // TIMELINE"
-          icon={<Briefcase className="mr-1.5 h-3.5 w-3.5" />}
+          icon={<Briefcase className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
           title="Mission"
           highlight="History"
           subtitle="A chronological record of deployed missions, operations, and system upgrades."
@@ -77,7 +77,7 @@ export function ExperienceSection() {
               >
                 {/* Timeline node */}
                 <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary transition-all duration-300 group-hover:border-gold-400/40 group-hover:shadow-[0_0_16px_rgba(242,201,76,0.25)] group-hover:scale-110">
-                  <TypeIcon className="h-4 w-4 text-gold-400 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(242,201,76,0.6)]" />
+                  <TypeIcon className="h-4 w-4 text-gold-400 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(242,201,76,0.6)]" aria-hidden="true" />
                 </div>
 
                 {/* Node connector line */}
@@ -90,11 +90,11 @@ export function ExperienceSection() {
                       <div className="flex items-center gap-2 mb-1">
                         <Badge variant="gold" size="sm">
                           {exp.type === "work" ? (
-                            <><Briefcase className="mr-1 h-3 w-3" /> WORK</>
+                            <><Briefcase className="mr-1 h-3 w-3" aria-hidden="true" /> WORK</>
                           ) : exp.type === "education" ? (
-                            <><GraduationCap className="mr-1 h-3 w-3" /> EDUCATION</>
+                            <><GraduationCap className="mr-1 h-3 w-3" aria-hidden="true" /> EDUCATION</>
                           ) : (
-                            <><Briefcase className="mr-1 h-3 w-3" /> FREELANCE</>
+                            <><Briefcase className="mr-1 h-3 w-3" aria-hidden="true" /> FREELANCE</>
                           )}
                         </Badge>
                       </div>
@@ -108,8 +108,8 @@ export function ExperienceSection() {
 
                     {/* Date range */}
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <Calendar className="h-3 w-3 text-text-muted/50" />
-                      <span className="font-mono text-[10px] text-text-muted tracking-wider">
+                      <Calendar className="h-3 w-3 text-text-muted/50" aria-hidden="true" />
+                      <span className="font-mono text-[10px] text-text-muted tracking-wider tabular-nums">
                         {exp.startDate} — {exp.endDate || "Present"}
                       </span>
                     </div>
@@ -121,8 +121,8 @@ export function ExperienceSection() {
 
                   {/* Sys ID */}
                   <div className="mt-4 flex items-center gap-2">
-                    <ArrowRight className="h-3 w-3 text-gold-400/40" />
-                    <span className="sys-label text-[9px]">
+                    <ArrowRight className="h-3 w-3 text-gold-400/40" aria-hidden="true" />
+                    <span className="sys-label text-[9px] font-mono tabular-nums">
                       MISSION // {String(index + 1).padStart(2, "0")}
                     </span>
                   </div>
