@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Boxes } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { ProjectCard } from "@/components/features/project-card";
@@ -25,7 +25,7 @@ type Project = {
 const stagger = {
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
-  viewport: { once: true, margin: "-100px" },
+  viewport: { once: true, margin: "-80px" },
   transition: { staggerChildren: 0.1 },
 };
 
@@ -34,17 +34,17 @@ export function ProjectsSection() {
 
   return (
     <section id="projects" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-20" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-gold" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-35" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeading
-          badge="PROJECT ARCHIVE // DOSSIER"
-          icon={<Boxes className="mr-1.5 h-3.5 w-3.5" />}
-          title="Deployed"
-          highlight="Operations"
-          subtitle="Tactical dossier of completed missions and active deployments."
+          badge="ARTIFACT ARCHIVE // DOMAINS OF FORGERY"
+          icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" />}
+          title="Domains &"
+          highlight="Artifacts"
+          subtitle="Curated chronicle of 5-star digital architectures, neural systems, and forged platforms across seven realms."
         />
 
         {/* Projects Grid */}
@@ -64,7 +64,9 @@ export function ProjectsSection() {
 
           {!loading && projects?.length === 0 && (
             <div className="col-span-full flex justify-center py-12">
-              <span className="sys-label text-xs text-text-muted">NO PROJECT DATA AVAILABLE</span>
+              <span className="font-mono text-xs text-leather-muted dark:text-text-muted">
+                NO ARTIFACT DATA AVAILABLE
+              </span>
             </div>
           )}
         </motion.div>

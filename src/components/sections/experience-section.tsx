@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, GraduationCap, Calendar, ShieldCheck, Briefcase } from "lucide-react";
+import { Award, GraduationCap, Calendar, ShieldCheck, Briefcase, Sparkles } from "lucide-react";
 import { ExperienceTimelineSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
@@ -41,11 +41,11 @@ export function ExperienceSection() {
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeading
-          badge="ADVENTURER'S GUILD // QUEST LOG"
+          badge="ADVENTURER HANDBOOK // DAILY COMMISSIONS"
           icon={<Award className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
           title="Expedition"
           highlight="Chronicle"
-          subtitle="A verified history of completed guild commissions, career milestones, and technical expeditions."
+          subtitle="A verified record of completed guild commissions, leadership roles, and technical expeditions across seven realms."
         />
 
         {/* Timeline */}
@@ -54,7 +54,7 @@ export function ExperienceSection() {
           {...stagger}
         >
           {/* Vertical guild line */}
-          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-leather-caramel/40 via-leather-caramel/20 to-transparent dark:from-gold-400/40 dark:via-gold-400/20" />
+          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-leather-caramel/50 via-leather-caramel/25 to-transparent dark:from-gold-400/50 dark:via-gold-400/25" />
 
           {loading && (
             <div className="pt-2">
@@ -75,7 +75,7 @@ export function ExperienceSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {/* Timeline node */}
-                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border border-leather-caramel/35 dark:border-gold-400/40 bg-parchment-subtle dark:bg-surface-primary transition-all duration-300 group-hover:scale-110 shadow-md">
+                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/40 bg-parchment-subtle dark:bg-surface-primary transition-all duration-300 group-hover:scale-110 shadow-lg">
                   <TypeIcon className="h-4 w-4 text-leather-caramel dark:text-gold-400 transition-transform group-hover:scale-110" aria-hidden="true" />
                 </div>
 
@@ -83,15 +83,18 @@ export function ExperienceSection() {
                 <div className="absolute left-[19px] top-11 bottom-0 w-px bg-leather-caramel/20 dark:bg-gold-400/20 group-last:hidden" />
 
                 {/* Content card */}
-                <div className="parchment-panel dark:glass-panel chamfered p-6 group-hover:border-leather-caramel/40 dark:group-hover:border-gold-400/40 transition-all duration-300 shadow-md">
+                <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-7 group-hover:border-leather-caramel/50 dark:group-hover:border-gold-400/50 transition-all duration-300 shadow-xl border-2 border-leather-caramel/25 dark:border-gold-400/25">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="px-2.5 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-gold-400 text-[10px] font-mono font-bold tracking-wider uppercase">
-                          {exp.type === "work" ? "GUILD MISSION" : exp.type === "education" ? "ACADEMY LORE" : "COMMISSION"}
+                        <span className="px-2.5 py-0.5 chamfered-xs bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/30 dark:border-gold-400/30 text-leather-dark dark:text-gold-400 text-[10px] font-mono font-bold tracking-wider uppercase">
+                          {exp.type === "work" ? "GUILD APPOINTMENT" : exp.type === "education" ? "ACADEMY LORE" : "COMMISSION"}
+                        </span>
+                        <span className="font-mono text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
+                          [+60 PRIMOGEMS // REWARD CLAIMED]
                         </span>
                       </div>
-                      <h3 className="font-display text-lg font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors">
+                      <h3 className="font-display text-lg sm:text-xl font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors">
                         {exp.role}
                       </h3>
                       <p className="mt-0.5 font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-semibold">
@@ -100,7 +103,7 @@ export function ExperienceSection() {
                     </div>
 
                     {/* Date range */}
-                    <div className="flex items-center gap-1.5 shrink-0 bg-leather-caramel/5 dark:bg-surface-primary px-3 py-1 chamfered-xs border border-leather-caramel/15 dark:border-gold-400/15">
+                    <div className="flex items-center gap-1.5 shrink-0 bg-leather-caramel/10 dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/20 dark:border-gold-400/20">
                       <Calendar className="h-3.5 w-3.5 text-leather-muted dark:text-text-muted" aria-hidden="true" />
                       <span className="font-mono text-xs text-leather-dark dark:text-platinum-200 tracking-wider tabular-nums font-semibold">
                         {exp.startDate} — {exp.endDate || "Present"}
@@ -108,16 +111,22 @@ export function ExperienceSection() {
                     </div>
                   </div>
 
-                  <p className="mt-3 text-sm leading-relaxed text-leather-muted dark:text-text-muted font-body">
+                  <p className="mt-3 text-sm leading-relaxed text-leather-dark/85 dark:text-text-muted font-body">
                     {exp.description}
                   </p>
 
-                  {/* Commission ID */}
-                  <div className="mt-4 flex items-center gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 text-leather-caramel/70 dark:text-gold-400/70" aria-hidden="true" />
-                    <span className="font-mono text-[10px] tracking-widest text-leather-muted dark:text-text-muted uppercase">
-                      COMMISSION // {String(index + 1).padStart(2, "0")} VERIFIED
-                    </span>
+                  {/* Commission ID & Guild Wax Seal */}
+                  <div className="mt-4 flex items-center justify-between pt-3 border-t border-leather-caramel/15 dark:border-gold-400/15">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                      <span className="font-mono text-[10px] tracking-widest text-leather-muted dark:text-text-muted uppercase font-semibold">
+                        COMMISSION // {String(index + 1).padStart(2, "0")} SEALED
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] font-display text-leather-caramel dark:text-gold-400 font-bold">
+                      <Sparkles className="w-3 h-3" />
+                      <span>AR 60 GUILD RANK</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -126,7 +135,7 @@ export function ExperienceSection() {
 
           {!loading && experiences?.length === 0 && (
             <div className="flex justify-center py-12">
-              <span className="sys-label text-xs text-leather-muted dark:text-text-muted">NO QUEST LOG DATA AVAILABLE</span>
+              <span className="font-mono text-xs text-leather-muted dark:text-text-muted">NO QUEST LOG DATA AVAILABLE</span>
             </div>
           )}
         </motion.div>

@@ -34,7 +34,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { StatusDot } from "@/components/ui/status-dot";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 
@@ -87,10 +86,10 @@ export function ContactSection() {
         setSent(true);
         setTransmissionId(data.transmissionId || "TX-SUCCESS");
       } else {
-        setError(data.error || "Summoning dispatch failed: channel unavailable.");
+        setError(data.error || "Summoning dispatch failed: shrine channel unavailable.");
       }
     } catch {
-      setError("Network resonance anomaly: failed to reach summoning portal.");
+      setError("Elemental resonance anomaly: failed to reach summoning portal.");
     } finally {
       setSending(false);
     }
@@ -98,32 +97,32 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-35" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="SUMMONING SHRINE // TRANSMISSION"
+          badge="KATHERYNE'S DISPATCH // SUMMONING SHRINE"
           icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
           title="Summon"
-          highlight="Developer"
-          subtitle="Direct telepathic dispatch channel. Messages are sent securely with prompt response."
+          highlight="Architect"
+          subtitle="Ad Astra Abyssosque. Direct telepathic message portal for commissions, collaborations, and guild contracts."
         />
 
         <div className="mt-14 mx-auto max-w-4xl">
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
             <motion.div className="lg:col-span-3" {...fadeInView}>
-              <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border border-leather-caramel/25 dark:border-gold-400/25 shadow-xl h-full">
+              <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl h-full">
                 {/* Form header */}
                 <div className="flex items-center gap-2 pb-4 mb-6 border-b border-leather-caramel/20 dark:border-gold-400/20">
                   <Lock className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
-                  <span className="font-mono text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
-                    TEYVAT DISPATCH // ENCRYPTED
+                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                    TEYVAT DISPATCH SCROLL // ENCRYPTED
                   </span>
-                  <span className="ml-auto flex items-center gap-1.5">
-                    <StatusDot tone="active" pulse label="Channel active" />
-                    <span className="sys-label-active text-[9px]">ONLINE</span>
+                  <span className="ml-auto flex items-center gap-1.5 px-2 py-0.5 chamfered-xs bg-emerald-500/10 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="font-mono text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase">ONLINE</span>
                   </span>
                 </div>
 
@@ -134,7 +133,7 @@ export function ContactSection() {
                     className="flex flex-col items-center justify-center py-12 text-center"
                     aria-live="polite"
                   >
-                    <CheckCircle className="h-12 w-12 text-hud-active mb-4" aria-hidden="true" />
+                    <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" aria-hidden="true" />
                     <p className="font-display text-lg font-bold tracking-wider text-leather-dark dark:text-platinum-50 uppercase">
                       DISPATCH DELIVERED
                     </p>
@@ -152,7 +151,7 @@ export function ContactSection() {
                         setSent(false);
                         setFormData({ name: "", email: "", subject: "", message: "" });
                       }}
-                      className="mt-6"
+                      className="mt-6 font-display uppercase tracking-widest"
                     >
                       SEND ANOTHER DISPATCH
                     </Button>
@@ -165,7 +164,7 @@ export function ContactSection() {
                         name="name"
                         autoComplete="name"
                         label="SUMMONER // NAME"
-                        placeholder="e.g. Traveler / Recruiter…"
+                        placeholder="Traveler / Collaborator…"
                         prefix={<User className="h-4 w-4" aria-hidden="true" />}
                         value={formData.name}
                         onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
@@ -192,8 +191,8 @@ export function ContactSection() {
                       <Input
                         id="subject"
                         name="subject"
-                        label="MISSION // TOPIC"
-                        placeholder="Collaboration or commission inquiry…"
+                        label="COMMISSION // TOPIC"
+                        placeholder="Project collaboration or contract inquiry…"
                         prefix={<Hash className="h-4 w-4" aria-hidden="true" />}
                         value={formData.subject}
                         onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
@@ -208,7 +207,7 @@ export function ContactSection() {
                         label="SCROLL CONTENT // MESSAGE"
                         rows={5}
                         className="resize-none"
-                        placeholder="Write your mission dispatch message here…"
+                        placeholder="Write your mission details and dispatch message here…"
                         value={formData.message}
                         onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
                         required
@@ -236,7 +235,7 @@ export function ContactSection() {
                     <button
                       type="submit"
                       disabled={sending || sent}
-                      className="w-full tactical-btn btn-glow-sweep py-3 bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space font-mono text-xs font-bold tracking-widest uppercase hover:opacity-90 shadow-md hover:shadow-xl transition-all inline-flex items-center justify-center gap-2"
+                      className="w-full tactical-btn btn-glow-sweep py-3.5 bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space font-display text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
                       {!sending && !sent && <Send className="h-4 w-4" aria-hidden="true" />}
                       <span>{sending ? "DISPATCHING SCROLL…" : "DISPATCH SUMMONING SCROLL"}</span>
@@ -249,10 +248,10 @@ export function ContactSection() {
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border border-leather-caramel/25 dark:border-gold-400/25 shadow-lg">
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
-                  <span className="font-mono text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                     GUILD // SOCIAL RUNES
                   </span>
                 </div>
@@ -283,11 +282,11 @@ export function ContactSection() {
                 </div>
               </div>
 
-              {/* Direct Mail */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border border-leather-caramel/25 dark:border-gold-400/25 shadow-lg">
+              {/* Direct Letter */}
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
                   <Mail className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
-                  <span className="font-mono text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                     DIRECT // LETTER
                   </span>
                 </div>
@@ -305,15 +304,15 @@ export function ContactSection() {
               </div>
 
               {/* Status */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border border-leather-caramel/25 dark:border-gold-400/25 shadow-lg">
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2">
-                  <span className="led-active" aria-hidden="true" />
-                  <span className="sys-label-active text-[10px]">
-                    {status === "ONLINE" ? "AVAILABLE FOR GUILD COMMISSIONS" : `STATUS: ${status}`}
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                    {status === "ONLINE" ? "AVAILABLE FOR COMMISSIONS" : `STATUS: ${status}`}
                   </span>
                 </div>
                 <p className="mt-2 font-mono text-[10px] text-leather-muted/80 dark:text-text-muted/60 tracking-wider">
-                  Response time: typically within 24 hours
+                  Katheryne's Dispatch: response within 24h
                 </p>
               </div>
             </motion.div>

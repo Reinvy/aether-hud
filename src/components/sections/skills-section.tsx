@@ -52,11 +52,11 @@ export function SkillsSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="ELEMENTAL TALENTS // VISIONS"
+          badge="TALENTS & CONSTELLATIONS // VISIONS"
           icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
-          title="Vision"
-          highlight="Proficiencies"
-          subtitle="Technical mastery across seven digital elements — resonance meter display."
+          title="Talents &"
+          highlight="Constellations"
+          subtitle="Elemental proficiencies and character talent trees across seven digital domains."
         />
 
         {/* Skills Grid Container */}
@@ -64,14 +64,14 @@ export function SkillsSection() {
           className="mt-12 mx-auto max-w-4xl"
           {...stagger}
         >
-          <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
+          <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
               <Sparkles className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
-              <span className="font-mono text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
-                TALENT TREE // ACTIVE NODES
+              <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                TALENT TREE // ACTIVE CONSTELLATIONS
               </span>
-              <span className="ml-auto sys-label font-mono tabular-nums">
-                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} TALENTS LOADED`}
+              <span className="ml-auto font-mono text-[10px] text-leather-muted dark:text-text-muted tabular-nums">
+                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} TALENTS ACTIVE`}
               </span>
             </div>
 
@@ -101,7 +101,7 @@ export function SkillsSection() {
 
             {!loading && skills?.length === 0 && (
               <div className="flex justify-center py-8">
-                <span className="sys-label text-xs text-leather-muted dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
+                <span className="font-mono text-xs text-leather-muted dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
               </div>
             )}
           </div>
@@ -116,17 +116,17 @@ export function SkillsSection() {
             <div className="parchment-panel-strong dark:glass-panel-strong chamfered-sm p-6 border border-leather-caramel/20 dark:border-gold-400/20 shadow-lg">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <Globe className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
-                <span className="font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                <span className="font-display text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
                   ELEMENTAL RESONANCE // CATEGORY AVERAGE
                 </span>
               </div>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
-                  <div key={stat.label} className="text-center min-w-[70px]">
+                  <div key={stat.label} className="text-center min-w-[80px] p-2 chamfered-xs bg-leather-caramel/5 dark:bg-surface-primary/40 border border-leather-caramel/15 dark:border-gold-400/15">
                     <div className="text-2xl font-bold font-display text-leather-dark dark:text-gold-400 tabular-nums">
                       {stat.pct}%
                     </div>
-                    <div className="sys-label text-[9px] mt-1">{stat.label} // AVG</div>
+                    <div className="font-mono text-[9px] text-leather-muted dark:text-text-muted mt-1 uppercase font-semibold">{stat.label}</div>
                   </div>
                 ))}
               </div>

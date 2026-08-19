@@ -13,12 +13,12 @@ interface RailItem {
 }
 
 const RAIL_ITEMS: RailItem[] = [
-  { id: "hero", label: "Traveler", href: "/#hero", icon: Compass, tag: "NODE//01" },
-  { id: "projects", label: "Missions", href: "/#projects", icon: Gamepad2, tag: "NODE//02" },
-  { id: "skills", label: "Visions", href: "/#skills", icon: Sparkles, tag: "NODE//03" },
-  { id: "experience", label: "Quests", href: "/#experience", icon: Award, tag: "NODE//04" },
-  { id: "testimonials", label: "Allies", href: "/#testimonials", icon: Users, tag: "NODE//05" },
-  { id: "contact", label: "Summon", href: "/#contact", icon: Mail, tag: "NODE//06" },
+  { id: "hero", label: "Traveler", href: "/#hero", icon: Compass, tag: "TEYVAT//01" },
+  { id: "projects", label: "Domains", href: "/#projects", icon: Gamepad2, tag: "ARTIFACTS//02" },
+  { id: "skills", label: "Talents", href: "/#skills", icon: Sparkles, tag: "TALENTS//03" },
+  { id: "experience", label: "Quests", href: "/#experience", icon: Award, tag: "COMMISSIONS//04" },
+  { id: "testimonials", label: "Allies", href: "/#testimonials", icon: Users, tag: "ALLIES//05" },
+  { id: "contact", label: "Summon", href: "/#contact", icon: Mail, tag: "SHRINE//06" },
 ];
 
 export function NavRail() {
@@ -44,7 +44,7 @@ export function NavRail() {
 
   return (
     <aside
-      aria-label="Tactical Rail Navigation"
+      aria-label="Teyvat Rail Navigation"
       className="hidden lg:flex fixed left-3 xl:left-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-4"
     >
       {/* Top Floating Circular Celestial Orb / Logo */}
@@ -62,7 +62,7 @@ export function NavRail() {
       {/* Vertical Rail Container */}
       <nav
         role="navigation"
-        className="parchment-panel dark:glass-panel chamfered-sm py-4 px-2 flex flex-col items-center gap-3 border border-leather-caramel/25 dark:border-gold-400/25 shadow-xl"
+        className="parchment-panel dark:glass-panel chamfered-sm py-4 px-2 flex flex-col items-center gap-3 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-2xl"
       >
         {RAIL_ITEMS.map((item) => {
           const Icon = item.icon;
