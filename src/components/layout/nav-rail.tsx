@@ -60,6 +60,7 @@ export function NavRail() {
           width={28}
           height={28}
           className="object-contain transition-transform group-hover:rotate-12"
+          unoptimized
         />
         <span className="sr-only">Top</span>
       </a>
@@ -92,6 +93,7 @@ export function NavRail() {
                   "object-contain transition-transform group-hover:scale-110",
                   isActive ? "brightness-0 invert dark:brightness-0" : "opacity-85 group-hover:opacity-100"
                 )}
+                unoptimized
               />
 
               {/* Hover Tooltip */}

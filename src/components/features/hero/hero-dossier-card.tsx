@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sparkles, Heart, ExternalLink } from "lucide-react";
 import { TEYVAT_ELEMENTS } from "@/lib/element-assets";
+import { cn } from "@/lib/utils";
 
 interface HeroDossierProps {
   name?: string;
@@ -102,7 +102,7 @@ export function HeroDossierCard({
 
       {/* ─── Main 3-Column Dossier Body ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-10">
-        {/* ── Column 1 (4 cols): Character 3D Diorama Figure ── */}
+        {/* ── Column 1 (4 cols): Character 3D Diorama Figure (Pre-rendered for rock-solid stability) ── */}
         <div className="lg:col-span-4 flex flex-col items-center justify-center relative min-h-[420px] lg:min-h-[480px]">
           {/* Subtle Ambient Shadow Glow */}
           <div
@@ -110,60 +110,89 @@ export function HeroDossierCard({
             style={{ backgroundColor: selectedElement.color }}
           />
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={character}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-              className="relative w-full h-[400px] sm:h-[460px] flex items-center justify-center group"
+          <div className="relative w-full h-[400px] sm:h-[460px] flex items-center justify-center group">
+            {/* AETHER FIGURE LAYER */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                character === "aether"
+                  ? "opacity-100 scale-100 z-10 pointer-events-auto"
+                  : "opacity-0 scale-95 z-0 pointer-events-none"
+              )}
             >
-              {/* Back Layer Silhouette (Wireframe 3D diorama effect from ref2) */}
+              {/* Back Layer Silhouette */}
               <div className="absolute inset-0 flex items-center justify-center opacity-25 filter grayscale contrast-150 transform -translate-x-3 -translate-y-2 pointer-events-none">
                 <Image
-                  src={
-                    character === "aether"
-                      ? "/characters/aether_figure.png"
-                      : "/characters/lumine_figure.png"
-                  }
-                  alt="Shadow Figure"
+                  src="/characters/aether_figure.png"
+                  alt="Aether Shadow"
                   width={360}
                   height={460}
                   className="object-contain"
                   priority
+                  unoptimized
                 />
               </div>
-
-              {/* Main Character Figure Display */}
+              {/* Main Figure */}
               <div className="relative z-10 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
                 <Image
-                  src={
-                    character === "aether"
-                      ? "/characters/aether_figure.png"
-                      : "/characters/lumine_figure.png"
-                  }
-                  alt={character === "aether" ? "Aether Figure" : "Lumine Figure"}
+                  src="/characters/aether_figure.png"
+                  alt="Aether Figure"
                   width={380}
                   height={480}
                   className="object-contain drop-shadow-[0_12px_20px_rgba(60,42,30,0.35)]"
                   priority
+                  unoptimized
                 />
               </div>
+            </div>
 
-              {/* Rarity Star Bar Below Figure */}
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-leather-dark/80 dark:bg-black/80 px-4 py-1 rounded-full border border-gold-400/40 backdrop-blur-sm z-20">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="text-gold-400 text-xs drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
-                    ★
-                  </span>
-                ))}
-                <span className="font-mono text-[9px] text-gold-200 font-bold ml-1.5 uppercase">
-                  5-STAR TRAVELER
-                </span>
+            {/* LUMINE FIGURE LAYER */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                character === "lumine"
+                  ? "opacity-100 scale-100 z-10 pointer-events-auto"
+                  : "opacity-0 scale-95 z-0 pointer-events-none"
+              )}
+            >
+              {/* Back Layer Silhouette */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-25 filter grayscale contrast-150 transform -translate-x-3 -translate-y-2 pointer-events-none">
+                <Image
+                  src="/characters/lumine_figure.png"
+                  alt="Lumine Shadow"
+                  width={360}
+                  height={460}
+                  className="object-contain"
+                  priority
+                  unoptimized
+                />
               </div>
-            </motion.div>
-          </AnimatePresence>
+              {/* Main Figure */}
+              <div className="relative z-10 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+                <Image
+                  src="/characters/lumine_figure.png"
+                  alt="Lumine Figure"
+                  width={380}
+                  height={480}
+                  className="object-contain drop-shadow-[0_12px_20px_rgba(60,42,30,0.35)]"
+                  priority
+                  unoptimized
+                />
+              </div>
+            </div>
+
+            {/* Rarity Star Bar Below Figure */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-leather-dark/80 dark:bg-black/80 px-4 py-1 rounded-full border border-gold-400/40 backdrop-blur-sm z-20">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className="text-gold-400 text-xs drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+                  ★
+                </span>
+              ))}
+              <span className="font-mono text-[9px] text-gold-200 font-bold ml-1.5 uppercase">
+                5-STAR TRAVELER
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* ── Column 2 (5 cols): Editorial Bio & Title ── */}
@@ -267,6 +296,7 @@ export function HeroDossierCard({
                         width={28}
                         height={28}
                         className="object-contain"
+                        unoptimized
                       />
                     </button>
                   );
@@ -288,11 +318,7 @@ export function HeroDossierCard({
               </span>
             </button>
             {activeAccordions.wishful && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="mt-2 text-xs space-y-1.5 font-body text-leather-dark/80 dark:text-platinum-200"
-              >
+              <div className="mt-2 text-xs space-y-1.5 font-body text-leather-dark/80 dark:text-platinum-200">
                 <div className="flex items-center gap-1 text-gold-500 text-[10px]">
                   <span>★★★★★</span>
                   <span className="font-mono text-[9px] text-leather-muted dark:text-text-muted ml-1 font-bold">
@@ -305,7 +331,7 @@ export function HeroDossierCard({
                 <p className="text-[11px] text-leather-muted dark:text-text-muted">
                   Full-stack game-tier portfolio with dual-engine runtime.
                 </p>
-              </motion.div>
+              </div>
             )}
           </div>
 

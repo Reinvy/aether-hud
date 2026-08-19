@@ -147,13 +147,15 @@ def main():
                 continue
             time.sleep(0.05)
         
-        # Copy to public
+        # Ensure it is true PNG format using sips
         try:
+            import subprocess
+            subprocess.run(["sips", "-s", "format", "png", ref_path, "--out", ref_path], capture_output=True)
             with open(ref_path, "rb") as rf, open(pub_path, "wb") as pf:
                 pf.write(rf.read())
             downloaded.append(fname)
         except Exception as e:
-            print(f"Failed to copy {fname} to public: {e}")
+            print(f"Failed to process {fname}: {e}")
             
     print(f"Successfully downloaded & mirrored {len(downloaded)} UI Icons.")
     

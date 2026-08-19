@@ -65,6 +65,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+              unoptimized
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-leather-caramel/20 via-parchment-subtle to-gold-400/15 dark:from-gold-400/15 dark:via-surface-primary dark:to-[#182040]" />

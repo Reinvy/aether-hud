@@ -130,6 +130,7 @@ export function IntroGate() {
                     width={44}
                     height={44}
                     className="object-contain"
+                    unoptimized
                   />
                 </motion.div>
               );
