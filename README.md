@@ -49,17 +49,10 @@ src/
 1. **Main Page** (`/`) — Portfolio showcase with Hero, Projects, Skills, Contact sections
 2. **Dashboard** (`/dashboard`) — Content management system
 
-## Cron Automation
+## Documentation
 
-5 autonomous cron agents maintain the project:
-
-| Agent | Schedule | Focus |
-|-------|----------|-------|
-| C1 | 02:00 WIB | Feature & Scalability |
-| C2 | 06:00 WIB | UI/UX & Design System |
-| C3 | 10:00 WIB | Content & Seed |
-| C4 | 14:00 WIB | E2E & Integration Test |
-| C5 | 18:00 WIB | Performance & Maintenance |
+- **[AGENTS.md](AGENTS.md)** — Master Engineering Guide, coding standards, architecture layering, and quality gates.
+- **[DESIGNS.md](DESIGNS.md)** — Master UI/UX Design System Specification, design tokens, chamfered geometry, and component blueprints.
 
 ## Getting Started
 

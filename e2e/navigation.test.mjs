@@ -264,8 +264,13 @@ async function main() {
     const constantsSrc = readFileSync("src/lib/constants.ts", "utf-8");
     const sectionsDir = "src/components/sections";
     const sectionFiles = readdirSync(sectionsDir).filter((f) => f.endsWith(".tsx"));
-    const sectionsHtml = sectionFiles
-      .map((f) => readFileSync(join(sectionsDir, f), "utf-8"))
+    const landingFiles = [
+      ...sectionFiles.map((f) => join(sectionsDir, f)),
+      "src/app/home-content.tsx",
+      "src/app/layout.tsx",
+    ].filter((f) => existsSync(f));
+    const sectionsHtml = landingFiles
+      .map((f) => readFileSync(f, "utf-8"))
       .join("\n");
 
     const navBlocks = [
