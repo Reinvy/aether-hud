@@ -39,7 +39,7 @@ export function HeroSection() {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-20">
+    <section id="hero" className="relative min-h-screen overflow-hidden pt-10 pb-16 sm:pt-14 sm:pb-20">
       {/* Atmosphere Background Layers */}
       <div className="pointer-events-none absolute inset-0 bg-parchment-base dark:bg-deep-space transition-colors duration-500" />
       <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />

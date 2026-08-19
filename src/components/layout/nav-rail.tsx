@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { Sun, Moon, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { useTheme } from "@/components/theme-provider";
 
 interface RailItem {
   id: string;
@@ -24,6 +27,35 @@ const RAIL_ITEMS: RailItem[] = [
 
 export function NavRail() {
   const [activeSection, setActiveSection] = useState("hero");
+  const [time, setTime] = useState("");
+  const { themePreset, setThemePreset } = useTheme();
+
+  const isNight = themePreset === "night-ops" || themePreset === "celestial-night";
+
+  const toggleTheme = () => {
+    if (isNight) {
+      setThemePreset("teyvat-codex");
+    } else {
+      setThemePreset("night-ops");
+    }
+  };
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString("en-US", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Asia/Jakarta",
+        })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,14 +77,14 @@ export function NavRail() {
 
   return (
     <aside
-      aria-label="Teyvat Rail Navigation"
-      className="hidden lg:flex fixed left-3 xl:left-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-4"
+      aria-label="Teyvat Tactical Rail Navigation"
+      className="hidden lg:flex fixed left-3 xl:left-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-3"
     >
-      {/* Top Floating Paimon Crest Orb */}
+      {/* Top Floating Paimon/Aether Crest Orb */}
       <a
         href="/#hero"
         aria-label="Back to top"
-        className="w-11 h-11 rounded-full bg-parchment-subtle dark:bg-surface-primary border-2 border-leather-caramel/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5"
+        className="w-11 h-11 rounded-full bg-parchment-subtle dark:bg-surface-primary border-2 border-leather-caramel/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
       >
         <Image
           src={GENSHIN_UI_ICONS.characterAether}
@@ -63,12 +95,17 @@ export function NavRail() {
           unoptimized
         />
         <span className="sr-only">Top</span>
+        {/* Tooltip */}
+        <div className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+          <span className="font-bold">TEYVAT CODEX</span>
+        </div>
       </a>
 
-      {/* Vertical Rail Container */}
+      {/* Main Vertical Rail Container */}
       <nav
         role="navigation"
-        className="parchment-panel dark:glass-panel chamfered-sm py-4 px-2 flex flex-col items-center gap-3 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
+        aria-label="Section Navigation"
+        className="parchment-panel dark:glass-panel chamfered-sm py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
       >
         {RAIL_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
@@ -78,7 +115,7 @@ export function NavRail() {
               href={item.href}
               aria-label={item.label}
               className={cn(
-                "group relative w-11 h-11 chamfered-xs flex items-center justify-center transition-all duration-300 p-2",
+                "group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 p-2 focus-ring-gold",
                 isActive
                   ? "bg-leather-caramel dark:bg-gold-400 shadow-md scale-105"
                   : "bg-leather-caramel/5 dark:bg-surface-primary/60 hover:bg-leather-caramel/15 dark:hover:bg-gold-400/15"
@@ -87,8 +124,8 @@ export function NavRail() {
               <Image
                 src={item.icon}
                 alt={item.label}
-                width={24}
-                height={24}
+                width={22}
+                height={22}
                 className={cn(
                   "object-contain transition-transform group-hover:scale-110",
                   isActive ? "brightness-0 invert dark:brightness-0" : "opacity-85 group-hover:opacity-100"
@@ -104,7 +141,50 @@ export function NavRail() {
             </a>
           );
         })}
+
+        {/* Divider */}
+        <div className="w-6 h-px bg-leather-caramel/30 dark:bg-gold-400/30 my-1" />
+
+        {/* Theme Switcher Button (☀️ / 🌙) */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={isNight ? "Switch to Ivory Codex theme" : "Switch to Celestial Night theme"}
+          className="group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+        >
+          {isNight ? (
+            <Sun className="h-4 w-4 text-gold-400 transition-transform rotate-0 group-hover:rotate-45" />
+          ) : (
+            <Moon className="h-4 w-4 text-leather-caramel transition-transform rotate-0 group-hover:-rotate-12" />
+          )}
+
+          {/* Theme Tooltip */}
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+            <span className="font-bold">{isNight ? "THEME: IVORY CODEX" : "THEME: CELESTIAL NIGHT"}</span>
+          </div>
+        </button>
+
+        {/* Staff Portal Link */}
+        <Link
+          href="/login"
+          aria-label="Staff Portal Login"
+          className="group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+        >
+          <Shield className="h-4 w-4 text-leather-caramel dark:text-gold-400" />
+          {/* Staff Tooltip */}
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+            <span className="font-bold">STAFF PORTAL</span>
+          </div>
+        </Link>
       </nav>
+
+      {/* Bottom Mini Clock / Telemetry Node */}
+      <div className="chamfered-xs bg-parchment-subtle/90 dark:bg-surface-primary/90 border border-leather-caramel/25 dark:border-gold-400/25 px-2 py-1 flex items-center gap-1.5 shadow-md">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="font-mono text-[9px] text-leather-dark dark:text-platinum-200 font-bold tabular-nums">
+          {time || "--:--"}
+        </span>
+      </div>
     </aside>
   );
 }

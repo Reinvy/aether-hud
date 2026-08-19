@@ -267,7 +267,7 @@ export function ContactSection() {
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -298,9 +298,9 @@ export function ContactSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Connect on ${social.platform}`}
-                        className="group/channel flex items-center gap-3 chamfered-sm border border-leather-caramel/20 dark:border-border-subtle bg-parchment-subtle/80 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400 shadow-sm"
+                        className="group/channel flex items-center gap-3 chamfered-sm border border-leather-caramel/25 dark:border-border-subtle bg-parchment-subtle/80 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400 shadow-sm"
                       >
-                        <Icon className="h-4 w-4 text-leather-caramel/70 dark:text-gold-400/70 transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                        <Icon className="h-4 w-4 text-leather-caramel dark:text-gold-400/70 transition-transform group-hover/channel:scale-110" aria-hidden="true" />
                         <span className="flex-1 font-semibold">{social.platform}</span>
                         <ChevronRight className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400 opacity-0 group-hover/channel:opacity-100 transition-opacity" />
                       </a>
@@ -310,7 +310,7 @@ export function ContactSection() {
               </div>
 
               {/* Direct Letter */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -328,9 +328,9 @@ export function ContactSection() {
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 chamfered-sm border border-leather-caramel/20 dark:border-border-subtle bg-parchment-subtle/80 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400"
+                  className="group/channel flex items-center gap-3 chamfered-sm border border-leather-caramel/25 dark:border-border-subtle bg-parchment-subtle/80 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400 shadow-sm"
                 >
-                  <Mail className="h-4 w-4 text-leather-caramel/70 dark:text-gold-400/70" aria-hidden="true" />
+                  <Mail className="h-4 w-4 text-leather-caramel dark:text-gold-400/70" aria-hidden="true" />
                   <span className="font-mono text-[11px] truncate font-semibold">
                     {directEmail}
                   </span>
@@ -339,14 +339,14 @@ export function ContactSection() {
               </div>
 
               {/* Status */}
-              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
+              <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                  <span className="font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                     {status === "ONLINE" ? "AVAILABLE FOR COMMISSIONS" : `STATUS: ${status}`}
                   </span>
                 </div>
-                <p className="mt-2 font-mono text-[10px] text-leather-muted/80 dark:text-text-muted/60 tracking-wider">
+                <p className="mt-2 font-mono text-[10px] text-leather-muted dark:text-text-muted/60 tracking-wider font-medium">
                   Katheryne's Dispatch: response within 24h
                 </p>
               </div>

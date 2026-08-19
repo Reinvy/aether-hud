@@ -72,11 +72,11 @@ export function TestimonialsSection() {
               }}
               transition={{ duration: 0.4 }}
             >
-              <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-7 card-lift border-2 border-leather-caramel/25 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
+              <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
                 {/* Quote Icon & Serenitea Pot Badge */}
                 <div>
                   <div className="mb-3 flex items-center justify-between">
-                    <Quote className="h-6 w-6 text-leather-caramel/40 dark:text-gold-400/40" aria-hidden="true" />
+                    <Quote className="h-6 w-6 text-leather-caramel/50 dark:text-gold-400/40" aria-hidden="true" />
                     <div className="flex items-center gap-1.5 px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
                       <div className="w-3.5 h-3.5 relative">
                         <Image
@@ -94,15 +94,15 @@ export function TestimonialsSection() {
                   </div>
 
                   {/* Content */}
-                  <blockquote className="text-sm leading-relaxed text-leather-dark/85 dark:text-platinum-200 font-body italic text-pretty">
+                  <blockquote className="text-sm leading-relaxed text-leather-dark/90 dark:text-platinum-200 font-body italic text-pretty">
                     “{testimonial.content}”
                   </blockquote>
                 </div>
 
                 {/* Author Info */}
-                <div className="mt-6 pt-4 border-t border-leather-caramel/15 dark:border-gold-400/15 flex items-center gap-3.5">
+                <div className="mt-6 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/15 flex items-center gap-3.5">
                   {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
-                    <div className="relative h-12 w-12 overflow-hidden chamfered-sm border-2 border-leather-caramel/50 dark:border-gold-400/50 shrink-0 shadow-sm">
+                    <div className="relative h-12 w-12 overflow-hidden chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/50 shrink-0 shadow-sm">
                       <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
@@ -111,7 +111,7 @@ export function TestimonialsSection() {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center chamfered-sm border-2 border-leather-caramel/50 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
+                    <div className="flex h-12 w-12 items-center justify-center chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
                       <span className="font-display text-base font-bold text-leather-dark dark:text-gold-400">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>

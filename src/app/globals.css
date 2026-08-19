@@ -10,12 +10,12 @@
 @theme inline {
   /* Teyvat Codex (Warm Parchment & Saddle Leather) */
   --color-parchment-base: #FAF7EE;
-  --color-parchment-subtle: #F3EEDF;
+  --color-parchment-subtle: #F3EDDF;
   --color-parchment-elevated: #EDE5D2;
-  --color-leather-dark: #2C1D11;
+  --color-leather-dark: #1E1208;
   --color-leather-caramel: #8C6239;
-  --color-leather-muted: #735741;
-  --color-leather-accent: #603813;
+  --color-leather-muted: #5E412A;
+  --color-leather-accent: #4A2B0E;
 
   /* Inazuma Celestial Night (Obsidian & Midnight Indigo) */
   --color-deep-space: #070913;
@@ -30,7 +30,7 @@
   --color-gold-300: #F9D66E;
   --color-gold-400: #F2C94C;
   --color-gold-500: #DFAE2A;
-  --color-gold-600: #B8881A;
+  --color-gold-600: #B88414;
   --color-gold-700: #936B14;
   --color-gold-800: #6E4F0E;
   --color-gold-900: #4A3509;
@@ -67,12 +67,12 @@
   --color-glass-400: rgba(255, 255, 255, 0.20);
 
   --color-border-glass: rgba(242, 201, 76, 0.35);
-  --color-border-subtle: rgba(140, 98, 57, 0.20);
-  --color-border-active: #F2C94C;
+  --color-border-subtle: rgba(140, 98, 57, 0.22);
+  --color-border-active: #B88414;
 
   /* Main text fallbacks */
-  --color-text-main: #2C1D11;
-  --color-text-muted: #735741;
+  --color-text-main: #1E1208;
+  --color-text-muted: #5E412A;
 
   /* Accent energy pulse */
   --color-accent-pulse: #8C6239;
@@ -141,24 +141,24 @@ body {
 
 /* ─── Teyvat Parchment Panels & Glass ──────────────────────── */
 .parchment-panel {
-  background: rgba(250, 247, 238, 0.88);
+  background: rgba(255, 253, 248, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(140, 98, 57, 0.22);
-  box-shadow: 0 4px 20px rgba(60, 40, 15, 0.05);
+  border: 1.5px solid rgba(140, 98, 57, 0.28);
+  box-shadow: 0 6px 24px rgba(60, 40, 15, 0.06);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .parchment-panel:hover {
-  border-color: rgba(140, 98, 57, 0.45);
-  box-shadow: 0 8px 30px rgba(60, 40, 15, 0.08);
+  border-color: rgba(140, 98, 57, 0.48);
+  box-shadow: 0 10px 32px rgba(60, 40, 15, 0.10);
 }
 
 .parchment-panel-strong {
-  background: rgba(243, 238, 223, 0.95);
+  background: rgba(246, 240, 227, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(140, 98, 57, 0.32);
+  border: 1.5px solid rgba(140, 98, 57, 0.36);
   box-shadow: 0 8px 32px rgba(60, 40, 15, 0.08);
 }
 

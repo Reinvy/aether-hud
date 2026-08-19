@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { HudHeader } from "@/components/layout/hud-header";
 import { HudFooter } from "@/components/layout/hud-footer";
 import { NavRail } from "@/components/layout/nav-rail";
+import { MobileNavDock } from "@/components/layout/mobile-nav-dock";
 import { SakuraCanvas } from "@/components/features/sakura-canvas";
 import { IntroGate } from "@/components/features/intro-gate";
 import { useData } from "@/lib/use-data";
@@ -77,6 +77,14 @@ export function HomeContent() {
 
   return (
     <>
+      {/* Skip to main content for keyboard accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-parchment-base focus:text-leather-dark focus:border focus:border-leather-caramel/60 focus:outline-none focus:ring-2 focus:ring-leather-caramel/40 chamfered-sm font-mono text-xs tracking-wider shadow-lg"
+      >
+        SKIP TO MAIN CONTENT [↓]
+      </a>
+
       {/* Interactive 7 Elements Intro Gate */}
       <IntroGate />
 
@@ -86,8 +94,8 @@ export function HomeContent() {
       {/* Left Navigation Rail (Desktop) */}
       <NavRail />
 
-      {/* Top Floating Glass Header */}
-      <HudHeader />
+      {/* Floating Tactical Bottom Dock (Mobile & Tablet) */}
+      <MobileNavDock />
 
       <main id="main-content" tabIndex={-1} className="outline-none relative z-20">
         {sectionList === null ? (

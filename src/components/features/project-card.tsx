@@ -78,17 +78,17 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
           />
 
           {/* Top-Right: 5★ Artifact Rarity Stars */}
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-leather-dark/85 dark:bg-black/85 px-3 py-1 chamfered-xs border border-gold-400/30 shadow-md">
-            <span className="text-gold-400 text-xs tracking-tighter drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-parchment-elevated/95 dark:bg-black/85 px-3 py-1 chamfered-xs border border-leather-caramel/40 dark:border-gold-400/30 shadow-md">
+            <span className="text-gold-600 dark:text-gold-400 text-xs tracking-tighter drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
               {is5Star ? "★★★★★" : "★★★★☆"}
             </span>
-            <span className="font-mono text-[8px] text-gold-200 font-bold ml-1 uppercase">
+            <span className="font-mono text-[8px] text-leather-dark dark:text-gold-200 font-bold ml-1 uppercase">
               ARTIFACT
             </span>
           </div>
 
           {/* Top-Left: Official Elemental Vision Medallion */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-gold-400/40 shadow-md">
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-parchment-base/90 dark:bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-leather-caramel/40 dark:border-gold-400/40 shadow-md">
             <div className="w-5 h-5 relative">
               <Image
                 src={element.gildedIcon}
@@ -108,7 +108,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
 
           {/* Bottom Telemetry Strip */}
           <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-            <span className="font-mono text-[9px] text-leather-muted/90 dark:text-platinum-300 font-semibold">
+            <span className="font-mono text-[9px] text-leather-muted dark:text-platinum-300 font-semibold">
               DOMAIN // {project.category.toUpperCase()}
             </span>
             <span className="font-mono text-[9px] text-leather-caramel dark:text-gold-400 font-bold">
@@ -129,7 +129,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
               </span>
             </div>
 
-            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-leather-dark/80 dark:text-text-muted font-body line-clamp-3">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-leather-dark/90 dark:text-text-muted font-body line-clamp-3">
               {project.description}
             </p>
 
@@ -138,7 +138,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
               {tags.slice(0, 4).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-platinum-200 text-[10px] font-mono font-medium"
+                  className="px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-platinum-200 text-[10px] font-mono font-semibold"
                 >
                   {tag}
                 </span>

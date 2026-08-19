@@ -143,10 +143,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#030407" },
-    { media: "(prefers-color-scheme: light)", color: "#030407" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF7EE" },
+    { media: "(prefers-color-scheme: dark)", color: "#070913" },
   ],
-  colorScheme: "dark",
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({
@@ -223,7 +223,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="application-name" content={APP_NAME} />
       </head>
-      <body className="min-h-full bg-deep-space text-text-main font-body scanline">
+      <body className="min-h-full bg-parchment-base text-leather-dark dark:bg-deep-space dark:text-platinum-50 font-body transition-colors duration-300">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>

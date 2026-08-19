@@ -142,7 +142,7 @@ export function SkillsSection() {
               </div>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
-                  <div key={stat.label} className="text-center min-w-[80px] p-2 chamfered-xs bg-leather-caramel/5 dark:bg-surface-primary/40 border border-leather-caramel/15 dark:border-gold-400/15">
+                  <div key={stat.label} className="text-center min-w-[80px] p-2.5 chamfered-xs bg-parchment-subtle/80 dark:bg-surface-primary/40 border border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
                     <div className="text-2xl font-bold font-display text-leather-dark dark:text-gold-400 tabular-nums">
                       {stat.pct}%
                     </div>

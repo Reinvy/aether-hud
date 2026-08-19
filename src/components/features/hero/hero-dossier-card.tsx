@@ -51,11 +51,11 @@ export function HeroDossierCard({
       </div>
 
       {/* ─── Top Nav Bar inside Dossier Card ─── */}
-      <div className="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-leather-caramel/20 dark:border-gold-400/20 bg-leather-caramel/5 dark:bg-surface-primary/60">
+      <div className="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-leather-caramel/25 dark:border-gold-400/20 bg-parchment-subtle/70 dark:bg-surface-primary/60">
         {/* Left: Gilded Medallion Emblem */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-leather-caramel dark:bg-gold-400/20 border border-leather-caramel/60 dark:border-gold-400/60 flex items-center justify-center shadow-inner">
-            <Sparkles className="w-4 h-4 text-parchment-base dark:text-gold-400" />
+          <div className="w-9 h-9 rounded-full bg-leather-caramel/15 dark:bg-gold-400/20 border border-leather-caramel/50 dark:border-gold-400/60 flex items-center justify-center shadow-inner">
+            <Sparkles className="w-4 h-4 text-leather-caramel dark:text-gold-400" />
           </div>
           <div>
             <span className="font-display text-xs font-bold tracking-[0.25em] text-leather-dark dark:text-platinum-100 uppercase block">
@@ -68,11 +68,11 @@ export function HeroDossierCard({
         </div>
 
         {/* Center: Character Switcher (LUMINE ◀▶ AETHER) */}
-        <div className="flex items-center gap-2 bg-leather-caramel/10 dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/30 dark:border-gold-400/30">
+        <div className="flex items-center gap-2 bg-parchment-subtle dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/35 dark:border-gold-400/30">
           <button
             type="button"
             onClick={() => setCharacter("lumine")}
-            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 ${
+            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 chamfered-xs ${
               character === "lumine"
                 ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-sm"
                 : "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-platinum-100"
@@ -81,11 +81,11 @@ export function HeroDossierCard({
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>LUMINE</span>
           </button>
-          <span className="text-leather-muted/50 dark:text-text-muted/50 text-xs">|</span>
+          <span className="text-leather-caramel/40 dark:text-text-muted/50 text-xs">|</span>
           <button
             type="button"
             onClick={() => setCharacter("aether")}
-            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 ${
+            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 chamfered-xs ${
               character === "aether"
                 ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-sm"
                 : "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-platinum-100"
@@ -102,7 +102,7 @@ export function HeroDossierCard({
 
       {/* ─── Main 3-Column Dossier Body ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-10">
-        {/* ── Column 1 (4 cols): Character 3D Diorama Figure (Pre-rendered for rock-solid stability) ── */}
+        {/* ── Column 1 (4 cols): Character 3D Diorama Figure ── */}
         <div className="lg:col-span-4 flex flex-col items-center justify-center relative min-h-[420px] lg:min-h-[480px]">
           {/* Subtle Ambient Shadow Glow */}
           <div
@@ -182,13 +182,13 @@ export function HeroDossierCard({
             </div>
 
             {/* Rarity Star Bar Below Figure */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-leather-dark/80 dark:bg-black/80 px-4 py-1 rounded-full border border-gold-400/40 backdrop-blur-sm z-20">
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-parchment-elevated/95 dark:bg-black/85 px-4 py-1 rounded-full border border-leather-caramel/40 dark:border-gold-400/40 backdrop-blur-sm z-20 shadow-md">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className="text-gold-400 text-xs drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+                <span key={i} className="text-gold-600 dark:text-gold-400 text-xs drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
                   ★
                 </span>
               ))}
-              <span className="font-mono text-[9px] text-gold-200 font-bold ml-1.5 uppercase">
+              <span className="font-mono text-[9px] text-leather-dark dark:text-gold-200 font-bold ml-1.5 uppercase">
                 5-STAR TRAVELER
               </span>
             </div>
@@ -200,7 +200,7 @@ export function HeroDossierCard({
           <div>
             {/* Subtitle with Japanese Kanji (1:1 from ref2.png) */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-display text-sm tracking-[0.2em] text-leather-muted dark:text-gold-400/90 font-medium">
+              <span className="font-display text-sm tracking-[0.2em] text-leather-muted dark:text-gold-400/90 font-semibold">
                 The Traveler //
               </span>
               <span className="font-serif text-base text-leather-caramel dark:text-gold-400 font-bold">
@@ -222,27 +222,27 @@ export function HeroDossierCard({
               <span className="font-mono text-xs font-bold tracking-wider text-leather-caramel dark:text-gold-400 uppercase">
                 {name}
               </span>
-              <span className="text-leather-muted/50 dark:text-text-muted/50 text-xs">•</span>
-              <span className="font-mono text-xs text-leather-muted dark:text-text-muted">
+              <span className="text-leather-caramel/40 dark:text-text-muted/50 text-xs">•</span>
+              <span className="font-mono text-xs text-leather-muted dark:text-text-muted font-medium">
                 {tagline}
               </span>
             </div>
 
             {/* Editorial Bio Text */}
-            <div className="space-y-3 font-body text-sm leading-relaxed text-leather-dark/80 dark:text-platinum-200">
+            <div className="space-y-3 font-body text-sm leading-relaxed text-leather-dark/90 dark:text-platinum-200">
               <p>
                 {character === "aether"
                   ? "He is a calm and collected traveler with an innate mastery over seven elemental domains. Capable of architecting massive distributed systems, high-speed neural pipelines, and fail-closed security perimeters."
                   : "She is a resolute and visionary architect navigating complex software topologies. Bringing unmatched precision to full-stack engineering, reactive HUD interfaces, and cloud-native services."}
               </p>
-              <p className="text-xs text-leather-muted dark:text-text-muted italic border-l-2 border-leather-caramel/40 pl-3">
+              <p className="text-xs text-leather-muted dark:text-text-muted italic border-l-2 border-leather-caramel/50 pl-3">
                 {bio}
               </p>
             </div>
           </div>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-leather-caramel/15 dark:border-gold-400/15">
+          <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/15">
             <a
               href="#contact"
               className="tactical-btn btn-glow-sweep px-6 py-2.5 bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space font-display text-xs font-bold tracking-widest uppercase shadow-md hover:opacity-95 transition-all inline-flex items-center gap-2"
@@ -263,7 +263,7 @@ export function HeroDossierCard({
         {/* ── Column 3 (3 cols): 4 Interactive Accordion Controls ── */}
         <div className="lg:col-span-3 flex flex-col space-y-3">
           {/* 1. Fragment Accordion (7 Elements Grid) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-leather-caramel/5 dark:bg-surface-primary/40 chamfered-xs p-3">
+          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("fragment")}
@@ -306,7 +306,7 @@ export function HeroDossierCard({
           </div>
 
           {/* 2. Wishful Accordion (Expandable Featured Project Banner) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-leather-caramel/5 dark:bg-surface-primary/40 chamfered-xs p-3">
+          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("wishful")}
@@ -318,8 +318,8 @@ export function HeroDossierCard({
               </span>
             </button>
             {activeAccordions.wishful && (
-              <div className="mt-2 text-xs space-y-1.5 font-body text-leather-dark/80 dark:text-platinum-200">
-                <div className="flex items-center gap-1 text-gold-500 text-[10px]">
+              <div className="mt-2 text-xs space-y-1.5 font-body text-leather-dark/90 dark:text-platinum-200">
+                <div className="flex items-center gap-1 text-gold-600 dark:text-gold-500 text-[10px]">
                   <span>★★★★★</span>
                   <span className="font-mono text-[9px] text-leather-muted dark:text-text-muted ml-1 font-bold">
                     EVENT WISH
@@ -336,7 +336,7 @@ export function HeroDossierCard({
           </div>
 
           {/* 3. Memory Accordion (Latin Lore & Architectural Motto) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-leather-caramel/5 dark:bg-surface-primary/40 chamfered-xs p-3">
+          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("memory")}
@@ -349,10 +349,10 @@ export function HeroDossierCard({
             </button>
             {activeAccordions.memory && (
               <div className="text-xs space-y-1 font-body text-leather-muted dark:text-text-muted italic pt-1">
-                <p className="font-serif">
+                <p className="font-serif text-leather-dark/85 dark:text-text-muted">
                   “Memoria nostra sit aeterna, quam nullus in hoc mundo pereat.”
                 </p>
-                <p className="text-[10px] font-mono not-italic text-leather-caramel dark:text-gold-400/80">
+                <p className="text-[10px] font-mono not-italic text-leather-caramel dark:text-gold-400 font-semibold">
                   — May our architectures endure across all worlds.
                 </p>
               </div>
@@ -360,7 +360,7 @@ export function HeroDossierCard({
           </div>
 
           {/* 4. Myriad Accordion (Tech Stack Specifications) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-leather-caramel/5 dark:bg-surface-primary/40 chamfered-xs p-3">
+          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("myriad")}
@@ -376,7 +376,7 @@ export function HeroDossierCard({
                 {["Next.js 16", "React 19", "TypeScript", "Tailwind v4", "Prisma v7", "PostgreSQL", "AI Logic"].map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-[10px] font-mono text-leather-dark dark:text-platinum-200 font-medium"
+                    className="px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-[10px] font-mono text-leather-dark dark:text-platinum-200 font-semibold"
                   >
                     {tag}
                   </span>

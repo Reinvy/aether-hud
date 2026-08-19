@@ -139,20 +139,20 @@ export function ExperienceSection() {
                     </div>
 
                     {/* Date range */}
-                    <div className="flex items-center gap-1.5 shrink-0 bg-leather-caramel/10 dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/20 dark:border-gold-400/20">
-                      <Calendar className="h-3.5 w-3.5 text-leather-muted dark:text-text-muted" aria-hidden="true" />
+                    <div className="flex items-center gap-1.5 shrink-0 bg-parchment-subtle dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/25 dark:border-gold-400/20 shadow-sm">
+                      <Calendar className="h-3.5 w-3.5 text-leather-caramel dark:text-text-muted" aria-hidden="true" />
                       <span className="font-mono text-xs text-leather-dark dark:text-platinum-200 tracking-wider tabular-nums font-semibold">
                         {exp.startDate} — {exp.endDate || "Present"}
                       </span>
                     </div>
                   </div>
 
-                  <p className="mt-3 text-sm leading-relaxed text-leather-dark/85 dark:text-text-muted font-body">
+                  <p className="mt-3 text-sm leading-relaxed text-leather-dark/90 dark:text-text-muted font-body">
                     {exp.description}
                   </p>
 
                   {/* Commission ID & Guild Wax Seal */}
-                  <div className="mt-4 flex items-center justify-between pt-3 border-t border-leather-caramel/15 dark:border-gold-400/15">
+                  <div className="mt-4 flex items-center justify-between pt-3 border-t border-leather-caramel/20 dark:border-gold-400/15">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
                       <span className="font-mono text-[10px] tracking-widest text-leather-muted dark:text-text-muted uppercase font-semibold">

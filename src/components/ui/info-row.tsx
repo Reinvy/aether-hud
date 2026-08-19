@@ -42,7 +42,7 @@ function InfoRow({
   return (
     <div
       className={cn(
-        "chamfered-sm flex items-center justify-between gap-3 border border-border-subtle bg-deep-space/40 px-4 py-3 transition-colors duration-300 hover:border-border-glass hover:bg-[rgba(242,201,76,0.04)]",
+        "chamfered-sm flex items-center justify-between gap-3 border border-leather-caramel/20 bg-parchment-subtle/60 px-4 py-3 transition-colors duration-300 hover:border-leather-caramel/40 hover:bg-leather-caramel/10 dark:border-border-subtle dark:bg-deep-space/40 dark:hover:border-border-glass dark:hover:bg-[rgba(242,201,76,0.04)]",
         className
       )}
       {...props}

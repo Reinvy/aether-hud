@@ -25,7 +25,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  themePreset: "obsidian",
+  themePreset: "teyvat-codex",
   animationsEnabled: true,
   setThemePreset: () => {},
   setAnimationsEnabled: () => {},
@@ -34,7 +34,7 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { data: config, refetch } = useData<ThemeConfig>("/api/config");
-  const [themePreset, setThemePresetState] = useState("obsidian");
+  const [themePreset, setThemePresetState] = useState("teyvat-codex");
   const [animationsEnabled, setAnimationsEnabledState] = useState(true);
 
   // Sync from API on initial load
@@ -52,10 +52,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Apply theme preset to document root
   useEffect(() => {
     const root = document.documentElement;
-    if (themePreset && themePreset !== "obsidian") {
+    const isNight =
+      themePreset === "night-ops" ||
+      themePreset === "celestial-night";
+
+    if (isNight) {
       root.dataset.theme = themePreset;
+      root.classList.add("dark");
     } else {
-      delete root.dataset.theme;
+      root.dataset.theme = "teyvat-codex";
+      root.classList.remove("dark");
     }
   }, [themePreset]);
 
