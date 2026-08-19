@@ -52,7 +52,7 @@ export function MobileNavDock() {
       aria-label="Mobile Navigation Dock"
       className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 lg:hidden w-[calc(100%-1.5rem)] max-w-md"
     >
-      <div className="parchment-panel-strong dark:glass-panel-strong rounded-full px-3 py-1.5 border-2 border-leather-caramel/35 dark:border-gold-400/35 shadow-2xl flex items-center justify-between gap-1 backdrop-blur-xl">
+      <div className="bg-[#FAF7EE]/95 dark:bg-surface-primary/90 parchment-panel-strong dark:glass-panel-strong rounded-full px-3 py-1.5 border-2 border-leather-caramel/35 dark:border-gold-400/35 shadow-2xl flex items-center justify-between gap-1 backdrop-blur-xl">
         {MOBILE_NAV_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
           return (
@@ -63,7 +63,7 @@ export function MobileNavDock() {
               className={cn(
                 "relative flex flex-col items-center justify-center p-1.5 rounded-full transition-all duration-200 min-w-[38px] min-h-[38px]",
                 isActive
-                  ? "bg-leather-caramel dark:bg-gold-400 shadow-sm scale-105"
+                  ? "bg-[#8C6239] dark:bg-gold-400 shadow-sm scale-105"
                   : "hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10"
               )}
             >
@@ -98,7 +98,7 @@ export function MobileNavDock() {
           {isNight ? (
             <Sun className="h-4 w-4 text-gold-400" />
           ) : (
-            <Moon className="h-4 w-4 text-leather-caramel" />
+            <Moon className="h-4 w-4 text-[#8C6239]" />
           )}
         </button>
 

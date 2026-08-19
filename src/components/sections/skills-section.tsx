@@ -74,7 +74,7 @@ export function SkillsSection() {
           className="mt-12 mx-auto max-w-4xl"
           {...stagger}
         >
-          <div className="parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
+          <div className="bg-[#FAF7EE] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
               <div className="w-5 h-5 relative">
                 <Image
@@ -85,11 +85,11 @@ export function SkillsSection() {
                   className="object-contain"
                 />
               </div>
-              <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+              <span className="font-display text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                 TALENT TREE // ACTIVE CONSTELLATIONS
               </span>
-              <span className="ml-auto font-mono text-[10px] text-leather-muted dark:text-text-muted font-bold tabular-nums">
-                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} TALENTS ACTIVE`}
+              <span className="ml-auto font-mono text-[10px] text-[#5E412A] dark:text-text-muted font-bold tabular-nums">
+                {loading ? "DISCOVERING TALENTS…" : `${skills?.length ?? 0} TALENTS ACTIVE`}
               </span>
             </div>
 
@@ -119,7 +119,7 @@ export function SkillsSection() {
 
             {!loading && skills?.length === 0 && (
               <div className="flex justify-center py-8">
-                <span className="font-mono text-xs text-leather-muted dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
+                <span className="font-mono text-xs text-[#5E412A] dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
               </div>
             )}
           </div>
@@ -131,7 +131,7 @@ export function SkillsSection() {
             className="mt-10 mx-auto max-w-2xl text-center"
             {...fadeInView}
           >
-            <div className="parchment-panel-strong dark:glass-panel-strong rounded-3xl p-6 border-2 border-leather-caramel/25 dark:border-gold-400/20 shadow-xl">
+            <div className="bg-[#FAF7EE] dark:bg-surface-primary/80 parchment-panel-strong dark:glass-panel-strong rounded-3xl p-6 border-2 border-leather-caramel/25 dark:border-gold-400/20 shadow-xl">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <div className="w-4 h-4 relative">
                   <Image
@@ -142,17 +142,17 @@ export function SkillsSection() {
                     className="object-contain"
                   />
                 </div>
-                <span className="font-display text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                <span className="font-display text-xs tracking-wider text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                   ELEMENTAL RESONANCE // CATEGORY AVERAGE
                 </span>
               </div>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
-                  <div key={stat.label} className="text-center min-w-[84px] p-3 rounded-2xl bg-[#FAF7EE] dark:bg-surface-primary/60 border-2 border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
-                    <div className="text-2xl font-bold font-display text-leather-dark dark:text-gold-400 tabular-nums">
+                  <div key={stat.label} className="text-center min-w-[84px] p-3 rounded-2xl bg-[#FFFFFF] dark:bg-surface-primary/60 border-2 border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
+                    <div className="text-2xl font-bold font-display text-[#1E1208] dark:text-gold-400 tabular-nums">
                       {stat.pct}%
                     </div>
-                    <div className="font-mono text-[9px] text-leather-muted dark:text-text-muted mt-1 uppercase font-bold">{stat.label}</div>
+                    <div className="font-mono text-[9px] text-[#5E412A] dark:text-text-muted mt-1 uppercase font-bold">{stat.label}</div>
                   </div>
                 ))}
               </div>

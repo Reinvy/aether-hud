@@ -13,7 +13,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={id}
-            className="sys-label mb-2 block text-leather-muted dark:text-text-muted font-bold"
+            className="sys-label mb-2 block text-[#1E1208] dark:text-platinum-200 font-bold tracking-wider"
           >
             {label}
           </label>
@@ -22,8 +22,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           ref={ref}
           className={cn(
-            "input-recessed rounded-xl w-full resize-y px-4 py-2.5 text-sm font-body",
-            "placeholder:text-leather-muted placeholder:opacity-40",
+            "input-recessed rounded-xl w-full resize-y px-4 py-2.5 text-sm font-body font-medium",
+            "text-[#1E1208] dark:text-platinum-50 placeholder:text-[#5E412A]/60 dark:placeholder:text-text-muted/60",
             "min-h-[80px]",
             error && "border-hud-danger",
             className

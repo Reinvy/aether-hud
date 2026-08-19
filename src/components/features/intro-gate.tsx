@@ -162,9 +162,9 @@ export function IntroGate() {
             onClick={handleProceed}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
-            className="group relative px-8 py-3.5 chamfered bg-gradient-to-r from-[#8C6239] via-[#C99A4E] to-[#8C6239] text-[#1A1208] font-display font-bold tracking-[0.2em] text-sm uppercase shadow-[0_0_25px_rgba(201,154,78,0.4)] hover:shadow-[0_0_35px_rgba(201,154,78,0.7)] transition-all cursor-pointer flex items-center gap-3 border border-[#FAF7EE]/60"
+            className="group relative px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#8C6239] via-[#C99A4E] to-[#8C6239] text-[#1A1208] font-display font-bold tracking-[0.2em] text-sm uppercase shadow-[0_0_25px_rgba(201,154,78,0.4)] hover:shadow-[0_0_35px_rgba(201,154,78,0.7)] transition-all cursor-pointer flex items-center gap-3 border-2 border-[#FAF7EE]/60"
           >
-            <span>CLICK TO PROCEED</span>
+            <span>ENTER TEYVAT REALM</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </motion.button>
 

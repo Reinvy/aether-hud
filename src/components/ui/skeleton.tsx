@@ -16,30 +16,31 @@ interface CardSkeletonProps {
 
 export function CardSkeleton({ className }: CardSkeletonProps) {
   return (
-    <div className={cn("glass-panel chamfered overflow-hidden", className)}>
+    <div className={cn("bg-[#FFFFFF] dark:bg-surface-primary/75 parchment-panel dark:glass-panel rounded-3xl overflow-hidden border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl", className)}>
       {/* Image area */}
-      <div className={cn("relative h-48 bg-glass-200", pulseClass)}>
-        <div className="absolute inset-0 bg-grid-hud opacity-10" />
+      <div className={cn("relative h-48 bg-[#F3EDDF] dark:bg-surface-primary border-b border-leather-caramel/20", pulseClass)}>
         {/* Badge placeholders */}
         <div className="absolute top-3 right-3 flex gap-1.5">
-          <div className="h-5 w-16 bg-glass-300 rounded-none skeleton-hud" />
-          <div className="h-5 w-14 bg-glass-300 rounded-none skeleton-hud" />
+          <div className="h-6 w-16 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full skeleton-hud" />
+        </div>
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          <div className="h-6 w-20 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full skeleton-hud" />
         </div>
       </div>
       {/* Content area */}
       <div className="p-6 space-y-4">
         <div className="flex items-start justify-between">
-          <div className={cn("h-5 w-2/3 bg-glass-300 rounded-none", pulseClass)} />
-          <div className={cn("h-4 w-12 bg-glass-300 rounded-none", pulseClass)} />
+          <div className={cn("h-5 w-2/3 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-lg", pulseClass)} />
+          <div className={cn("h-4 w-12 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-lg", pulseClass)} />
         </div>
         <div className="space-y-2">
-          <div className={cn("h-3 w-full bg-glass-200 rounded-none", pulseClass)} />
-          <div className={cn("h-3 w-5/6 bg-glass-200 rounded-none", pulseClass)} />
+          <div className={cn("h-3 w-full bg-leather-caramel/10 dark:bg-surface-primary rounded-md", pulseClass)} />
+          <div className={cn("h-3 w-5/6 bg-leather-caramel/10 dark:bg-surface-primary rounded-md", pulseClass)} />
         </div>
         {/* Tags */}
         <div className="flex gap-1.5">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className={cn("h-5 w-16 bg-glass-200 rounded-none", pulseClass)} />
+            <div key={i} className={cn("h-5 w-16 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full", pulseClass)} />
           ))}
         </div>
       </div>
@@ -56,9 +57,9 @@ interface SectionSkeletonProps {
 export function SectionHeaderSkeleton({ className }: SectionSkeletonProps) {
   return (
     <div className={cn("mx-auto max-w-2xl text-center", className)}>
-      <div className={cn("mx-auto mb-4 h-7 w-48 bg-glass-300 rounded-none", pulseClass)} />
-      <div className={cn("mx-auto h-10 w-3/4 bg-glass-300 rounded-none", pulseClass)} />
-      <div className={cn("mx-auto mt-4 h-5 w-1/2 bg-glass-200 rounded-none", pulseClass)} />
+      <div className={cn("mx-auto mb-4 h-7 w-48 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full", pulseClass)} />
+      <div className={cn("mx-auto h-10 w-3/4 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-xl", pulseClass)} />
+      <div className={cn("mx-auto mt-4 h-5 w-1/2 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-lg", pulseClass)} />
     </div>
   );
 }

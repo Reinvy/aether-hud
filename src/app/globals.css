@@ -16,6 +16,7 @@
   --color-parchment-elevated: #EDE5D2;
   --color-leather-dark: #1E1208;
   --color-leather-caramel: #8C6239;
+  --color-leather-cognac: #8D6343;
   --color-leather-muted: #5E412A;
   --color-leather-accent: #4A2B0E;
 
@@ -453,12 +454,61 @@ body {
   font-family: var(--font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.15em;
-  color: #B8881A;
+  color: #B88414;
 }
 
 .dark .sys-label-gold {
   color: #F2C94C;
 }
+
+/* ─── High-Contrast Imperial Gold Text Gradient ────────────── */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #B88414 0%, #DFAE2A 50%, #8C6239 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.dark .text-gradient-gold,
+[data-theme="celestial-night"] .text-gradient-gold {
+  background: linear-gradient(135deg, #FFE082 0%, #F2C94C 50%, #B388FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* ─── Warm Cognac Leather Panels (Hero Right Panel & Accents) ─── */
+.cognac-panel {
+  background: linear-gradient(180deg, #956845 0%, #835938 100%);
+  border: 1.5px solid rgba(255, 235, 200, 0.25);
+  box-shadow: inset 0 2px 8px rgba(40, 20, 5, 0.2), 0 8px 24px rgba(60, 40, 15, 0.15);
+  color: #FAF7EE;
+}
+
+.dark .cognac-panel,
+[data-theme="celestial-night"] .cognac-panel {
+  background: rgba(18, 23, 44, 0.85);
+  border: 1px solid rgba(179, 136, 255, 0.3);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  color: #F8FAFC;
+}
+
+.cognac-card-subtle {
+  background: rgba(141, 99, 67, 0.22);
+  border: 1px solid rgba(141, 99, 67, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dark .cognac-card-subtle {
+  background: rgba(13, 17, 34, 0.6);
+  border-color: rgba(179, 136, 255, 0.2);
+}
+
 
 /* ─── Button Glow Sweep ────────────────────────────────────── */
 .btn-glow-sweep {

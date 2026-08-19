@@ -20,7 +20,7 @@ export function HudFooter() {
   const sysVersion = config?.sysVersion || "v2.4.1";
 
   return (
-    <footer aria-label="Portal Footer" className="relative border-t border-leather-caramel/25 dark:border-border-subtle bg-parchment-base/90 dark:bg-deep-space/90 transition-colors">
+    <footer aria-label="Portal Footer" className="relative border-t border-leather-caramel/30 dark:border-border-subtle bg-[#FAF7EE] dark:bg-deep-space/90 transition-colors">
       {/* Accent bar */}
       <div className="h-[1px] bg-gradient-to-r from-transparent via-leather-caramel/40 dark:via-gold-500/30 to-transparent" />
 
@@ -37,10 +37,10 @@ export function HudFooter() {
                 className="object-contain"
               />
             </div>
-            <span className="font-display text-xs font-bold tracking-[0.2em] text-leather-dark dark:text-platinum-50 uppercase">
+            <span className="font-display text-xs font-bold tracking-[0.2em] text-[#1E1208] dark:text-platinum-50 uppercase">
               {siteName} // TEYVAT CODEX
             </span>
-            <span className="sys-label font-mono tabular-nums text-leather-muted dark:text-text-muted font-bold">{sysVersion}</span>
+            <span className="sys-label font-mono tabular-nums text-[#5E412A] dark:text-text-muted font-bold">{sysVersion}</span>
           </div>
 
           {/* Center links */}
@@ -48,7 +48,7 @@ export function HudFooter() {
             <Link
               href="/login"
               aria-label="Staff Login"
-              className="inline-flex items-center gap-1.5 font-mono text-xs text-leather-dark/80 dark:text-text-muted hover:text-leather-caramel dark:hover:text-gold-400 focus-ring-gold rounded-full px-3 py-1 bg-leather-caramel/10 dark:bg-gold-400/10 transition-colors font-bold"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1E1208] dark:text-text-muted hover:text-[#8C6239] dark:hover:text-gold-400 focus-ring-gold rounded-full px-3.5 py-1 bg-leather-caramel/15 dark:bg-gold-400/10 transition-colors font-bold"
             >
               <div className="w-3.5 h-3.5 relative">
                 <Image
@@ -64,15 +64,15 @@ export function HudFooter() {
             <a
               href="#hero"
               aria-label="Scroll back to top"
-              className="inline-flex items-center gap-1 font-mono text-xs text-leather-dark/80 dark:text-text-muted hover:text-leather-caramel dark:hover:text-gold-400 focus-ring-gold rounded-full px-3 py-1 bg-leather-caramel/10 dark:bg-gold-400/10 transition-colors font-bold"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1E1208] dark:text-text-muted hover:text-[#8C6239] dark:hover:text-gold-400 focus-ring-gold rounded-full px-3.5 py-1 bg-leather-caramel/15 dark:bg-gold-400/10 transition-colors font-bold"
             >
-              <ArrowUp className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+              <ArrowUp className="h-3.5 w-3.5 text-[#8C6239] dark:text-gold-400" aria-hidden="true" />
               <span>TOP</span>
             </a>
           </div>
 
           {/* Copyright */}
-          <p className="font-mono text-[10px] tracking-wider text-leather-muted dark:text-text-muted/40 tabular-nums font-semibold">
+          <p className="font-mono text-[10px] tracking-wider text-[#5E412A] dark:text-text-muted/60 tabular-nums font-bold">
             &copy; {new Date().getFullYear()} {authorName} — Teyvat Traveler Dossier
           </p>
         </div>

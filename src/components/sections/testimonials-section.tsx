@@ -70,7 +70,7 @@ export function TestimonialsSection() {
               }}
               transition={{ duration: 0.4 }}
             >
-              <div className="parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
+              <div className="bg-[#FFFFFF] dark:bg-surface-primary/75 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
                 {/* Mail Icon & Serenitea Pot Badge */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
@@ -93,14 +93,14 @@ export function TestimonialsSection() {
                           className="object-contain"
                         />
                       </div>
-                      <span className="font-display text-[9px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                      <span className="font-display text-[9px] text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                         TRUST // LV. 10
                       </span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <blockquote className="text-sm leading-relaxed text-[#2A1A0E] dark:text-platinum-200 font-body italic text-pretty">
+                  <blockquote className="text-sm leading-relaxed text-[#2B1A0D] dark:text-platinum-200 font-body font-medium italic text-pretty">
                     “{testimonial.content}”
                   </blockquote>
                 </div>
@@ -118,17 +118,17 @@ export function TestimonialsSection() {
                     </div>
                   ) : (
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
-                      <span className="font-display text-base font-bold text-leather-dark dark:text-gold-400">
+                      <span className="font-display text-base font-bold text-[#1E1208] dark:text-gold-400">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-sm sm:text-base font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase truncate">
+                    <p className="font-display text-sm sm:text-base font-bold tracking-wide text-[#1E1208] dark:text-platinum-50 uppercase truncate">
                       {testimonial.name}
                     </p>
-                    <p className="font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 truncate font-bold">
+                    <p className="font-mono text-xs tracking-wider text-[#8C6239] dark:text-gold-400 truncate font-bold">
                       {testimonial.role}
                     </p>
                   </div>
@@ -144,7 +144,7 @@ export function TestimonialsSection() {
                         className="object-contain"
                       />
                     </div>
-                    <span className="font-mono text-[9px] font-bold text-leather-caramel dark:text-gold-400">
+                    <span className="font-mono text-[9px] font-bold text-[#8C6239] dark:text-gold-400">
                       SEALED
                     </span>
                   </div>

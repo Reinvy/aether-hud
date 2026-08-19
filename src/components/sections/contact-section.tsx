@@ -145,7 +145,7 @@ export function ContactSection() {
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
             <motion.div className="lg:col-span-3" {...fadeInView}>
-              <div className="parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl h-full">
+              <div className="bg-[#FFFFFF] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl h-full">
                 {/* Form header */}
                 <div className="flex items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20 dark:border-gold-400/20">
                   <div className="w-4 h-4 relative">
@@ -157,12 +157,12 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  <span className="font-display text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                     TEYVAT DISPATCH SCROLL // ENCRYPTED
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-mono text-[9px] text-emerald-700 dark:text-emerald-400 font-bold uppercase">ONLINE</span>
+                    <span className="font-mono text-[9px] text-emerald-800 dark:text-emerald-400 font-bold uppercase">ONLINE</span>
                   </span>
                 </div>
 
@@ -174,13 +174,13 @@ export function ContactSection() {
                     aria-live="polite"
                   >
                     <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" aria-hidden="true" />
-                    <p className="font-display text-lg font-bold tracking-wider text-leather-dark dark:text-platinum-50 uppercase">
+                    <p className="font-display text-lg font-bold tracking-wider text-[#1E1208] dark:text-platinum-50 uppercase">
                       DISPATCH DELIVERED
                     </p>
-                    <p className="mt-2 text-sm text-leather-muted dark:text-text-muted font-mono font-medium">
+                    <p className="mt-2 text-sm text-[#5E412A] dark:text-text-muted font-mono font-medium">
                       [TEYVAT] // Summoning scroll received. Seal ID:
                     </p>
-                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 dark:border-gold-400/40 bg-leather-caramel/10 dark:bg-gold-400/10 px-4 py-1 font-mono text-xs text-leather-caramel dark:text-gold-300 font-bold tabular-nums">
+                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 dark:border-gold-400/40 bg-leather-caramel/10 dark:bg-gold-400/10 px-4 py-1 font-mono text-xs text-[#8C6239] dark:text-gold-300 font-bold tabular-nums">
                       {transmissionId}
                     </span>
                     <Button
@@ -296,7 +296,7 @@ export function ContactSection() {
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              <div className="bg-[#FFFFFF] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -307,7 +307,7 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  <span className="font-display text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                     GUILD // SOCIAL RUNES
                   </span>
                 </div>
@@ -327,11 +327,11 @@ export function ContactSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Connect on ${social.platform}`}
-                        className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/25 dark:border-border-subtle bg-parchment-base/90 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400 shadow-sm"
+                        className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 dark:border-border-subtle bg-[#FAF7EE] hover:bg-[#F3EDDF] dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-[#1E1208] dark:text-text-muted transition-all hover:border-[#8C6239] dark:hover:border-gold-400 hover:text-[#8C6239] dark:hover:text-gold-400 shadow-sm"
                       >
-                        <Icon className="h-4 w-4 text-leather-caramel dark:text-gold-400/70 transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                        <Icon className="h-4 w-4 text-[#8C6239] dark:text-gold-400/70 transition-transform group-hover/channel:scale-110" aria-hidden="true" />
                         <span className="flex-1 font-bold">{social.platform}</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400 opacity-0 group-hover/channel:opacity-100 transition-opacity" />
+                        <ChevronRight className="h-3.5 w-3.5 text-[#8C6239] dark:text-gold-400 opacity-0 group-hover/channel:opacity-100 transition-opacity" />
                       </a>
                     );
                   })}
@@ -339,7 +339,7 @@ export function ContactSection() {
               </div>
 
               {/* Direct Letter */}
-              <div className="parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              <div className="bg-[#FFFFFF] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -350,14 +350,14 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  <span className="font-display text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
                     DIRECT // LETTER
                   </span>
                 </div>
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/25 dark:border-border-subtle bg-parchment-base/90 dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark dark:text-text-muted transition-all hover:border-leather-caramel dark:hover:border-gold-400 hover:text-leather-caramel dark:hover:text-gold-400 shadow-sm"
+                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 dark:border-border-subtle bg-[#FAF7EE] hover:bg-[#F3EDDF] dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-[#1E1208] dark:text-text-muted transition-all hover:border-[#8C6239] dark:hover:border-gold-400 hover:text-[#8C6239] dark:hover:text-gold-400 shadow-sm"
                 >
                   <div className="w-4 h-4 relative">
                     <Image
@@ -371,19 +371,19 @@ export function ContactSection() {
                   <span className="font-mono text-[11px] truncate font-bold">
                     {directEmail}
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 ml-auto text-leather-caramel dark:text-gold-400" />
+                  <ChevronRight className="h-3.5 w-3.5 ml-auto text-[#8C6239] dark:text-gold-400" />
                 </a>
               </div>
 
               {/* Status */}
-              <div className="parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              <div className="bg-[#FFFFFF] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
+                  <span className="font-mono text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase">
                     {status === "ONLINE" ? "AVAILABLE FOR COMMISSIONS" : `STATUS: ${status}`}
                   </span>
                 </div>
-                <p className="mt-2 font-mono text-[10px] text-leather-muted dark:text-text-muted/60 tracking-wider font-bold">
+                <p className="mt-2 font-mono text-[10px] text-[#5E412A] dark:text-text-muted/60 tracking-wider font-bold">
                   Katheryne's Dispatch: response within 24h
                 </p>
               </div>
