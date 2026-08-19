@@ -4,6 +4,35 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-08-17] — C5 Performance & Code Maintenance
+
+### Lint gate
+- `npx eslint src/` → 0 errors; `npx tsc --noEmit` → 0 errors; `npm run build` → 32 routes, passes clean (baseline green before edits, still green after).
+
+### Dead code
+- `audit-dead-exports.sh` found 2 exported interfaces referenced 0 times outside their own module — made module-private (dropped `export`, kept the types):
+  - `ProfileFormState` in `src/components/features/profile/personal-info-card.tsx` (only used by `PersonalInfoCardProps` in the same file).
+  - `ProjectArchiveRowData` in `src/components/features/projects/project-archive-row.tsx` (only used as the generic constraint in the same file).
+- Unreferenced-file pass: 0 hits — every non-convention component/lib file has ≥1 importer.
+
+### Structured error handling
+- `/api/telemetry/summary` was the ONLY API route without a top-level try/catch (18 other route files all have one). Wrapped `GET` in a structured guard: tagged `console.error("[TELEMETRY_SUMMARY]", e instanceof Error ? e.message : e)` + JSON 500 `{ error: "Failed to fetch telemetry summary" }` — a thrown error now returns structured JSON, never an HTML error page. `durableTelemetrySummary` still keeps its internal DB→memory fallback; this guard is belt-and-suspenders for consistency.
+
+### Dependencies
+- Updated patch releases: `next` 16.3.0 → 16.3.1, `eslint-config-next` 16.3.0 → 16.3.1 (both within `^16.3.0` caret range).
+- `npm audit` → **0 vulnerabilities** (nanoid/js-yaml overrides still in effect).
+- Majors deliberately skipped (documented decision, not omission): eslint 9→10, typescript 5→7, framer-motion 12→13, @types/node 20→26 — breaking changes, deferred to a dedicated upgrade cycle.
+
+### Audit (verified, no change needed)
+- **Security:** only `.env.example` + `.cron/VERCEL_DOMAIN.env` tracked (`.env` untracked, `git ls-files .env` = 0); no secret patterns (`sk-`, `ghp_`, `vcp_`, `AIza`, PEM keys) in `src/` or `prisma/`.
+- **Design system:** `rounded-xl/lg/2xl/md` → 0 hits; `animate-spin` only in doc comments (`.hud-rotate` in use); `HudLoader` absent from `src/components/sections/`; all 3 `cursor-pointer` hits have real handlers (Toggle/Select/ErrorBoundary details).
+- **Catch bindings:** all 20 `catch (e)` sites consume `e` (eslint flags none) — no optional-binding conversion needed this cycle.
+
+### Verified
+- `node e2e/navigation.test.mjs` + `node e2e/run-tests.mjs` green; pre-push build green; post-deploy route + commit-SHA pin verification passed.
+
+---
+
 ## [2026-08-15] — C3 Dynamic Content Update
 
 ### Portfolio content

@@ -11,8 +11,19 @@ import { durableTelemetrySummary } from "@/lib/telemetry-store";
  * no-store: the summary is live operational data, never CDN-cached.
  */
 export async function GET() {
-  const summary = await durableTelemetrySummary();
-  return NextResponse.json(summary, {
-    headers: { "Cache-Control": "no-store" },
-  });
+  try {
+    const summary = await durableTelemetrySummary();
+    return NextResponse.json(summary, {
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch (e) {
+    // durableTelemetrySummary already falls back to memory internally, but a
+    // top-level guard keeps this route consistent with every other API route:
+    // a thrown error returns a structured JSON 500, never an HTML error page.
+    console.error("[TELEMETRY_SUMMARY]", e instanceof Error ? e.message : e);
+    return NextResponse.json(
+      { error: "Failed to fetch telemetry summary" },
+      { status: 500 }
+    );
+  }
 }

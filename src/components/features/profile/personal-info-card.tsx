@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
  * sub-component.
  */
 
-export interface ProfileFormState {
+interface ProfileFormState {
   name: string;
   tagline: string;
   email: string;

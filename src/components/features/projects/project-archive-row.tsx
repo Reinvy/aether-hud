@@ -24,7 +24,7 @@ import { RowActions } from "@/components/ui/row-actions";
  * This keeps large archives responsive while filtering.
  */
 
-export interface ProjectArchiveRowData {
+interface ProjectArchiveRowData {
   id: string;
   title: string;
   description: string;
