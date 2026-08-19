@@ -1,7 +1,9 @@
 /* ============================================================
-   AETHER-HUD — Teyvat Codex & Celestial Gaming HUD Design System
-   Inspired by Genshin Impact (Traveler Dossier & Inazuma Night)
-   Dual Mode: Warm Ivory Codex (☀️) · Celestial Night (🌙)
+   AETHER-HUD — Teyvat Codex & Celestial Fantasy UI Design System
+   Inspired by Genshin Impact (Traveler Dossier & Inazuma Celestial Night)
+   Dual-Theme Engine:
+     1. ☀️ Teyvat Codex (Default Warm Ivory Parchment)
+     2. 🌙 Celestial Night (Midnight Indigo & Electro Gold)
    ============================================================ */
 
 @import "tailwindcss";
@@ -97,9 +99,9 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ─── Inazuma Celestial Night Mode ([data-theme="night-ops"] / [data-theme="celestial-night"] / .dark) ─── */
-[data-theme="night-ops"],
+/* ─── Inazuma Celestial Night Mode ([data-theme="celestial-night"] / [data-theme="night-ops"] / .dark) ─── */
 [data-theme="celestial-night"],
+[data-theme="night-ops"],
 .dark {
   --color-parchment-base: #070913;
   --color-parchment-subtle: #0D1122;
@@ -115,18 +117,11 @@ body {
   --color-accent-pulse: #00D2FF;
 }
 
-[data-theme="night-ops"] body,
 [data-theme="celestial-night"] body,
+[data-theme="night-ops"] body,
 .dark body {
   background-color: #070913;
   color: #F8FAFC;
-}
-
-/* ─── Titanium / Stealth Preset ────────────────────────────── */
-[data-theme="titanium"] {
-  --color-border-glass: rgba(224, 230, 237, 0.35);
-  --color-border-active: #E0E6ED;
-  --color-accent-pulse: #ADB6C4;
 }
 
 /* ─── Disabled Animations Override ─────────────────────────── */
@@ -139,19 +134,19 @@ body {
   transition-delay: 0ms !important;
 }
 
-/* ─── Teyvat Parchment Panels & Glass ──────────────────────── */
+/* ─── Teyvat Parchment Panels & Fantasy Curves ──────────────── */
 .parchment-panel {
-  background: rgba(255, 253, 248, 0.94);
+  background: rgba(255, 253, 248, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1.5px solid rgba(140, 98, 57, 0.28);
-  box-shadow: 0 6px 24px rgba(60, 40, 15, 0.06);
+  box-shadow: 0 8px 30px rgba(60, 40, 15, 0.07);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .parchment-panel:hover {
   border-color: rgba(140, 98, 57, 0.48);
-  box-shadow: 0 10px 32px rgba(60, 40, 15, 0.10);
+  box-shadow: 0 12px 36px rgba(60, 40, 15, 0.10);
 }
 
 .parchment-panel-strong {
@@ -163,27 +158,27 @@ body {
 }
 
 /* Night mode panel overrides */
-[data-theme="night-ops"] .parchment-panel,
 [data-theme="celestial-night"] .parchment-panel,
+[data-theme="night-ops"] .parchment-panel,
 .dark .parchment-panel {
-  background: rgba(18, 23, 44, 0.65);
+  background: rgba(18, 23, 44, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(179, 136, 255, 0.20);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
-[data-theme="night-ops"] .parchment-panel:hover,
 [data-theme="celestial-night"] .parchment-panel:hover,
+[data-theme="night-ops"] .parchment-panel:hover,
 .dark .parchment-panel:hover {
   border-color: rgba(179, 136, 255, 0.45);
   box-shadow: 0 8px 32px rgba(179, 136, 255, 0.12), 0 0 20px rgba(0, 210, 255, 0.08);
 }
 
-[data-theme="night-ops"] .parchment-panel-strong,
 [data-theme="celestial-night"] .parchment-panel-strong,
+[data-theme="night-ops"] .parchment-panel-strong,
 .dark .parchment-panel-strong {
-  background: rgba(13, 17, 34, 0.85);
+  background: rgba(13, 17, 34, 0.88);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(179, 136, 255, 0.30);
@@ -208,13 +203,105 @@ body {
   border: 1px solid var(--color-border-subtle);
 }
 
-[data-theme="night-ops"] .glass-panel-strong,
 [data-theme="celestial-night"] .glass-panel-strong,
+[data-theme="night-ops"] .glass-panel-strong,
 .dark .glass-panel-strong {
   background: rgba(13, 17, 34, 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(179, 136, 255, 0.25);
+}
+
+/* ─── Genshin Fantasy Rounded Curves (Replacing Mecha Chamfered Cuts) ─── */
+.chamfered {
+  border-radius: 1.5rem;
+}
+
+.chamfered-sm {
+  border-radius: 1rem;
+}
+
+.chamfered-xs {
+  border-radius: 0.75rem;
+}
+
+.chamfered-lg {
+  border-radius: 2rem;
+}
+
+.tactical-btn {
+  border-radius: 0.875rem;
+}
+
+/* Genshin Signature Fantasy Card */
+.genshin-card {
+  border-radius: 1.5rem;
+  background: rgba(255, 253, 248, 0.96);
+  border: 2px solid rgba(140, 98, 57, 0.32);
+  box-shadow: 0 12px 36px rgba(60, 40, 15, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .genshin-card {
+  background: rgba(18, 23, 44, 0.75);
+  border-color: rgba(179, 136, 255, 0.25);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+/* Genshin Signature Buttons */
+.genshin-btn-primary {
+  border-radius: 0.875rem;
+  background: linear-gradient(180deg, #F2C94C 0%, #DFAE2A 50%, #B88414 100%);
+  color: #1E1208;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(184, 132, 20, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.genshin-btn-primary:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(184, 132, 20, 0.45);
+}
+
+.genshin-btn-primary:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+.genshin-btn-secondary {
+  border-radius: 0.875rem;
+  background: #FAF7EE;
+  border: 2px solid rgba(140, 98, 57, 0.45);
+  color: #1E1208;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(60, 40, 15, 0.06);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.genshin-btn-secondary:hover {
+  background: #F3EDDF;
+  border-color: rgba(140, 98, 57, 0.7);
+  transform: translateY(-1px);
+}
+
+.dark .genshin-btn-secondary {
+  background: #0D1122;
+  border-color: rgba(242, 201, 76, 0.4);
+  color: #F2C94C;
+}
+
+.dark .genshin-btn-secondary:hover {
+  background: #141933;
+  border-color: rgba(242, 201, 76, 0.7);
 }
 
 /* ─── Bookmark Ribbon (Top-Right Hanging Ribbon with Heart) ─── */
@@ -241,21 +328,21 @@ body {
   background: #73502E;
 }
 
-[data-theme="night-ops"] .bookmark-ribbon,
 [data-theme="celestial-night"] .bookmark-ribbon,
+[data-theme="night-ops"] .bookmark-ribbon,
 .dark .bookmark-ribbon {
   background: #B388FF;
   color: #070913;
   box-shadow: 0 4px 16px rgba(179, 136, 255, 0.35);
 }
 
-[data-theme="night-ops"] .bookmark-ribbon:hover,
 [data-theme="celestial-night"] .bookmark-ribbon:hover,
+[data-theme="night-ops"] .bookmark-ribbon:hover,
 .dark .bookmark-ribbon:hover {
   background: #9D72FF;
 }
 
-/* ─── Figure Shadow & Layered Wireframe ────────────────────── */
+/* ─── Figure Shadow Layer ─────────────────────────────────── */
 .figure-shadow-layer {
   position: absolute;
   top: 0;
@@ -268,116 +355,18 @@ body {
   z-index: 1;
 }
 
-/* ─── Chamfered Corners (45° cut) ──────────────────────────── */
-.chamfered {
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
-}
-
-.chamfered-sm {
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-}
-
-.chamfered-xs {
-  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
-}
-
-.chamfered-lg {
-  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
-}
-
-/* Tactical & Teyvat Button Double Cut */
-.tactical-btn {
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-}
-
-/* ─── Corner Decorative Elements ───────────────────────────── */
-.corner-decor {
-  position: relative;
-}
-.corner-decor::before {
-  content: "+";
-  position: absolute;
-  bottom: 8px;
-  left: 12px;
-  font-size: 0.65rem;
-  font-family: var(--font-mono);
-  color: rgba(140, 98, 57, 0.35);
-  pointer-events: none;
-}
-
-[data-theme="night-ops"] .corner-decor::before,
-[data-theme="celestial-night"] .corner-decor::before,
-.dark .corner-decor::before {
-  color: rgba(242, 201, 76, 0.25);
-}
-
-.sys-node {
-  position: relative;
-}
-.sys-node::after {
-  content: "[TEYVAT_NODE]";
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.15em;
-  color: rgba(140, 98, 57, 0.4);
-  pointer-events: none;
-}
-
-[data-theme="night-ops"] .sys-node::after,
-[data-theme="celestial-night"] .sys-node::after,
-.dark .sys-node::after {
-  color: rgba(179, 136, 255, 0.4);
-}
-
-/* ─── Gold Corner Brackets ─────────────────────────────────── */
-.corner-brackets {
-  position: relative;
-}
-.corner-brackets::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 18px;
-  height: 18px;
-  border-top: 2px solid rgba(140, 98, 57, 0.4);
-  border-left: 2px solid rgba(140, 98, 57, 0.4);
-  pointer-events: none;
-}
-.corner-brackets::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  right: -1px;
-  width: 18px;
-  height: 18px;
-  border-bottom: 2px solid rgba(140, 98, 57, 0.4);
-  border-right: 2px solid rgba(140, 98, 57, 0.4);
-  pointer-events: none;
-}
-
-[data-theme="night-ops"] .corner-brackets::before,
-[data-theme="night-ops"] .corner-brackets::after,
-.dark .corner-brackets::before,
-.dark .corner-brackets::after {
-  border-color: rgba(242, 201, 76, 0.35);
-}
-
-/* ─── Vision Badges (Hexagonal Elemental Pills) ────────────── */
+/* ─── Vision Badges (Rounded Fantasy Elemental Pills) ───────── */
 .vision-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 10px;
+  padding: 3px 12px;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
   font-weight: 600;
-  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
-  border: 1px solid rgba(140, 98, 57, 0.25);
+  border-radius: 9999px;
+  border: 1.5px solid rgba(140, 98, 57, 0.30);
   background: rgba(140, 98, 57, 0.08);
   color: var(--color-leather-dark);
 }
@@ -390,114 +379,62 @@ body {
 .vision-cryo { background: rgba(128, 222, 234, 0.12); color: #0097A7; border-color: rgba(128, 222, 234, 0.35); }
 .vision-geo { background: rgba(255, 183, 77, 0.12); color: #E65100; border-color: rgba(255, 183, 77, 0.35); }
 
-[data-theme="night-ops"] .vision-pyro, .dark .vision-pyro { color: #FF7043; }
-[data-theme="night-ops"] .vision-hydro, .dark .vision-hydro { color: #4FC3F7; }
-[data-theme="night-ops"] .vision-anemo, .dark .vision-anemo { color: #80DEEA; }
-[data-theme="night-ops"] .vision-electro, .dark .vision-electro { color: #CE93D8; }
-[data-theme="night-ops"] .vision-dendro, .dark .vision-dendro { color: #9CCC65; }
-[data-theme="night-ops"] .vision-cryo, .dark .vision-cryo { color: #B2EBF2; }
-[data-theme="night-ops"] .vision-geo, .dark .vision-geo { color: #FFCC80; }
+[data-theme="celestial-night"] .vision-pyro, .dark .vision-pyro { color: #FF7043; }
+[data-theme="celestial-night"] .vision-hydro, .dark .vision-hydro { color: #4FC3F7; }
+[data-theme="celestial-night"] .vision-anemo, .dark .vision-anemo { color: #80DEEA; }
+[data-theme="celestial-night"] .vision-electro, .dark .vision-electro { color: #CE93D8; }
+[data-theme="celestial-night"] .vision-dendro, .dark .vision-dendro { color: #9CCC65; }
+[data-theme="celestial-night"] .vision-cryo, .dark .vision-cryo { color: #B2EBF2; }
+[data-theme="celestial-night"] .vision-geo, .dark .vision-geo { color: #FFCC80; }
 
 /* ─── Tech Badge ───────────────────────────────────────────── */
 .tech-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 10px;
+  padding: 3px 10px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
   color: var(--color-leather-dark);
   background: rgba(140, 98, 57, 0.09);
   border: 1px solid rgba(140, 98, 57, 0.25);
-  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  border-radius: 9999px;
 }
 
-[data-theme="night-ops"] .tech-badge,
 [data-theme="celestial-night"] .tech-badge,
+[data-theme="night-ops"] .tech-badge,
 .dark .tech-badge {
   color: var(--color-platinum-100);
   background: rgba(179, 136, 255, 0.08);
   border-color: rgba(179, 136, 255, 0.25);
 }
 
-/* ─── Glow Effects ─────────────────────────────────────────── */
-.glow-gold {
-  box-shadow: 0 0 20px rgba(242, 201, 76, 0.18), 0 0 40px rgba(242, 201, 76, 0.06);
-}
-.glow-gold-strong {
-  box-shadow: 0 0 30px rgba(242, 201, 76, 0.30), 0 0 60px rgba(242, 201, 76, 0.12);
-}
-.glow-leather {
-  box-shadow: 0 4px 20px rgba(140, 98, 57, 0.15);
-}
-
-/* ─── Atmosphere & Particle Layers ─────────────────────────── */
-.bg-grid-hud {
-  background-image:
-    linear-gradient(rgba(140, 98, 57, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(140, 98, 57, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-[data-theme="night-ops"] .bg-grid-hud,
-[data-theme="celestial-night"] .bg-grid-hud,
-.dark .bg-grid-hud {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-}
-
+/* ─── Atmosphere & Starfield ───────────────────────────────── */
 .bg-starfield {
   background-image:
-    radial-gradient(1px 1px at 10% 20%, rgba(140,98,57,0.15), transparent),
-    radial-gradient(1px 1px at 30% 60%, rgba(140,98,57,0.10), transparent),
-    radial-gradient(1.5px 1.5px at 50% 10%, rgba(242,201,76,0.25), transparent),
-    radial-gradient(1px 1px at 70% 40%, rgba(140,98,57,0.12), transparent),
-    radial-gradient(1px 1px at 90% 80%, rgba(140,98,57,0.15), transparent);
+    radial-gradient(1px 1px at 20px 30px, rgba(140, 98, 57, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 100px 150px, rgba(184, 132, 20, 0.3), transparent),
+    radial-gradient(1px 1px at 240px 70px, rgba(140, 98, 57, 0.2), transparent);
+  background-size: 320px 320px;
 }
 
-[data-theme="night-ops"] .bg-starfield,
-[data-theme="celestial-night"] .bg-starfield,
 .dark .bg-starfield {
   background-image:
-    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.20), transparent),
-    radial-gradient(1.5px 1.5px at 30% 60%, rgba(179,136,255,0.25), transparent),
-    radial-gradient(1.5px 1.5px at 50% 10%, rgba(242,201,76,0.30), transparent),
-    radial-gradient(1px 1px at 70% 40%, rgba(0,210,255,0.20), transparent),
-    radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.20), transparent);
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 100px 150px, rgba(242, 201, 76, 0.5), transparent),
+    radial-gradient(1px 1px at 240px 70px, rgba(179, 136, 255, 0.4), transparent);
 }
 
-.bg-ambient-gold {
-  background: radial-gradient(ellipse at 50% 0%, rgba(242, 201, 76, 0.12) 0%, transparent 60%);
+/* ─── Typography & Utilities ───────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
 }
-
-.bg-ambient-violet {
-  background: radial-gradient(ellipse at 100% 50%, rgba(179, 136, 255, 0.08) 0%, transparent 50%);
+.font-body {
+  font-family: var(--font-body);
 }
-
-/* ─── Typography System ────────────────────────────────────── */
-.text-gradient-gold {
-  background: linear-gradient(135deg, #2C1D11 0%, #C69214 50%, #8C6239 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-[data-theme="night-ops"] .text-gradient-gold,
-[data-theme="celestial-night"] .text-gradient-gold,
-.dark .text-gradient-gold {
-  background: linear-gradient(135deg, #F8FAFC 0%, #F2C94C 45%, #C19A32 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-celestial {
-  background: linear-gradient(135deg, #B388FF 0%, #00D2FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.font-mono {
+  font-family: var(--font-mono);
 }
 
 .sys-label {
@@ -508,8 +445,6 @@ body {
   color: var(--color-leather-muted);
 }
 
-[data-theme="night-ops"] .sys-label,
-[data-theme="celestial-night"] .sys-label,
 .dark .sys-label {
   color: var(--color-text-muted);
 }
@@ -521,65 +456,8 @@ body {
   color: #B8881A;
 }
 
-[data-theme="night-ops"] .sys-label-gold,
 .dark .sys-label-gold {
   color: #F2C94C;
-}
-
-.sys-label-active {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  color: var(--color-hud-active);
-}
-
-/* ─── HUD Status Indicator LED ─────────────────────────────── */
-.led-active {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-hud-active);
-  box-shadow: 0 0 8px rgba(0, 230, 118, 0.6);
-  animation: led-pulse 2s ease-in-out infinite;
-}
-
-.led-warning {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-hud-warning);
-  box-shadow: 0 0 8px rgba(255, 160, 0, 0.6);
-}
-
-/* ─── Animations ───────────────────────────────────────────── */
-@keyframes led-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(0, 230, 118, 0.6); }
-  50% { opacity: 0.6; box-shadow: 0 0 4px rgba(0, 230, 118, 0.3); }
-}
-
-@keyframes energy-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-@keyframes float-drift {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes glyph-shimmer {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(140, 98, 57, 0.3)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 12px rgba(242, 201, 76, 0.7)); }
-}
-
-.animate-glyph-shimmer {
-  animation: glyph-shimmer 3s ease-in-out infinite;
-}
-
-.animate-float-drift {
-  animation: float-drift 3s ease-in-out infinite;
 }
 
 /* ─── Button Glow Sweep ────────────────────────────────────── */
@@ -606,14 +484,12 @@ body {
 .btn-glow-sweep:hover::before {
   left: 100%;
 }
-.btn-glow-sweep:hover {
-  transform: scale(1.03);
-}
 
 /* ─── Recessed Input ───────────────────────────────────────── */
 .input-recessed {
   background: rgba(243, 238, 223, 0.6);
-  border: 1px solid rgba(140, 98, 57, 0.3);
+  border: 1.5px solid rgba(140, 98, 57, 0.3);
+  border-radius: 0.875rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--color-leather-dark);
 }
@@ -627,13 +503,11 @@ body {
   opacity: 0.6;
 }
 
-[data-theme="night-ops"] .input-recessed,
 .dark .input-recessed {
   background: rgba(13, 17, 34, 0.7);
   border-color: rgba(179, 136, 255, 0.3);
   color: #F8FAFC;
 }
-[data-theme="night-ops"] .input-recessed:focus,
 .dark .input-recessed:focus {
   border-color: rgba(242, 201, 76, 0.6);
   box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.25), inset 0 0 10px rgba(242, 201, 76, 0.15);
@@ -644,15 +518,14 @@ body {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .card-lift:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   border-color: rgba(140, 98, 57, 0.45);
-  box-shadow: 0 8px 30px rgba(140, 98, 57, 0.12);
+  box-shadow: 0 12px 32px rgba(140, 98, 57, 0.12);
 }
 
-[data-theme="night-ops"] .card-lift:hover,
 .dark .card-lift:hover {
   border-color: rgba(242, 201, 76, 0.45);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(242, 201, 76, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(242, 201, 76, 0.15);
 }
 
 /* ─── Segment Progress Bar ─────────────────────────────────── */
@@ -663,7 +536,7 @@ body {
 }
 .segment-bar .segment {
   flex: 1;
-  border-radius: 0;
+  border-radius: 4px;
   background: rgba(140, 98, 57, 0.15);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -672,19 +545,12 @@ body {
   box-shadow: 0 0 6px rgba(198, 146, 20, 0.4);
 }
 
-[data-theme="night-ops"] .segment-bar .segment,
 .dark .segment-bar .segment {
   background: rgba(255, 255, 255, 0.08);
 }
-[data-theme="night-ops"] .segment-bar .segment.active,
 .dark .segment-bar .segment.active {
   background: var(--color-gold-400);
   box-shadow: 0 0 6px rgba(242, 201, 76, 0.45);
-}
-
-.skillbar-hover:hover .segment-bar .segment.active {
-  background: #E5B842;
-  box-shadow: 0 0 8px rgba(229, 184, 66, 0.6);
 }
 
 /* ─── Scrollbar ────────────────────────────────────────────── */
@@ -709,112 +575,14 @@ body {
   color: inherit;
 }
 
-/* ─── Diamond Corner Decor ────────────────────────────── */
-.diamond-corner {
-  position: relative;
-}
-.diamond-corner::before {
-  content: "◆";
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 0.45rem;
-  color: rgba(140, 98, 57, 0.35);
-  pointer-events: none;
-}
-
-[data-theme="night-ops"] .diamond-corner::before,
-.dark .diamond-corner::before {
-  color: rgba(242, 201, 76, 0.25);
-}
-
 /* ─── Focus Ring ──────────────────────────────────────── */
 .focus-ring-gold:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(140, 98, 57, 0.4);
 }
 
-[data-theme="night-ops"] .focus-ring-gold:focus-visible,
 .dark .focus-ring-gold:focus-visible {
   box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.4);
-}
-
-/* ─── HUD Diamond Spinner ─────────────────────────────── */
-.hud-spinner {
-  display: inline-block;
-  border: 2px solid rgba(140, 98, 57, 0.2);
-  border-top-color: #8C6239;
-  border-right-color: rgba(140, 98, 57, 0.6);
-  transform: rotate(45deg);
-  border-radius: 0;
-  animation: hud-spin 0.7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-[data-theme="night-ops"] .hud-spinner,
-.dark .hud-spinner {
-  border-color: rgba(242, 201, 76, 0.2);
-  border-top-color: var(--color-gold-400);
-  border-right-color: rgba(242, 201, 76, 0.6);
-}
-
-@keyframes hud-spin {
-  from { transform: rotate(45deg); }
-  to { transform: rotate(405deg); }
-}
-
-.hud-rotate {
-  animation: hud-rotate 0.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-@keyframes hud-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ─── Micro Interactions ──────────────────────────────── */
-.hover-scale {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hover-scale:hover {
-  transform: scale(1.02);
-}
-.hover-scale-sm:hover {
-  transform: scale(1.05);
-}
-
-.press-scale {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.press-scale:active {
-  transform: scale(0.96);
-}
-
-/* ─── Skeleton HUD ────────────────────────────────────── */
-.skeleton-hud {
-  position: relative;
-  overflow: hidden;
-  background: rgba(140, 98, 57, 0.08);
-}
-.skeleton-hud::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    rgba(140, 98, 57, 0.10) 45%,
-    rgba(242, 201, 76, 0.20) 50%,
-    rgba(140, 98, 57, 0.10) 55%,
-    transparent 70%
-  );
-  transform: translateX(-100%);
-  animation: skeleton-sweep 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  pointer-events: none;
-}
-
-@keyframes skeleton-sweep {
-  0% { transform: translateX(-100%); }
-  55%, 100% { transform: translateX(100%); }
 }
 
 /* ─── Reduced Motion ──────────────────────────────────── */

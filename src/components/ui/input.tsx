@@ -38,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             className={cn(
-              "input-recessed chamfered-xs w-full px-4 py-2.5 text-sm font-body transition-all duration-300",
+              "input-recessed rounded-xl w-full px-4 py-2.5 text-sm font-body transition-all duration-300",
               "placeholder:text-leather-muted placeholder:opacity-40",
               prefix && "pl-10",
               suffix && "pr-10",

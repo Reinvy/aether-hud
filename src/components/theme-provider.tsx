@@ -11,15 +11,18 @@ import {
 import { MotionConfig } from "framer-motion";
 import { useData } from "@/lib/use-data";
 
+export type GenshinTheme = "teyvat-codex" | "celestial-night";
+
 interface ThemeConfig {
-  themePreset: string;
-  animationsEnabled: boolean;
+  themePreset?: string;
+  animationsEnabled?: boolean;
 }
 
 interface ThemeContextType {
-  themePreset: string;
+  themePreset: GenshinTheme;
   animationsEnabled: boolean;
-  setThemePreset: (preset: string) => void;
+  setThemePreset: (preset: GenshinTheme | string) => void;
+  toggleTheme: () => void;
   setAnimationsEnabled: (enabled: boolean) => void;
   syncConfig: () => void;
 }
@@ -28,40 +31,60 @@ const ThemeContext = createContext<ThemeContextType>({
   themePreset: "teyvat-codex",
   animationsEnabled: true,
   setThemePreset: () => {},
+  toggleTheme: () => {},
   setAnimationsEnabled: () => {},
   syncConfig: () => {},
 });
 
+function sanitizeTheme(preset?: string | null): GenshinTheme {
+  if (preset === "celestial-night" || preset === "night-ops") {
+    return "celestial-night";
+  }
+  return "teyvat-codex";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { data: config, refetch } = useData<ThemeConfig>("/api/config");
-  const [themePreset, setThemePresetState] = useState("teyvat-codex");
+  const [themePreset, setThemePresetState] = useState<GenshinTheme>("teyvat-codex");
   const [animationsEnabled, setAnimationsEnabledState] = useState(true);
 
-  // Sync from API on initial load
+  // Sync from API / localStorage on initial load
   useEffect(() => {
-    if (config) {
-      if (config.themePreset) {
-        setThemePresetState(config.themePreset);
+    // Check localStorage first if available
+    try {
+      const stored = localStorage.getItem("aether_theme");
+      if (stored) {
+        setThemePresetState(sanitizeTheme(stored));
+        return;
       }
-      if (typeof config.animationsEnabled === "boolean") {
-        setAnimationsEnabledState(config.animationsEnabled);
-      }
+    } catch (_error) {
+      // Ignore localStorage access failures in restricted environments
+      void _error;
+    }
+
+    if (config?.themePreset) {
+      setThemePresetState(sanitizeTheme(config.themePreset));
+    }
+    if (typeof config?.animationsEnabled === "boolean") {
+      setAnimationsEnabledState(config.animationsEnabled);
     }
   }, [config]);
 
   // Apply theme preset to document root
   useEffect(() => {
     const root = document.documentElement;
-    const isNight =
-      themePreset === "night-ops" ||
-      themePreset === "celestial-night";
-
-    if (isNight) {
-      root.dataset.theme = themePreset;
+    if (themePreset === "celestial-night") {
+      root.dataset.theme = "celestial-night";
       root.classList.add("dark");
     } else {
       root.dataset.theme = "teyvat-codex";
       root.classList.remove("dark");
+    }
+    try {
+      localStorage.setItem("aether_theme", themePreset);
+    } catch (_error) {
+      // Ignore localStorage write failures in restricted environments
+      void _error;
     }
   }, [themePreset]);
 
@@ -75,8 +98,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [animationsEnabled]);
 
-  const setThemePreset = useCallback((preset: string) => {
-    setThemePresetState(preset);
+  const setThemePreset = useCallback((preset: GenshinTheme | string) => {
+    setThemePresetState(sanitizeTheme(preset));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemePresetState((prev) =>
+      prev === "celestial-night" ? "teyvat-codex" : "celestial-night"
+    );
   }, []);
 
   const setAnimationsEnabled = useCallback((enabled: boolean) => {
@@ -89,6 +118,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         themePreset,
         animationsEnabled,
         setThemePreset,
+        toggleTheme,
         setAnimationsEnabled,
         syncConfig: refetch,
       }}

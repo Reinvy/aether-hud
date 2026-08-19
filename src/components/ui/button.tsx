@@ -21,7 +21,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
-          "tactical-btn btn-glow-sweep focus-ring-gold",
+          "rounded-xl btn-glow-sweep focus-ring-gold",
           "active:scale-[0.97] disabled:active:scale-100",
           crosshair && "crosshair-ring",
 

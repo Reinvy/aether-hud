@@ -16,9 +16,8 @@ interface ThemePreset {
 }
 
 const THEME_PRESETS: ThemePreset[] = [
-  { key: "obsidian", name: "OBSIDIAN", desc: "Deep space & imperial gold", color: "bg-gold-400" },
-  { key: "night-ops", name: "NIGHT OPS", desc: "Dark tactical & stellar blue", color: "bg-stellar-400" },
-  { key: "titanium", name: "TITANIUM", desc: "Platinum & silver frost", color: "bg-platinum-100" },
+  { key: "teyvat-codex", name: "TEYVAT CODEX", desc: "Warm ivory parchment & saddle leather (☀️ Light Default)", color: "bg-[#FAF7EE]" },
+  { key: "celestial-night", name: "CELESTIAL NIGHT", desc: "Midnight indigo & electro stardust (🌙 Dark Mode)", color: "bg-[#070913]" },
 ];
 
 interface ThemeAppearanceCardProps {

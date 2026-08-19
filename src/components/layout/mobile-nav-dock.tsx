@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sun, Moon, Shield } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { useTheme } from "@/components/theme-provider";
@@ -26,16 +26,8 @@ const MOBILE_NAV_ITEMS: NavItem[] = [
 
 export function MobileNavDock() {
   const [activeSection, setActiveSection] = useState("hero");
-  const { themePreset, setThemePreset } = useTheme();
-  const isNight = themePreset === "night-ops" || themePreset === "celestial-night";
-
-  const toggleTheme = () => {
-    if (isNight) {
-      setThemePreset("teyvat-codex");
-    } else {
-      setThemePreset("night-ops");
-    }
-  };
+  const { themePreset, toggleTheme } = useTheme();
+  const isNight = themePreset === "celestial-night";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,7 +52,7 @@ export function MobileNavDock() {
       aria-label="Mobile Navigation Dock"
       className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 lg:hidden w-[calc(100%-1.5rem)] max-w-md"
     >
-      <div className="parchment-panel-strong dark:glass-panel-strong chamfered-sm px-2.5 py-1.5 border-2 border-leather-caramel/35 dark:border-gold-400/35 shadow-2xl flex items-center justify-between gap-1 backdrop-blur-xl">
+      <div className="parchment-panel-strong dark:glass-panel-strong rounded-full px-3 py-1.5 border-2 border-leather-caramel/35 dark:border-gold-400/35 shadow-2xl flex items-center justify-between gap-1 backdrop-blur-xl">
         {MOBILE_NAV_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
           return (
@@ -69,7 +61,7 @@ export function MobileNavDock() {
               href={item.href}
               aria-label={item.label}
               className={cn(
-                "relative flex flex-col items-center justify-center p-1.5 chamfered-xs transition-all duration-200 min-w-[38px] min-h-[38px]",
+                "relative flex flex-col items-center justify-center p-1.5 rounded-full transition-all duration-200 min-w-[38px] min-h-[38px]",
                 isActive
                   ? "bg-leather-caramel dark:bg-gold-400 shadow-sm scale-105"
                   : "hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10"
@@ -101,7 +93,7 @@ export function MobileNavDock() {
           type="button"
           onClick={toggleTheme}
           aria-label={isNight ? "Switch to Ivory Codex theme" : "Switch to Celestial Night theme"}
-          className="flex items-center justify-center p-1.5 chamfered-xs min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
+          className="flex items-center justify-center p-1.5 rounded-full min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
         >
           {isNight ? (
             <Sun className="h-4 w-4 text-gold-400" />
@@ -114,9 +106,17 @@ export function MobileNavDock() {
         <Link
           href="/login"
           aria-label="Staff Portal"
-          className="flex items-center justify-center p-1.5 chamfered-xs min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
+          className="flex items-center justify-center p-1.5 rounded-full min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
         >
-          <Shield className="h-4 w-4 text-leather-caramel dark:text-gold-400" />
+          <div className="w-4 h-4 relative">
+            <Image
+              src={GENSHIN_UI_ICONS.archive}
+              alt="Staff Portal"
+              width={16}
+              height={16}
+              className="object-contain"
+            />
+          </div>
         </Link>
       </div>
     </nav>

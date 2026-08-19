@@ -22,34 +22,34 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
   const isCrowned = talentLevel === 10;
 
   return (
-    <div className="group space-y-2 p-3 chamfered-xs transition-colors bg-parchment-subtle/80 dark:bg-surface-primary/40 hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/20 shadow-sm">
+    <div className="group space-y-2.5 p-3.5 rounded-2xl transition-all bg-[#FAF7EE] dark:bg-surface-primary/70 hover:bg-[#F3EDDF] dark:hover:bg-gold-400/10 border-2 border-leather-caramel/25 dark:border-gold-400/20 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/35 dark:border-gold-400/30 flex items-center justify-center p-1">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/35 dark:border-gold-400/30 flex items-center justify-center p-1.5 shadow-inner">
             <Icon className="h-4 w-4 text-leather-caramel dark:text-gold-400 transition-transform group-hover:scale-110" />
           </div>
           <div>
             <span className="font-display text-xs tracking-wide text-leather-dark dark:text-platinum-50 font-bold group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors block">
               {name}
             </span>
-            <span className="font-mono text-[9px] text-leather-muted dark:text-text-muted font-medium">
+            <span className="font-mono text-[9px] text-leather-muted dark:text-text-muted font-bold">
               {category} // TALENT
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`font-mono text-[9px] px-2 py-0.5 chamfered-xs font-bold flex items-center gap-1 ${
+          <div className={`font-display text-[9px] px-3 py-1 rounded-full font-bold flex items-center gap-1.5 ${
             isCrowned
               ? "bg-leather-caramel text-parchment-base dark:bg-gold-400 dark:text-deep-space shadow-sm"
               : "bg-leather-caramel/15 text-leather-dark dark:bg-gold-400/10 dark:text-gold-400 border border-leather-caramel/20 dark:border-gold-400/20"
           }`}>
             {isCrowned && (
-              <div className="w-3 h-3 relative">
+              <div className="w-3.5 h-3.5 relative">
                 <Image
                   src={GENSHIN_UI_ICONS.crown}
                   alt="Crown of Insight"
-                  width={12}
-                  height={12}
+                  width={14}
+                  height={14}
                   className="object-contain"
                 />
               </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sun, Moon, Shield } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { useTheme } from "@/components/theme-provider";
@@ -28,17 +28,9 @@ const RAIL_ITEMS: RailItem[] = [
 export function NavRail() {
   const [activeSection, setActiveSection] = useState("hero");
   const [time, setTime] = useState("");
-  const { themePreset, setThemePreset } = useTheme();
+  const { themePreset, toggleTheme } = useTheme();
 
-  const isNight = themePreset === "night-ops" || themePreset === "celestial-night";
-
-  const toggleTheme = () => {
-    if (isNight) {
-      setThemePreset("teyvat-codex");
-    } else {
-      setThemePreset("night-ops");
-    }
-  };
+  const isNight = themePreset === "celestial-night";
 
   useEffect(() => {
     const updateTime = () => {
@@ -84,7 +76,7 @@ export function NavRail() {
       <a
         href="/#hero"
         aria-label="Back to top"
-        className="w-11 h-11 rounded-full bg-parchment-subtle dark:bg-surface-primary border-2 border-leather-caramel/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
+        className="w-11 h-11 rounded-full bg-parchment-base dark:bg-surface-primary border-2 border-leather-caramel/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
       >
         <Image
           src={GENSHIN_UI_ICONS.characterAether}
@@ -96,7 +88,7 @@ export function NavRail() {
         />
         <span className="sr-only">Top</span>
         {/* Tooltip */}
-        <div className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+        <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
           <span className="font-bold">TEYVAT CODEX</span>
         </div>
       </a>
@@ -105,7 +97,7 @@ export function NavRail() {
       <nav
         role="navigation"
         aria-label="Section Navigation"
-        className="parchment-panel dark:glass-panel chamfered-sm py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
+        className="parchment-panel dark:glass-panel rounded-3xl py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
       >
         {RAIL_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
@@ -115,7 +107,7 @@ export function NavRail() {
               href={item.href}
               aria-label={item.label}
               className={cn(
-                "group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 p-2 focus-ring-gold",
+                "group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 p-2 focus-ring-gold",
                 isActive
                   ? "bg-leather-caramel dark:bg-gold-400 shadow-md scale-105"
                   : "bg-leather-caramel/5 dark:bg-surface-primary/60 hover:bg-leather-caramel/15 dark:hover:bg-gold-400/15"
@@ -134,7 +126,7 @@ export function NavRail() {
               />
 
               {/* Hover Tooltip */}
-              <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+              <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
                 <span className="font-bold">{item.label.toUpperCase()}</span>
                 <span className="ml-2 opacity-60 text-[9px]">// {item.tag}</span>
               </div>
@@ -150,7 +142,7 @@ export function NavRail() {
           type="button"
           onClick={toggleTheme}
           aria-label={isNight ? "Switch to Ivory Codex theme" : "Switch to Celestial Night theme"}
-          className="group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+          className="group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
         >
           {isNight ? (
             <Sun className="h-4 w-4 text-gold-400 transition-transform rotate-0 group-hover:rotate-45" />
@@ -159,7 +151,7 @@ export function NavRail() {
           )}
 
           {/* Theme Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
             <span className="font-bold">{isNight ? "THEME: IVORY CODEX" : "THEME: CELESTIAL NIGHT"}</span>
           </div>
         </button>
@@ -168,18 +160,26 @@ export function NavRail() {
         <Link
           href="/login"
           aria-label="Staff Portal Login"
-          className="group relative w-10 h-10 chamfered-xs flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+          className="group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
         >
-          <Shield className="h-4 w-4 text-leather-caramel dark:text-gold-400" />
+          <div className="w-4 h-4 relative">
+            <Image
+              src={GENSHIN_UI_ICONS.archive}
+              alt="Staff Portal"
+              width={16}
+              height={16}
+              className="object-contain"
+            />
+          </div>
           {/* Staff Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 chamfered-xs bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-leather-dark text-parchment-base dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
             <span className="font-bold">STAFF PORTAL</span>
           </div>
         </Link>
       </nav>
 
       {/* Bottom Mini Clock / Telemetry Node */}
-      <div className="chamfered-xs bg-parchment-subtle/90 dark:bg-surface-primary/90 border border-leather-caramel/25 dark:border-gold-400/25 px-2 py-1 flex items-center gap-1.5 shadow-md">
+      <div className="rounded-full bg-parchment-base/90 dark:bg-surface-primary/90 border border-leather-caramel/25 dark:border-gold-400/25 px-3 py-1 flex items-center gap-1.5 shadow-md">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
         <span className="font-mono text-[9px] text-leather-dark dark:text-platinum-200 font-bold tabular-nums">
           {time || "--:--"}

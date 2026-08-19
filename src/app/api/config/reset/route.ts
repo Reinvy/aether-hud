@@ -19,8 +19,8 @@ export async function POST() {
         status: "ONLINE",
         sysVersion: "v2.4.1",
         siteName: "AETHER-HUD",
-        siteDescription: "High-End Tactical Portfolio — Obsidian & Imperial Gold Edition",
-        themePreset: "obsidian",
+        siteDescription: "Teyvat Codex & Tactical Portfolio",
+        themePreset: "teyvat-codex",
         animationsEnabled: true,
       },
       create: {
@@ -34,8 +34,8 @@ export async function POST() {
         status: "ONLINE",
         sysVersion: "v2.4.1",
         siteName: "AETHER-HUD",
-        siteDescription: "High-End Tactical Portfolio — Obsidian & Imperial Gold Edition",
-        themePreset: "obsidian",
+        siteDescription: "Teyvat Codex & Tactical Portfolio",
+        themePreset: "teyvat-codex",
         animationsEnabled: true,
       },
     });

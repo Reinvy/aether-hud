@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Quote, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { TestimonialsGridSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
@@ -29,8 +28,7 @@ export function TestimonialsSection() {
 
   return (
     <section id="testimonials" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-25" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -72,12 +70,20 @@ export function TestimonialsSection() {
               }}
               transition={{ duration: 0.4 }}
             >
-              <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
-                {/* Quote Icon & Serenitea Pot Badge */}
+              <div className="parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
+                {/* Mail Icon & Serenitea Pot Badge */}
                 <div>
-                  <div className="mb-3 flex items-center justify-between">
-                    <Quote className="h-6 w-6 text-leather-caramel/50 dark:text-gold-400/40" aria-hidden="true" />
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="w-6 h-6 relative opacity-70">
+                      <Image
+                        src={GENSHIN_UI_ICONS.mail}
+                        alt="Letter"
+                        width={24}
+                        height={24}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
                       <div className="w-3.5 h-3.5 relative">
                         <Image
                           src={GENSHIN_UI_ICONS.sereniteaPot}
@@ -87,14 +93,14 @@ export function TestimonialsSection() {
                           className="object-contain"
                         />
                       </div>
-                      <span className="font-mono text-[9px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                      <span className="font-display text-[9px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
                         TRUST // LV. 10
                       </span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <blockquote className="text-sm leading-relaxed text-leather-dark/90 dark:text-platinum-200 font-body italic text-pretty">
+                  <blockquote className="text-sm leading-relaxed text-[#2A1A0E] dark:text-platinum-200 font-body italic text-pretty">
                     “{testimonial.content}”
                   </blockquote>
                 </div>
@@ -102,7 +108,7 @@ export function TestimonialsSection() {
                 {/* Author Info */}
                 <div className="mt-6 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/15 flex items-center gap-3.5">
                   {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
-                    <div className="relative h-12 w-12 overflow-hidden chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/50 shrink-0 shadow-sm">
+                    <div className="relative h-12 w-12 overflow-hidden rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/50 shrink-0 shadow-sm">
                       <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
@@ -111,7 +117,7 @@ export function TestimonialsSection() {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
                       <span className="font-display text-base font-bold text-leather-dark dark:text-gold-400">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>
@@ -122,14 +128,22 @@ export function TestimonialsSection() {
                     <p className="font-display text-sm sm:text-base font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase truncate">
                       {testimonial.name}
                     </p>
-                    <p className="font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 truncate font-semibold">
+                    <p className="font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 truncate font-bold">
                       {testimonial.role}
                     </p>
                   </div>
 
                   {/* Verified Seal */}
-                  <div className="flex items-center gap-1 shrink-0 px-2.5 py-1 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/30 dark:border-gold-400/30">
-                    <ShieldCheck className="w-3.5 h-3.5 text-leather-caramel dark:text-gold-400" />
+                  <div className="flex items-center gap-1.5 shrink-0 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/30 dark:border-gold-400/30">
+                    <div className="w-3 h-3 relative">
+                      <Image
+                        src={GENSHIN_UI_ICONS.achievements}
+                        alt="Sealed"
+                        width={12}
+                        height={12}
+                        className="object-contain"
+                      />
+                    </div>
                     <span className="font-mono text-[9px] font-bold text-leather-caramel dark:text-gold-400">
                       SEALED
                     </span>

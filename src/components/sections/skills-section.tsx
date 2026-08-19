@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { fadeInView } from "@/lib/motion-variants";
-import { Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
@@ -49,8 +48,7 @@ export function SkillsSection() {
 
   return (
     <section id="skills" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-35" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
@@ -76,7 +74,7 @@ export function SkillsSection() {
           className="mt-12 mx-auto max-w-4xl"
           {...stagger}
         >
-          <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
+          <div className="parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
               <div className="w-5 h-5 relative">
                 <Image
@@ -90,7 +88,7 @@ export function SkillsSection() {
               <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                 TALENT TREE // ACTIVE CONSTELLATIONS
               </span>
-              <span className="ml-auto font-mono text-[10px] text-leather-muted dark:text-text-muted tabular-nums">
+              <span className="ml-auto font-mono text-[10px] text-leather-muted dark:text-text-muted font-bold tabular-nums">
                 {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} TALENTS ACTIVE`}
               </span>
             </div>
@@ -133,20 +131,28 @@ export function SkillsSection() {
             className="mt-10 mx-auto max-w-2xl text-center"
             {...fadeInView}
           >
-            <div className="parchment-panel-strong dark:glass-panel-strong chamfered-sm p-6 border border-leather-caramel/20 dark:border-gold-400/20 shadow-lg">
+            <div className="parchment-panel-strong dark:glass-panel-strong rounded-3xl p-6 border-2 border-leather-caramel/25 dark:border-gold-400/20 shadow-xl">
               <div className="flex items-center justify-center gap-2 mb-3">
-                <Globe className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                <div className="w-4 h-4 relative">
+                  <Image
+                    src={GENSHIN_UI_ICONS.achievements}
+                    alt="Elemental Resonance"
+                    width={16}
+                    height={16}
+                    className="object-contain"
+                  />
+                </div>
                 <span className="font-display text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
                   ELEMENTAL RESONANCE // CATEGORY AVERAGE
                 </span>
               </div>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
-                  <div key={stat.label} className="text-center min-w-[80px] p-2.5 chamfered-xs bg-parchment-subtle/80 dark:bg-surface-primary/40 border border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
+                  <div key={stat.label} className="text-center min-w-[84px] p-3 rounded-2xl bg-[#FAF7EE] dark:bg-surface-primary/60 border-2 border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
                     <div className="text-2xl font-bold font-display text-leather-dark dark:text-gold-400 tabular-nums">
                       {stat.pct}%
                     </div>
-                    <div className="font-mono text-[9px] text-leather-muted dark:text-text-muted mt-1 uppercase font-semibold">{stat.label}</div>
+                    <div className="font-mono text-[9px] text-leather-muted dark:text-text-muted mt-1 uppercase font-bold">{stat.label}</div>
                   </div>
                 ))}
               </div>

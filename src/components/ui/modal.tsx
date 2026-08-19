@@ -157,8 +157,7 @@ export function Modal({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "glass-panel-strong chamfered-lg relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
-              "corner-brackets",
+              "glass-panel-strong rounded-3xl relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
               sizeStyles[size] || sizeStyles.md,
               variantStyles[variant] || variantStyles.default,
               className
@@ -179,7 +178,7 @@ export function Modal({
               </div>
               <button
                 onClick={onClose}
-                className="min-h-9 min-w-9 chamfered-sm p-0 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold shrink-0 sm:min-h-0 sm:min-w-0 sm:p-1.5"
+                className="min-h-9 min-w-9 rounded-xl p-0 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold shrink-0 sm:min-h-0 sm:min-w-0 sm:p-1.5"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />

@@ -99,8 +99,8 @@ model PortfolioConfig {
   sysVersion        String   @default("v2.4.1")
   // Web config
   siteName          String   @default("AETHER-HUD")
-  siteDescription   String   @default("High-End Tactical Portfolio — Obsidian &amp; Imperial Gold Edition")
-  themePreset       String   @default("obsidian")
+  siteDescription   String   @default("Teyvat Codex & Tactical Portfolio")
+  themePreset       String   @default("teyvat-codex")
   animationsEnabled Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

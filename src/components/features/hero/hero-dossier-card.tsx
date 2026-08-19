@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Sparkles, Heart, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { TEYVAT_ELEMENTS } from "@/lib/element-assets";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { cn } from "@/lib/utils";
 
 interface HeroDossierProps {
@@ -33,7 +34,7 @@ export function HeroDossierCard({
   const selectedElement = TEYVAT_ELEMENTS.find((el) => el.key === activeElementKey) || TEYVAT_ELEMENTS[0];
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto my-6 parchment-panel dark:glass-panel chamfered border-2 border-leather-caramel/40 dark:border-gold-400/40 shadow-2xl overflow-hidden select-none transition-colors duration-500">
+    <div className="relative w-full max-w-6xl mx-auto my-6 rounded-3xl parchment-panel dark:glass-panel border-2 border-leather-caramel/35 dark:border-gold-400/40 shadow-2xl overflow-hidden select-none transition-colors duration-500">
       {/* Background Watermark Crest & Starfield */}
       <div className="pointer-events-none absolute inset-0 bg-starfield opacity-20" />
       <div className="pointer-events-none absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-leather-caramel/5 dark:bg-gold-400/5 blur-3xl" />
@@ -51,11 +52,18 @@ export function HeroDossierCard({
       </div>
 
       {/* ─── Top Nav Bar inside Dossier Card ─── */}
-      <div className="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-leather-caramel/25 dark:border-gold-400/20 bg-parchment-subtle/70 dark:bg-surface-primary/60">
-        {/* Left: Gilded Medallion Emblem */}
+      <div className="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-leather-caramel/25 dark:border-gold-400/20 bg-parchment-base/90 dark:bg-surface-primary/70">
+        {/* Left: Gilded Medallion Emblem with Genshin Archive Icon */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-leather-caramel/15 dark:bg-gold-400/20 border border-leather-caramel/50 dark:border-gold-400/60 flex items-center justify-center shadow-inner">
-            <Sparkles className="w-4 h-4 text-leather-caramel dark:text-gold-400" />
+          <div className="w-10 h-10 rounded-full bg-leather-caramel/15 dark:bg-gold-400/20 border-2 border-leather-caramel/50 dark:border-gold-400/60 flex items-center justify-center p-1.5 shadow-inner">
+            <Image
+              src={GENSHIN_UI_ICONS.archive}
+              alt="Teyvat Archive"
+              width={24}
+              height={24}
+              className="object-contain"
+              unoptimized
+            />
           </div>
           <div>
             <span className="font-display text-xs font-bold tracking-[0.25em] text-leather-dark dark:text-platinum-100 uppercase block">
@@ -68,26 +76,26 @@ export function HeroDossierCard({
         </div>
 
         {/* Center: Character Switcher (LUMINE ◀▶ AETHER) */}
-        <div className="flex items-center gap-2 bg-parchment-subtle dark:bg-surface-primary px-3 py-1.5 chamfered-xs border border-leather-caramel/35 dark:border-gold-400/30">
+        <div className="flex items-center gap-1.5 bg-parchment-elevated/80 dark:bg-surface-primary p-1 rounded-full border border-leather-caramel/35 dark:border-gold-400/30 shadow-inner">
           <button
             type="button"
             onClick={() => setCharacter("lumine")}
-            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 chamfered-xs ${
+            className={`px-4 py-1.5 rounded-full font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1.5 ${
               character === "lumine"
-                ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-sm"
+                ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-md scale-102"
                 : "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-platinum-100"
             }`}
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>LUMINE</span>
           </button>
-          <span className="text-leather-caramel/40 dark:text-text-muted/50 text-xs">|</span>
+          <span className="text-leather-caramel/30 dark:text-text-muted/40 text-xs">|</span>
           <button
             type="button"
             onClick={() => setCharacter("aether")}
-            className={`px-3 py-1 font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1 chamfered-xs ${
+            className={`px-4 py-1.5 rounded-full font-display text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1.5 ${
               character === "aether"
-                ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-sm"
+                ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-md scale-102"
                 : "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-platinum-100"
             }`}
           >
@@ -182,13 +190,11 @@ export function HeroDossierCard({
             </div>
 
             {/* Rarity Star Bar Below Figure */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-parchment-elevated/95 dark:bg-black/85 px-4 py-1 rounded-full border border-leather-caramel/40 dark:border-gold-400/40 backdrop-blur-sm z-20 shadow-md">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className="text-gold-600 dark:text-gold-400 text-xs drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
-                  ★
-                </span>
-              ))}
-              <span className="font-mono text-[9px] text-leather-dark dark:text-gold-200 font-bold ml-1.5 uppercase">
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-parchment-base/95 dark:bg-black/85 px-4 py-1.5 rounded-full border-2 border-leather-caramel/40 dark:border-gold-400/40 backdrop-blur-md z-20 shadow-lg">
+              <span className="text-[#DFAE2A] dark:text-gold-400 text-sm tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+                ★★★★★
+              </span>
+              <span className="font-display text-[10px] text-leather-dark dark:text-gold-200 font-bold ml-1 tracking-wider uppercase">
                 5-STAR TRAVELER
               </span>
             </div>
@@ -200,10 +206,10 @@ export function HeroDossierCard({
           <div>
             {/* Subtitle with Japanese Kanji (1:1 from ref2.png) */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-display text-sm tracking-[0.2em] text-leather-muted dark:text-gold-400/90 font-semibold">
+              <span className="font-display text-sm tracking-[0.2em] text-leather-caramel dark:text-gold-400 font-bold">
                 The Traveler //
               </span>
-              <span className="font-serif text-base text-leather-caramel dark:text-gold-400 font-bold">
+              <span className="font-serif text-base text-leather-dark dark:text-gold-300 font-bold">
                 旅人
               </span>
             </div>
@@ -211,8 +217,8 @@ export function HeroDossierCard({
             {/* Huge Serif Title with Intersecting Leather Accent Box */}
             <div className="relative my-2 inline-block">
               {/* Intersecting Caramel Block (Exact visual from ref2) */}
-              <div className="absolute -left-2 top-2 bottom-2 w-7 bg-leather-caramel/20 dark:bg-gold-400/20 -z-0 chamfered-xs" />
-              <h1 className="relative z-10 font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-leather-dark dark:text-platinum-50 capitalize drop-shadow-sm">
+              <div className="absolute -left-2 top-2 bottom-2 w-7 bg-leather-caramel/20 dark:bg-gold-400/20 -z-0 rounded-md" />
+              <h1 className="relative z-10 font-display text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-leather-dark dark:text-platinum-50 capitalize drop-shadow-sm">
                 {character === "aether" ? "Aether" : "Lumine"}
               </h1>
             </div>
@@ -223,13 +229,13 @@ export function HeroDossierCard({
                 {name}
               </span>
               <span className="text-leather-caramel/40 dark:text-text-muted/50 text-xs">•</span>
-              <span className="font-mono text-xs text-leather-muted dark:text-text-muted font-medium">
+              <span className="font-mono text-xs text-leather-muted dark:text-text-muted font-semibold">
                 {tagline}
               </span>
             </div>
 
             {/* Editorial Bio Text */}
-            <div className="space-y-3 font-body text-sm leading-relaxed text-leather-dark/90 dark:text-platinum-200">
+            <div className="space-y-3 font-body text-sm leading-relaxed text-[#2A1A0E] dark:text-platinum-200">
               <p>
                 {character === "aether"
                   ? "He is a calm and collected traveler with an innate mastery over seven elemental domains. Capable of architecting massive distributed systems, high-speed neural pipelines, and fail-closed security perimeters."
@@ -245,17 +251,33 @@ export function HeroDossierCard({
           <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/15">
             <a
               href="#contact"
-              className="tactical-btn btn-glow-sweep px-6 py-2.5 bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space font-display text-xs font-bold tracking-widest uppercase shadow-md hover:opacity-95 transition-all inline-flex items-center gap-2"
+              className="genshin-btn-primary px-6 py-3 font-display text-xs font-bold tracking-widest uppercase shadow-md hover:opacity-95 transition-all inline-flex items-center gap-2"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <div className="w-4 h-4 relative">
+                <Image
+                  src={GENSHIN_UI_ICONS.wish}
+                  alt="Wish"
+                  width={16}
+                  height={16}
+                  className="object-contain brightness-0"
+                />
+              </div>
               <span>SUMMON ARCHITECT</span>
             </a>
             <a
               href="#projects"
-              className="tactical-btn px-5 py-2.5 bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/40 dark:border-gold-400/40 text-leather-dark dark:text-gold-400 font-display text-xs font-bold tracking-widest uppercase hover:bg-leather-caramel/10 transition-all inline-flex items-center gap-2"
+              className="genshin-btn-secondary px-5 py-3 font-display text-xs font-bold tracking-widest uppercase hover:bg-leather-caramel/10 transition-all inline-flex items-center gap-2"
             >
+              <div className="w-4 h-4 relative">
+                <Image
+                  src={GENSHIN_UI_ICONS.domain}
+                  alt="Domains"
+                  width={16}
+                  height={16}
+                  className="object-contain"
+                />
+              </div>
               <span>EXPLORE DOMAINS</span>
-              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
@@ -263,14 +285,14 @@ export function HeroDossierCard({
         {/* ── Column 3 (3 cols): 4 Interactive Accordion Controls ── */}
         <div className="lg:col-span-3 flex flex-col space-y-3">
           {/* 1. Fragment Accordion (7 Elements Grid) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
+          <div className="border-2 border-leather-caramel/25 dark:border-gold-400/25 bg-[#F6F0E3] dark:bg-surface-primary/70 rounded-2xl p-4 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("fragment")}
               className="w-full flex items-center justify-between font-display text-xs font-bold text-leather-dark dark:text-platinum-100 tracking-wider uppercase mb-2 text-left"
             >
               <span>fragment</span>
-              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm">
+              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm font-bold">
                 {activeAccordions.fragment ? "−" : "+"}
               </span>
             </button>
@@ -284,10 +306,10 @@ export function HeroDossierCard({
                       type="button"
                       onClick={() => setActiveElementKey(elem.key)}
                       title={`Vision: ${elem.name} — ${elem.domain}`}
-                      className={`relative p-1 chamfered-xs flex items-center justify-center transition-all ${
+                      className={`relative p-1.5 rounded-xl flex items-center justify-center transition-all ${
                         isActive
                           ? "bg-leather-caramel/20 dark:bg-gold-400/20 border-2 border-leather-caramel dark:border-gold-400 scale-110 shadow-sm"
-                          : "border border-leather-caramel/20 dark:border-gold-400/20 hover:scale-105 opacity-75 hover:opacity-100"
+                          : "border border-leather-caramel/20 dark:border-gold-400/20 bg-parchment-base/80 dark:bg-surface-primary hover:scale-105 opacity-80 hover:opacity-100"
                       }`}
                     >
                       <Image
@@ -306,14 +328,14 @@ export function HeroDossierCard({
           </div>
 
           {/* 2. Wishful Accordion (Expandable Featured Project Banner) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
+          <div className="border-2 border-leather-caramel/25 dark:border-gold-400/25 bg-[#F6F0E3] dark:bg-surface-primary/70 rounded-2xl p-4 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("wishful")}
               className="w-full flex items-center justify-between font-display text-xs font-bold text-leather-dark dark:text-platinum-100 tracking-wider uppercase text-left"
             >
               <span>wishful</span>
-              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm">
+              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm font-bold">
                 {activeAccordions.wishful ? "−" : "+"}
               </span>
             </button>
@@ -325,7 +347,7 @@ export function HeroDossierCard({
                     EVENT WISH
                   </span>
                 </div>
-                <p className="font-display font-semibold text-xs text-leather-dark dark:text-gold-400">
+                <p className="font-display font-bold text-xs text-leather-dark dark:text-gold-400">
                   Aether HUD // Next-Gen Tactical Platform
                 </p>
                 <p className="text-[11px] text-leather-muted dark:text-text-muted">
@@ -336,23 +358,23 @@ export function HeroDossierCard({
           </div>
 
           {/* 3. Memory Accordion (Latin Lore & Architectural Motto) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
+          <div className="border-2 border-leather-caramel/25 dark:border-gold-400/25 bg-[#F6F0E3] dark:bg-surface-primary/70 rounded-2xl p-4 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("memory")}
               className="w-full flex items-center justify-between font-display text-xs font-bold text-leather-dark dark:text-platinum-100 tracking-wider uppercase mb-1 text-left"
             >
               <span>memory</span>
-              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm">
+              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm font-bold">
                 {activeAccordions.memory ? "−" : "+"}
               </span>
             </button>
             {activeAccordions.memory && (
               <div className="text-xs space-y-1 font-body text-leather-muted dark:text-text-muted italic pt-1">
-                <p className="font-serif text-leather-dark/85 dark:text-text-muted">
+                <p className="font-serif text-leather-dark/90 dark:text-text-muted">
                   “Memoria nostra sit aeterna, quam nullus in hoc mundo pereat.”
                 </p>
-                <p className="text-[10px] font-mono not-italic text-leather-caramel dark:text-gold-400 font-semibold">
+                <p className="text-[10px] font-mono not-italic text-leather-caramel dark:text-gold-400 font-bold">
                   — May our architectures endure across all worlds.
                 </p>
               </div>
@@ -360,14 +382,14 @@ export function HeroDossierCard({
           </div>
 
           {/* 4. Myriad Accordion (Tech Stack Specifications) */}
-          <div className="border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/70 dark:bg-surface-primary/40 chamfered-xs p-3.5 shadow-sm">
+          <div className="border-2 border-leather-caramel/25 dark:border-gold-400/25 bg-[#F6F0E3] dark:bg-surface-primary/70 rounded-2xl p-4 shadow-sm">
             <button
               type="button"
               onClick={() => toggleAccordion("myriad")}
               className="w-full flex items-center justify-between font-display text-xs font-bold text-leather-dark dark:text-platinum-100 tracking-wider uppercase mb-2 text-left"
             >
               <span>myriad</span>
-              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm">
+              <span className="font-mono text-leather-caramel dark:text-gold-400 text-sm font-bold">
                 {activeAccordions.myriad ? "−" : "+"}
               </span>
             </button>
@@ -376,7 +398,7 @@ export function HeroDossierCard({
                 {["Next.js 16", "React 19", "TypeScript", "Tailwind v4", "Prisma v7", "PostgreSQL", "AI Logic"].map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-[10px] font-mono text-leather-dark dark:text-platinum-200 font-semibold"
+                    className="px-2.5 py-0.5 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-[10px] font-mono text-leather-dark dark:text-platinum-200 font-bold"
                   >
                     {tag}
                   </span>

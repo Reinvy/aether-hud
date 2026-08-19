@@ -41,13 +41,13 @@ export function HudHeader() {
   const sysVersion = config?.sysVersion || "v2.4.1";
   const sysStatus = config?.status || "ONLINE";
 
-  const isNight = themePreset === "night-ops" || themePreset === "celestial-night";
+  const isNight = themePreset === "celestial-night";
 
   const toggleTheme = () => {
     if (isNight) {
-      setThemePreset("obsidian"); // Maps to default Teyvat Codex
+      setThemePreset("teyvat-codex");
     } else {
-      setThemePreset("night-ops"); // Maps to Inazuma Celestial Night
+      setThemePreset("celestial-night");
     }
   };
 

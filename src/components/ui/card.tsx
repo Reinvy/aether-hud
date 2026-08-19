@@ -11,7 +11,7 @@ function Card({ className, variant = "glass", hover = "sweep", diamond = false, 
   return (
     <div
       className={cn(
-        "chamfered relative group",
+        "rounded-3xl relative group",
         variant === "glass" && "parchment-panel dark:glass-panel",
         variant === "default" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/25 dark:border-border-subtle",
         variant === "bordered" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/40 dark:border-border-glass",

@@ -52,7 +52,7 @@ export default function DashboardSettings() {
   const [form, setForm] = useState({
     siteName: "",
     siteDescription: "",
-    themePreset: "obsidian",
+    themePreset: "teyvat-codex",
     animationsEnabled: true,
     sysVersion: "",
   });
@@ -62,7 +62,7 @@ export default function DashboardSettings() {
       setForm({
         siteName: config.siteName || "AETHER-HUD",
         siteDescription: config.siteDescription || "",
-        themePreset: config.themePreset || "obsidian",
+        themePreset: config.themePreset || "teyvat-codex",
         animationsEnabled: config.animationsEnabled !== false,
         sysVersion: config.sysVersion || "v2.4.1",
       });

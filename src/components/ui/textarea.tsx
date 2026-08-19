@@ -22,7 +22,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           ref={ref}
           className={cn(
-            "input-recessed chamfered-xs w-full resize-y px-4 py-2.5 text-sm font-body",
+            "input-recessed rounded-xl w-full resize-y px-4 py-2.5 text-sm font-body",
             "placeholder:text-leather-muted placeholder:opacity-40",
             "min-h-[80px]",
             error && "border-hud-danger",
