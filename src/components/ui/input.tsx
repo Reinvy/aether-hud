@@ -23,14 +23,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={id}
-            className="sys-label mb-2 block text-text-muted"
+            className="sys-label mb-2 block text-leather-muted dark:text-text-muted font-bold"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {prefix && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-leather-muted dark:text-text-muted">
               {prefix}
             </div>
           )}
@@ -38,8 +38,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             className={cn(
-              "input-recessed w-full px-4 py-2.5 text-sm font-body transition-all duration-300",
-              "placeholder:text-text-muted placeholder:opacity-40",
+              "input-recessed chamfered-xs w-full px-4 py-2.5 text-sm font-body transition-all duration-300",
+              "placeholder:text-leather-muted placeholder:opacity-40",
               prefix && "pl-10",
               suffix && "pr-10",
               error && "border-hud-danger",
@@ -50,7 +50,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {suffix && (
             <div
               className={cn(
-                "absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted",
+                "absolute inset-y-0 right-0 flex items-center pr-3 text-leather-muted dark:text-text-muted",
                 !suffixInteractive && "pointer-events-none"
               )}
             >

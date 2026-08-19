@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
-import { Cpu, Globe } from "lucide-react";
+import { Sparkles, Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
@@ -21,7 +21,7 @@ type Skill = {
 const stagger = {
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
-  viewport: { once: true, margin: "-100px" },
+  viewport: { once: true, margin: "-80px" },
   transition: { staggerChildren: 0.05 },
 };
 
@@ -47,31 +47,31 @@ export function SkillsSection() {
 
   return (
     <section id="skills" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-violet" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-35" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="SKILLS MATRIX // ATTRIBUTE"
-          icon={<Cpu className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
-          title="Combat"
+          badge="ELEMENTAL TALENTS // VISIONS"
+          icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          title="Vision"
           highlight="Proficiencies"
-          subtitle="Technical attributes and system capabilities — HUD segment display."
+          subtitle="Technical mastery across seven digital elements — resonance meter display."
         />
 
-        {/* Skills Grid */}
+        {/* Skills Grid Container */}
         <motion.div
-          className="mt-14 mx-auto max-w-4xl"
+          className="mt-12 mx-auto max-w-4xl"
           {...stagger}
         >
-          <div className="glass-panel chamfered p-6 sm:p-8">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-subtle">
-              <Cpu className="h-4 w-4 text-gold-400" aria-hidden="true" />
-              <span className="sys-label-gold">
-                SKILL ARRAY // SEGMENTED DATA
+          <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
+              <Sparkles className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+              <span className="font-mono text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                TALENT TREE // ACTIVE NODES
               </span>
               <span className="ml-auto sys-label font-mono tabular-nums">
-                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} MODULES LOADED`}
+                {loading ? "SCANNING ARRAY…" : `${skills?.length ?? 0} TALENTS LOADED`}
               </span>
             </div>
 
@@ -79,7 +79,7 @@ export function SkillsSection() {
               <SkillsArraySkeleton rows={6} />
             )}
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {skills?.map((skill) => (
                 <motion.div
                   key={skill.id}
@@ -101,7 +101,7 @@ export function SkillsSection() {
 
             {!loading && skills?.length === 0 && (
               <div className="flex justify-center py-8">
-                <span className="sys-label text-xs text-text-muted">NO SKILL DATA AVAILABLE</span>
+                <span className="sys-label text-xs text-leather-muted dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
               </div>
             )}
           </div>
@@ -110,21 +110,23 @@ export function SkillsSection() {
         {/* Radar / Category Summary Overview */}
         {categoryStats.length > 0 && (
           <motion.div
-            className="mt-12 mx-auto max-w-2xl text-center"
+            className="mt-10 mx-auto max-w-2xl text-center"
             {...fadeInView}
           >
-            <div className="glass-panel chamfered-sm p-6">
+            <div className="parchment-panel-strong dark:glass-panel-strong chamfered-sm p-6 border border-leather-caramel/20 dark:border-gold-400/20 shadow-lg">
               <div className="flex items-center justify-center gap-2 mb-3">
-                <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
-                <span className="sys-label-gold">SYSTEM OVERVIEW // ATTRIBUTE AVERAGE</span>
+                <Globe className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                <span className="font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  ELEMENTAL RESONANCE // CATEGORY AVERAGE
+                </span>
               </div>
-              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
                   <div key={stat.label} className="text-center min-w-[70px]">
-                    <div className="text-2xl font-bold text-gradient-gold font-display tabular-nums">
+                    <div className="text-2xl font-bold font-display text-leather-dark dark:text-gold-400 tabular-nums">
                       {stat.pct}%
                     </div>
-                    <div className="sys-label text-[9px]">{stat.label} // AVG</div>
+                    <div className="sys-label text-[9px] mt-1">{stat.label} // AVG</div>
                   </div>
                 ))}
               </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Chakra_Petch, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
+import { Chakra_Petch, Cinzel, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
@@ -7,12 +7,17 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
- * Self-hosted typography — replaces the Google Fonts CDN <link> (render-
- * blocking stylesheet) with build-time font downloads served from the
- * same origin. Removes the external connection (preconnect + css2 fetch)
- * from the critical path: a clean LCP win. The CSS variables below feed
- * the Tailwind v4 `@theme inline` font tokens in globals.css.
+ * Self-hosted typography — includes Cinzel display serif for majestic
+ * Teyvat Codex headings, Orbitron for tactical display accents,
+ * Inter for body reading, and JetBrains Mono for telemetry tags.
  */
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
 const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["600", "700", "800", "900"],
@@ -197,7 +202,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased dark`}
+      className={`${cinzel.variable} ${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

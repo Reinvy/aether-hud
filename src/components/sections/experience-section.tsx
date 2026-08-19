@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, GraduationCap, Calendar, ArrowRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Award, GraduationCap, Calendar, ShieldCheck, Briefcase } from "lucide-react";
 import { ExperienceTimelineSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
@@ -21,12 +20,12 @@ type Experience = {
 const stagger = {
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
-  viewport: { once: true, margin: "-100px" },
+  viewport: { once: true, margin: "-80px" },
   transition: { staggerChildren: 0.1 },
 };
 
 const typeIcons: Record<string, React.ElementType> = {
-  work: Briefcase,
+  work: Award,
   education: GraduationCap,
   freelance: Briefcase,
 };
@@ -36,17 +35,17 @@ export function ExperienceSection() {
 
   return (
     <section id="experience" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-violet" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeading
-          badge="EXPERIENCE // TIMELINE"
-          icon={<Briefcase className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
-          title="Mission"
-          highlight="History"
-          subtitle="A chronological record of deployed missions, operations, and system upgrades."
+          badge="ADVENTURER'S GUILD // QUEST LOG"
+          icon={<Award className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          title="Expedition"
+          highlight="Chronicle"
+          subtitle="A verified history of completed guild commissions, career milestones, and technical expeditions."
         />
 
         {/* Timeline */}
@@ -54,8 +53,8 @@ export function ExperienceSection() {
           className="relative mt-14"
           {...stagger}
         >
-          {/* Vertical line */}
-          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-gold-400/40 via-gold-400/20 to-transparent" />
+          {/* Vertical guild line */}
+          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-leather-caramel/40 via-leather-caramel/20 to-transparent dark:from-gold-400/40 dark:via-gold-400/20" />
 
           {loading && (
             <div className="pt-2">
@@ -64,7 +63,7 @@ export function ExperienceSection() {
           )}
 
           {experiences?.map((exp, index) => {
-            const TypeIcon = typeIcons[exp.type] || Briefcase;
+            const TypeIcon = typeIcons[exp.type] || Award;
             return (
               <motion.div
                 key={exp.id}
@@ -76,54 +75,48 @@ export function ExperienceSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {/* Timeline node */}
-                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border border-border-glass bg-surface-primary transition-all duration-300 group-hover:border-gold-400/40 group-hover:shadow-[0_0_16px_rgba(242,201,76,0.25)] group-hover:scale-110">
-                  <TypeIcon className="h-4 w-4 text-gold-400 transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_4px_rgba(242,201,76,0.6)]" aria-hidden="true" />
+                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border border-leather-caramel/35 dark:border-gold-400/40 bg-parchment-subtle dark:bg-surface-primary transition-all duration-300 group-hover:scale-110 shadow-md">
+                  <TypeIcon className="h-4 w-4 text-leather-caramel dark:text-gold-400 transition-transform group-hover:scale-110" aria-hidden="true" />
                 </div>
 
                 {/* Node connector line */}
-                <div className="absolute left-[19px] top-11 bottom-0 w-px bg-border-subtle group-last:hidden" />
+                <div className="absolute left-[19px] top-11 bottom-0 w-px bg-leather-caramel/20 dark:bg-gold-400/20 group-last:hidden" />
 
                 {/* Content card */}
-                <div className="glass-panel chamfered p-6 group-hover:border-gold-400/30 transition-all duration-300 energy-sweep">
+                <div className="parchment-panel dark:glass-panel chamfered p-6 group-hover:border-leather-caramel/40 dark:group-hover:border-gold-400/40 transition-all duration-300 shadow-md">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="gold" size="sm">
-                          {exp.type === "work" ? (
-                            <><Briefcase className="mr-1 h-3 w-3" aria-hidden="true" /> WORK</>
-                          ) : exp.type === "education" ? (
-                            <><GraduationCap className="mr-1 h-3 w-3" aria-hidden="true" /> EDUCATION</>
-                          ) : (
-                            <><Briefcase className="mr-1 h-3 w-3" aria-hidden="true" /> FREELANCE</>
-                          )}
-                        </Badge>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="px-2.5 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-gold-400 text-[10px] font-mono font-bold tracking-wider uppercase">
+                          {exp.type === "work" ? "GUILD MISSION" : exp.type === "education" ? "ACADEMY LORE" : "COMMISSION"}
+                        </span>
                       </div>
-                      <h3 className="font-display text-base font-bold tracking-wider text-text-main transition-colors duration-300 group-hover:text-gold-400">
+                      <h3 className="font-display text-lg font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors">
                         {exp.role}
                       </h3>
-                      <p className="mt-0.5 font-mono text-xs tracking-wider text-gold-400">
+                      <p className="mt-0.5 font-mono text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-semibold">
                         {exp.company}
                       </p>
                     </div>
 
                     {/* Date range */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <Calendar className="h-3 w-3 text-text-muted/50" aria-hidden="true" />
-                      <span className="font-mono text-[10px] text-text-muted tracking-wider tabular-nums">
+                    <div className="flex items-center gap-1.5 shrink-0 bg-leather-caramel/5 dark:bg-surface-primary px-3 py-1 chamfered-xs border border-leather-caramel/15 dark:border-gold-400/15">
+                      <Calendar className="h-3.5 w-3.5 text-leather-muted dark:text-text-muted" aria-hidden="true" />
+                      <span className="font-mono text-xs text-leather-dark dark:text-platinum-200 tracking-wider tabular-nums font-semibold">
                         {exp.startDate} — {exp.endDate || "Present"}
                       </span>
                     </div>
                   </div>
 
-                  <p className="mt-3 text-sm leading-relaxed text-text-muted font-body">
+                  <p className="mt-3 text-sm leading-relaxed text-leather-muted dark:text-text-muted font-body">
                     {exp.description}
                   </p>
 
-                  {/* Sys ID */}
+                  {/* Commission ID */}
                   <div className="mt-4 flex items-center gap-2">
-                    <ArrowRight className="h-3 w-3 text-gold-400/40" aria-hidden="true" />
-                    <span className="sys-label text-[9px] font-mono tabular-nums">
-                      MISSION // {String(index + 1).padStart(2, "0")}
+                    <ShieldCheck className="h-3.5 w-3.5 text-leather-caramel/70 dark:text-gold-400/70" aria-hidden="true" />
+                    <span className="font-mono text-[10px] tracking-widest text-leather-muted dark:text-text-muted uppercase">
+                      COMMISSION // {String(index + 1).padStart(2, "0")} VERIFIED
                     </span>
                   </div>
                 </div>
@@ -133,23 +126,9 @@ export function ExperienceSection() {
 
           {!loading && experiences?.length === 0 && (
             <div className="flex justify-center py-12">
-              <span className="sys-label text-xs text-text-muted">NO TIMELINE DATA AVAILABLE</span>
+              <span className="sys-label text-xs text-leather-muted dark:text-text-muted">NO QUEST LOG DATA AVAILABLE</span>
             </div>
           )}
-        </motion.div>
-
-        {/* Bottom sys node decoration */}
-        <motion.div
-          className="mt-8 flex justify-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <div className="flex items-center gap-3">
-            <span className="sys-node" />
-            <span className="sys-label text-[9px] text-text-muted/30">END OF TIMELINE // SYS_NODE</span>
-            <span className="sys-node" />
-          </div>
         </motion.div>
       </div>
     </section>

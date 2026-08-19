@@ -3,13 +3,14 @@
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/layout/hud-header";
 import { HudFooter } from "@/components/layout/hud-footer";
+import { NavRail } from "@/components/layout/nav-rail";
+import { SakuraCanvas } from "@/components/features/sakura-canvas";
+import { IntroGate } from "@/components/features/intro-gate";
 import { useData } from "@/lib/use-data";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { SectionSkeleton } from "@/components/ui/section-skeleton";
 
 // ─── Lazy-loaded sections (dynamic imports for bundle splitting) ───
-// Each section renders a shared HUD skeleton (SectionSkeleton) while its
-// chunk is loading — see src/components/ui/section-skeleton.tsx.
 const HeroSection = dynamic(
   () => import("@/components/sections/hero-section").then((m) => ({ default: m.HeroSection })),
   { loading: () => <SectionSkeleton variant="hero" /> }
@@ -60,70 +61,69 @@ const SECTION_MAP: Record<string, React.ElementType> = {
 };
 
 /**
- * HomeContent — client-side homepage composition.
+ * HomeContent — client-side Teyvat Codex homepage composition.
  *
- * Renders the HUD header/footer plus the section map (hero, projects,
- * skills, experience, testimonials, contact) with per-section error
- * boundaries. Each section is lazy-loaded for bundle splitting and shows
- * a shared SectionSkeleton while its chunk loads.
- *
- * Kept separate from the route page so the page.tsx server component can
- * inject server-rendered structured data (JSON-LD) around it without
- * forcing the whole tree into a client bundle.
+ * Mounts the IntroGate ("Click to Proceed" with 7 Elements),
+ * ambient SakuraCanvas particle overlay, Left NavRail, Top HudHeader,
+ * and lazy-loaded Teyvat sections with error boundaries.
  */
 export function HomeContent() {
   const { data: sections, loading } = useData<Section[]>("/api/sections");
 
-  // Fallback: if sections are loading, show all sections
   const sectionList =
     !loading && sections && sections.length > 0
       ? sections.filter((s) => s.enabled).sort((a, b) => a.order - b.order)
       : null;
 
-  // If no dynamic data yet, render all sections as fallback
-  if (sectionList === null) {
-    return (
-      <>
-        <HudHeader />
-        <main id="main-content" tabIndex={-1} className="outline-none">
-          <ErrorBoundary section="hero">
-            <HeroSection />
-          </ErrorBoundary>
-          <ErrorBoundary section="projects">
-            <ProjectsSection />
-          </ErrorBoundary>
-          <ErrorBoundary section="skills">
-            <SkillsSection />
-          </ErrorBoundary>
-          <ErrorBoundary section="experience">
-            <ExperienceSection />
-          </ErrorBoundary>
-          <ErrorBoundary section="testimonials">
-            <TestimonialsSection />
-          </ErrorBoundary>
-          <ErrorBoundary section="contact">
-            <ContactSection />
-          </ErrorBoundary>
-        </main>
-        <HudFooter />
-      </>
-    );
-  }
-
   return (
     <>
+      {/* Interactive 7 Elements Intro Gate */}
+      <IntroGate />
+
+      {/* Atmospheric Falling Sakura & Stardust Canvas */}
+      <SakuraCanvas />
+
+      {/* Left Navigation Rail (Desktop) */}
+      <NavRail />
+
+      {/* Top Floating Glass Header */}
       <HudHeader />
-      <main id="main-content" tabIndex={-1} className="outline-none">
-        {sectionList.map((section) => {
-          const SectionComponent = SECTION_MAP[section.key];
-          if (!SectionComponent) return null;
-          return (
-            <ErrorBoundary key={section.id} section={section.key}>
-              <SectionComponent />
+
+      <main id="main-content" tabIndex={-1} className="outline-none relative z-20">
+        {sectionList === null ? (
+          <>
+            <ErrorBoundary section="hero">
+              <HeroSection />
             </ErrorBoundary>
-          );
-        })}
+            <ErrorBoundary section="projects">
+              <ProjectsSection />
+            </ErrorBoundary>
+            <ErrorBoundary section="skills">
+              <SkillsSection />
+            </ErrorBoundary>
+            <ErrorBoundary section="experience">
+              <ExperienceSection />
+            </ErrorBoundary>
+            <ErrorBoundary section="testimonials">
+              <TestimonialsSection />
+            </ErrorBoundary>
+            <ErrorBoundary section="contact">
+              <ContactSection />
+            </ErrorBoundary>
+          </>
+        ) : (
+          sectionList.map((section) => {
+            const SectionComponent = SECTION_MAP[section.key];
+            if (!SectionComponent) return null;
+            return (
+              <ErrorBoundary key={section.id} section={section.key}>
+                <SectionComponent />
+              </ErrorBoundary>
+            );
+          })
+        )}
       </main>
+
       <HudFooter />
     </>
   );

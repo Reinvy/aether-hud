@@ -3,32 +3,20 @@
 import { motion } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
 import type { ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-/**
- * SectionHeading — reusable HUD section header block.
- *
- * Encapsulates the AETHER-HUD header pattern used across all landing
- * sections: gold badge label + Orbitron display title (with a gold
- * highlight span) + muted subtitle, animated with fade-in-up.
- *
- * Design: Obsidian & Imperial Gold — Luxury Cybernetics.
- */
-
-
 interface SectionHeadingProps {
-  /** Short uppercase label rendered inside the gold badge. */
+  /** Short uppercase label rendered inside the badge. */
   badge: string;
   /** Optional icon rendered next to the badge label. */
   icon?: ReactNode;
-  /** Display title (Orbitron). */
+  /** Display title (Cinzel / Orbitron). */
   title: string;
   /** Portion of the title rendered with the gold gradient. */
   highlight?: string;
   /** Subtitle paragraph under the title. */
   subtitle?: string;
-  /** Alignment — centered by default (HUD standard). */
+  /** Alignment — centered by default. */
   align?: "center" | "left";
   className?: string;
 }
@@ -51,16 +39,20 @@ export function SectionHeading({
       )}
       {...fadeInView}
     >
-      <Badge variant="gold" size="md" className="mb-4">
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/30 text-leather-dark dark:text-gold-400 text-xs font-mono tracking-widest font-semibold mb-4 shadow-sm">
         {icon}
-        {badge}
-      </Badge>
-      <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-text-main sm:text-4xl">
+        <span>{badge}</span>
+      </div>
+
+      <h2 className="font-display text-3xl font-bold tracking-[0.08em] text-leather-dark dark:text-platinum-50 sm:text-4xl uppercase">
         {title}{" "}
         {highlight && <span className="text-gradient-gold">{highlight}</span>}
       </h2>
+
       {subtitle && (
-        <p className="mt-4 text-lg text-text-muted font-body">{subtitle}</p>
+        <p className="mt-3 text-base sm:text-lg text-leather-muted dark:text-text-muted font-body leading-relaxed">
+          {subtitle}
+        </p>
       )}
     </motion.div>
   );

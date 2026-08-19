@@ -12,12 +12,12 @@ function Card({ className, variant = "glass", hover = "sweep", diamond = false, 
     <div
       className={cn(
         "chamfered relative group",
-        variant === "glass" && "glass-panel",
-        variant === "default" && "bg-surface-primary border border-border-subtle",
-        variant === "bordered" && "bg-surface-primary border border-border-glass",
+        variant === "glass" && "parchment-panel dark:glass-panel",
+        variant === "default" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/25 dark:border-border-subtle",
+        variant === "bordered" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/40 dark:border-border-glass",
         hover === "lift" && "card-lift",
         hover === "sweep" && "energy-sweep",
-        hover === "glow" && "card-lift animate-glow-pulse",
+        hover === "glow" && "card-lift",
         "corner-decor",
         diamond && "diamond-corner",
         className
@@ -25,7 +25,7 @@ function Card({ className, variant = "glass", hover = "sweep", diamond = false, 
       {...props}
     >
       {/* Diamond accent on hover */}
-      <div className="pointer-events-none absolute -top-px -right-px h-3 w-3 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
+      <div className="pointer-events-none absolute -top-px -right-px h-3 w-3 rotate-45 border-t border-r border-leather-caramel/40 dark:border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-leather-caramel dark:group-hover:border-gold-400/40" />
       {children}
     </div>
   );
@@ -44,7 +44,7 @@ function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) 
   return (
     <h3
       className={cn(
-        "font-display text-lg font-bold tracking-wider uppercase text-text-main",
+        "font-display text-lg font-bold tracking-wider uppercase text-leather-dark dark:text-text-main",
         className
       )}
       {...props}

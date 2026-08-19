@@ -32,18 +32,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
           /* Variant */
           variant === "primary" &&
-            "bg-gradient-to-r from-gold-600 to-gold-500 text-deep-space hover:from-gold-500 hover:to-gold-400",
+            "bg-leather-caramel dark:bg-gradient-to-r dark:from-gold-600 dark:to-gold-500 text-parchment-base dark:text-deep-space font-semibold hover:opacity-90 shadow-md",
           variant === "secondary" &&
-            "bg-glass-card border border-border-glass text-gold-400 hover:bg-[rgba(242,201,76,0.12)]",
+            "bg-parchment-subtle dark:bg-glass-card border border-leather-caramel/30 dark:border-border-glass text-leather-dark dark:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-[rgba(242,201,76,0.12)]",
           variant === "outline" &&
-            "border border-border-subtle text-text-main hover:border-border-glass hover:bg-glass-card",
+            "border border-leather-caramel/25 dark:border-border-subtle text-leather-dark dark:text-text-main hover:border-leather-caramel dark:hover:border-border-glass hover:bg-parchment-subtle/50 dark:hover:bg-glass-card",
           variant === "ghost" &&
-            "text-text-muted hover:text-gold-400 hover:bg-glass-200",
+            "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-glass-200",
           variant === "danger" &&
             "bg-gradient-to-r from-hud-danger to-rose-700 text-white hover:from-rose-600 hover:to-rose-800",
 
           /* Glow */
-          glow === "gold" && variant === "primary" && "glow-gold",
+          glow === "gold" && variant === "primary" && "glow-leather dark:glow-gold",
           glow === "stellar" && "glow-stellar",
           glow === "none" && "shadow-none",
 
