@@ -2,12 +2,14 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { fadeInView } from "@/lib/motion-variants";
-import { Sparkles, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
 import { SkillsArraySkeleton } from "@/components/ui/section-skeleton";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 type Skill = {
   id: string;
@@ -53,7 +55,17 @@ export function SkillsSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="TALENTS & CONSTELLATIONS // VISIONS"
-          icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          icon={
+            <div className="w-4 h-4 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.talents}
+                alt="Talents Icon"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            </div>
+          }
           title="Talents &"
           highlight="Constellations"
           subtitle="Elemental proficiencies and character talent trees across seven digital domains."
@@ -65,8 +77,16 @@ export function SkillsSection() {
           {...stagger}
         >
           <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
-              <Sparkles className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+            <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
+              <div className="w-5 h-5 relative">
+                <Image
+                  src={GENSHIN_UI_ICONS.talents}
+                  alt="Talents Tree"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+              </div>
               <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                 TALENT TREE // ACTIVE CONSTELLATIONS
               </span>

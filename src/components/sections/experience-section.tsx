@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, GraduationCap, Calendar, ShieldCheck, Briefcase, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { Calendar, ShieldCheck, Sparkles } from "lucide-react";
 import { ExperienceTimelineSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 type Experience = {
   id: string;
@@ -24,12 +26,6 @@ const stagger = {
   transition: { staggerChildren: 0.1 },
 };
 
-const typeIcons: Record<string, React.ElementType> = {
-  work: Award,
-  education: GraduationCap,
-  freelance: Briefcase,
-};
-
 export function ExperienceSection() {
   const { data: experiences, loading } = useData<Experience[]>("/api/experiences");
 
@@ -42,7 +38,17 @@ export function ExperienceSection() {
         {/* Section Header */}
         <SectionHeading
           badge="ADVENTURER HANDBOOK // DAILY COMMISSIONS"
-          icon={<Award className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          icon={
+            <div className="w-4 h-4 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.handbook}
+                alt="Adventurer Handbook"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            </div>
+          }
           title="Expedition"
           highlight="Chronicle"
           subtitle="A verified record of completed guild commissions, leadership roles, and technical expeditions across seven realms."
@@ -63,7 +69,6 @@ export function ExperienceSection() {
           )}
 
           {experiences?.map((exp, index) => {
-            const TypeIcon = typeIcons[exp.type] || Award;
             return (
               <motion.div
                 key={exp.id}
@@ -74,9 +79,15 @@ export function ExperienceSection() {
                 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                {/* Timeline node */}
-                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/40 bg-parchment-subtle dark:bg-surface-primary transition-all duration-300 group-hover:scale-110 shadow-lg">
-                  <TypeIcon className="h-4 w-4 text-leather-caramel dark:text-gold-400 transition-transform group-hover:scale-110" aria-hidden="true" />
+                {/* Timeline node with Quest Icon */}
+                <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center chamfered-sm border-2 border-leather-caramel/40 dark:border-gold-400/40 bg-parchment-subtle dark:bg-surface-primary transition-all duration-300 group-hover:scale-110 shadow-lg p-1.5">
+                  <Image
+                    src={GENSHIN_UI_ICONS.quests}
+                    alt="Quest Node"
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
                 </div>
 
                 {/* Node connector line */}
@@ -90,9 +101,34 @@ export function ExperienceSection() {
                         <span className="px-2.5 py-0.5 chamfered-xs bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/30 dark:border-gold-400/30 text-leather-dark dark:text-gold-400 text-[10px] font-mono font-bold tracking-wider uppercase">
                           {exp.type === "work" ? "GUILD APPOINTMENT" : exp.type === "education" ? "ACADEMY LORE" : "COMMISSION"}
                         </span>
-                        <span className="font-mono text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
-                          [+60 PRIMOGEMS // REWARD CLAIMED]
-                        </span>
+                        
+                        {/* Claimed Primogem & Mora Rewards Tag */}
+                        <div className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 chamfered-xs">
+                          <div className="w-3 h-3 relative">
+                            <Image
+                              src={GENSHIN_UI_ICONS.primogem}
+                              alt="Primogem"
+                              width={12}
+                              height={12}
+                              className="object-contain"
+                            />
+                          </div>
+                          <span className="font-mono text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
+                            +60
+                          </span>
+                          <div className="w-3 h-3 relative ml-1">
+                            <Image
+                              src={GENSHIN_UI_ICONS.mora}
+                              alt="Mora"
+                              width={12}
+                              height={12}
+                              className="object-contain"
+                            />
+                          </div>
+                          <span className="font-mono text-[9px] text-amber-600 dark:text-amber-400 font-bold">
+                            +25K
+                          </span>
+                        </div>
                       </div>
                       <h3 className="font-display text-lg sm:text-xl font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors">
                         {exp.role}

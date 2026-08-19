@@ -103,7 +103,7 @@ async function main() {
 
   // ===== TEST 1: Build Test =====
   log("\n📋 TEST 1: Build Verification", CYAN);
-  const buildOut = run("rm -rf .next && npm run build 2>&1 || true");
+  const buildOut = run("rm -rf .next 2>/dev/null || true; npm run build 2>&1");
   const hasBuildError = buildOut.includes("Build error") || buildOut.includes("Error:") || buildOut.includes("Failed to compile");
   assert(!hasBuildError, "Build completes without errors");
 

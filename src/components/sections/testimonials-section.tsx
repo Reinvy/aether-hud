@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Users, Quote, ShieldCheck } from "lucide-react";
+import { Quote, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { TestimonialsGridSkeleton } from "@/components/ui/section-skeleton";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 type Testimonial = {
   id: string;
@@ -35,7 +36,17 @@ export function TestimonialsSection() {
         {/* Section Header */}
         <SectionHeading
           badge="COMPANION LETTERS // SERENITEA POT TRUST"
-          icon={<Users className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          icon={
+            <div className="w-4 h-4 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.friends}
+                alt="Friends Icon"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            </div>
+          }
           title="Companion"
           highlight="Endorsements"
           subtitle="Official commendations, letters of transit, and alliance trust records from peers and guild partners across Teyvat."
@@ -62,13 +73,24 @@ export function TestimonialsSection() {
               transition={{ duration: 0.4 }}
             >
               <div className="parchment-panel dark:glass-panel chamfered p-6 sm:p-7 card-lift border-2 border-leather-caramel/25 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
-                {/* Quote Icon */}
+                {/* Quote Icon & Serenitea Pot Badge */}
                 <div>
                   <div className="mb-3 flex items-center justify-between">
                     <Quote className="h-6 w-6 text-leather-caramel/40 dark:text-gold-400/40" aria-hidden="true" />
-                    <span className="font-mono text-[9px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
-                      ALLIANCE TRUST // LV. 10
-                    </span>
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 chamfered-xs bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
+                      <div className="w-3.5 h-3.5 relative">
+                        <Image
+                          src={GENSHIN_UI_ICONS.sereniteaPot}
+                          alt="Serenitea Pot"
+                          width={14}
+                          height={14}
+                          className="object-contain"
+                        />
+                      </div>
+                      <span className="font-mono text-[9px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                        TRUST // LV. 10
+                      </span>
+                    </div>
                   </div>
 
                   {/* Content */}

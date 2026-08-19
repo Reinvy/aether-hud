@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, ArrowUp, Shield } from "lucide-react";
+import Image from "next/image";
+import { ArrowUp, Shield } from "lucide-react";
 import { useData } from "@/lib/use-data";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 interface SiteConfig {
   name: string;
@@ -26,8 +28,16 @@ export function HudFooter() {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {/* Brand */}
           <div className="flex items-center gap-3">
-            <Sparkles className="h-4 w-4 text-leather-caramel/60 dark:text-gold-500/50" aria-hidden="true" />
-            <span className="font-display text-xs font-bold tracking-[0.2em] text-leather-dark/60 dark:text-text-muted/60 uppercase">
+            <div className="w-5 h-5 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.archive}
+                alt="Archive Icon"
+                width={20}
+                height={20}
+                className="object-contain"
+              />
+            </div>
+            <span className="font-display text-xs font-bold tracking-[0.2em] text-leather-dark/70 dark:text-text-muted/70 uppercase">
               {siteName} // TEYVAT CODEX
             </span>
             <span className="sys-label font-mono tabular-nums">{sysVersion}</span>

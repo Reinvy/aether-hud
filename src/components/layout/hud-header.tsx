@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles, Sun, Moon, Shield } from "lucide-react";
+import { Menu, X, Sun, Moon, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/lib/constants";
 import { useData } from "@/lib/use-data";
 import { useTheme } from "@/components/theme-provider";
 import { StatusDot } from "@/components/ui/status-dot";
 import { IconButton } from "@/components/ui/icon-button";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 interface Section {
   id: string;
@@ -83,7 +84,7 @@ export function HudHeader() {
       ? enabledSections.map((s, idx) => ({
           label: s.title.toUpperCase(),
           href: `/#${s.key}`,
-          sysId: `NODE//${String(idx + 1).padStart(2, "0")}`,
+          sysId: `TEYVAT//${String(idx + 1).padStart(2, "0")}`,
         }))
       : [...NAV_ITEMS];
 
@@ -104,7 +105,7 @@ export function HudHeader() {
 
       <nav
         aria-label="Main Navigation"
-        className="parchment-panel-strong dark:glass-panel-strong mx-4 mt-2 rounded-none chamfered-sm px-4 py-2.5 sm:mx-6 lg:mx-8 border border-leather-caramel/25 dark:border-gold-400/25 shadow-lg"
+        className="parchment-panel-strong dark:glass-panel-strong mx-4 mt-2 rounded-none chamfered-sm px-4 py-2.5 sm:mx-6 lg:mx-8 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl"
       >
         <div className="flex items-center justify-between">
           {/* Left: Logo + Status */}
@@ -115,8 +116,14 @@ export function HudHeader() {
               className="flex items-center gap-2.5 group focus-ring-gold chamfered-xs p-1"
             >
               {/* Teyvat Crest Icon */}
-              <div className="relative w-7 h-7 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/40 dark:border-gold-400/40 flex items-center justify-center transition-transform group-hover:rotate-45">
-                <Sparkles className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+              <div className="relative w-8 h-8 rounded-full bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/40 dark:border-gold-400/40 flex items-center justify-center p-1 shadow-sm">
+                <Image
+                  src={GENSHIN_UI_ICONS.characterAether}
+                  alt="Aether Emblem"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
                 <StatusDot tone="active" pulse label="System online" className="absolute -top-0.5 -right-0.5" />
               </div>
               <div className="flex flex-col">
@@ -188,10 +195,18 @@ export function HudHeader() {
               )}
             </button>
 
-            {/* Time readout */}
+            {/* Time readout with Icon Time */}
             <div className="hidden items-center gap-2 lg:flex" aria-live="polite">
               <div className="flex items-center gap-2 chamfered-sm border border-leather-caramel/20 dark:border-gold-400/20 bg-parchment-subtle/80 dark:bg-deep-space/50 px-3 py-1.5">
-                <StatusDot tone="active" label="Clock online" />
+                <div className="w-3.5 h-3.5 relative">
+                  <Image
+                    src={GENSHIN_UI_ICONS.time}
+                    alt="Time"
+                    width={14}
+                    height={14}
+                    className="object-contain"
+                  />
+                </div>
                 <span className="font-mono text-[10px] tracking-[0.15em] text-leather-dark dark:text-text-muted tabular-nums font-semibold">
                   {time || "SYNCING…"}
                 </span>
@@ -201,72 +216,63 @@ export function HudHeader() {
               </div>
             </div>
 
-            {/* Login / Dashboard Link */}
+            {/* Auth Link */}
             <Link
               href="/login"
               aria-label="Staff Login"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 chamfered-xs bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/30 dark:border-gold-400/30 text-leather-dark dark:text-gold-400 text-xs font-mono tracking-wider hover:bg-leather-caramel dark:hover:bg-gold-400 hover:text-parchment-base dark:hover:text-deep-space transition-all"
+              className="hidden items-center gap-1.5 px-3 py-1.5 text-xs font-mono tracking-wider text-leather-dark dark:text-platinum-100 hover:text-leather-caramel dark:hover:text-gold-400 bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/30 dark:border-gold-400/30 focus-ring-gold chamfered-xs transition-colors sm:inline-flex"
             >
-              <Shield className="w-3.5 h-3.5" />
-              <span>LOGIN</span>
+              <Shield className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+              <span className="font-semibold">STAFF</span>
             </Link>
 
-            {/* Mobile toggle */}
-            <IconButton
-              size="md"
-              label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden text-leather-dark dark:text-text-main"
-            >
-              {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-            </IconButton>
+            {/* Mobile Menu Trigger */}
+            <div className="md:hidden">
+              <IconButton
+                label={mobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen}
+                size="sm"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </IconButton>
+            </div>
           </div>
         </div>
-      </nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
+        {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="parchment-panel-strong dark:glass-panel-strong chamfered-sm mx-4 mt-2 px-4 py-4 sm:mx-6 lg:mx-8 border border-leather-caramel/30 dark:border-gold-400/30"
-          >
-            <div className="flex flex-col gap-1" role="menu">
-              {navItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    role="menuitem"
-                    className={cn(
-                      "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale focus-ring-gold",
-                      isActive
-                        ? "bg-leather-caramel/15 text-leather-dark dark:text-gold-400 border-l-2 border-leather-caramel dark:border-gold-400"
-                        : "text-leather-muted dark:text-text-muted hover:bg-leather-caramel/10 hover:text-leather-dark dark:hover:text-gold-400"
-                    )}
-                  >
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="sys-label">{item.sysId}</span>
-                  </Link>
-                );
-              })}
-              <div className="pt-2 mt-2 border-t border-leather-caramel/20 dark:border-gold-400/20 flex items-center justify-between">
+          <div className="mt-3 pt-3 border-t border-leather-caramel/20 dark:border-gold-400/20 md:hidden space-y-1">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
                 <Link
-                  href="/login"
-                  className="text-xs font-mono tracking-wider text-leather-caramel dark:text-gold-400 py-2 inline-flex items-center gap-2"
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-xs font-mono tracking-wider chamfered-xs",
+                    isActive
+                      ? "bg-leather-caramel/15 text-leather-dark dark:text-gold-400 font-bold"
+                      : "text-leather-muted dark:text-text-muted hover:bg-leather-caramel/10"
+                  )}
                 >
-                  <Shield className="w-4 h-4" />
-                  <span>DASHBOARD LOGIN</span>
+                  <span>{item.label}</span>
+                  <span className="text-[9px] opacity-60">{item.sysId}</span>
                 </Link>
-              </div>
-            </div>
-          </motion.div>
+              );
+            })}
+            <Link
+              href="/login"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-xs font-mono text-leather-caramel dark:text-gold-400 font-bold"
+            >
+              <Shield className="h-3.5 w-3.5" />
+              <span>STAFF PORTAL</span>
+            </Link>
+          </div>
         )}
-      </AnimatePresence>
+      </nav>
     </header>
   );
 }

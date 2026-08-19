@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { ProjectCard } from "@/components/features/project-card";
 import { ProjectsGridSkeleton } from "@/components/ui/section-skeleton";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 type Project = {
   id: string;
@@ -41,7 +42,17 @@ export function ProjectsSection() {
         {/* Section Header */}
         <SectionHeading
           badge="ARTIFACT ARCHIVE // DOMAINS OF FORGERY"
-          icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" />}
+          icon={
+            <div className="w-4 h-4 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.domain}
+                alt="Domain Icon"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            </div>
+          }
           title="Domains &"
           highlight="Artifacts"
           subtitle="Curated chronicle of 5-star digital architectures, neural systems, and forged platforms across seven realms."

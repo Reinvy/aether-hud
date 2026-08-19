@@ -285,3 +285,24 @@ cubic-bezier(0.16, 1, 0.3, 1)
   }
 }
 ```
+
+---
+
+## 9. Official Genshin UI Icon System
+
+All UI iconography across navigation, headings, cards, and interactives must utilize the official Genshin Impact UI icons registered in [references/UI_ICONS.md](file:///Volumes/Reinshy/Workspace/Personal/Aether%20HUD/aether-hud/references/UI_ICONS.md) and exported via [src/lib/ui-icons.ts](file:///Volumes/Reinshy/Workspace/Personal/Aether%20HUD/aether-hud/src/lib/ui-icons.ts).
+
+### 9.1. Core Icon Mappings:
+| UI Component | Official Genshin UI Icon | Path |
+|---|---|---|
+| **Traveler / Profile** | `Icon Character Aether` | `/ui-icons/Icon%20Character%20Aether.png` |
+| **Domains / Projects** | `Icon Domain` / `Icon Artifacts` | `/ui-icons/Icon%20Domain.png` |
+| **Talents / Skills** | `Icon Talents` | `/ui-icons/Icon%20Talents.png` |
+| **Crown / Max Mastery** | `Item Crown of Insight` | `/ui-icons/Item%20Crown%20of%20Insight.png` |
+| **Quests / Handbook** | `Icon Adventurer Handbook` / `Icon Quests` | `/ui-icons/Icon%20Adventurer%20Handbook.png` |
+| **Rewards (Primogem & Mora)**| `Item Primogem` / `Item Mora` | `/ui-icons/Item%20Primogem.png` |
+| **Companions / Allies** | `Icon Friends` / `Icon Serenitea Pot` | `/ui-icons/Icon%20Friends.png` |
+| **Dispatch Shrine / Mail** | `Icon Mail` / `Icon Wish` | `/ui-icons/Icon%20Mail.png` |
+| **Archive / Codex** | `Icon Archive` | `/ui-icons/Icon%20Archive.png` |
+| **Clock / Time** | `Icon Time` | `/ui-icons/Icon%20Time.png` |
+

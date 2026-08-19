@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInView } from "@/lib/motion-variants";
 import {
-  Send,
   Lock,
   Terminal,
   GitBranch,
@@ -29,13 +29,14 @@ import {
   Camera,
   Code,
   Music,
-  Sparkles,
+  Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 
 type Social = {
   id: string;
@@ -103,7 +104,17 @@ export function ContactSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="KATHERYNE'S DISPATCH // SUMMONING SHRINE"
-          icon={<Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+          icon={
+            <div className="w-4 h-4 relative">
+              <Image
+                src={GENSHIN_UI_ICONS.mail}
+                alt="Mail Icon"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
+            </div>
+          }
           title="Summon"
           highlight="Architect"
           subtitle="Ad Astra Abyssosque. Direct telepathic message portal for commissions, collaborations, and guild contracts."
@@ -237,7 +248,15 @@ export function ContactSection() {
                       disabled={sending || sent}
                       className="w-full tactical-btn btn-glow-sweep py-3.5 bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space font-display text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
-                      {!sending && !sent && <Send className="h-4 w-4" aria-hidden="true" />}
+                      <div className="w-4 h-4 relative">
+                        <Image
+                          src={GENSHIN_UI_ICONS.wish}
+                          alt="Wish Icon"
+                          width={16}
+                          height={16}
+                          className="object-contain brightness-0 invert dark:brightness-0"
+                        />
+                      </div>
                       <span>{sending ? "DISPATCHING SCROLL…" : "DISPATCH SUMMONING SCROLL"}</span>
                     </button>
                   </form>
@@ -250,7 +269,15 @@ export function ContactSection() {
               {/* Social Channels */}
               <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                  <div className="w-4 h-4 relative">
+                    <Image
+                      src={GENSHIN_UI_ICONS.community}
+                      alt="Community"
+                      width={16}
+                      height={16}
+                      className="object-contain"
+                    />
+                  </div>
                   <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                     GUILD // SOCIAL RUNES
                   </span>
@@ -285,7 +312,15 @@ export function ContactSection() {
               {/* Direct Letter */}
               <div className="parchment-panel dark:glass-panel chamfered p-5 border-2 border-leather-caramel/25 dark:border-gold-400/25 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <Mail className="h-3.5 w-3.5 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                  <div className="w-4 h-4 relative">
+                    <Image
+                      src={GENSHIN_UI_ICONS.mail}
+                      alt="Mail"
+                      width={16}
+                      height={16}
+                      className="object-contain"
+                    />
+                  </div>
                   <span className="font-display text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
                     DIRECT // LETTER
                   </span>
