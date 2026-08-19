@@ -14,7 +14,7 @@ export const PORTFOLIO_CONFIG = {
 };
 
 export const NAV_ITEMS = [
-  { label: "HOME", href: "/", sysId: "NODE//01" },
+  { label: "HOME", href: "/", sysId: "NODE//00" },
   { label: "PROFILE", href: "/#hero", sysId: "NODE//01" },
   { label: "PROJECTS", href: "/#projects", sysId: "NODE//02" },
   { label: "SKILLS", href: "/#skills", sysId: "NODE//03" },

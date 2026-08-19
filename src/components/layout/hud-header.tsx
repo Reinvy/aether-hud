@@ -57,13 +57,11 @@ export function HudHeader() {
 
   const dynamicNavItems =
     enabledSections.length > 0
-      ? [
-          ...enabledSections.map((s) => ({
-            label: s.title.toUpperCase(),
-            href: `/#${s.key}`,
-            sysId: `NODE//${String(s.order + 1).padStart(2, "0")}`,
-          })),
-        ]
+      ? enabledSections.map((s, idx) => ({
+          label: s.title.toUpperCase(),
+          href: `/#${s.key}`,
+          sysId: `NODE//${String(idx + 1).padStart(2, "0")}`,
+        }))
       : [...NAV_ITEMS];
 
   const navItems = dynamicNavItems;
@@ -103,7 +101,7 @@ export function HudHeader() {
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               return (
                 <Link
-                  key={item.sysId}
+                  key={item.href}
                   href={item.href}
                   className={cn(
                     "group relative px-4 py-2 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale focus-ring-gold",
@@ -171,7 +169,7 @@ export function HudHeader() {
                 const isActive = pathname === item.href;
                 return (
                   <Link
-                    key={item.sysId}
+                    key={item.href}
                     href={item.href}
                     className={cn(
                       "flex items-center justify-between chamfered-sm px-4 py-3 text-xs font-mono tracking-widest transition-all duration-300 hover-scale-sm press-scale focus-ring-gold",

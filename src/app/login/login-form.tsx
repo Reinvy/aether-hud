@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -20,8 +20,13 @@ export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
 
   // If already authenticated, redirect
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
   if (isAuthenticated) {
-    router.replace("/dashboard");
     return null;
   }
 
