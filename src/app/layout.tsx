@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Chakra_Petch, Cinzel, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
+import { Chakra_Petch, Cinzel, Cormorant_Garamond, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
@@ -7,10 +7,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
- * Self-hosted typography — includes Cinzel display serif for majestic
- * Teyvat Codex headings, Orbitron for tactical display accents,
- * Inter for body reading, and JetBrains Mono for telemetry tags.
+ * Self-hosted typography — includes Cormorant Garamond & Cinzel display serif
+ * for majestic Teyvat Codex headings, Inter for body reading, and JetBrains Mono.
  */
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+
 const cinzel = Cinzel({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800", "900"],
@@ -202,7 +208,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cinzel.variable} ${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${cinzel.variable} ${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

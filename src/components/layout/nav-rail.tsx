@@ -76,7 +76,7 @@ export function NavRail() {
       <a
         href="/#hero"
         aria-label="Back to top"
-        className="w-11 h-11 rounded-full bg-[#FAF7EE] dark:bg-surface-primary border-2 border-[#8C6239]/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
+        className="w-11 h-11 rounded-full bg-[#FAF8F5] dark:bg-surface-primary border-2 border-[#8C6239]/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
       >
         <Image
           src={GENSHIN_UI_ICONS.characterAether}
@@ -88,7 +88,7 @@ export function NavRail() {
         />
         <span className="sr-only">Top</span>
         {/* Tooltip */}
-        <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#1E1208] text-[#FAF7EE] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+        <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
           <span className="font-bold">TEYVAT CODEX</span>
         </div>
       </a>
@@ -97,7 +97,7 @@ export function NavRail() {
       <nav
         role="navigation"
         aria-label="Section Navigation"
-        className="bg-[#FAF7EE]/95 dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
+        className="bg-[#FAF8F5]/95 dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
       >
         {RAIL_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
@@ -126,7 +126,7 @@ export function NavRail() {
               />
 
               {/* Hover Tooltip */}
-              <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#1E1208] text-[#FAF7EE] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+              <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
                 <span className="font-bold">{item.label.toUpperCase()}</span>
                 <span className="ml-2 opacity-60 text-[9px]">// {item.tag}</span>
               </div>
@@ -151,7 +151,7 @@ export function NavRail() {
           )}
 
           {/* Theme Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#1E1208] text-[#FAF7EE] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
             <span className="font-bold">{isNight ? "THEME: IVORY CODEX" : "THEME: CELESTIAL NIGHT"}</span>
           </div>
         </button>
@@ -172,16 +172,16 @@ export function NavRail() {
             />
           </div>
           {/* Staff Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#1E1208] text-[#FAF7EE] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
+          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
             <span className="font-bold">STAFF PORTAL</span>
           </div>
         </Link>
       </nav>
 
       {/* Bottom Mini Clock / Realm Clock */}
-      <div className="rounded-full bg-[#FAF7EE]/95 dark:bg-surface-primary/90 border border-leather-caramel/30 dark:border-gold-400/25 px-3 py-1 flex items-center gap-1.5 shadow-md">
+      <div className="rounded-full bg-[#FAF8F5]/95 dark:bg-surface-primary/90 border border-leather-caramel/30 dark:border-gold-400/25 px-3 py-1 flex items-center gap-1.5 shadow-md">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="font-mono text-[9px] text-[#1E1208] dark:text-platinum-200 font-bold tabular-nums">
+        <span className="font-mono text-[9px] text-[#2C1E14] dark:text-platinum-200 font-bold tabular-nums">
           {time || "--:--"}
         </span>
       </div>

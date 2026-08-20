@@ -11,20 +11,20 @@
 /* ─── Design Tokens ────────────────────────────────────────── */
 @theme inline {
   /* Teyvat Codex (Warm Parchment & Saddle Leather) */
-  --color-parchment-base: #FAF7EE;
+  --color-parchment-base: #FAF8F5;
   --color-parchment-subtle: #F3EDDF;
   --color-parchment-elevated: #EDE5D2;
-  --color-leather-dark: #1E1208;
+  --color-leather-dark: #2C1E14;
   --color-leather-caramel: #8C6239;
-  --color-leather-cognac: #8D6343;
+  --color-leather-cognac: #8B5738;
   --color-leather-muted: #5E412A;
-  --color-leather-accent: #4A2B0E;
+  --color-leather-accent: #6E4024;
 
-  /* Inazuma Celestial Night (Obsidian & Midnight Indigo) */
-  --color-deep-space: #070913;
-  --color-surface-primary: #0D1122;
-  --color-surface-overlay: rgba(13, 17, 34, 0.78);
-  --color-glass-card: rgba(22, 28, 52, 0.50);
+  /* Genshin Dark Brown Codex (Genshin Archive Dark Palette) */
+  --color-deep-space: #1A120C;
+  --color-surface-primary: #241810;
+  --color-surface-overlay: rgba(36, 24, 16, 0.95);
+  --color-glass-card: rgba(45, 30, 21, 0.90);
 
   /* Brand / Luxury Accents (Imperial Gold) */
   --color-gold-50: #FEFAEE;
@@ -74,14 +74,15 @@
   --color-border-active: #B88414;
 
   /* Main text fallbacks */
-  --color-text-main: #1E1208;
+  --color-text-main: #2C1E14;
   --color-text-muted: #5E412A;
 
   /* Accent energy pulse */
   --color-accent-pulse: #8C6239;
 
   /* Fonts */
-  --font-display: var(--font-cinzel), var(--font-orbitron), Georgia, serif;
+  --font-serif: var(--font-cormorant), var(--font-cinzel), Georgia, serif;
+  --font-display: var(--font-cinzel), var(--font-cormorant), Georgia, serif;
   --font-body: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), "Share Tech Mono", monospace;
 }
@@ -100,29 +101,29 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ─── Inazuma Celestial Night Mode ([data-theme="celestial-night"] / [data-theme="night-ops"] / .dark) ─── */
+/* ─── Genshin Dark Brown Mode ([data-theme="celestial-night"] / [data-theme="night-ops"] / .dark) ─── */
 [data-theme="celestial-night"],
 [data-theme="night-ops"],
 .dark {
-  --color-parchment-base: #070913;
-  --color-parchment-subtle: #0D1122;
-  --color-parchment-elevated: #141933;
-  --color-leather-dark: #F8FAFC;
-  --color-leather-caramel: #B388FF;
-  --color-leather-muted: #94A3B8;
-  --color-border-subtle: rgba(179, 136, 255, 0.20);
-  --color-text-main: #F8FAFC;
-  --color-text-muted: #94A3B8;
-  --color-border-glass: rgba(179, 136, 255, 0.40);
-  --color-border-active: #B388FF;
-  --color-accent-pulse: #00D2FF;
+  --color-parchment-base: #1A120C;
+  --color-parchment-subtle: #241810;
+  --color-parchment-elevated: #352319;
+  --color-leather-dark: #FAF8F5;
+  --color-leather-caramel: #F2C94C;
+  --color-leather-muted: #D4B89B;
+  --color-border-subtle: rgba(201, 154, 78, 0.28);
+  --color-text-main: #FAF8F5;
+  --color-text-muted: #D4B89B;
+  --color-border-glass: rgba(242, 201, 76, 0.45);
+  --color-border-active: #F2C94C;
+  --color-accent-pulse: #F2C94C;
 }
 
 [data-theme="celestial-night"] body,
 [data-theme="night-ops"] body,
 .dark body {
-  background-color: #070913;
-  color: #F8FAFC;
+  background-color: #1A120C;
+  color: #FAF8F5;
 }
 
 /* ─── Disabled Animations Override ─────────────────────────── */
@@ -158,31 +159,31 @@ body {
   box-shadow: 0 8px 32px rgba(60, 40, 15, 0.08);
 }
 
-/* Night mode panel overrides */
+/* Genshin Dark Brown Codex panel overrides */
 [data-theme="celestial-night"] .parchment-panel,
 [data-theme="night-ops"] .parchment-panel,
 .dark .parchment-panel {
-  background: rgba(18, 23, 44, 0.75);
+  background: rgba(36, 24, 16, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(179, 136, 255, 0.20);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(201, 154, 78, 0.30);
+  box-shadow: 0 8px 32px rgba(16, 10, 5, 0.55);
 }
 
 [data-theme="celestial-night"] .parchment-panel:hover,
 [data-theme="night-ops"] .parchment-panel:hover,
 .dark .parchment-panel:hover {
-  border-color: rgba(179, 136, 255, 0.45);
-  box-shadow: 0 8px 32px rgba(179, 136, 255, 0.12), 0 0 20px rgba(0, 210, 255, 0.08);
+  border-color: rgba(242, 201, 76, 0.55);
+  box-shadow: 0 8px 32px rgba(201, 154, 78, 0.20), 0 0 20px rgba(242, 201, 76, 0.15);
 }
 
 [data-theme="celestial-night"] .parchment-panel-strong,
 [data-theme="night-ops"] .parchment-panel-strong,
 .dark .parchment-panel-strong {
-  background: rgba(13, 17, 34, 0.88);
+  background: rgba(28, 18, 12, 0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(179, 136, 255, 0.30);
+  border: 1.5px solid rgba(201, 154, 78, 0.38);
 }
 
 .glass-panel {
@@ -207,10 +208,10 @@ body {
 [data-theme="celestial-night"] .glass-panel-strong,
 [data-theme="night-ops"] .glass-panel-strong,
 .dark .glass-panel-strong {
-  background: rgba(13, 17, 34, 0.85);
+  background: rgba(28, 18, 12, 0.96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(179, 136, 255, 0.25);
+  border: 1.5px solid rgba(201, 154, 78, 0.35);
 }
 
 /* ─── Genshin Fantasy Rounded Curves (Replacing Mecha Chamfered Cuts) ─── */
@@ -244,9 +245,9 @@ body {
 }
 
 .dark .genshin-card {
-  background: rgba(18, 23, 44, 0.75);
+  background: rgba(10, 14, 36, 0.90);
   border-color: rgba(179, 136, 255, 0.25);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
 }
 
 /* Genshin Signature Buttons */
@@ -350,7 +351,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  filter: grayscale(100%) opacity(0.35) blur(1px);
+  filter: sepia(100%) hue-rotate(340deg) saturate(1.8) brightness(0.65) opacity(0.35);
   transform: translate(-12px, -8px) scale(0.98);
   pointer-events: none;
   z-index: 1;
@@ -443,11 +444,11 @@ body {
   font-size: 0.65rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-leather-muted);
+  color: #8C6239;
 }
 
 .dark .sys-label {
-  color: var(--color-text-muted);
+  color: #F2C94C;
 }
 
 .sys-label-gold {
@@ -491,10 +492,10 @@ body {
 
 .dark .cognac-panel,
 [data-theme="celestial-night"] .cognac-panel {
-  background: rgba(18, 23, 44, 0.85);
-  border: 1px solid rgba(179, 136, 255, 0.3);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
-  color: #F8FAFC;
+  background: linear-gradient(180deg, #422C1F 0%, #301F15 100%);
+  border: 1.5px solid rgba(201, 154, 78, 0.35);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(20, 12, 6, 0.45);
+  color: #FAF8F5;
 }
 
 .cognac-card-subtle {

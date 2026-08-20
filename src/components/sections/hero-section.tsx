@@ -45,7 +45,7 @@ export function HeroSection() {
       <div className="pointer-events-none absolute inset-0 bg-parchment-base dark:bg-deep-space transition-colors duration-500" />
       <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-[1480px] px-4 sm:px-6 lg:px-8">
         {/* Top Status Indicator */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -53,13 +53,13 @@ export function HeroSection() {
           transition={{ duration: 0.5 }}
           className="flex items-center justify-center gap-3 mb-5"
         >
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-parchment-base/90 dark:bg-surface-primary/90 border border-leather-caramel/30 dark:border-gold-400/30 shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF8F5]/95 dark:bg-surface-primary/90 border border-leather-caramel/35 dark:border-gold-400/30 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-mono text-[10px] font-bold tracking-wider text-leather-dark dark:text-gold-400 uppercase">
+            <span className="font-mono text-[10px] font-bold tracking-wider text-[#2C1E14] dark:text-gold-400 uppercase">
               STATUS: {cfg.status} // ADVENTURER AR 60
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-parchment-base/90 dark:bg-surface-primary/90 border border-leather-caramel/30 dark:border-gold-400/30 shadow-sm">
+          <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF8F5]/95 dark:bg-surface-primary/90 border border-leather-caramel/35 dark:border-gold-400/30 shadow-sm">
             <div className="w-3.5 h-3.5 relative">
               <Image
                 src={GENSHIN_UI_ICONS.handbook}
@@ -69,7 +69,7 @@ export function HeroSection() {
                 className="object-contain"
               />
             </div>
-            <span className="font-mono text-[9px] text-leather-muted dark:text-text-muted font-bold uppercase">
+            <span className="font-mono text-[9px] text-[#8C6239] dark:text-gold-300 font-bold uppercase">
               REALM: {cfg.location.toUpperCase()}
             </span>
           </div>

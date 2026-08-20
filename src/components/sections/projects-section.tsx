@@ -87,10 +87,10 @@ export function ProjectsSection() {
                   aria-selected={isActive}
                   onClick={() => setSelectedCategory(cat)}
                   className={cn(
-                    "px-4 py-1.5 rounded-full font-display text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
+                    "px-4 py-1.5 rounded-full font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
                     isActive
-                      ? "bg-[#8C6239] dark:bg-gold-400 text-[#FAF7EE] dark:text-deep-space border-[#8C6239] dark:border-gold-400 shadow-md scale-105"
-                      : "bg-[#FAF7EE] dark:bg-surface-primary/70 text-[#1E1208] dark:text-platinum-200 border-[#8C6239]/30 dark:border-gold-400/20 hover:border-[#8C6239] dark:hover:border-gold-400"
+                      ? "bg-[#8C6239] dark:bg-gold-400 text-[#FAF8F5] dark:text-deep-space border-[#8C6239] dark:border-gold-400 shadow-md scale-105"
+                      : "bg-[#FAF8F5] dark:bg-surface-primary/90 text-[#2C1E14] dark:text-platinum-200 border-[#8C6239]/35 dark:border-gold-400/25 hover:border-[#8C6239] dark:hover:border-gold-400"
                   )}
                 >
                   {cat === "ALL" ? "✦ ALL DOMAINS" : cat}
