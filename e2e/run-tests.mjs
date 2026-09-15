@@ -24,6 +24,7 @@ const ALL_ROUTES = [
   // Public pages
   "/",
   "/login",
+  "/projects/proj-01",
   // Dashboard pages
   "/dashboard",
   "/dashboard/contact",
@@ -107,9 +108,11 @@ async function main() {
   const hasBuildError = buildOut.includes("Build error") || buildOut.includes("Error:") || buildOut.includes("Failed to compile");
   assert(!hasBuildError, "Build completes without errors");
 
-  // Check all routes exist in build output
+  // Check all routes exist in build output. The public detail page is a
+  // dynamic segment with generated params, so the manifest lists the pattern.
+  const buildRouteName = (route) => (route === "/projects/proj-01" ? "/projects/[id]" : route);
   for (const route of [...ALL_ROUTES, ...API_ROUTES]) {
-    assert(buildOut.includes(route), `Build includes route ${route}`);
+    assert(buildOut.includes(buildRouteName(route)), `Build includes route ${buildRouteName(route)}`);
   }
 
   // ===== TEST 2: Page & Route Accessibility =====
@@ -220,25 +223,45 @@ async function main() {
   assert(!!pkg.dependencies.react, "React is in dependencies");
   assert(!!pkg.dependencies["framer-motion"], "Framer Motion is in dependencies");
 
-  // ===== TEST 5: Content & Design System Verification =====
+  // TEST 5: Content & Design System Verification
   // HEAD liveness checks above cannot detect SILENT content loss (e.g. a
-  // server component throwing and dropping the JSON-LD, or a CSS class
-  // refactor stripping the design system). GET the rendered HTML and assert
-  // on the actual content + design-system markers.
+  // server component throwing and dropping the JSON-LD, or a CSS refactor
+  // stripping the design system). GET the rendered HTML and assert on the
+  // actual content + design-system markers of each surface.
   log("\n📋 TEST 5: Content & Design System Verification", CYAN);
-  const DESIGN_MARKERS = [
-    "glass-panel",
-    "chamfered",
-    "btn-glow-sweep",
-    "bg-deep-space",
-    "starfield",
-    "grid-hud",
-    "sys-label",
+  // Each surface is asserted against the classes it genuinely renders. The
+  // homepage is server-rendered with no loading state, so no shimmer appears
+  // there — the skeleton classes are asserted on the console, which does render
+  // them. The hero's `cognac-panel` + `bookmark-ribbon` are the DESIGNS.md §3
+  // embellishments, so losing either is a real regression.
+  const HOME_MARKERS = [
+    "codex-panel",
+    "codex-card",
+    "codex-label",
+    "codex-btn-primary",
+    "bg-starfield",
+    "vision-badge",
+    "bookmark-ribbon",
+    "cognac-panel",
+  ];
+  const LOGIN_MARKERS = [
+    "codex-panel",
+    "codex-card",
+    "codex-label",
+    "codex-btn-primary",
+    "bg-starfield",
+  ];
+  const CONSOLE_MARKERS = [
+    "codex-card",
+    "codex-label",
+    "codex-grid-bg",
+    "codex-shimmer",
+    "elemental-rotate",
   ];
     for (const [path, markers] of [
-      ["/", DESIGN_MARKERS],
-      ["/login", DESIGN_MARKERS],
-      ["/dashboard", DESIGN_MARKERS],
+      ["/", HOME_MARKERS],
+      ["/login", LOGIN_MARKERS],
+      ["/dashboard", CONSOLE_MARKERS],
     ]) {
       try {
         const resp = await fetchUrl(`${targetUrl}${path}`, "GET");
