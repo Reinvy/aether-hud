@@ -89,16 +89,19 @@ Defined in [src/app/globals.css](file:///Users/reincry/Workspace/Personal/aether
 --color-parchment-elevated: #EDE5D2;    /* Elevated surface tone */
 --color-leather-dark: #2C1E14;          /* High-contrast deep espresso text (WCAG AAA) */
 --color-leather-caramel: #8C6239;       /* Rich caramel leather border & accent */
---color-leather-cognac: #8B5738;        /* Warm cognac / saddle leather panel background */
 --color-leather-muted: #5E412A;         /* Muted leather metadata text */
---color-leather-accent: #6E4024;        /* Deep accent tone */
 
 /* Genshin Dark Brown Codex (Dark Mode / [data-theme="celestial-night"]) */
 --color-deep-space: #1A120C;            /* Deepest Genshin roasted espresso background */
 --color-surface-primary: #241810;       /* Primary dark roasted chocolate container surface */
---color-surface-overlay: rgba(36, 24, 16, 0.95); /* High-density warm dark leather backdrop */
 --color-glass-card: rgba(45, 30, 21, 0.90);      /* Deep Genshin dark leather glass */
 ```
+
+Both themes are driven by `data-theme` on `<html>` together with a `.dark`
+class. Tailwind's `dark:` variant is remapped to those selectors by
+`@custom-variant dark` in `globals.css`, so `dark:` utilities follow the app
+theme rather than the operating system. A blocking script in the root layout
+resolves the stored theme before first paint.
 
 ### 4.2. Metallic & Accent Color Scales
 
@@ -116,6 +119,30 @@ Defined in [src/app/globals.css](file:///Users/reincry/Workspace/Personal/aether
 | `--color-gold-800` | `#6E4F0E` | Ambient low-contrast gold |
 | `--color-gold-900` | `#4A3509` | Shadow tone |
 
+#### Jade Scale (Sanctioned green — growth, health, "deployed")
+| Token | Hex Value | Usage |
+|---|---|---|
+| `--color-jade-300` | `#86E29B` | Light jade on dark surfaces |
+| `--color-jade-400` | `#38EF7D` | **Primary jade** (success, active status) |
+| `--color-jade-500` | `#19C46A` | Jade fill (segment bars, charts) |
+| `--color-jade-600` | `#0E9B52` | Deep jade |
+
+#### Radii, elevation & typography
+```css
+--radius-codex-panel: 1.5rem;      /* panels */
+--radius-codex-card: 1.25rem;      /* cards */
+--radius-codex-control: 0.875rem;  /* buttons, inputs */
+
+--shadow-codex-card: 0 8px 30px rgba(60, 40, 15, 0.07);
+--shadow-codex-raised: 0 12px 36px rgba(60, 40, 15, 0.10);
+--shadow-codex-glow: 0 0 20px rgba(242, 201, 76, 0.20);
+
+--font-display: var(--font-cinzel), var(--font-cormorant), Georgia, serif;
+--font-serif: var(--font-cormorant), var(--font-cinzel), Georgia, serif;
+--font-body / --font-sans: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
+--font-mono: var(--font-jetbrains), "Share Tech Mono", monospace;
+```
+
 ---
 
 ## 5. Non-Negotiable Rules & Anti-Patterns
@@ -128,31 +155,69 @@ Defined in [src/app/globals.css](file:///Users/reincry/Workspace/Personal/aether
 | Tactical / Mecha Pattern (FORBIDDEN ❌) | Teyvat Codex Standard (REQUIRED ✅) |
 |---|---|
 | Sharp 45° chamfered polygon cuts | Soft organic fantasy curves (`rounded-3xl`, `rounded-2xl`) with warm leather borders |
+| `rounded-none` / square panels | Radius policy below — panels `rounded-3xl`, cards & controls `rounded-2xl`/`rounded-xl`, pills & dots `rounded-full` |
 | Dark grey / slate cards in light mode | Warm Ivory Parchment cards (`#FFFFFF` / `#FAF8F5`) with warm caramel borders |
 | Faint / ghost-white text on light background | Deep Espresso text (`#2C1E14` / `#1E1208`) with Imperial Amber Gold highlights |
 | Monospace telemetry jargon (`SYS_REF // 0x482A`) | Authentic Teyvat lore (`TEYVAT CODEX`, `ADVENTURER HANDBOOK`, `COMMISSION`) |
-| Generic circular spinners | Official diamond celestial rotation (`elemental-rotate` / `hud-spinner`) |
+| Generic circular spinners (`animate-spin`) | Official diamond celestial rotation — `.elemental-rotate` / `CodexLoader` |
 | Dark grey social / email button boxes | Warm Ivory buttons with rich caramel borders and gold hover sheen |
 
 ---
 
-## 6. Official Genshin UI Icon Registry
+## 6. Class & Icon Registry
 
-All UI iconography across navigation, headings, cards, and interactives must utilize the official Genshin Impact UI icons registered in [references/UI_ICONS.md](file:///Users/reincry/Workspace/Personal/aether-hud/references/UI_ICONS.md) and exported via [src/lib/ui-icons.ts](file:///Users/reincry/Workspace/Personal/aether-hud/src/lib/ui-icons.ts).
+### 6.1. Codex class registry (`src/app/globals.css`)
 
-### 6.1. Core Icon Mappings:
+These classes are defined outside Tailwind's layers, so they win over utility
+classes on the same element. Prefer them over re-deriving the same styles.
+
+| Class | Purpose |
+|---|---|
+| `.codex-panel` / `.codex-panel-strong` | Parchment glass panel (page surfaces, cards) |
+| `.codex-card` / `.codex-card-strong` | Leather-glass card (lists, modals) |
+| `.codex-label` / `-gold` / `-active` | Uppercase Inter eyebrow labels |
+| `.codex-input` | Recessed field with gold focus ring |
+| `.codex-badge` | Legacy-technology pill |
+| `.codex-btn` / `.codex-btn-primary` / `.codex-btn-secondary` | Canonical button surfaces |
+| `.codex-panel-radius` / `.codex-radius-sm` / `-xs` / `-lg` / `.codex-btn` | Panel / card / control radii |
+| `.codex-sheen` | Hover light sweep |
+| `.codex-lift` | Hover lift + shadow |
+| `.codex-glow-gold` | Gold ambient glow |
+| `.codex-focus` | Focus-visible ring |
+| `.codex-gradient-text` | Gold gradient headline text |
+| `.codex-grid-bg` | Faint parchment grid |
+| `.codex-shimmer` / `.elemental-rotate` | Loading shimmer / diamond spinner (tune via `--codex-spin-duration`) |
+| `.hover-scale-sm` / `.press-scale` | Micro-interaction transforms |
+| `.bg-starfield` / `.bg-ambient-gold` | Atmospheric washes |
+| `.vision-badge` + `.vision-{pyro…geo}` | Elemental vision pills |
+| `.cognac-panel` / `.cognac-card-subtle` | Saddle-leather dossier panel |
+| `.bookmark-ribbon` | Hanging bookmark ribbon with heart cutout |
+| `.figure-shadow-layer` | Offset character silhouette shadow |
+| `.segment-bar` (+ `.segment`, `.segment.active`, `.segment.jade`) | Segmented progress readout |
+
+### 6.2. Official Genshin UI Icon Registry
+
+All lore and navigation iconography uses the official Genshin Impact UI icons
+registered in [references/UI_ICONS.md](references/UI_ICONS.md) and exported via
+`src/lib/ui-icons.ts` (`GENSHIN_UI_ICONS`, keyed by `GenshinIconKey`). Chrome
+controls (close, chevrons, checkboxes) use Lucide.
+
+Navigation icons are declared once in `src/lib/navigation.ts`; the console
+sidebar resolves them through its `iconMap`, and
+`e2e/navigation.test.mjs` fails the build if a registry entry has no icon.
+
 | UI Component | Official Genshin UI Icon | Path |
 |---|---|---|
-| **Traveler / Profile** | `Icon Character Aether` | `/ui-icons/Icon%20Character%20Aether.png` |
-| **Domains / Projects** | `Icon Domain` / `Icon Artifacts` | `/ui-icons/Icon%20Domain.png` |
-| **Talents / Skills** | `Icon Talents` | `/ui-icons/Icon%20Talents.png` |
-| **Crown / Max Mastery** | `Item Crown of Insight` | `/ui-icons/Item%20Crown%20of%20Insight.png` |
-| **Quests / Handbook** | `Icon Adventurer Handbook` / `Icon Quests` | `/ui-icons/Icon%20Adventurer%20Handbook.png` |
-| **Rewards (Primogem & Mora)**| `Item Primogem` / `Item Mora` | `/ui-icons/Item%20Primogem.png` |
-| **Companions / Allies** | `Icon Friends` / `Icon Serenitea Pot` | `/ui-icons/Icon%20Friends.png` |
-| **Dispatch Shrine / Mail** | `Icon Mail` / `Icon Wish` | `/ui-icons/Icon%20Mail.png` |
-| **Archive / Codex** | `Icon Archive` | `/ui-icons/Icon%20Archive.png` |
-| **Clock / Time** | `Icon Time` | `/ui-icons/Icon%20Time.png` |
+| **Traveler / Profile** | `Icon Character Aether` | `/ui-icons/Icon_Character_Aether.png` |
+| **Domains / Projects** | `Icon Domain` / `Icon Artifacts` | `/ui-icons/Icon_Domain.png` |
+| **Talents / Skills** | `Icon Talents` | `/ui-icons/Icon_Talents.png` |
+| **Crown / Max Mastery** | `Item Crown of Insight` | `/ui-icons/Item_Crown_of_Insight.png` |
+| **Quests / Handbook** | `Icon Adventurer Handbook` / `Icon Quests` | `/ui-icons/Icon_Adventurer_Handbook.png` |
+| **Rewards (Primogem & Mora)**| `Item Primogem` / `Item Mora` | `/ui-icons/Item_Primogem.png` |
+| **Companions / Allies** | `Icon Friends` / `Icon Serenitea Pot` | `/ui-icons/Icon_Friends.png` |
+| **Dispatch Shrine / Mail** | `Icon Mail` / `Icon Wish` | `/ui-icons/Icon_Mail.png` |
+| **Archive / Codex** | `Icon Archive` | `/ui-icons/Icon_Archive.png` |
+| **Clock / Time** | `Icon Time` | `/ui-icons/Icon_Time.png` |
 
 
 
