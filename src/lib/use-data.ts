@@ -23,7 +23,7 @@ const HTTP_ERROR_MESSAGES: Record<number, string> = {
 
 /**
  * In-flight request dedup: multiple components mounting simultaneously and
- * fetching the SAME url (e.g. the homepage mounts hud-header + home-content,
+ * fetching the SAME url (e.g. the homepage mounts the site header + home-content,
  * both fetching /api/sections) share ONE network request instead of N.
  *
  * The first caller starts the fetch; concurrent callers attach to the same

@@ -5,8 +5,8 @@ import type { Metadata } from "next";
  *
  * All dashboard routes are auth-gated private pages, so they must NEVER be
  * indexed — this hard-codes robots noindex/follow for every page that uses
- * it (defense-in-depth on top of robots.ts). Each page passes its own HUD
- * title, which renders under the root layout's "%s | AETHER-HUD" template.
+ * it (defense-in-depth on top of robots.ts). Each page passes its own codex
+ * title, which renders under the root layout's "%s | Teyvat Codex" template.
  *
  * Usage (server page wrapper):
  *   export const metadata: Metadata = dashboardMetadata("PROJECT ARCHIVE");

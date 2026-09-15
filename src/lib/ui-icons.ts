@@ -39,7 +39,3 @@ export const GENSHIN_UI_ICONS = {
 } as const;
 
 export type GenshinIconKey = keyof typeof GENSHIN_UI_ICONS;
-
-export function getGenshinIcon(key: GenshinIconKey): string {
-  return GENSHIN_UI_ICONS[key] || GENSHIN_UI_ICONS.character;
-}
