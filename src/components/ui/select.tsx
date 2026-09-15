@@ -15,11 +15,11 @@ interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "chi
 }
 
 /**
- * Select — reusable HUD-styled dropdown.
+ * Select — reusable codex dropdown.
  *
- * Mirrors the `Input` component's API (sys-label + recessed field) so form
- * modals can use selects without hand-rolling the `.input-recessed` markup
- * and a raw chevron. Gold inner glow on focus, hexagonal-free (chamfered
+ * Mirrors the `Input` component's API (codex-label + recessed field) so form
+ * modals can use selects without hand-rolling the `.codex-input` markup
+ * and a raw chevron. Gold inner glow on focus, hexagonal-free (codex-panel-radius
  * system), no rounded corners.
  */
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
@@ -27,7 +27,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="sys-label mb-2 block text-text-muted">
+          <label htmlFor={id} className="codex-label mb-2 block text-text-muted">
             {label}
           </label>
         )}
@@ -36,7 +36,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={id}
             ref={ref}
             className={cn(
-              "input-recessed w-full appearance-none px-4 py-2.5 pr-10 text-sm font-body",
+              "codex-input w-full appearance-none px-4 py-2.5 pr-10 text-sm font-body",
               "cursor-pointer transition-all duration-300",
               error && "border-hud-danger",
               className
@@ -49,12 +49,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          {/* HUD chevron — gold-tinted, mirrors the diamond indicator language */}
+          {/* Gold-tinted chevron indicator */}
           <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold-400/60" />
         </div>
         {error && (
-          <p className="mt-1.5 text-xs font-mono text-hud-danger">
-            [ERROR] // {error}
+          <p role="alert" className="mt-1.5 text-xs text-hud-danger">
+            {error}
           </p>
         )}
       </div>

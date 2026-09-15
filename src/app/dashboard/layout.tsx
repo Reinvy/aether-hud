@@ -11,8 +11,8 @@ import { DashboardShell } from "./dashboard-shell";
  */
 export const metadata: Metadata = {
   title: {
-    default: "SYSTEM OVERVIEW",
-    template: "%s // AETHER DASH",
+    default: "Codex Console",
+    template: "%s | Codex Console",
   },
   robots: {
     index: false,

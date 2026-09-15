@@ -2,41 +2,50 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, GripVertical, Pencil } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { IconBox } from "@/components/ui/icon-box";
+import { IconButton } from "@/components/ui/icon-button";
+import { RowActions } from "@/components/ui/row-actions";
 import { cn } from "@/lib/utils";
+import type { SectionDto } from "@/lib/dto";
+
+interface SectionRowProps {
+  section: SectionDto;
+  index: number;
+  /** Renders the leading selection box. */
+  selectable: boolean;
+  selected: boolean;
+  onSelect: (id: string) => void;
+  /** Moves the page one slot up (-1) or down (1) in the display order. */
+  onMove: (section: SectionDto, direction: -1 | 1) => void;
+  /** False at the ends of the registry — the reorder controls disable there. */
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onToggle: (section: SectionDto) => void;
+  onEdit: (section: SectionDto) => void;
+  onDelete: (section: SectionDto) => void;
+}
 
 /**
  * SectionRow — one landing-section control row in the sections table.
  *
- * Extracted from the sections dashboard view (was inline) so the view stays a
- * thin orchestrator. Renders order/title/key/subtitle/status-toggle/actions;
- * the parent owns data fetching, the edit modal and the toggle handler.
+ * Renders selection, order/reorder, title/key/subtitle, the enabled toggle
+ * and the row actions; the parent owns data fetching, pagination, the edit
+ * modal and the toggle/reorder/delete handlers.
  */
-
-export interface Section {
-  id: string;
-  key: string;
-  title: string;
-  subtitle: string | null;
-  enabled: boolean;
-  order: number;
-}
-
-interface SectionRowProps {
-  section: Section;
-  index: number;
-  onToggle: (section: Section) => void;
-  onEdit: (section: Section) => void;
-}
-
 export const SectionRow = memo(function SectionRow({
   section,
   index,
+  selectable,
+  selected,
+  onSelect,
+  onMove,
+  canMoveUp,
+  canMoveDown,
   onToggle,
   onEdit,
+  onDelete,
 }: SectionRowProps) {
   return (
     <motion.tr
@@ -45,16 +54,44 @@ export const SectionRow = memo(function SectionRow({
       transition={{ delay: index * 0.04 }}
       className={cn(
         "border-b border-border-subtle/50 transition-colors hover:bg-glass-200/40",
-        !section.enabled && "opacity-60"
+        !section.enabled && "opacity-60",
+        selected && "bg-leather-caramel/5 dark:bg-glass-200/60"
       )}
     >
+      {/* Selection */}
+      <td className="px-4 py-4">
+        {selectable && (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onSelect(section.id)}
+            aria-label={`Select ${section.title}`}
+            className="h-4 w-4 cursor-pointer accent-leather-caramel codex-focus dark:accent-gold-400"
+          />
+        )}
+      </td>
       {/* Order */}
       <td className="px-4 py-4">
-        <div className="flex items-center gap-2">
-          <GripVertical className="h-3.5 w-3.5 text-text-muted/30" />
-          <span className="font-mono text-[11px] text-text-muted">
+        <div className="flex items-center gap-1">
+          <span className="font-mono text-[11px] tabular-nums text-text-muted">
             {String(section.order).padStart(2, "0")}
           </span>
+          <IconButton
+            label={`Move ${section.title} up`}
+            disabled={!canMoveUp}
+            className="disabled:cursor-not-allowed disabled:opacity-30"
+            onClick={() => onMove(section, -1)}
+          >
+            <ChevronUp className="h-3.5 w-3.5" />
+          </IconButton>
+          <IconButton
+            label={`Move ${section.title} down`}
+            disabled={!canMoveDown}
+            className="disabled:cursor-not-allowed disabled:opacity-30"
+            onClick={() => onMove(section, 1)}
+          >
+            <ChevronDown className="h-3.5 w-3.5" />
+          </IconButton>
         </div>
       </td>
       {/* Title */}
@@ -69,8 +106,8 @@ export const SectionRow = memo(function SectionRow({
             <p className="font-mono text-xs font-medium tracking-wider text-text-main">
               {section.title}
             </p>
-            <p className="font-mono text-[9px] tracking-wider text-text-muted/60">
-              sec-{section.key}
+            <p className="font-mono text-[9px] tracking-wider text-text-muted/60 dark:text-platinum-200/70">
+              {section.key}
             </p>
           </div>
         </div>
@@ -90,12 +127,15 @@ export const SectionRow = memo(function SectionRow({
       {/* Status */}
       <td className="px-4 py-4 text-center">
         <button
+          type="button"
           onClick={() => onToggle(section)}
+          aria-pressed={section.enabled}
+          aria-label={`${section.enabled ? "Hide" : "Show"} ${section.title}`}
           className={cn(
-            "inline-flex items-center gap-1.5 chamfered-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale focus-ring-gold",
+            "inline-flex items-center gap-1.5 codex-radius-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale codex-focus",
             section.enabled
-              ? "bg-[rgba(56,239,125,0.1)] text-stellar-400 hover:bg-[rgba(56,239,125,0.15)]"
-              : "bg-[rgba(239,68,68,0.1)] text-hud-danger hover:bg-[rgba(239,68,68,0.15)]"
+              ? "bg-jade-400/10 text-jade-600 hover:bg-jade-400/20 dark:text-jade-400"
+              : "bg-hud-danger/10 text-hud-danger hover:bg-hud-danger/20"
           )}
         >
           {section.enabled ? (
@@ -113,15 +153,13 @@ export const SectionRow = memo(function SectionRow({
       </td>
       {/* Actions */}
       <td className="px-4 py-4 text-right">
-        <Button
-          variant="ghost"
-          size="sm"
-          glow="none"
-          className="min-h-9 min-w-9 p-0 sm:p-1.5"
-          onClick={() => onEdit(section)}
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </Button>
+        <RowActions
+          className="justify-end"
+          editLabel={`Edit ${section.title}`}
+          deleteLabel={`Remove ${section.title}`}
+          onEdit={() => onEdit(section)}
+          onDelete={() => onDelete(section)}
+        />
       </td>
     </motion.tr>
   );

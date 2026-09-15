@@ -3,6 +3,8 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import {
+  ChevronDown,
+  ChevronUp,
   Link2,
   Plus,
   Mail,
@@ -28,23 +30,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
+import { IconButton } from "@/components/ui/icon-button";
 import { RowActions } from "@/components/ui/row-actions";
+import { cn } from "@/lib/utils";
+import type { SocialDto } from "@/lib/dto";
 
 /**
  * SocialLinksCard — dashboard widget for managing the contact network links.
  *
- * Extracted from the contact dashboard view (was inline) so the view stays a
- * thin orchestrator. Owns the icon registry and the per-row presentation;
- * the parent owns data fetching, modal state and the delete flow.
+ * Owns the icon registry and the per-row presentation (selection, reorder,
+ * edit/delete); the parent owns data fetching, pagination, modal state and
+ * the delete flow.
  */
-
-export interface ApiSocial {
-  id: string;
-  platform: string;
-  url: string;
-  icon: string;
-  order: number;
-}
 
 // Icon registry for social platforms — unknown icon names fall back to Link2.
 // Registered names must stay in sync with the landing contact-section map.
@@ -71,14 +68,33 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 interface SocialLinksCardProps {
-  socials: ApiSocial[];
+  socials: SocialDto[];
+  /** Renders the leading selection box on every row. */
+  selectable: boolean;
+  selectedIds: ReadonlySet<string>;
+  onSelect: (id: string) => void;
+  /** Empty-state copy; the view swaps it in when a search hides every row. */
+  emptyMessage?: string;
+  /** Moves the link one slot up (-1) or down (1) in the network order. */
+  onMove: (social: SocialDto, direction: -1 | 1) => void;
+  /** Ids of the first and last link in display order; the reorder controls
+   *  disable on those two rows. */
+  firstId: string | null;
+  lastId: string | null;
   onAdd: () => void;
-  onEdit: (social: ApiSocial) => void;
-  onDelete: (social: ApiSocial) => void;
+  onEdit: (social: SocialDto) => void;
+  onDelete: (social: SocialDto) => void;
 }
 
 export const SocialLinksCard = memo(function SocialLinksCard({
   socials,
+  selectable,
+  selectedIds,
+  onSelect,
+  emptyMessage = "Add a link to publish it on your landing page.",
+  onMove,
+  firstId,
+  lastId,
   onAdd,
   onEdit,
   onDelete,
@@ -93,7 +109,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
           </div>
           <Button variant="primary" size="sm" onClick={onAdd}>
             <Plus className="h-4 w-4" />
-            ADD LINK
+            Add link
           </Button>
         </div>
       </CardHeader>
@@ -101,39 +117,70 @@ export const SocialLinksCard = memo(function SocialLinksCard({
         {socials.length === 0 ? (
           <EmptyState
             icon={<Link2 className="h-5 w-5" />}
-            title="NETWORK OFFLINE"
-            message="No social links configured"
+            title="No links to show"
+            message={emptyMessage}
           />
         ) : (
           <div className="space-y-2">
             {socials.map((s, i) => {
               const Icon = iconMap[s.icon] || Link2;
+              const selected = selectedIds.has(s.id);
               return (
                 <motion.div
                   key={s.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
-                  className="group relative flex items-center justify-between chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm"
+                  className={cn(
+                    "group relative flex items-center justify-between gap-3 codex-radius-sm border border-border-subtle bg-deep-space/30 px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm",
+                    selected && "border-leather-caramel/50 dark:border-gold-400/50"
+                  )}
                 >
                   {/* Diamond accent on hover — mirrors Card micro-interaction */}
                   <span className="pointer-events-none absolute -top-px -right-px h-2.5 w-2.5 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex min-w-0 items-center gap-3">
+                    {selectable && (
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => onSelect(s.id)}
+                        aria-label={`Select ${s.platform}`}
+                        className="h-4 w-4 shrink-0 cursor-pointer accent-leather-caramel codex-focus dark:accent-gold-400"
+                      />
+                    )}
                     <IconBox>
                       <Icon className="h-4 w-4 text-gold-400/60" />
                     </IconBox>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-mono text-xs font-medium tracking-wider text-text-main">
                         {s.platform}
                       </p>
-                      <p className="mt-0.5 font-mono text-[9px] text-text-muted truncate max-w-[200px]">
+                      <p className="mt-0.5 max-w-[200px] truncate font-mono text-[9px] text-text-muted">
                         {s.url}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="sys-label text-[8px]">#{s.order}</span>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <span className="codex-label text-[8px]">#{s.order}</span>
+                    <IconButton
+                      label={`Move ${s.platform} up`}
+                      disabled={s.id === firstId}
+                      className="disabled:cursor-not-allowed disabled:opacity-30"
+                      onClick={() => onMove(s, -1)}
+                    >
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    </IconButton>
+                    <IconButton
+                      label={`Move ${s.platform} down`}
+                      disabled={s.id === lastId}
+                      className="disabled:cursor-not-allowed disabled:opacity-30"
+                      onClick={() => onMove(s, 1)}
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </IconButton>
                     <RowActions
+                      editLabel={`Edit ${s.platform}`}
+                      deleteLabel={`Remove ${s.platform}`}
                       onEdit={() => onEdit(s)}
                       onDelete={() => onDelete(s)}
                     />

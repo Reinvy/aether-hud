@@ -1,36 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { ApiError, apiRequest } from "@/lib/api-client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Modal } from "@/components/ui/modal";
+import { FormModal } from "@/components/ui/form-modal";
 
 /**
- * ProjectFormModal — create/edit dossier modal for the dashboard project
- * archive.
+ * ProjectFormModal — create/edit modal for the dashboard domain archive.
  *
  * Extracted from dashboard/projects page so the whole form (fields + save
  * logic) can be lazy-loaded as its own chunk via next/dynamic — it only
  * renders when the operator opens the modal, keeping the archive list's
  * initial bundle small.
  *
- * Data still comes from the API (POST /api/projects for new, PUT for
- * edits) — nothing is hardcoded.
+ * Data comes from the API (POST /api/projects for new, PUT for edits) and
+ * every write goes through `apiRequest`, so a refused or failed save shows
+ * the server's message inside the modal instead of closing silently.
  */
 
 export interface ProjectFormRecord {
   id: string;
   title: string;
   description: string;
-  tags: string; // JSON array stored as string (API format)
+  tags: string[];
   category: string;
   complexity: string;
   performance: string;
   year: string;
   liveUrl: string | null;
   githubUrl: string | null;
+  order: number;
 }
 
 type FormData = {
@@ -42,7 +43,7 @@ type FormData = {
   year: string;
   liveUrl: string;
   githubUrl: string;
-  tags: string; // comma-separated for the input
+  tags: string; // comma-separated in the field, sent as an array
 };
 
 const EMPTY_FORM: FormData = {
@@ -57,15 +58,6 @@ const EMPTY_FORM: FormData = {
   tags: "",
 };
 
-function parseTagsDisplay(tags: string): string {
-  try {
-    const parsed = JSON.parse(tags);
-    return Array.isArray(parsed) ? parsed.join(", ") : tags;
-  } catch {
-    return tags;
-  }
-}
-
 function toForm(project: ProjectFormRecord | null): FormData {
   if (!project) return EMPTY_FORM;
   return {
@@ -77,14 +69,14 @@ function toForm(project: ProjectFormRecord | null): FormData {
     year: project.year,
     liveUrl: project.liveUrl ?? "",
     githubUrl: project.githubUrl ?? "",
-    tags: parseTagsDisplay(project.tags),
+    tags: project.tags.join(", "),
   };
 }
 
 interface ProjectFormModalProps {
   open: boolean;
   onClose: () => void;
-  /** Project being edited, or null for a new dossier. */
+  /** Project being edited, or null for a new domain. */
   project: ProjectFormRecord | null;
   /** Called after a successful save so the parent can refetch + close. */
   onSaved: () => void;
@@ -98,10 +90,14 @@ export function ProjectFormModal({
 }: ProjectFormModalProps) {
   const [form, setForm] = useState<FormData>(() => toForm(project));
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Re-sync the form whenever the modal opens with a (different) project.
   useEffect(() => {
-    if (open) setForm(toForm(project));
+    if (open) {
+      setForm(toForm(project));
+      setError(null);
+    }
   }, [open, project]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
@@ -110,137 +106,120 @@ export function ProjectFormModal({
 
   async function handleSave() {
     setSaving(true);
-    try {
-      const body = {
-        title: form.title,
-        description: form.description,
-        category: form.category,
-        complexity: form.complexity,
-        performance: form.performance,
-        year: form.year,
-        liveUrl: form.liveUrl || null,
-        githubUrl: form.githubUrl || null,
-        tags: JSON.stringify(
-          form.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean)
-        ),
-      };
+    setError(null);
 
+    const body = {
+      title: form.title,
+      description: form.description,
+      category: form.category,
+      complexity: form.complexity,
+      performance: form.performance,
+      year: form.year,
+      liveUrl: form.liveUrl || null,
+      githubUrl: form.githubUrl || null,
+      tags: form.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    };
+
+    try {
       if (project) {
-        await fetch("/api/projects", {
+        await apiRequest<unknown>("/api/projects", {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: project.id, ...body }),
+          body: { id: project.id, ...body },
         });
       } else {
-        await fetch("/api/projects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+        await apiRequest<unknown>("/api/projects", { method: "POST", body });
       }
 
       onSaved();
     } catch (e) {
-      console.error("Failed to save project", e);
+      setError(
+        e instanceof ApiError ? e.message : "Failed to save the domain"
+      );
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <Modal
+    <FormModal
       open={open}
       onClose={onClose}
-      title={project ? "EDIT DOSSIER" : "NEW DOSSIER"}
-      sysId={project ? `DASH//01 // ${project.id.slice(0, 8)}` : "DASH//01 // NEW"}
+      title={project ? "Edit domain" : "New domain"}
       size="lg"
-      footer={
-        <>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onClose}
-            disabled={saving}
-          >
-            CANCEL
-          </Button>
-          <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            SAVE DOSSIER
-          </Button>
-        </>
-      }
+      saveLabel="Save"
+      error={error}
+      onSave={handleSave}
+      saving={saving}
     >
-      <div className="space-y-4">
+      <Input
+        label="Title"
+        placeholder="Enter the domain title…"
+        value={form.title}
+        onChange={(e) => updateField("title", e.target.value)}
+      />
+      <Textarea
+        label="Description"
+        placeholder="What this domain delivers…"
+        value={form.description}
+        onChange={(e) => updateField("description", e.target.value)}
+        rows={3}
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Select
+          label="Complexity"
+          value={form.complexity}
+          onChange={(e) => updateField("complexity", e.target.value)}
+          options={[
+            { value: "CLASS-S", label: "Class S — Apex" },
+            { value: "CLASS-A", label: "Class A — High" },
+            { value: "CLASS-B", label: "Class B — Standard" },
+            { value: "CLASS-C", label: "Class C — Basic" },
+          ]}
+        />
         <Input
-          label="FIELD_01 // PROJECT TITLE"
-          placeholder="Enter project designation..."
-          value={form.title}
-          onChange={(e) => updateField("title", e.target.value)}
+          label="Category"
+          placeholder="AI Platform"
+          value={form.category}
+          onChange={(e) => updateField("category", e.target.value)}
         />
-        <Textarea
-          label="FIELD_02 // DESCRIPTION"
-          placeholder="Mission briefing..."
-          value={form.description}
-          onChange={(e) => updateField("description", e.target.value)}
-          rows={3}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Select
-            label="FIELD_03 // COMPLEXITY"
-            value={form.complexity}
-            onChange={(e) => updateField("complexity", e.target.value)}
-            options={[
-              { value: "CLASS-S", label: "CLASS-S // APEX" },
-              { value: "CLASS-A", label: "CLASS-A // HIGH" },
-              { value: "CLASS-B", label: "CLASS-B // STANDARD" },
-              { value: "CLASS-C", label: "CLASS-C // BASIC" },
-            ]}
-          />
-          <Input
-            label="FIELD_04 // CATEGORY"
-            placeholder="AI Platform"
-            value={form.category}
-            onChange={(e) => updateField("category", e.target.value)}
-          />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="FIELD_05 // PERFORMANCE"
-            placeholder="95%"
-            value={form.performance}
-            onChange={(e) => updateField("performance", e.target.value)}
-          />
-          <Input
-            label="FIELD_06 // YEAR"
-            placeholder="2026"
-            value={form.year}
-            onChange={(e) => updateField("year", e.target.value)}
-          />
-        </div>
-        <Input
-          label="FIELD_07 // TAGS (comma-separated)"
-          placeholder="Next.js, TypeScript, Prisma"
-          value={form.tags}
-          onChange={(e) => updateField("tags", e.target.value)}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="FIELD_08 // LIVE URL"
-            placeholder="https://..."
-            value={form.liveUrl}
-            onChange={(e) => updateField("liveUrl", e.target.value)}
-          />
-          <Input
-            label="FIELD_09 // GITHUB URL"
-            placeholder="https://github.com/..."
-            value={form.githubUrl}
-            onChange={(e) => updateField("githubUrl", e.target.value)}
-          />
-        </div>
       </div>
-    </Modal>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          label="Performance"
+          placeholder="95%"
+          value={form.performance}
+          onChange={(e) => updateField("performance", e.target.value)}
+        />
+        <Input
+          label="Year"
+          placeholder="2026"
+          value={form.year}
+          onChange={(e) => updateField("year", e.target.value)}
+        />
+      </div>
+      <Input
+        label="Tags (comma-separated)"
+        placeholder="Next.js, TypeScript, Prisma"
+        value={form.tags}
+        onChange={(e) => updateField("tags", e.target.value)}
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          label="Live URL"
+          placeholder="https://…"
+          value={form.liveUrl}
+          onChange={(e) => updateField("liveUrl", e.target.value)}
+        />
+        <Input
+          label="GitHub URL"
+          placeholder="https://github.com/…"
+          value={form.githubUrl}
+          onChange={(e) => updateField("githubUrl", e.target.value)}
+        />
+      </div>
+    </FormModal>
   );
 }

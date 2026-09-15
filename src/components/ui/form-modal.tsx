@@ -8,14 +8,15 @@ interface FormModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
-  sysId?: string;
   size?: "sm" | "md" | "lg" | "xl";
   variant?: "default" | "danger";
   /** Label for the primary save button. */
   saveLabel?: string;
+  /** Server or validation error rendered above the footer. */
+  error?: string | null;
   /** Called when the primary save button is pressed. */
   onSave: () => void;
-  /** Disables both footer buttons and shows the HUD spinner on save. */
+  /** Disables both footer buttons and shows the elemental spinner on save. */
   saving?: boolean;
   /** Form fields rendered inside the modal body. */
   children: ReactNode;
@@ -24,19 +25,19 @@ interface FormModalProps {
 /**
  * FormModal — standardized create/edit modal for dashboard CRUD forms.
  *
- * Wraps the HUD `Modal` with the canonical footer (CANCEL secondary +
- * primary save with HUD diamond loading spinner) and a consistent
- * `space-y-4` content gutter, so every CRUD form shares the same chrome
- * instead of re-declaring footer buttons inline.
+ * Wraps the `Modal` with the canonical footer (cancel secondary + primary
+ * save with the elemental loading spinner) and a consistent `space-y-4`
+ * content gutter, so every CRUD form shares the same chrome instead of
+ * re-declaring footer buttons inline.
  */
 export function FormModal({
   open,
   onClose,
   title,
-  sysId = "DASH//00",
   size = "md",
   variant = "default",
-  saveLabel = "SAVE",
+  saveLabel = "Save",
+  error = null,
   onSave,
   saving = false,
   children,
@@ -46,9 +47,9 @@ export function FormModal({
       open={open}
       onClose={onClose}
       title={title}
-      sysId={sysId}
       size={size}
       variant={variant}
+      error={error}
       footer={
         <>
           <Button
@@ -57,7 +58,7 @@ export function FormModal({
             onClick={onClose}
             disabled={saving}
           >
-            CANCEL
+            Cancel
           </Button>
           <Button variant="primary" size="sm" onClick={onSave} loading={saving}>
             {saveLabel}

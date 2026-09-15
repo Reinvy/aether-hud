@@ -13,10 +13,10 @@ interface ToggleProps {
 }
 
 /**
- * Toggle — reusable HUD switch.
+ * Toggle — reusable switch.
  *
- * Obsidian & Imperial Gold treatment of a binary control: a chamfered
- * (squared) track with a rotated diamond knob that slides right and glows
+ * Teyvat Codex treatment of a binary control: a codex-panel-radius
+ * (squared) track with a rotated knob that slides right and glows
  * gold when active. Replaces hand-rolled peer-checked switch markup across
  * dashboard settings so every toggle shares the same interaction language.
  */
@@ -45,10 +45,10 @@ export function Toggle({
         disabled={disabled}
         className="peer sr-only"
       />
-      {/* Chamfered track */}
+      {/* Sliding track */}
       <div
         className={cn(
-          "h-6 w-11 rounded-none border transition-all duration-300",
+          "h-6 w-11 rounded-full border transition-all duration-300",
           "border-leather-caramel/30 bg-parchment-subtle dark:border-border-glass dark:bg-deep-space peer-focus-visible:shadow-[0_0_0_2px_rgba(140,98,57,0.3)] dark:peer-focus-visible:shadow-[0_0_0_2px_rgba(242,201,76,0.3)]",
           "peer-checked:border-leather-caramel dark:peer-checked:border-gold-400/60 peer-checked:bg-leather-caramel/20 dark:peer-checked:bg-[rgba(242,201,76,0.18)]"
         )}
