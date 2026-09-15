@@ -1,17 +1,21 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ok, fail } from "@/lib/api-helpers";
+import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
+import { getExperiences, hasDatabase } from "@/lib/portfolio-repo";
 
 export async function GET() {
   try {
-    const items = await prisma.experience.findMany({ orderBy: { order: "asc" } });
-    return ok(items);
+    return ok(await getExperiences());
   } catch {
     return fail("Failed to fetch experiences", "EXPERIENCES_GET");
   }
 }
 
 export async function POST(req: NextRequest) {
+  const denied = requireSession(req);
+  if (denied) return denied;
+  if (!hasDatabase()) return failNoDb("EXPERIENCES_POST");
+
   try {
     const body = await req.json();
     const item = await prisma.experience.create({ data: body });
@@ -22,6 +26,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const denied = requireSession(req);
+  if (denied) return denied;
+  if (!hasDatabase()) return failNoDb("EXPERIENCES_PUT");
+
   try {
     const body = await req.json();
     const { id, ...data } = body;

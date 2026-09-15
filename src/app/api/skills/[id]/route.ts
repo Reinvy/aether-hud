@@ -1,13 +1,18 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ok, fail } from "@/lib/api-helpers";
+import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
+import { hasDatabase } from "@/lib/portfolio-repo";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireSession(req);
+  if (denied) return denied;
+  if (!hasDatabase()) return failNoDb("SKILLS_DELETE");
+
+  const { id } = await params;
   try {
-    const { id } = await params;
     await prisma.skill.delete({ where: { id } });
     return ok({ success: true });
   } catch {
-    return fail("Failed to delete skill", "SKILLS_DELETE");
+    return fail("Skill not found", "SKILLS_DELETE", 404);
   }
 }

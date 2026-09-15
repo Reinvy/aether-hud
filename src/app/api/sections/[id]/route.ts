@@ -3,16 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
 import { hasDatabase } from "@/lib/portfolio-repo";
 
+export const dynamic = "force-dynamic";
+
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const denied = requireSession(req);
   if (denied) return denied;
-  if (!hasDatabase()) return failNoDb("SOCIALS_DELETE");
+  if (!hasDatabase()) return failNoDb("SECTIONS_DELETE");
 
   const { id } = await params;
   try {
-    await prisma.socialLink.delete({ where: { id } });
+    await prisma.section.delete({ where: { id } });
     return ok({ success: true });
   } catch {
-    return fail("Social link not found", "SOCIALS_DELETE", 404);
+    return fail("Section not found", "SECTIONS_DELETE", 404);
   }
 }
