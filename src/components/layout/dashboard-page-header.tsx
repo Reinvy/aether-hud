@@ -1,33 +1,30 @@
 /**
- * DashboardPageHeader — Reusable header component for all dashboard sub-pages
- * AETHER-HUD Design System: Obsidian & Imperial Gold
+ * DashboardPageHeader — shared header for every Codex Console page.
  */
 "use client";
 
 import { type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { StatusDot } from "@/components/ui/status-dot";
 
 interface DashboardPageHeaderProps {
   icon: React.ElementType;
-  label: string;
+  /** Lore eyebrow rendered above the title, e.g. "COMMISSION LOG". */
+  eyebrow: string;
   title: string;
+  /** Substring of `title` rendered in the gold gradient. */
   titleHighlight?: string;
+  /** Trailing controls (create button, refresh, …). */
   actions?: ReactNode;
-  statusLabel?: string;
-  statusActive?: boolean;
   className?: string;
 }
 
 export function DashboardPageHeader({
   icon: Icon,
-  label,
+  eyebrow,
   title,
   titleHighlight,
   actions,
-  statusLabel = "ALL SYSTEMS NOMINAL",
-  statusActive = true,
   className,
 }: DashboardPageHeaderProps) {
   return (
@@ -40,33 +37,27 @@ export function DashboardPageHeader({
         <div className="min-w-0">
           <div className="mb-1 flex items-center gap-2">
             <Icon className="h-4 w-4 shrink-0 text-gold-400" />
-            <span className="sys-label-gold">{label}</span>
+            <span className="codex-label-gold">{eyebrow}</span>
           </div>
           <h1 className="font-display text-xl font-bold tracking-[0.08em] text-text-main sm:text-2xl">
-            {titleHighlight ? (
+            {/* The highlight must be a substring of the title; when a caller
+                passes something else the two are joined instead of being
+                concatenated without a separator. */}
+            {!titleHighlight ? (
+              title
+            ) : title.includes(titleHighlight) ? (
               <>
                 {title.replace(titleHighlight, "")}
-                <span className="text-gradient-gold">{titleHighlight}</span>
+                <span className="codex-gradient-text">{titleHighlight}</span>
               </>
             ) : (
-              title
+              <>
+                {title} <span className="codex-gradient-text">{titleHighlight}</span>
+              </>
             )}
           </h1>
         </div>
-        <div className="flex items-center gap-3">
-          {actions}
-          {(statusLabel || statusActive !== undefined) && (
-            <>
-              <StatusDot
-                tone={statusActive ? "active" : "danger"}
-                pulse={statusActive}
-                label={statusLabel}
-                className="h-1.5 w-1.5"
-              />
-              <span className="sys-label-active hidden text-[10px] sm:inline">{statusLabel}</span>
-            </>
-          )}
-        </div>
+        {actions && <div className="flex items-center gap-3">{actions}</div>}
       </div>
     </motion.div>
   );

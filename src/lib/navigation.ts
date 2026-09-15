@@ -1,0 +1,57 @@
+
+/**
+ * navigation.ts — the single source of navigation truth.
+ *
+ * Every navigational surface (site header, desktop rail, mobile dock, footer,
+ * dashboard sidebar) renders from these registries. Four competing definitions
+ * previously drifted apart — including one on `HudHeader` that was never
+ * imported, leaving the public site without a header entirely. No other module
+ * may declare a nav array; `e2e/navigation.test.mjs` enforces that.
+ *
+ * Each entry is a literal `{ …, href: "…" } as const` object so the e2e parser
+ * can read the registry statically.
+ */
+
+export const PUBLIC_NAV = [
+  { label: "Traveler", href: "/#hero", sectionId: "hero", icon: "characterAether" },
+  { label: "Domains", href: "/#projects", sectionId: "projects", icon: "domain" },
+  { label: "Talents", href: "/#skills", sectionId: "skills", icon: "talents" },
+  { label: "Quests", href: "/#experience", sectionId: "experience", icon: "handbook" },
+  { label: "Allies", href: "/#testimonials", sectionId: "testimonials", icon: "friends" },
+  { label: "Summon", href: "/#contact", sectionId: "contact", icon: "mail" },
+] as const;
+
+interface DashboardNavItem {
+  label: string;
+  href: string;
+  /** Key of the sidebar iconMap entry (locked by e2e TEST 10). */
+  icon: string;
+  group: "codex" | "sanctum";
+}
+
+export const DASHBOARD_NAV = [
+  { label: "Overview", href: "/dashboard", icon: "Activity", group: "codex" },
+  { label: "Domains", href: "/dashboard/projects", icon: "Boxes", group: "codex" },
+  { label: "Talents", href: "/dashboard/skills", icon: "Cpu", group: "codex" },
+  { label: "Quests", href: "/dashboard/experiences", icon: "Briefcase", group: "codex" },
+  { label: "Allies", href: "/dashboard/testimonials", icon: "MessageCircle", group: "codex" },
+  { label: "Summon Desk", href: "/dashboard/contact", icon: "Globe", group: "codex" },
+  { label: "Traveler Profile", href: "/dashboard/profile", icon: "User", group: "sanctum" },
+  { label: "Codex Pages", href: "/dashboard/sections", icon: "Layout", group: "sanctum" },
+  { label: "Observatory", href: "/dashboard/telemetry", icon: "Gauge", group: "sanctum" },
+  { label: "Settings", href: "/dashboard/settings", icon: "Settings", group: "sanctum" },
+] as const;
+
+/** Console sections, in render order, with their display labels. */
+export const DASHBOARD_NAV_GROUPS: readonly {
+  label: string;
+  items: readonly DashboardNavItem[];
+}[] = [
+  { label: "Codex", items: DASHBOARD_NAV.filter((item) => item.group === "codex") },
+  { label: "Sanctum", items: DASHBOARD_NAV.filter((item) => item.group === "sanctum") },
+];
+
+/** True when `href` addresses the active route (exact, or a parent prefix). */
+export function isDashboardNavActive(pathname: string, href: string): boolean {
+  return pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
+}
