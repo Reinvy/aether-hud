@@ -1,24 +1,28 @@
-import { portfolioData } from "@/data/portfolio";
+import type { ProjectDto } from "@/lib/dto";
 import { APP_URL } from "@/lib/constants";
+import {
+  getConfig,
+  getExperiences,
+  getProjects,
+  getSections,
+  getSkills,
+  getSocials,
+  getTestimonials,
+} from "@/lib/portfolio-repo";
 import { HomeContent } from "./home-content";
 
-/**
- * Homepage — server component wrapper.
- *
- * The heavy section rendering lives in the client-side <HomeContent />
- * (lazy-loaded sections + error boundaries). This server wrapper injects
- * server-rendered structured data (schema.org ItemList of the portfolio
- * projects) sourced from src/data/portfolio.ts, so crawlers get rich
- * project metadata without a client-side fetch.
- */
-function buildProjectsJsonLd() {
+// The dossier is content, not a feed: it changes only through the console, so
+// it is served statically and revalidated instead of fetching on every visit.
+export const revalidate = 300;
+
+function buildProjectsJsonLd(projects: ProjectDto[]) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "AETHER-HUD — Deployed Projects",
-    description: "Tactical dossier of completed missions and active deployments.",
-    numberOfItems: portfolioData.projects.length,
-    itemListElement: portfolioData.projects.map((project, index) => ({
+    name: "Teyvat Codex — Deployed Domains",
+    description: "Artifact archive of forged platforms and commissioned systems.",
+    numberOfItems: projects.length,
+    itemListElement: projects.map((project, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {
@@ -28,15 +32,34 @@ function buildProjectsJsonLd() {
         applicationCategory: "WebApplication",
         operatingSystem: "Web",
         inLanguage: "en",
-        url: project.links.live || `${APP_URL}/#projects`,
-        codeRepository: project.links.github,
+        url: project.liveUrl || `${APP_URL}/#projects`,
+        ...(project.githubUrl ? { codeRepository: project.githubUrl } : {}),
       },
     })),
   };
 }
 
-export default function HomePage() {
-  const projectsJsonLd = buildProjectsJsonLd();
+/**
+ * Homepage — the server composition root.
+ *
+ * Every section's data is fetched here through the repository and handed to
+ * `<HomeContent />` as props, so the page renders complete markup on the first
+ * byte — with or without a database — and crawlers see every project without
+ * executing client JavaScript.
+ */
+export default async function HomePage() {
+  const [config, sections, projects, skills, experiences, testimonials, socials] =
+    await Promise.all([
+      getConfig(),
+      getSections(),
+      getProjects(),
+      getSkills(),
+      getExperiences(),
+      getTestimonials(),
+      getSocials(),
+    ]);
+
+  const projectsJsonLd = buildProjectsJsonLd(projects);
 
   return (
     <>
@@ -44,7 +67,15 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }}
       />
-      <HomeContent />
+      <HomeContent
+        config={config}
+        sections={sections}
+        projects={projects}
+        skills={skills}
+        experiences={experiences}
+        testimonials={testimonials}
+        socials={socials}
+      />
     </>
   );
 }

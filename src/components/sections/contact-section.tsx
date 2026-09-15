@@ -8,6 +8,7 @@ import {
   CheckCircle,
   ChevronRight,
   Terminal,
+  Users,
   User,
   AtSign,
   Hash,
@@ -34,9 +35,10 @@ import { fadeInView } from "@/lib/motion-variants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useData } from "@/lib/use-data";
+import { StatusDot } from "@/components/ui/status-dot";
 import { SectionHeading } from "@/components/features/section-heading";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import type { ConfigDto, SectionDto, SocialDto } from "@/lib/dto";
 
 const socialIcons: Record<string, React.ElementType> = {
   Globe,
@@ -60,23 +62,20 @@ const socialIcons: Record<string, React.ElementType> = {
   Rss,
 };
 
-type SiteConfig = {
-  email: string;
-  status: string;
-};
+interface ContactResponse {
+  error?: string;
+  transmissionId?: string;
+}
 
-type SocialLink = {
-  id: string;
-  platform: string;
-  url: string;
-  icon: string;
-  order: number;
-};
-
-export function ContactSection() {
-  const { data: config } = useData<SiteConfig>("/api/config");
-  const { data: socials, loading: socialsLoading } = useData<SocialLink[]>("/api/socials");
-
+export function ContactSection({
+  config,
+  socials,
+  section,
+}: {
+  config: ConfigDto;
+  socials: SocialDto[];
+  section: SectionDto;
+}) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -88,10 +87,10 @@ export function ContactSection() {
   const [error, setError] = useState<string | null>(null);
   const [transmissionId, setTransmissionId] = useState<string>("");
 
-  const directEmail = config?.email || "hello@aether-hud.dev";
-  const status = config?.status || "ONLINE";
+  const directEmail = config.email || "hello@aether-hud.dev";
+  const isAvailable = config.status.toUpperCase() === "ONLINE";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSending(true);
     setError(null);
@@ -103,16 +102,17 @@ export function ContactSection() {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const data: ContactResponse = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(data.error || "Transmission failed");
+        setError(data.error ?? "The dispatch scroll could not be delivered. Try again.");
+        return;
       }
 
-      setTransmissionId(data.data?.transmissionId || `EXP-${Date.now().toString(36).toUpperCase()}`);
+      setTransmissionId(data.transmissionId ?? `TX-${Date.now().toString(36).toUpperCase()}`);
       setSent(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Transmission failed. Try again.");
+    } catch {
+      setError("The dispatch portal is unreachable. Try again in a moment.");
     } finally {
       setSending(false);
     }
@@ -124,7 +124,7 @@ export function ContactSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="DISPATCH PORTAL // KATHERYNE'S DESK"
+          badge="Dispatch Portal"
           icon={
             <div className="w-4 h-4 relative">
               <Image
@@ -136,18 +136,21 @@ export function ContactSection() {
               />
             </div>
           }
-          title="Summon"
-          highlight="Architect"
-          subtitle="Ad Astra Abyssosque. Direct telepathic message portal for commissions, collaborations, and guild contracts."
+          title={section.title || "Summon"}
+          highlight={section.title ? undefined : "Architect"}
+          subtitle={
+            section.subtitle ||
+            "Ad Astra Abyssosque. Direct telepathic message portal for commissions, collaborations, and guild contracts."
+          }
         />
 
         <div className="mt-14 mx-auto max-w-4xl">
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
             <motion.div className="lg:col-span-3" {...fadeInView}>
-              <div className="bg-[#FAF8F5] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl h-full">
+              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 shadow-2xl h-full">
                 {/* Form header */}
-                <div className="flex items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20 dark:border-gold-400/20">
+                <div className="flex flex-wrap items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20">
                   <div className="w-4 h-4 relative">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
@@ -157,12 +160,14 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-serif text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                    TEYVAT DISPATCH SCROLL // ENCRYPTED
+                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                    Encrypted Dispatch Scroll
                   </span>
-                  <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-mono text-[9px] text-emerald-800 dark:text-emerald-400 font-bold uppercase">ONLINE</span>
+                  <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-jade-500/10 border border-jade-500/30">
+                    <StatusDot tone="active" pulse label="Dispatch portal online" />
+                    <span className="font-mono text-[9px] text-jade-600 dark:text-jade-300 font-bold uppercase">
+                      Open
+                    </span>
                   </span>
                 </div>
 
@@ -173,14 +178,14 @@ export function ContactSection() {
                     className="flex flex-col items-center justify-center py-12 text-center"
                     aria-live="polite"
                   >
-                    <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" aria-hidden="true" />
-                    <p className="font-serif text-lg font-bold tracking-wider text-[#2C1E14] dark:text-platinum-50 uppercase">
-                      DISPATCH DELIVERED
+                    <CheckCircle className="h-12 w-12 text-jade-500 mb-4" aria-hidden="true" />
+                    <p className="font-serif text-lg font-bold tracking-wider text-leather-dark uppercase">
+                      Dispatch Delivered
                     </p>
-                    <p className="mt-2 text-sm text-[#8C6239] dark:text-text-muted font-mono font-medium">
-                      [TEYVAT] // Summoning scroll received. Seal ID:
+                    <p className="mt-2 text-sm text-leather-caramel dark:text-text-muted font-mono font-medium">
+                      Summoning scroll received. Seal ID:
                     </p>
-                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 dark:border-gold-400/40 bg-leather-caramel/10 dark:bg-gold-400/10 px-4 py-1 font-mono text-xs text-[#8C6239] dark:text-gold-300 font-bold tabular-nums">
+                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-caramel font-bold tabular-nums">
                       {transmissionId}
                     </span>
                     <Button
@@ -193,7 +198,7 @@ export function ContactSection() {
                       }}
                       className="mt-6 font-serif uppercase tracking-widest"
                     >
-                      SEND ANOTHER DISPATCH
+                      Send Another Dispatch
                     </Button>
                   </motion.div>
                 ) : (
@@ -203,7 +208,7 @@ export function ContactSection() {
                         id="name"
                         name="name"
                         autoComplete="name"
-                        label="SUMMONER // NAME"
+                        label="Summoner Name"
                         placeholder="Traveler / Collaborator…"
                         prefix={<User className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
                         value={formData.name}
@@ -218,7 +223,7 @@ export function ContactSection() {
                         inputMode="email"
                         autoComplete="email"
                         spellCheck={false}
-                        label="COMM ADDRESS // EMAIL"
+                        label="Comm Address"
                         placeholder="traveler@teyvat.realm…"
                         prefix={<AtSign className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
                         value={formData.email}
@@ -231,7 +236,7 @@ export function ContactSection() {
                       <Input
                         id="subject"
                         name="subject"
-                        label="COMMISSION // TOPIC"
+                        label="Commission Topic"
                         placeholder="Project collaboration or contract inquiry…"
                         prefix={<Hash className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
                         value={formData.subject}
@@ -244,7 +249,7 @@ export function ContactSection() {
                       <Textarea
                         id="message"
                         name="message"
-                        label="SCROLL CONTENT // MESSAGE"
+                        label="Scroll Content"
                         rows={5}
                         className="resize-none"
                         placeholder="Write your mission details and dispatch message here…"
@@ -262,7 +267,7 @@ export function ContactSection() {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="flex items-center gap-2 rounded-xl border border-hud-danger/40 bg-[rgba(255,0,85,0.08)] px-4 py-3 text-hud-danger"
+                          className="flex items-center gap-2 rounded-xl border border-hud-danger/40 bg-hud-danger/10 px-4 py-3 text-hud-danger"
                           role="alert"
                           aria-live="polite"
                         >
@@ -275,7 +280,7 @@ export function ContactSection() {
                     <button
                       type="submit"
                       disabled={sending || sent}
-                      className="w-full genshin-btn-primary py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
+                      className="w-full codex-btn-primary py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
                       <div className="w-4 h-4 relative">
                         <Image
@@ -286,7 +291,7 @@ export function ContactSection() {
                           className="object-contain brightness-0"
                         />
                       </div>
-                      <span>{sending ? "DISPATCHING SCROLL…" : "DISPATCH SUMMONING SCROLL"}</span>
+                      <span>{sending ? "Dispatching Scroll…" : "Dispatch Summoning Scroll"}</span>
                     </button>
                   </form>
                 )}
@@ -296,7 +301,7 @@ export function ContactSection() {
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="bg-[#FAF8F5] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -307,39 +312,50 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-serif text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                    GUILD // SOCIAL RUNES
+                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                    Guild Channels
                   </span>
                 </div>
-                <div className="space-y-2 max-h-72 overflow-y-auto pr-1" aria-label="Social communication channels">
-                  {socialsLoading ? (
-                    <div className="space-y-2">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-10 w-full rounded-xl bg-leather-caramel/10 skeleton-hud" />
-                      ))}
-                    </div>
-                  ) : (socials ?? []).map((social) => {
-                    const Icon = socialIcons[social.icon] || Terminal;
-                    return (
-                      <a
-                        key={social.platform}
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Connect on ${social.platform}`}
-                        className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 dark:border-border-subtle bg-[#F3EDDF] hover:bg-[#EDE5D2] dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-[#2C1E14] dark:text-text-muted transition-all hover:border-[#8C6239] dark:hover:border-gold-400 hover:text-[#8C6239] dark:hover:text-gold-400 shadow-sm"
-                      >
-                        <Icon className="h-4 w-4 text-[#8C6239] dark:text-gold-400/70 transition-transform group-hover/channel:scale-110" aria-hidden="true" />
-                        <span className="flex-1 font-bold">{social.platform}</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-[#8C6239] dark:text-gold-400 opacity-0 group-hover/channel:opacity-100 transition-opacity" />
-                      </a>
-                    );
-                  })}
-                </div>
+
+                {socials.length > 0 ? (
+                  <div
+                    className="space-y-2 max-h-72 overflow-y-auto pr-1"
+                    aria-label="Social communication channels"
+                  >
+                    {socials.map((social) => {
+                      const Icon = socialIcons[social.icon] || Terminal;
+                      return (
+                        <a
+                          key={social.id}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Connect on ${social.platform}`}
+                          className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
+                        >
+                          <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                          <span className="flex-1 font-bold">{social.platform}</span>
+                          <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-leather-caramel/30 dark:border-border-subtle px-4 py-8 text-center">
+                    <Users className="h-6 w-6 text-leather-caramel/70" aria-hidden="true" />
+                    <p className="font-serif text-sm font-bold text-leather-dark">
+                      No guild channels inscribed yet
+                    </p>
+                    <p className="font-body text-xs text-leather-muted">
+                      The roster is still being written. Send a direct letter below and the reply
+                      will find you.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Direct Letter */}
-              <div className="bg-[#FAF8F5] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-4 h-4 relative">
                     <Image
@@ -350,14 +366,14 @@ export function ContactSection() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-serif text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                    DIRECT // LETTER
+                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                    Direct Letter
                   </span>
                 </div>
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 dark:border-border-subtle bg-[#F3EDDF] hover:bg-[#EDE5D2] dark:bg-deep-space/40 px-4 py-2.5 text-xs font-mono tracking-wider text-[#2C1E14] dark:text-text-muted transition-all hover:border-[#8C6239] dark:hover:border-gold-400 hover:text-[#8C6239] dark:hover:text-gold-400 shadow-sm"
+                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
                 >
                   <div className="w-4 h-4 relative">
                     <Image
@@ -371,20 +387,20 @@ export function ContactSection() {
                   <span className="font-mono text-[11px] truncate font-bold">
                     {directEmail}
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 ml-auto text-[#8C6239] dark:text-gold-400" />
+                  <ChevronRight className="h-3.5 w-3.5 ml-auto text-leather-caramel" />
                 </a>
               </div>
 
-              {/* Status */}
-              <div className="bg-[#FFFFFF] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-5 border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl">
+              {/* Availability */}
+              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-mono text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase">
-                    {status === "ONLINE" ? "AVAILABLE FOR COMMISSIONS" : `STATUS: ${status}`}
+                  <StatusDot tone={isAvailable ? "active" : "warning"} pulse={isAvailable} />
+                  <span className="font-mono text-[10px] font-bold text-jade-600 dark:text-jade-300 uppercase">
+                    {isAvailable ? "Available for commissions" : config.status}
                   </span>
                 </div>
-                <p className="mt-2 font-mono text-[10px] text-[#5E412A] dark:text-text-muted/60 tracking-wider font-bold">
-                  Katheryne's Dispatch: response within 24h
+                <p className="mt-2 font-mono text-[10px] text-leather-muted tracking-wider font-bold">
+                  Katheryne&apos;s Dispatch: response within 24h
                 </p>
               </div>
             </motion.div>
