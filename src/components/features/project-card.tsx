@@ -2,42 +2,30 @@
 
 import { memo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { TEYVAT_ELEMENTS } from "@/lib/element-assets";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { EASE_CODEX } from "@/lib/motion-variants";
+import type { ProjectDto } from "@/lib/dto";
 
-type ProjectCardProps = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  tags: string;
-  category: string;
-  complexity: string;
-  performance: string;
-  year: string;
-  liveUrl: string | null;
-  githubUrl: string | null;
-};
-
-function parseTags(tags: string): string[] {
-  try {
-    const parsed = JSON.parse(tags);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
-  }
+interface ProjectCardProps {
+  project: ProjectDto;
 }
 
-// Map category to matching Teyvat Element Asset
+/** Map a domain category onto the element medallion shown over the art. */
 function getElementForCategory(category: string) {
-  const cat = category.toLowerCase();
-  if (cat.includes("ai") || cat.includes("neural")) return TEYVAT_ELEMENTS[0]; // Pyro
-  if (cat.includes("data") || cat.includes("full")) return TEYVAT_ELEMENTS[1]; // Hydro
-  if (cat.includes("core") || cat.includes("lang")) return TEYVAT_ELEMENTS[2]; // Anemo
-  if (cat.includes("realtime") || cat.includes("event") || cat.includes("stream")) return TEYVAT_ELEMENTS[3]; // Electro
-  if (cat.includes("agent") || cat.includes("logic")) return TEYVAT_ELEMENTS[4]; // Dendro
-  if (cat.includes("sec") || cat.includes("crypto") || cat.includes("auth")) return TEYVAT_ELEMENTS[5]; // Cryo
+  const normalized = category.toLowerCase();
+  if (normalized.includes("ai") || normalized.includes("neural")) return TEYVAT_ELEMENTS[0]; // Pyro
+  if (normalized.includes("data") || normalized.includes("full")) return TEYVAT_ELEMENTS[1]; // Hydro
+  if (normalized.includes("core") || normalized.includes("lang")) return TEYVAT_ELEMENTS[2]; // Anemo
+  if (normalized.includes("realtime") || normalized.includes("event") || normalized.includes("stream")) {
+    return TEYVAT_ELEMENTS[3]; // Electro
+  }
+  if (normalized.includes("agent") || normalized.includes("logic")) return TEYVAT_ELEMENTS[4]; // Dendro
+  if (normalized.includes("sec") || normalized.includes("crypto") || normalized.includes("auth")) {
+    return TEYVAT_ELEMENTS[5]; // Cryo
+  }
   return TEYVAT_ELEMENTS[6]; // Geo
 }
 
@@ -45,19 +33,26 @@ const cardMotion = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  transition: { duration: 0.45, ease: EASE_CODEX },
 } as const;
 
-export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) {
-  const tags = parseTags(project.tags);
+/**
+ * ProjectCard — one artifact in the domain archive.
+ *
+ * The card body links through to the `/projects/<id>` dossier (a stretched
+ * link over the whole card), while the external live/source buttons stay
+ * independent above it.
+ */
+export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardProps) {
   const element = getElementForCategory(project.category);
   const is5Star = project.complexity.includes("S") || project.complexity.includes("A");
+  const dossierHref = `/projects/${project.id}`;
 
   return (
     <motion.div {...cardMotion} className="h-full">
-      <div className="group h-full bg-[#FAF8F5] dark:bg-surface-primary/90 parchment-panel dark:glass-panel rounded-3xl border-2 border-leather-caramel/30 dark:border-gold-400/30 overflow-hidden card-lift flex flex-col justify-between relative shadow-xl">
+      <div className="group relative h-full codex-panel rounded-3xl overflow-hidden codex-lift flex flex-col justify-between">
         {/* Top Media & Artifact Realm Frame */}
-        <div className="relative h-48 sm:h-52 overflow-hidden bg-[#F3EDDF] dark:bg-surface-primary border-b border-leather-caramel/25 dark:border-gold-400/20">
+        <div className="relative h-48 sm:h-52 overflow-hidden bg-parchment-subtle dark:bg-surface-primary border-b border-leather-caramel/25 dark:border-gold-400/25">
           {project.image && project.image !== "/placeholder.svg" ? (
             <Image
               src={project.image}
@@ -68,7 +63,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
               unoptimized
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#EFE8D6] via-[#FAF8F5] to-[#E2D6C0] dark:from-gold-400/15 dark:via-surface-primary dark:to-[#182040]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle dark:from-gold-400/10 dark:via-surface-primary dark:to-deep-space" />
           )}
 
           {/* Ambient Elemental Glow on Card Media */}
@@ -77,18 +72,18 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
             style={{ backgroundColor: element.color }}
           />
 
-          {/* Top-Right: 5★ Artifact Rarity Stars */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#FAF8F5]/95 dark:bg-black/85 px-3.5 py-1 rounded-full border border-leather-caramel/40 dark:border-gold-400/30 shadow-md">
-            <span className="text-[#DFAE2A] dark:text-gold-400 text-xs tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+          {/* Top-Right: Artifact Rarity Stars */}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-parchment-base/95 border border-leather-caramel/40 px-3.5 py-1 rounded-full shadow-md dark:bg-deep-space/85 dark:border-gold-400/30">
+            <span className="text-gold-500 dark:text-gold-400 text-xs tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
               {is5Star ? "★★★★★" : "★★★★☆"}
             </span>
-            <span className="font-serif text-[9px] text-[#2C1E14] dark:text-gold-200 font-bold uppercase">
-              ARTIFACT
+            <span className="font-serif text-[9px] text-leather-dark dark:text-platinum-50 font-bold uppercase">
+              Artifact
             </span>
           </div>
 
           {/* Top-Left: Official Elemental Vision Medallion */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#FAF8F5]/95 dark:bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-leather-caramel/40 dark:border-gold-400/40 shadow-md">
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-parchment-base/95 backdrop-blur-md px-3 py-1 rounded-full border border-leather-caramel/40 shadow-md dark:bg-deep-space/70 dark:border-gold-400/40">
             <div className="w-5 h-5 relative">
               <Image
                 src={element.gildedIcon}
@@ -96,6 +91,7 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
                 width={20}
                 height={20}
                 className="object-contain transition-transform group-hover:scale-110"
+                unoptimized
               />
             </div>
             <span
@@ -106,14 +102,10 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
             </span>
           </div>
 
-          {/* Bottom Telemetry Strip */}
-          <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-            <span className="font-mono text-[9px] text-[#8C6239] dark:text-platinum-300 font-bold">
-              DOMAIN // {project.category.toUpperCase()}
-            </span>
-            <span className="font-mono text-[9px] text-[#8C6239] dark:text-gold-400 font-bold">
-              PERF: {project.performance}
-            </span>
+          {/* Bottom Domain Strip */}
+          <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between gap-2 rounded-full border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-base/90 px-3 py-1 backdrop-blur-sm dark:bg-deep-space/85">
+            <span className="codex-label">Domain · {project.category}</span>
+            <span className="codex-label-gold tabular-nums">Performance {project.performance}</span>
           </div>
         </div>
 
@@ -121,32 +113,39 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
         <div className="p-6 flex-1 flex flex-col justify-between space-y-4 bg-transparent">
           <div>
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-serif text-lg font-bold tracking-wide text-[#2C1E14] dark:text-platinum-50 group-hover:text-[#8C6239] dark:group-hover:text-gold-400 transition-colors uppercase">
-                {project.title}
+              <h3 className="font-serif text-lg font-bold tracking-wide text-leather-dark dark:text-platinum-50 group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors uppercase">
+                <Link
+                  href={dossierHref}
+                  className="codex-focus after:absolute after:inset-0 after:content-['']"
+                >
+                  {project.title}
+                </Link>
               </h3>
-              <span className="text-[10px] font-mono text-[#8C6239] dark:text-text-muted shrink-0 tabular-nums font-bold">
-                // {project.year}
+              <span className="text-[11px] font-serif text-leather-caramel dark:text-gold-400 shrink-0 tabular-nums font-bold">
+                {project.year}
               </span>
             </div>
 
-            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#2C1E14] dark:text-platinum-200 font-body font-medium line-clamp-3">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-leather-muted dark:text-platinum-200 font-body font-medium line-clamp-3">
               {project.description}
             </p>
 
             {/* Tech Stack Tags */}
-            <div className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies used">
-              {tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-0.5 rounded-full bg-[#8C6239]/10 dark:bg-gold-400/10 border border-[#8C6239]/25 dark:border-gold-400/25 text-[#2C1E14] dark:text-platinum-200 text-[10px] font-mono font-bold"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            {project.tags.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies used">
+                {project.tags.slice(0, 4).map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-0.5 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-platinum-50 text-[11px] font-body font-semibold"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Action Links Styled as Genshin Domain Buttons */}
+          {/* Action Links — external domains & source forges */}
           <div className="pt-3 border-t border-leather-caramel/20 dark:border-gold-400/20 flex items-center gap-2.5">
             {project.liveUrl && (
               <a
@@ -154,18 +153,19 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Enter Domain ${project.title}`}
-                className="genshin-btn-primary px-4 py-2 font-serif text-[11px] font-bold tracking-wider hover:opacity-95 transition-all inline-flex items-center gap-1.5 shadow-sm"
+                className="codex-btn-primary codex-focus relative z-10 px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
-                <div className="w-3.5 h-3.5 relative">
+                <span className="w-3.5 h-3.5 relative">
                   <Image
                     src={GENSHIN_UI_ICONS.domain}
-                    alt="Domain"
+                    alt=""
                     width={14}
                     height={14}
                     className="object-contain brightness-0"
+                    unoptimized
                   />
-                </div>
-                <span>ENTER DOMAIN</span>
+                </span>
+                <span>Enter Domain</span>
               </a>
             )}
             {project.githubUrl && (
@@ -174,18 +174,19 @@ export const ProjectCard = memo(function ProjectCard(project: ProjectCardProps) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`View code for ${project.title}`}
-                className="genshin-btn-secondary px-3.5 py-2 font-mono text-[11px] tracking-wider transition-all inline-flex items-center gap-1.5"
+                className="codex-btn-secondary codex-focus relative z-10 px-3.5 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
-                <div className="w-3.5 h-3.5 relative">
+                <span className="w-3.5 h-3.5 relative">
                   <Image
                     src={GENSHIN_UI_ICONS.trainingGuide}
-                    alt="Training Guide"
+                    alt=""
                     width={14}
                     height={14}
                     className="object-contain"
+                    unoptimized
                   />
-                </div>
-                <span>FORGE LORE</span>
+                </span>
+                <span>Forge Lore</span>
               </a>
             )}
           </div>

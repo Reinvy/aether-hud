@@ -1,33 +1,33 @@
 # AGENTS.md — Engineering & Agent Architecture Guide
 
-> **AETHER-HUD** — High-End Tactical Portfolio & Dashboard Platform  
-> **Core Concept:** Luxury Cybernetics / Tactical Glassmorphism (AAA Game HUD)  
-> **Authority:** This document serves as the master engineering directive for all AI agents and engineers working on this codebase. It enforces architectural consistency, type safety, security, and quality gates across the entire system.
+> **TEYVAT CODEX** — Interactive Traveler Dossier & Codex Console
+> **Core Concept:** Luxury Fantasy RPG / Illuminated Traveler Dossier
+> **Authority:** This document is the master engineering directive for all AI agents and engineers on this codebase. It enforces architectural consistency, type safety, security and quality gates across the system.
 
 ---
 
 ## 1. Core Mission & Principles
 
-1. **Code Consistency & Precision:** Every file, component, route, and module must adhere to uniform design patterns, naming conventions, and structural boundaries.
-2. **Strict Type Safety:** Zero tolerance for unsafe types (`any`), unhandled nulls, or loose type assertions.
-3. **Resilient & Fail-Closed Architecture:** APIs and database queries must fail gracefully with structured responses without crashing the runtime or exposing sensitive data.
-4. **Design System Fidelity:** All visual implementations must strictly comply with [DESIGNS.md](file:///Volumes/Reinshy/Workspace/Personal/Aether%20HUD/aether-hud/DESIGNS.md). Generic styling defaults (such as standard rounded corners) are strictly prohibited.
-5. **Quality Verification Before Completion:** No code change is complete without passing all type checks, lint checks, test suites, and production build gates.
+1. **Code Consistency & Precision:** Every file, component, route and module adheres to uniform patterns, naming conventions and structural boundaries.
+2. **Strict Type Safety:** Zero tolerance for `any`, unhandled nulls, or loose assertions. The wire contract lives in `src/lib/dto.ts`; never redefine it locally.
+3. **Resilient & Fail-Closed Architecture:** The codex must render completely with **no database at all**, writes must be authenticated, and APIs must fail closed with structured errors instead of crashing or leaking internals.
+4. **Design System Fidelity:** All visual work follows [DESIGNS.md](DESIGNS.md) — warm parchment, saddle leather, imperial gold, organic fantasy curves. Tactical/mecha styling (chamfered cuts, scanlines, monospace telemetry jargon, obsidian panels in light mode) is prohibited.
+5. **Quality Verification Before Completion:** No change is complete until type check, lint, the e2e/navigation suites and the production build all pass.
 
 ---
 
 ## 2. Technology Stack & Runtime Matrix
 
-| Layer | Technology | Specification / Role |
+|Layer|Technology|Specification / Role|
 |---|---|---|
-| **Framework** | Next.js 16 (App Router) | Server & Client Components, Route Handlers, Metadata API |
-| **Language** | TypeScript 5 (Strict Mode) | Strong typing, strict null checks, explicit return types |
-| **UI Library** | React 19 | Server/Client rendering, React Hooks, Context API |
-| **Styling** | Tailwind CSS v4 | CSS variable token theme, utility classes, `@theme inline` |
-| **Database & ORM** | PostgreSQL + Prisma v7 | Prisma Client with `@prisma/adapter-pg` driver adapter |
-| **Icons** | Lucide React | Tactical system icons with HUD color and stroke styling |
-| **Animation** | Framer Motion & CSS | Easing curves `cubic-bezier(0.16, 1, 0.3, 1)`, HUD micro-interactions |
-| **Testing** | Node.js E2E Test Suite | Automated route auditing, navigation verification, API schema tests |
+|**Framework**|Next.js 16 (App Router)|Server & Client Components, Route Handlers, Metadata API, ISR|
+|**Language**|TypeScript 5 (Strict)|Strong typing, strict null checks, explicit return types|
+|**UI Library**|React 19|Server/Client rendering, hooks, context|
+|**Styling**|Tailwind CSS v4|CSS-variable token theme, `@theme inline`, `@custom-variant dark`|
+|**Database & ORM**|PostgreSQL + Prisma v7|`PrismaClient` with the `@prisma/adapter-pg` driver adapter|
+|**Icons**|Lucide React + Genshin UI icons|HUD chrome uses Lucide; lore/nav iconography uses `public/ui-icons`|
+|**Animation**|Framer Motion & CSS|Shared easing `EASE_CODEX` = `cubic-bezier(0.16, 1, 0.3, 1)`|
+|**Testing**|Node.js E2E suite|Route auditing, navigation integrity, API schema and write-guard tests|
 
 ---
 
@@ -36,142 +36,132 @@
 ```
 aether-hud/
 ├── src/
-│   ├── app/                         # Next.js App Router (Pages, Layouts, APIs)
-│   │   ├── (public)/                # Landing portfolio pages & root layout
-│   │   ├── dashboard/               # Tactical CMS Dashboard pages & views
-│   │   ├── login/                   # Authentication view & login flow
-│   │   ├── api/                     # REST API Route Handlers (JSON endpoints)
-│   │   └── globals.css              # Master Design System CSS & Token definitions
+│   ├── app/
+│   │   ├── page.tsx                  # Server composition root: fetches every dataset
+│   │   ├── home-content.tsx          # Presentational homepage composition (client)
+│   │   ├── projects/[id]/page.tsx    # Public domain dossier (server, static params)
+│   │   ├── dashboard/                # Codex Console (auth-gated CMS)
+│   │   ├── login/                    # Console sign-in
+│   │   ├── api/                      # JSON route handlers
+│   │   ├── opengraph-image.tsx       # Social share card (next/og)
+│   │   └── globals.css               # Design tokens, theme scopes, class registry
 │   │
-│   ├── components/                  # Component Library (Strict Layering)
-│   │   ├── ui/                      # Atomic HUD Primitives (Button, Card, Input, Modal, etc.)
-│   │   ├── features/                # Domain-Specific Feature Blocks & Sub-views
-│   │   ├── layout/                  # Global Layouts (HUD Header, Footer, Sidebar, Page Headers)
-│   │   └── sections/                # Main Landing Page Sections (Hero, Projects, Skills, Contact)
+│   ├── components/
+│   │   ├── ui/                       # Business-logic-free primitives
+│   │   ├── features/                 # Domain blocks (forms, cards, rows, panels)
+│   │   ├── layout/                   # Shell: site header/footer, rail, dock, sidebar
+│   │   └── sections/                 # Landing sections (prop-driven, server-rendered)
 │   │
-│   ├── lib/                         # Core Infrastructure & Utilities
-│   │   ├── prisma.ts                # Prisma v7 Client Singleton instance
-│   │   ├── constants.ts             # Static configurations, routes, and data models
-│   │   ├── utils.ts                 # `cn()` className utility (clsx + tailwind-merge)
-│   │   ├── api-helpers.ts           # API response helpers and request parsers
-│   │   ├── motion-variants.ts       # Shared Framer Motion animation configurations
-│   │   ├── auth-context.tsx         # Client authentication state provider
-│   │   └── sidebar-context.tsx      # Dashboard sidebar state provider
+│   ├── lib/
+│   │   ├── dto.ts                    # ⚠ THE wire contract for every payload
+│   │   ├── portfolio-repo.ts         # ⚠ The only module that reads content (DB-or-fallback)
+│   │   ├── navigation.ts             # ⚠ The only navigation registry
+│   │   ├── session.ts                # HMAC session tokens (node:crypto)
+│   │   ├── api-client.ts             # Typed client for dashboard mutations (ApiError)
+│   │   ├── api-helpers.ts            # ok/fail/failNoDb/requireSession + cache headers
+│   │   ├── use-list-controls.ts      # Search + sort + pagination + selection
+│   │   ├── use-active-section.ts     # The single scroll-spy observer
+│   │   ├── reorder.ts                # Adjacent `order` swap helper
+│   │   ├── motion-variants.ts        # EASE_CODEX + shared variants
+│   │   ├── prisma.ts                 # Prisma client singleton
+│   │   ├── constants.ts              # Product identity + static data types
+│   │   ├── auth-context.tsx          # Client session state (cookie-backed)
+│   │   └── sidebar-context.tsx       # Console sidebar state
 │   │
-│   └── data/                        # Static fallback data & initial seed datasets
-│       └── portfolio.ts             # Baseline portfolio data (Projects, Skills, Socials)
+│   └── data/
+│       ├── portfolio.ts              # Authored dataset (static-data mode + seed source)
+│       └── sections.ts               # SECTION_FALLBACKS for the section registry
 │
-├── prisma/                          # Database Schema & Migrations
-│   ├── schema.prisma                # Data models and provider configurations
-│   ├── migrations/                  # Versioned SQL migration history
-│   └── seed.ts                      # Database seeding script
-│
-├── e2e/                             # End-to-End & Integration Test Suites
-│   ├── navigation.test.mjs          # Route accessibility, anchors, manifest, and icons audit
-│   └── run-tests.mjs                # Production build & route validation runner
-│
-├── DESIGNS.md                       # Master UI/UX Design System Specification
-└── AGENTS.md                        # Master Engineering Guide (This Document)
+├── prisma/                           # schema.prisma, migrations/, seed.ts
+├── e2e/                              # navigation.test.mjs, run-tests.mjs, test-server.mjs
+├── DESIGNS.md                        # Master UI/UX specification
+└── AGENTS.md                         # This document
 ```
 
-### Architectural Layering Rules:
-- **`src/components/ui/`**: Must remain completely reusable and agnostic of business logic. Do not import API helpers or database clients here.
-- **`src/components/features/`**: Houses domain-specific interactive blocks (e.g. `profile-preview-card.tsx`, `project-archive-row.tsx`). Decompose complex dashboard views into modular feature components.
-- **`src/components/sections/`**: Landing page sections. Must be optimized for performance, responsive across all viewports, and visually immersive.
-- **`src/app/api/`**: Pure backend route handlers. Never return raw HTML; always return structured JSON with appropriate HTTP status codes.
+### Architectural layering rules
+- **`components/ui/`** — reusable, agnostic of business logic. Never import API helpers, the repo or `prisma` here.
+- **`components/features/`** — domain blocks. Decompose complex console views into modular feature components rather than growing a view file.
+- **`components/sections/`** — landing sections. They are **presentational**: props only, no fetching, no loading states (the homepage is server-rendered).
+- **`app/api/`** — structured JSON only, never raw HTML.
 
 ---
 
 ## 4. Coding Standards & Consistency Guidelines
 
-### 4.1. TypeScript Strictness
-- **No `any` or loose `unknown` casts:** Define explicit interfaces and type aliases for all payloads, props, state, and API responses.
-- **Encapsulate Module-Private Types:** If a type or interface is only used within a single component/file, do NOT export it. Keep it module-private to prevent dead exports across the codebase.
-- **Interface Naming:** Props interfaces must follow `[ComponentName]Props` (e.g. `ButtonProps`, `ProjectCardProps`).
-- **Strict Return Types:** All utility functions and API handlers must have predictable and typed return values.
+### 4.1 TypeScript strictness
+- No `any` and no loose `unknown` casts. Define explicit interfaces for payloads, props and state.
+- **Module-private types stay private.** A type used by one file must not be exported.
+- Props interfaces are named `<Component>Props`.
+- Utility functions and handlers have explicit, predictable return types.
 
-### 4.2. Component Architecture (Server vs. Client)
-- **Default to Server Components:** Keep components as Server Components unless interactivity, browser APIs, or React Hooks (`useState`, `useEffect`, `useCallback`, `useContext`) are required.
-- **Mark Client Components Explicitly:** Place `"use client";` at the very first line of interactive components.
-- **Dynamic Imports for Heavy Dialogs:** Modals and heavy interactive sheets should utilize `next/dynamic` where suitable to keep initial bundle sizes minimal.
-- **Accessible State Handling:** All interactive elements must support keyboard navigation, visible focus indicators (`focus-ring-gold`), proper `aria-*` attributes, and disabled states.
+### 4.2 Component architecture (Server vs Client)
+- **Default to Server Components.** The homepage, project dossiers and all route wrappers are server components.
+- Data fetching happens on the server through `src/lib/portfolio-repo.ts`; client components receive **props**. The only client-side fetches are console reads (`useData`) and mutations (`api-client`).
+- Mark client components explicitly with `"use client";` as the first line.
+- Heavy modals use `next/dynamic` with the existing loader overlay.
+- All interactive elements support keyboard navigation, a visible focus indicator (`.codex-focus`), correct `aria-*` attributes and disabled states.
 
-### 4.3. API Route Architecture & Security
-- **Strict HTTP Method Guarding:** Check and enforce allowed HTTP methods (e.g. `GET`, `POST`, `PUT`, `DELETE`).
-- **Fail-Closed Authentication:** Protected endpoints must validate the session or `DASHBOARD_SECRET` / `Authorization` header. If the secret is unset in environment variables, fail closed immediately (return HTTP `503` or `401`).
-- **Structured Error Handling:** Wrap all API route logic in top-level `try/catch` blocks:
-  ```typescript
-  export async function GET(req: Request) {
-    try {
-      // Endpoint logic...
-      return NextResponse.json({ data: result }, { status: 200 });
-    } catch (error) {
-      console.error("[API_ENDPOINT_TAG]", error instanceof Error ? error.message : error);
-      return NextResponse.json(
-        { error: "Failed to process request" },
-        { status: 500 }
-      );
-    }
-  }
+### 4.3 API route architecture & security
+- **Method guarding**: check and enforce allowed HTTP methods.
+- **Authentication**: every mutating handler starts with the session guard.
+  ```ts
+  const denied = requireSession(req);
+  if (denied) return denied;
+  if (!hasDatabase()) return failNoDb("PROJECTS_POST");
   ```
-- **No Secret Leakage:** Never include database connection strings, secret keys, or internal stack traces in client-facing error responses.
+  `requireSession` fails closed: `503` when `DASHBOARD_SECRET` is unset, `401` on a missing/invalid/expired cookie. `/api/contact` and `/api/telemetry` are intentionally public.
+- **Sessions** are HMAC-signed `httpOnly` cookies minted by `src/lib/session.ts`. Never reintroduce client-stored tokens — the previous base64 `sessionStorage` blob was forgeable.
+- **Static-data mode**: when `DATABASE_URL` is absent, every read is served from `src/data/*` and every write returns `503` with an explanatory message. Use `failNoDb(tag)`; never let a write attempt a Prisma call it cannot complete.
+- **Structured errors**: wrap handler logic in `try/catch` and return `fail(message, "TAG", status)`.
+- **No secret leakage**: never return connection strings, secrets or stack traces to clients.
 
-### 4.4. Database Operations (Prisma v7)
-- **Singleton Client Instance:** Always import `prisma` from `@/lib/prisma`. Never instantiate new `new PrismaClient()` objects in route handlers or components.
-- **Transactional Integrity:** For multi-step data mutations, always wrap queries in `prisma.$transaction([...])`.
-- **Graceful Fallback / Dual-Engine Resilience:** If database connectivity is degraded or unconfigured, dashboard and public routes should fall back gracefully to the static dataset in `src/data/portfolio.ts` without crashing the application.
+### 4.4 Database operations (Prisma v7)
+- Import the singleton: `import { prisma } from "@/lib/prisma"`. Never construct `new PrismaClient()` elsewhere.
+- **Reads go through `src/lib/portfolio-repo.ts`** — the single place implementing dual-engine resilience (database first, authored dataset on any failure, with a tagged `console.warn`).
+- Multi-step mutations use `prisma.$transaction([...])` (see `/api/config/reset`).
+- The console must stay fully usable in static-data mode: lists render the fallback dataset, mutations report the 503 message visibly.
 
-### 4.5. Design System Integration
-- **Refer to [DESIGNS.md](file:///Volumes/Reinshy/Workspace/Personal/Aether%20HUD/aether-hud/DESIGNS.md) for All UI Decisions:** All colors, spacing, borders, chamfered cuts, glassmorphism layers, typography, and animations must strictly follow the tokens and patterns defined in `DESIGNS.md`.
-- **Anti-Generic Enforcement:** Do NOT introduce generic styling (e.g., standard `rounded-lg` / `rounded-2xl` corners). All panels and buttons must use tactical chamfered polygons (`.chamfered`, `.tactical-btn`) or sharp HUD borders.
+### 4.5 Public rendering strategy
+- **`/` (dossier)** — statically generated with `revalidate = 300`. It is content, not a feed; the console's edits appear within the revalidation window.
+- **`/projects/[id]` (domain dossier)** — rendered per request (`dynamic = "force-dynamic"`). It must be reachable the moment a domain is published, and a prerendered/ISR dynamic segment served the not-found render with HTTP 200. `dynamicParams = false` would produce a real 404 but would also 404 every newly published domain until the next deploy — broken links from the homepage — so the route stays dynamic and the not-found page carries `noindex, nofollow` for unknown ids.
+- Everything else under the console is client-rendered behind the session guard.
+
+### 4.6 Design system integration
+- Every colour, spacing value, border, radius, glass layer, typography choice and animation comes from the tokens and classes in `src/app/globals.css` (registry: DESIGNS.md §6).
+- `dark:` utilities follow the **app** theme (`data-theme` / `.dark`) via `@custom-variant dark`. Never rely on `prefers-color-scheme`. Always pair `lightClass dark:darkClass`.
+- **Radius policy:** panels `rounded-3xl`, cards and controls `rounded-2xl` / `rounded-xl`, pills and dots `rounded-full`. `rounded-none` is forbidden.
+- Prefer the class registry (`.codex-panel`, `.codex-card`, `.codex-label`, `.codex-input`, `.codex-btn-primary`, …) over re-deriving those styles with utilities.
 
 ---
 
 ## 5. Quality Gates & Verification Workflow
 
-Before completing any task or proposing changes, you MUST run and pass the following quality verification pipeline in sequence:
-
 ```mermaid
 flowchart LR
     A["1. Type Check<br/>npx tsc --noEmit"] --> B["2. Lint Audit<br/>npx eslint src/"]
-    B --> C["3. E2E & Nav Suite<br/>node e2e/navigation.test.mjs<br/>node e2e/run-tests.mjs"]
+    B --> C["3. E2E & Nav Suite<br/>node e2e/run-tests.mjs<br/>node e2e/navigation.test.mjs"]
     C --> D["4. Production Build<br/>npm run build"]
     D --> E["✅ Task Complete"]
 ```
 
-### Verification Commands:
-1. **Type Safety Check:**
-   ```bash
-   npx tsc --noEmit
-   ```
-   *Expectation: 0 errors.*
+1. **Type safety:** `npx tsc --noEmit` → 0 errors.
+2. **Lint:** `npx eslint src/` → 0 errors, 0 warnings.
+3. **E2E & navigation:** `node e2e/run-tests.mjs && node e2e/navigation.test.mjs` → 100% passing. The suite runs against a production build on `TEST_PORT` (default `3005`).
+4. **Production build:** `npm run build` → clean across static and dynamic routes.
 
-2. **Lint & Code Style Audit:**
-   ```bash
-   npx eslint src/
-   ```
-   *Expectation: 0 errors and 0 warnings.*
-
-3. **E2E & Navigation Test Suite:**
-   ```bash
-   node e2e/navigation.test.mjs
-   node e2e/run-tests.mjs
-   ```
-   *Expectation: 100% tests passing.*
-
-4. **Production Build Gate:**
-   ```bash
-   npm run build
-   ```
-   *Expectation: Clean build across all static and dynamic routes.*
+No database is required for any of the above: verification runs in static-data mode, which is the shipped default.
 
 ---
 
 ## 6. Prohibited Anti-Patterns
 
-- ❌ **No Git Protocol or Commit Automation:** Do not include automated git commit formats, branch scripts, or push rituals. Keep version control clean and standard.
-- ❌ **No Cron Automation / Schedules:** Do not include cron tasks, scheduled agents (C1-C5), or background cron scripts.
-- ❌ **No Generic Rounded Corners:** Never use `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-full` for tactical panels or cards. Use `.chamfered*` classes.
-- ❌ **No Raw / Generic Spinners:** Do not use default `animate-spin`. Use the tactical HUD diamond spinner (`.hud-spinner`) or `.hud-rotate`.
-- ❌ **No Dead Exports:** Do not export symbols, types, or helpers that are not imported by other modules.
-- ❌ **No Hardcoded Secrets or Credentials:** Never commit credentials or assume default secrets. Fail closed when configuration is absent.
+- ❌ **Tactical / mecha styling** — 45° chamfered cuts, scanlines, `.rounded-none`, monospace telemetry jargon (`SYS_NODE // 0x482A`, `DASH//01`, `[ERR_NODE]`), obsidian/slate cards in light mode, faint ghost text.
+- ❌ **Generic spinners** — never `animate-spin` / a plain rotating circle. Use the elemental diamond rotation (`.elemental-rotate`, `CodexLoader`).
+- ❌ **A second navigation array** — `PUBLIC_NAV` / `DASHBOARD_NAV` in `src/lib/navigation.ts` are the only nav registries. Declaring another is a defect (guarded by `e2e/navigation.test.mjs`).
+- ❌ **A second wire type** — `src/lib/dto.ts` owns every payload shape.
+- ❌ **Client-held credentials** — no tokens in `localStorage`/`sessionStorage`; sessions are `httpOnly` cookies.
+- ❌ **Unhandled mutation failures** — every mutation goes through `@/lib/api-client` and surfaces `ApiError.message` to the operator. A silent `console.error` is a defect.
+- ❌ **Dead exports** — no symbols, types or helpers that nothing imports.
+- ❌ **Hardcoded secrets** — never commit credentials or assume a default secret. Absent configuration fails closed.
+- ❌ **Regression-pinning tests** — tests assert observable behaviour; they never pin source text that a legitimate refactor would change.
+- ❌ **Git automation & cron** — no commit-format scripts, branch rituals, or scheduled agents.

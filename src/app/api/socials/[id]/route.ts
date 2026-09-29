@@ -1,13 +1,18 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ok, fail } from "@/lib/api-helpers";
+import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
+import { hasDatabase } from "@/lib/portfolio-repo";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireSession(req);
+  if (denied) return denied;
+  if (!hasDatabase()) return failNoDb("SOCIALS_DELETE");
+
+  const { id } = await params;
   try {
-    const { id } = await params;
     await prisma.socialLink.delete({ where: { id } });
     return ok({ success: true });
   } catch {
-    return fail("Failed to delete social link", "SOCIALS_DELETE");
+    return fail("Social link not found", "SOCIALS_DELETE", 404);
   }
 }

@@ -1,21 +1,21 @@
 import { cn } from "@/lib/utils";
 
 /**
- * StatusDot — reusable HUD diamond status indicator.
+ * StatusDot — reusable status indicator.
  *
  * Replaces ad-hoc `h-2 w-2 rounded-full bg-hud-*` dots scattered across the
  * header, sidebar, login, contact, dashboard headers and activity feed with
- * a single design-system-consistent diamond indicator (rotate-45), matching
- * the AETHER-HUD "diamond indicators" micro-detail language.
+ * a single design-system-consistent indicator (rotate-45), matching
+ * the Teyvat Codex "indicators" micro-detail language.
  *
- * Tones map to the HUD status palette: active (stellar green), warning
- * (amber), danger (rose), gold (imperial), stellar (cyan), muted (titanium).
+ * Tones map to the status palette: active (jade green), warning
+ * (amber), danger (rose), gold (imperial), jade (cyan), muted (default).
  */
 
-export type StatusTone = "active" | "warning" | "danger" | "gold" | "stellar" | "muted";
+export type StatusTone = "active" | "warning" | "danger" | "gold" | "jade" | "muted";
 
 interface StatusDotProps {
-  /** HUD status tone. Defaults to "active". */
+  /** Status tone. Defaults to "active". */
   tone?: StatusTone;
   size?: "sm" | "md";
   /** Enables the energy-pulse animation (used for live/online states). */
@@ -32,16 +32,16 @@ const TONE_STYLES: Record<StatusTone, string> = {
   warning: "bg-hud-warning",
   danger: "bg-hud-danger",
   gold: "bg-gold-400",
-  stellar: "bg-stellar-400",
+  jade: "bg-jade-400",
   muted: "bg-text-muted/40",
 };
 
 const GLOW_STYLES: Record<StatusTone, string> = {
-  active: "shadow-[0_0_6px_rgba(0,255,135,0.6)]",
-  warning: "shadow-[0_0_6px_rgba(255,153,0,0.6)]",
-  danger: "shadow-[0_0_6px_rgba(255,0,85,0.6)]",
+  active: "shadow-[0_0_6px_rgba(0,230,118,0.6)]",
+  warning: "shadow-[0_0_6px_rgba(255,160,0,0.6)]",
+  danger: "shadow-[0_0_6px_rgba(255,23,68,0.6)]",
   gold: "shadow-[0_0_6px_rgba(242,201,76,0.6)]",
-  stellar: "shadow-[0_0_6px_rgba(0,210,255,0.6)]",
+  jade: "shadow-[0_0_6px_rgba(56,239,125,0.6)]",
   muted: "",
 };
 
@@ -61,7 +61,7 @@ export function StatusDot({
         size === "sm" ? "h-2 w-2" : "h-2.5 w-2.5",
         TONE_STYLES[tone],
         glow && GLOW_STYLES[tone],
-        pulse && "animate-energy-pulse",
+        pulse && "animate-pulse",
         className
       )}
     >

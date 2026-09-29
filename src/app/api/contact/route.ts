@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json(
-        { error: "All transmission fields (NAME, EMAIL, SUBJECT, MESSAGE) are required." },
+        { error: "Please fill in your name, email, subject and message." },
         { status: 400 }
       );
     }
@@ -28,26 +28,27 @@ export async function POST(req: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid transmission address format." },
+        { error: "That email address does not look right." },
         { status: 400 }
       );
     }
 
     if (message.length < 5) {
       return NextResponse.json(
-        { error: "Message payload too short for encryption protocol." },
+        { error: "Please write a slightly longer message." },
         { status: 400 }
       );
     }
 
     const transmissionId = `TX-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-    // Return structured transmission verification
+    // The summon desk validates and acknowledges; submissions are not persisted
+    // (see AGENTS.md §4.3 — this endpoint is intentionally public and stateless).
     return NextResponse.json(
       {
         success: true,
         transmissionId,
-        message: "Encrypted transmission delivered to node buffer.",
+        message: "Your message has been received. Expect a reply by email.",
         timestamp: new Date().toISOString(),
       },
       { status: 200 }
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[CONTACT_POST]", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { error: "Transmission node failed to process payload." },
+      { error: "The message could not be sent. Please try again." },
       { status: 500 }
     );
   }

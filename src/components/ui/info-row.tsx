@@ -1,12 +1,11 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type InfoRowTone = "default" | "titanium" | "stellar" | "gold" | "danger";
+type InfoRowTone = "default" | "jade" | "gold" | "danger";
 
 const TONE_CLASS: Record<InfoRowTone, string> = {
   default: "text-text-main",
-  titanium: "text-platinum-100",
-  stellar: "text-stellar-400",
+  jade: "text-jade-400",
   gold: "text-gold-400",
   danger: "text-hud-danger",
 };
@@ -25,9 +24,9 @@ interface InfoRowProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * InfoRow — chamfered HUD key/value row used for read-only system data
+ * InfoRow — codex key/value row used for read-only system data
  * (framework, database, deploy targets, …). Replaces hand-rolled
- * `rounded border` rows with the design-system chamfered treatment and a
+ * `rounded border` rows with the design-system codex treatment and a
  * shared hover micro-interaction.
  */
 function InfoRow({
@@ -42,7 +41,7 @@ function InfoRow({
   return (
     <div
       className={cn(
-        "chamfered-sm flex items-center justify-between gap-3 border border-leather-caramel/20 bg-parchment-subtle/60 px-4 py-3 transition-colors duration-300 hover:border-leather-caramel/40 hover:bg-leather-caramel/10 dark:border-border-subtle dark:bg-deep-space/40 dark:hover:border-border-glass dark:hover:bg-[rgba(242,201,76,0.04)]",
+        "codex-radius-sm flex items-center justify-between gap-3 border border-leather-caramel/20 bg-parchment-subtle/60 px-4 py-3 transition-colors duration-300 hover:border-leather-caramel/40 hover:bg-leather-caramel/10 dark:border-border-subtle dark:bg-deep-space/40 dark:hover:border-border-glass dark:hover:bg-[rgba(242,201,76,0.04)]",
         className
       )}
       {...props}
@@ -56,4 +55,4 @@ function InfoRow({
   );
 }
 
-export { InfoRow, type InfoRowTone };
+export { InfoRow };

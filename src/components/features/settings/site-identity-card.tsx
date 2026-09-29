@@ -21,13 +21,11 @@ interface SiteIdentityCardProps {
 }
 
 /**
- * SiteIdentityCard — editable web-identity panel for the dashboard
- * settings page.
+ * SiteIdentityCard — editable codex identity panel for the settings page.
  *
- * Extracted from settings-view so the identity fields (site name,
- * description, sys version) are a self-contained unit. The view feeds
- * the current form values in and receives field updates through the
- * onChange callback — the card stays presentation-only.
+ * Owns the public-facing identity fields (codex name, description, version).
+ * The view feeds the current form values in and receives field updates through
+ * the onChange callback — the card stays presentation-only.
  */
 export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCardProps) {
   return (
@@ -35,30 +33,30 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-gold-400" />
-            <CardTitle>Site Identity</CardTitle>
+            <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <CardTitle>Codex Identity</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            label="FIELD_01 // SITE NAME"
+            label="Codex name"
             value={values.siteName}
             onChange={(e) => onChange("siteName", e.target.value)}
-            placeholder="AETHER-HUD"
+            placeholder="Teyvat Codex"
           />
           <Textarea
-            label="FIELD_02 // SITE DESCRIPTION"
+            label="Codex description"
             rows={3}
             value={values.siteDescription}
             onChange={(e) => onChange("siteDescription", e.target.value)}
-            placeholder="High-End Tactical Portfolio"
+            placeholder="Interactive Traveler Dossier — portfolio, domains, talents and commissions"
             className="resize-none"
           />
-          <p className="mt-1 sys-label text-[9px] text-text-muted">
-            Used for SEO meta tags and social sharing
+          <p className="mt-1 codex-label text-[9px] text-text-muted">
+            Appears in search results and link previews
           </p>
           <Input
-            label="FIELD_03 // SYS VERSION"
+            label="Codex version"
             value={values.sysVersion}
             onChange={(e) => onChange("sysVersion", e.target.value)}
             placeholder="v2.4.1"

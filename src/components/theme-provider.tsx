@@ -11,7 +11,7 @@ import {
 import { MotionConfig } from "framer-motion";
 import { useData } from "@/lib/use-data";
 
-export type GenshinTheme = "teyvat-codex" | "celestial-night";
+type GenshinTheme = "teyvat-codex" | "celestial-night";
 
 interface ThemeConfig {
   themePreset?: string;
@@ -37,10 +37,7 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 function sanitizeTheme(preset?: string | null): GenshinTheme {
-  if (preset === "celestial-night" || preset === "night-ops") {
-    return "celestial-night";
-  }
-  return "teyvat-codex";
+  return preset === "celestial-night" ? "celestial-night" : "teyvat-codex";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -48,23 +45,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themePreset, setThemePresetState] = useState<GenshinTheme>("teyvat-codex");
   const [animationsEnabled, setAnimationsEnabledState] = useState(true);
 
-  // Sync from API / localStorage on initial load
+  // Sync from the saved preference, falling back to the server config. The
+  // two are independent: a visitor who once toggled the theme still receives
+  // the operator's animation setting.
   useEffect(() => {
-    // Check localStorage first if available
+    let storedTheme: string | null = null;
     try {
-      const stored = localStorage.getItem("aether_theme");
-      if (stored) {
-        setThemePresetState(sanitizeTheme(stored));
-        return;
-      }
-    } catch (_error) {
-      // Ignore localStorage access failures in restricted environments
-      void _error;
+      storedTheme = localStorage.getItem("aether_theme");
+    } catch {
+      // Restricted environments (private mode, blocked storage) keep defaults.
     }
 
-    if (config?.themePreset) {
+    if (storedTheme) {
+      setThemePresetState(sanitizeTheme(storedTheme));
+    } else if (config?.themePreset) {
       setThemePresetState(sanitizeTheme(config.themePreset));
     }
+
     if (typeof config?.animationsEnabled === "boolean") {
       setAnimationsEnabledState(config.animationsEnabled);
     }

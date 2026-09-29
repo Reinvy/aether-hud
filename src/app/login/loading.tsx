@@ -1,12 +1,12 @@
-import { HudLoader } from "@/components/ui/hud-loader";
+import { CodexLoader } from "@/components/ui/codex-loader";
 
 /**
- * Login route loading state — HUD-style session boot indicator.
+ * Login route loading state — codex-style session boot indicator.
  */
 export default function LoginLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-deep-space">
-      <HudLoader label="INITIALIZING SECURE CHANNEL" size="lg" />
+    <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
+      <CodexLoader label="Opening the codex" size="lg" />
     </div>
   );
 }

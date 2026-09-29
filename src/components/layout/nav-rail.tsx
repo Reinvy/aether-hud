@@ -1,42 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sun, Moon } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { PUBLIC_NAV } from "@/lib/navigation";
+import { useActiveSection } from "@/lib/use-active-section";
 import { useTheme } from "@/components/theme-provider";
 
-interface RailItem {
-  id: string;
-  label: string;
-  href: string;
-  icon: string;
-  tag: string;
-}
-
-const RAIL_ITEMS: RailItem[] = [
-  { id: "hero", label: "Traveler", href: "/#hero", icon: GENSHIN_UI_ICONS.character, tag: "TEYVAT//01" },
-  { id: "projects", label: "Domains", href: "/#projects", icon: GENSHIN_UI_ICONS.domain, tag: "ARTIFACTS//02" },
-  { id: "skills", label: "Talents", href: "/#skills", icon: GENSHIN_UI_ICONS.talents, tag: "TALENTS//03" },
-  { id: "experience", label: "Quests", href: "/#experience", icon: GENSHIN_UI_ICONS.handbook, tag: "COMMISSIONS//04" },
-  { id: "testimonials", label: "Allies", href: "/#testimonials", icon: GENSHIN_UI_ICONS.friends, tag: "ALLIES//05" },
-  { id: "contact", label: "Summon", href: "/#contact", icon: GENSHIN_UI_ICONS.mail, tag: "SHRINE//06" },
-];
-
+/**
+ * NavRail — vertical desktop navigation, rendered from `PUBLIC_NAV`.
+ *
+ * The active section comes from the shared `useActiveSection` observer (the
+ * rail previously ran its own duplicated scroll loop, and landing on a hash
+ * never set the active state).
+ */
 export function NavRail() {
-  const [activeSection, setActiveSection] = useState("hero");
+  const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
   const [time, setTime] = useState("");
   const { themePreset, toggleTheme } = useTheme();
-
   const isNight = themePreset === "celestial-night";
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
       setTime(
-        now.toLocaleTimeString("en-US", {
+        new Date().toLocaleTimeString("en-US", {
           hour12: false,
           hour: "2-digit",
           minute: "2-digit",
@@ -49,139 +39,113 @@ export function NavRail() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = RAIL_ITEMS.map((item) => document.getElementById(item.id));
-      const scrollPos = window.scrollY + 300;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const sec = sections[i];
-        if (sec && sec.offsetTop <= scrollPos) {
-          setActiveSection(RAIL_ITEMS[i].id);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <aside
-      aria-label="Teyvat Tactical Rail Navigation"
-      className="hidden lg:flex fixed left-3 xl:left-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-3"
+      aria-label="Codex section rail"
+      /*
+       * The rail is a wide-screen enhancement: sections are centred in a
+       * `max-w-7xl` column, and below ~1400px the outer gutter is narrower than
+       * the rail, which would let it overlap card content. From 1400px up it
+       * floats in the empty margin. The header carries the navigation at every
+       * width where the rail is hidden.
+       */
+      className="fixed left-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-3 min-[1400px]:flex xl:left-5"
     >
-      {/* Top Floating Paimon/Aether Crest Orb */}
       <a
         href="/#hero"
-        aria-label="Back to top"
-        className="w-11 h-11 rounded-full bg-[#FAF8F5] dark:bg-surface-primary border-2 border-[#8C6239]/50 dark:border-gold-400/50 flex items-center justify-center shadow-xl hover:scale-110 transition-transform group relative p-1.5 focus-ring-gold"
+        aria-label="Back to the traveler dossier"
+        className="group relative flex h-11 w-11 items-center justify-center rounded-full border-2 border-leather-caramel/50 dark:border-gold-400/50 bg-parchment-base p-1.5 shadow-xl transition-transform hover:scale-110 dark:bg-surface-primary codex-focus"
       >
         <Image
           src={GENSHIN_UI_ICONS.characterAether}
-          alt="Aether Crest"
+          alt=""
           width={28}
           height={28}
           className="object-contain transition-transform group-hover:rotate-12"
           unoptimized
         />
-        <span className="sr-only">Top</span>
-        {/* Tooltip */}
-        <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
-          <span className="font-bold">TEYVAT CODEX</span>
-        </div>
+        <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
+          Teyvat Codex
+        </span>
       </a>
 
-      {/* Main Vertical Rail Container */}
       <nav
-        role="navigation"
-        aria-label="Section Navigation"
-        className="bg-[#FAF8F5]/95 dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl py-3 px-1.5 flex flex-col items-center gap-2 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl"
+        aria-label="Codex sections"
+        className="codex-panel flex flex-col items-center gap-2 rounded-3xl border-2 border-leather-caramel/30 px-1.5 py-3 shadow-2xl dark:border-gold-400/30"
       >
-        {RAIL_ITEMS.map((item) => {
-          const isActive = activeSection === item.id;
+        {PUBLIC_NAV.map((item) => {
+          const isActive = activeSection === item.sectionId;
           return (
             <a
-              key={item.id}
+              key={item.sectionId}
               href={item.href}
               aria-label={item.label}
+              aria-current={isActive ? "location" : undefined}
               className={cn(
-                "group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 p-2 focus-ring-gold",
+                "group relative flex h-10 w-10 items-center justify-center rounded-2xl p-2 transition-all duration-300 codex-focus",
                 isActive
-                  ? "bg-[#8C6239] dark:bg-gold-400 shadow-md scale-105"
-                  : "bg-leather-caramel/5 dark:bg-surface-primary/60 hover:bg-leather-caramel/15 dark:hover:bg-gold-400/15"
+                  ? "scale-105 bg-leather-caramel shadow-md dark:bg-gold-400"
+                  : "bg-leather-caramel/5 hover:bg-leather-caramel/15 dark:bg-surface-primary/60 dark:hover:bg-gold-400/15"
               )}
             >
               <Image
-                src={item.icon}
-                alt={item.label}
+                src={GENSHIN_UI_ICONS[item.icon]}
+                alt=""
                 width={22}
                 height={22}
                 className={cn(
                   "object-contain transition-transform group-hover:scale-110",
-                  isActive ? "brightness-0 invert dark:brightness-0" : "opacity-85 group-hover:opacity-100"
+                  isActive ? "brightness-0 invert" : "opacity-85 group-hover:opacity-100"
                 )}
                 unoptimized
               />
-
-              {/* Hover Tooltip */}
-              <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
-                <span className="font-bold">{item.label.toUpperCase()}</span>
-                <span className="ml-2 opacity-60 text-[9px]">// {item.tag}</span>
-              </div>
+              <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
+                {item.label}
+              </span>
             </a>
           );
         })}
 
-        {/* Divider */}
-        <div className="w-6 h-px bg-leather-caramel/30 dark:bg-gold-400/30 my-1" />
+        <div className="my-1 h-px w-6 bg-leather-caramel/30 dark:bg-gold-400/30" />
 
-        {/* Theme Switcher Button (☀️ / 🌙) */}
         <button
           type="button"
           onClick={toggleTheme}
-          aria-label={isNight ? "Switch to Ivory Codex theme" : "Switch to Celestial Night theme"}
-          className="group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+          aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+          className="group relative flex h-10 w-10 items-center justify-center rounded-2xl bg-leather-caramel/10 p-2 text-leather-dark transition-all duration-300 hover:scale-105 dark:bg-gold-400/10 dark:text-gold-400 codex-focus"
         >
           {isNight ? (
-            <Sun className="h-4 w-4 text-gold-400 transition-transform rotate-0 group-hover:rotate-45" />
+            <Sun className="h-4 w-4 text-gold-400" />
           ) : (
-            <Moon className="h-4 w-4 text-[#8C6239] transition-transform rotate-0 group-hover:-rotate-12" />
+            <Moon className="h-4 w-4 text-leather-caramel" />
           )}
-
-          {/* Theme Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
-            <span className="font-bold">{isNight ? "THEME: IVORY CODEX" : "THEME: CELESTIAL NIGHT"}</span>
-          </div>
+          <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
+            {isNight ? "Parchment theme" : "Celestial night"}
+          </span>
         </button>
 
-        {/* Staff Portal Link */}
         <Link
           href="/login"
-          aria-label="Staff Portal Login"
-          className="group relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 focus-ring-gold p-2"
+          aria-label="Codex Console"
+          className="group relative flex h-10 w-10 items-center justify-center rounded-2xl bg-leather-caramel/10 p-2 transition-all duration-300 hover:scale-105 dark:bg-gold-400/10 codex-focus"
         >
-          <div className="w-4 h-4 relative">
-            <Image
-              src={GENSHIN_UI_ICONS.archive}
-              alt="Staff Portal"
-              width={16}
-              height={16}
-              className="object-contain"
-            />
-          </div>
-          {/* Staff Tooltip */}
-          <div className="pointer-events-none absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-[#2C1E14] text-[#FAF8F5] dark:bg-surface-primary dark:text-gold-400 border border-leather-caramel/30 dark:border-gold-400/30 text-[10px] font-mono whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-2xl z-50">
-            <span className="font-bold">STAFF PORTAL</span>
-          </div>
+          <Image
+            src={GENSHIN_UI_ICONS.archive}
+            alt=""
+            width={16}
+            height={16}
+            className="object-contain"
+            unoptimized
+          />
+          <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
+            Codex Console
+          </span>
         </Link>
       </nav>
 
-      {/* Bottom Mini Clock / Realm Clock */}
-      <div className="rounded-full bg-[#FAF8F5]/95 dark:bg-surface-primary/90 border border-leather-caramel/30 dark:border-gold-400/25 px-3 py-1 flex items-center gap-1.5 shadow-md">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="font-mono text-[9px] text-[#2C1E14] dark:text-platinum-200 font-bold tabular-nums">
+      <div className="flex items-center gap-1.5 rounded-full border border-leather-caramel/30 bg-parchment-base/95 px-3 py-1 shadow-md dark:border-gold-400/25 dark:bg-surface-primary/90">
+        <span className="h-1.5 w-1.5 rounded-full bg-jade-400 animate-pulse" />
+        <span className="tabular-nums text-[9px] font-bold text-leather-dark dark:text-platinum-200">
           {time || "--:--"}
         </span>
       </div>

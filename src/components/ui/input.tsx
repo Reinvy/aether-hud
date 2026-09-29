@@ -23,14 +23,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={id}
-            className="sys-label mb-2 block text-[#1E1208] dark:text-platinum-200 font-bold tracking-wider"
+            className="codex-label mb-2 block text-leather-dark dark:text-platinum-200 font-bold tracking-wider"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {prefix && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#8C6239] dark:text-gold-400">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-leather-caramel dark:text-gold-400">
               {prefix}
             </div>
           )}
@@ -38,8 +38,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             className={cn(
-              "input-recessed rounded-xl w-full px-4 py-2.5 text-sm font-body transition-all duration-300 font-medium",
-              "text-[#1E1208] dark:text-platinum-50 placeholder:text-[#5E412A]/60 dark:placeholder:text-text-muted/60",
+              "codex-input rounded-xl w-full px-4 py-2.5 text-sm font-body transition-all duration-300 font-medium",
+              "text-leather-dark dark:text-platinum-50 placeholder:text-leather-muted/60 dark:placeholder:text-text-muted/60",
               prefix && "pl-10",
               suffix && "pr-10",
               error && "border-hud-danger",
@@ -59,8 +59,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="mt-1.5 text-xs font-mono text-hud-danger">
-            [ERROR] // {error}
+          <p role="alert" className="mt-1.5 text-xs text-hud-danger">
+            {error}
           </p>
         )}
       </div>

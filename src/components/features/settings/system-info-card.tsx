@@ -1,31 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code2 } from "lucide-react";
+import { ScrollText } from "lucide-react";
 import { fadeInUp } from "@/lib/motion-variants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InfoRow } from "@/components/ui/info-row";
 import { useData } from "@/lib/use-data";
+import type { ConfigDto } from "@/lib/dto";
 
 interface SystemInfoCardProps {
   /** Panel grid position — drives the staggered enter animation delay. */
   delay?: number;
 }
 
-interface SiteConfig {
-  siteName: string;
-  sysVersion: string;
-  status: string;
-}
-
 /**
- * SystemInfoCard — dynamic stack readout for the dashboard settings page.
+ * SystemInfoCard — read-only codex readout for the settings page.
  *
- * Displays live platform facts (framework / database / deploy / design system version).
+ * Reports the identity and platform facts of this deployment: the codex name
+ * and version the operator published (`siteName` / `sysVersion` from
+ * `/api/config`), its availability, and the stack serving it.
  */
 export function SystemInfoCard({ delay = 0 }: SystemInfoCardProps) {
-  const { data: config } = useData<SiteConfig>("/api/config");
+  const { data: config } = useData<ConfigDto>("/api/config");
 
+  const siteName = config?.siteName || "Teyvat Codex";
   const sysVersion = config?.sysVersion || "v2.4.1";
   const sysStatus = config?.status || "ONLINE";
 
@@ -34,29 +32,33 @@ export function SystemInfoCard({ delay = 0 }: SystemInfoCardProps) {
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Code2 className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <ScrollText className="h-4 w-4 text-gold-400" aria-hidden="true" />
             <CardTitle>System Information</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
           <InfoRow
-            label="FRAMEWORK"
-            value="Next.js 16 (App Router)"
+            label="Codex"
+            value={siteName}
           />
           <InfoRow
-            label="DATABASE"
-            value="PostgreSQL (Prisma ORM)"
-            tone="stellar"
-          />
-          <InfoRow
-            label="NODE STATUS"
-            value={sysStatus}
-            tone="stellar"
-          />
-          <InfoRow
-            label="CORE DESIGN VERSION"
-            value={`AETHER-HUD ${sysVersion}`}
+            label="Codex version"
+            value={sysVersion}
             tone="gold"
+          />
+          <InfoRow
+            label="Availability"
+            value={sysStatus}
+            tone="jade"
+          />
+          <InfoRow
+            label="Platform"
+            value="Next.js 16 · App Router"
+          />
+          <InfoRow
+            label="Data store"
+            value="PostgreSQL · Prisma"
+            tone="jade"
           />
         </CardContent>
       </Card>

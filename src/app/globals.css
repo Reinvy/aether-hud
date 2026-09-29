@@ -1,32 +1,55 @@
 /* ============================================================
-   AETHER-HUD — Teyvat Codex & Celestial Fantasy UI Design System
-   Inspired by Genshin Impact (Traveler Dossier & Inazuma Celestial Night)
+   TEYVAT CODEX — Design System
+   Warm parchment, saddle leather, imperial gold, organic curves.
    Dual-Theme Engine:
-     1. ☀️ Teyvat Codex (Default Warm Ivory Parchment)
-     2. 🌙 Celestial Night (Midnight Indigo & Electro Gold)
+     1. ☀️ Teyvat Codex    (default warm ivory parchment)
+     2. 🌙 Celestial Night (midnight indigo & electro gold)
    ============================================================ */
 
 @import "tailwindcss";
 
+/*
+ * The app theme is driven by `data-theme` on <html> (ThemeProvider) — never by
+ * the OS preference. Without this variant, every `dark:` utility followed
+ * `prefers-color-scheme`, so an OS-dark visitor in light mode got the espresso
+ * palette (the hero card rendered rgb(26,18,12)).
+ *
+ * Both the theme root and its descendants must match: Tailwind appends the
+ * `:where(...)` argument to the utility class itself, so a variant listing only
+ * `.dark` would restrict `dark:` utilities to the <html> element and leave every
+ * nested element on the light palette. `night-ops` survives as a legacy alias
+ * for one release; see theme-provider.tsx.
+ */
+@custom-variant dark (&:where(
+  [data-theme="celestial-night"], [data-theme="celestial-night"] *,
+  [data-theme="night-ops"], [data-theme="night-ops"] *,
+  .dark, .dark *
+));
+
 /* ─── Design Tokens ────────────────────────────────────────── */
-@theme inline {
-  /* Teyvat Codex (Warm Parchment & Saddle Leather) */
+/*
+ * Deliberately NOT `@theme inline`. With inlining, every utility compiles to
+ * the literal hex (`text-leather-dark` → `color: #2c1e14`), so the
+ * `[data-theme="celestial-night"]` overrides below could never reach them and
+ * dark surfaces ended up with espresso text on an espresso panel. Referencing
+ * the variables (`color: var(--color-leather-dark)`) lets each token flip with
+ * the theme from one place, so a component never has to restate the pair.
+ */
+@theme {
+  /* Teyvat Codex (warm parchment & saddle leather) */
   --color-parchment-base: #FAF8F5;
   --color-parchment-subtle: #F3EDDF;
   --color-parchment-elevated: #EDE5D2;
   --color-leather-dark: #2C1E14;
   --color-leather-caramel: #8C6239;
-  --color-leather-cognac: #8B5738;
   --color-leather-muted: #5E412A;
-  --color-leather-accent: #6E4024;
 
-  /* Genshin Dark Brown Codex (Genshin Archive Dark Palette) */
+  /* Celestial Night surfaces */
   --color-deep-space: #1A120C;
   --color-surface-primary: #241810;
-  --color-surface-overlay: rgba(36, 24, 16, 0.95);
   --color-glass-card: rgba(45, 30, 21, 0.90);
 
-  /* Brand / Luxury Accents (Imperial Gold) */
+  /* Brand / luxury accents (imperial gold) */
   --color-gold-50: #FEFAEE;
   --color-gold-100: #FDF2CA;
   --color-gold-200: #FCE69C;
@@ -38,13 +61,19 @@
   --color-gold-800: #6E4F0E;
   --color-gold-900: #4A3509;
 
-  /* Titanium / Platinum secondary */
+  /* Jade — the sanctioned green (growth, health, "deployed") */
+  --color-jade-300: #86E29B;
+  --color-jade-400: #38EF7D;
+  --color-jade-500: #19C46A;
+  --color-jade-600: #0E9B52;
+
+  /* Platinum — neutral metal for dark-surface text */
   --color-platinum-50: #F4F6F8;
   --color-platinum-100: #E0E6ED;
   --color-platinum-200: #C7D0DB;
   --color-platinum-300: #ADB6C4;
 
-  /* 7 Elemental Vision Scales */
+  /* 7 Elemental Vision scales */
   --color-element-pyro: #FF5E41;
   --color-element-hydro: #29B6F6;
   --color-element-anemo: #4DD0E1;
@@ -53,38 +82,38 @@
   --color-element-cryo: #80DEEA;
   --color-element-geo: #FFB74D;
 
-  /* Legacy Stellar Scale compatibility */
-  --color-stellar-400: #38EF7D;
-  --color-stellar-500: #00D2FF;
-  --color-stellar-600: #00A8CC;
-
-  /* HUD Status */
+  /* Status */
   --color-hud-active: #00E676;
   --color-hud-warning: #FFA000;
   --color-hud-danger: #FF1744;
 
-  /* Borders & Glass */
-  --color-glass-100: rgba(255, 255, 255, 0.04);
+  /* Glass & borders */
   --color-glass-200: rgba(255, 255, 255, 0.08);
   --color-glass-300: rgba(255, 255, 255, 0.14);
-  --color-glass-400: rgba(255, 255, 255, 0.20);
-
   --color-border-glass: rgba(242, 201, 76, 0.35);
   --color-border-subtle: rgba(140, 98, 57, 0.22);
   --color-border-active: #B88414;
 
-  /* Main text fallbacks */
+  /* Text */
   --color-text-main: #2C1E14;
   --color-text-muted: #5E412A;
 
-  /* Accent energy pulse */
-  --color-accent-pulse: #8C6239;
-
-  /* Fonts */
+  /* Typography */
   --font-serif: var(--font-cormorant), var(--font-cinzel), Georgia, serif;
   --font-display: var(--font-cinzel), var(--font-cormorant), Georgia, serif;
   --font-body: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), "Share Tech Mono", monospace;
+
+  /* Radii — organic fantasy curves, no chamfered cuts */
+  --radius-codex-panel: 1.5rem;
+  --radius-codex-card: 1.25rem;
+  --radius-codex-control: 0.875rem;
+
+  /* Elevation */
+  --shadow-codex-card: 0 8px 30px rgba(60, 40, 15, 0.07);
+  --shadow-codex-raised: 0 12px 36px rgba(60, 40, 15, 0.10);
+  --shadow-codex-glow: 0 0 20px rgba(242, 201, 76, 0.20);
 }
 
 /* ─── Global Styles ────────────────────────────────────────── */
@@ -101,7 +130,7 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ─── Genshin Dark Brown Mode ([data-theme="celestial-night"] / [data-theme="night-ops"] / .dark) ─── */
+/* ─── Celestial Night token overrides ──────────────────────── */
 [data-theme="celestial-night"],
 [data-theme="night-ops"],
 .dark {
@@ -111,12 +140,14 @@ body {
   --color-leather-dark: #FAF8F5;
   --color-leather-caramel: #F2C94C;
   --color-leather-muted: #D4B89B;
+  --color-surface-primary: #241810;
+  --color-glass-card: rgba(36, 24, 16, 0.94);
+  --color-jade-400: #86E29B;
   --color-border-subtle: rgba(201, 154, 78, 0.28);
   --color-text-main: #FAF8F5;
   --color-text-muted: #D4B89B;
   --color-border-glass: rgba(242, 201, 76, 0.45);
   --color-border-active: #F2C94C;
-  --color-accent-pulse: #F2C94C;
 }
 
 [data-theme="celestial-night"] body,
@@ -136,33 +167,53 @@ body {
   transition-delay: 0ms !important;
 }
 
-/* ─── Teyvat Parchment Panels & Fantasy Curves ──────────────── */
-.parchment-panel {
+/* ─── Radius utilities ─────────────────────────────────────── */
+.codex-panel-radius {
+  border-radius: var(--radius-codex-panel);
+}
+
+.codex-radius-sm {
+  border-radius: 1rem;
+}
+
+.codex-radius-xs {
+  border-radius: 0.75rem;
+}
+
+.codex-radius-lg {
+  border-radius: 2rem;
+}
+
+.codex-btn {
+  border-radius: var(--radius-codex-control);
+}
+
+/* ─── Codex Panels ─────────────────────────────────────────── */
+.codex-panel {
   background: rgba(255, 253, 248, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1.5px solid rgba(140, 98, 57, 0.28);
-  box-shadow: 0 8px 30px rgba(60, 40, 15, 0.07);
+  box-shadow: var(--shadow-codex-card);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.parchment-panel:hover {
+.codex-panel:hover {
   border-color: rgba(140, 98, 57, 0.48);
-  box-shadow: 0 12px 36px rgba(60, 40, 15, 0.10);
+  box-shadow: var(--shadow-codex-raised);
 }
 
-.parchment-panel-strong {
+.codex-panel-strong {
   background: rgba(246, 240, 227, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1.5px solid rgba(140, 98, 57, 0.36);
-  box-shadow: 0 8px 32px rgba(60, 40, 15, 0.08);
+  box-shadow: var(--shadow-codex-card);
 }
 
-/* Genshin Dark Brown Codex panel overrides */
-[data-theme="celestial-night"] .parchment-panel,
-[data-theme="night-ops"] .parchment-panel,
-.dark .parchment-panel {
+[data-theme="celestial-night"] .codex-panel,
+[data-theme="night-ops"] .codex-panel,
+.dark .codex-panel {
   background: rgba(36, 24, 16, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -170,23 +221,24 @@ body {
   box-shadow: 0 8px 32px rgba(16, 10, 5, 0.55);
 }
 
-[data-theme="celestial-night"] .parchment-panel:hover,
-[data-theme="night-ops"] .parchment-panel:hover,
-.dark .parchment-panel:hover {
+[data-theme="celestial-night"] .codex-panel:hover,
+[data-theme="night-ops"] .codex-panel:hover,
+.dark .codex-panel:hover {
   border-color: rgba(242, 201, 76, 0.55);
-  box-shadow: 0 8px 32px rgba(201, 154, 78, 0.20), 0 0 20px rgba(242, 201, 76, 0.15);
+  box-shadow: var(--shadow-codex-glow), 0 8px 32px rgba(201, 154, 78, 0.20);
 }
 
-[data-theme="celestial-night"] .parchment-panel-strong,
-[data-theme="night-ops"] .parchment-panel-strong,
-.dark .parchment-panel-strong {
+[data-theme="celestial-night"] .codex-panel-strong,
+[data-theme="night-ops"] .codex-panel-strong,
+.dark .codex-panel-strong {
   background: rgba(28, 18, 12, 0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1.5px solid rgba(201, 154, 78, 0.38);
 }
 
-.glass-panel {
+/* ─── Codex Cards ──────────────────────────────────────────── */
+.codex-card {
   background: var(--color-glass-card);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -194,65 +246,29 @@ body {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-panel:hover {
+.codex-card:hover {
   border-color: var(--color-border-glass);
 }
 
-.glass-panel-strong {
+.codex-card-strong {
   background: rgba(243, 238, 223, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--color-border-subtle);
 }
 
-[data-theme="celestial-night"] .glass-panel-strong,
-[data-theme="night-ops"] .glass-panel-strong,
-.dark .glass-panel-strong {
+[data-theme="celestial-night"] .codex-card-strong,
+[data-theme="night-ops"] .codex-card-strong,
+.dark .codex-card-strong {
   background: rgba(28, 18, 12, 0.96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1.5px solid rgba(201, 154, 78, 0.35);
 }
 
-/* ─── Genshin Fantasy Rounded Curves (Replacing Mecha Chamfered Cuts) ─── */
-.chamfered {
-  border-radius: 1.5rem;
-}
-
-.chamfered-sm {
-  border-radius: 1rem;
-}
-
-.chamfered-xs {
-  border-radius: 0.75rem;
-}
-
-.chamfered-lg {
-  border-radius: 2rem;
-}
-
-.tactical-btn {
-  border-radius: 0.875rem;
-}
-
-/* Genshin Signature Fantasy Card */
-.genshin-card {
-  border-radius: 1.5rem;
-  background: rgba(255, 253, 248, 0.96);
-  border: 2px solid rgba(140, 98, 57, 0.32);
-  box-shadow: 0 12px 36px rgba(60, 40, 15, 0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.dark .genshin-card {
-  background: rgba(10, 14, 36, 0.90);
-  border-color: rgba(179, 136, 255, 0.25);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-}
-
-/* Genshin Signature Buttons */
-.genshin-btn-primary {
-  border-radius: 0.875rem;
+/* ─── Codex Buttons ────────────────────────────────────────── */
+.codex-btn-primary {
+  border-radius: var(--radius-codex-control);
   background: linear-gradient(180deg, #F2C94C 0%, #DFAE2A 50%, #B88414 100%);
   color: #1E1208;
   font-weight: 700;
@@ -264,19 +280,19 @@ body {
   gap: 0.5rem;
 }
 
-.genshin-btn-primary:hover {
+.codex-btn-primary:hover {
   filter: brightness(1.06);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(184, 132, 20, 0.45);
 }
 
-.genshin-btn-primary:active {
+.codex-btn-primary:active {
   transform: translateY(0);
   filter: brightness(0.96);
 }
 
-.genshin-btn-secondary {
-  border-radius: 0.875rem;
+.codex-btn-secondary {
+  border-radius: var(--radius-codex-control);
   background: #FAF7EE;
   border: 2px solid rgba(140, 98, 57, 0.45);
   color: #1E1208;
@@ -289,24 +305,24 @@ body {
   gap: 0.5rem;
 }
 
-.genshin-btn-secondary:hover {
+.codex-btn-secondary:hover {
   background: #F3EDDF;
   border-color: rgba(140, 98, 57, 0.7);
   transform: translateY(-1px);
 }
 
-.dark .genshin-btn-secondary {
+.dark .codex-btn-secondary {
   background: #0D1122;
   border-color: rgba(242, 201, 76, 0.4);
   color: #F2C94C;
 }
 
-.dark .genshin-btn-secondary:hover {
+.dark .codex-btn-secondary:hover {
   background: #141933;
   border-color: rgba(242, 201, 76, 0.7);
 }
 
-/* ─── Bookmark Ribbon (Top-Right Hanging Ribbon with Heart) ─── */
+/* ─── Bookmark Ribbon (top-right hanging ribbon) ────────────── */
 .bookmark-ribbon {
   position: absolute;
   top: 0;
@@ -357,13 +373,12 @@ body {
   z-index: 1;
 }
 
-/* ─── Vision Badges (Rounded Fantasy Elemental Pills) ───────── */
+/* ─── Vision Badges (elemental pills) ──────────────────────── */
 .vision-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 3px 12px;
-  font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   font-weight: 600;
@@ -389,8 +404,8 @@ body {
 [data-theme="celestial-night"] .vision-cryo, .dark .vision-cryo { color: #B2EBF2; }
 [data-theme="celestial-night"] .vision-geo, .dark .vision-geo { color: #FFCC80; }
 
-/* ─── Tech Badge ───────────────────────────────────────────── */
-.tech-badge {
+/* ─── Codex Badge (technology pills) ───────────────────────── */
+.codex-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -404,15 +419,15 @@ body {
   border-radius: 9999px;
 }
 
-[data-theme="celestial-night"] .tech-badge,
-[data-theme="night-ops"] .tech-badge,
-.dark .tech-badge {
+[data-theme="celestial-night"] .codex-badge,
+[data-theme="night-ops"] .codex-badge,
+.dark .codex-badge {
   color: var(--color-platinum-100);
   background: rgba(179, 136, 255, 0.08);
   border-color: rgba(179, 136, 255, 0.25);
 }
 
-/* ─── Atmosphere & Starfield ───────────────────────────────── */
+/* ─── Atmosphere ───────────────────────────────────────────── */
 .bg-starfield {
   background-image:
     radial-gradient(1px 1px at 20px 30px, rgba(140, 98, 57, 0.25), transparent),
@@ -428,7 +443,26 @@ body {
     radial-gradient(1px 1px at 240px 70px, rgba(179, 136, 255, 0.4), transparent);
 }
 
-/* ─── Typography & Utilities ───────────────────────────────── */
+.bg-ambient-gold {
+  background-image: radial-gradient(60% 50% at 50% 0%, rgba(242, 201, 76, 0.18), transparent 70%);
+}
+
+.codex-grid-bg {
+  background-image:
+    linear-gradient(rgba(140, 98, 57, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 98, 57, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+[data-theme="celestial-night"] .codex-grid-bg,
+[data-theme="night-ops"] .codex-grid-bg,
+.dark .codex-grid-bg {
+  background-image:
+    linear-gradient(rgba(242, 201, 76, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 201, 76, 0.06) 1px, transparent 1px);
+}
+
+/* ─── Typography & Labels ──────────────────────────────────── */
 .font-display {
   font-family: var(--font-display);
 }
@@ -439,31 +473,47 @@ body {
   font-family: var(--font-mono);
 }
 
-.sys-label {
-  font-family: var(--font-mono);
+.codex-label {
+  font-family: var(--font-sans);
   font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #8C6239;
+  color: var(--color-leather-muted);
 }
 
-.dark .sys-label {
-  color: #F2C94C;
+.dark .codex-label {
+  color: #D4B89B;
 }
 
-.sys-label-gold {
-  font-family: var(--font-mono);
+.codex-label-gold {
+  font-family: var(--font-sans);
   font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: #B88414;
 }
 
-.dark .sys-label-gold {
+.dark .codex-label-gold {
   color: #F2C94C;
 }
 
-/* ─── High-Contrast Imperial Gold Text Gradient ────────────── */
-.text-gradient-gold {
+.codex-label-active {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-leather-caramel);
+}
+
+.dark .codex-label-active {
+  color: var(--color-gold-400);
+}
+
+/* ─── Gold text gradient ───────────────────────────────────── */
+.codex-gradient-text {
   background: linear-gradient(135deg, #B88414 0%, #DFAE2A 50%, #8C6239 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -472,8 +522,8 @@ body {
   display: inline-block;
 }
 
-.dark .text-gradient-gold,
-[data-theme="celestial-night"] .text-gradient-gold {
+.dark .codex-gradient-text,
+[data-theme="celestial-night"] .codex-gradient-text {
   background: linear-gradient(135deg, #FFE082 0%, #F2C94C 50%, #B388FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -482,7 +532,7 @@ body {
   display: inline-block;
 }
 
-/* ─── Warm Cognac Leather Panels (Hero Right Panel & Accents) ─── */
+/* ─── Warm Cognac Leather Panels (hero right panel & accents) ─── */
 .cognac-panel {
   background: linear-gradient(180deg, #956845 0%, #835938 100%);
   border: 1.5px solid rgba(255, 235, 200, 0.25);
@@ -506,77 +556,120 @@ body {
 }
 
 .dark .cognac-card-subtle {
-  background: rgba(13, 17, 34, 0.6);
-  border-color: rgba(179, 136, 255, 0.2);
+  background: rgba(20, 13, 8, 0.6);
+  border-color: rgba(201, 154, 78, 0.25);
 }
 
-
-/* ─── Button Glow Sweep ────────────────────────────────────── */
-.btn-glow-sweep {
+/* ─── Sheen sweep (buttons & cards) ────────────────────────── */
+.codex-sheen {
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn-glow-sweep::before {
+.codex-sheen::before {
   content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.25),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
   transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn-glow-sweep:hover::before {
+.codex-sheen:hover::before {
   left: 100%;
 }
 
-/* ─── Recessed Input ───────────────────────────────────────── */
-.input-recessed {
+/* ─── Recessed input ───────────────────────────────────────── */
+.codex-input {
   background: rgba(243, 238, 223, 0.6);
   border: 1.5px solid rgba(140, 98, 57, 0.3);
-  border-radius: 0.875rem;
+  border-radius: var(--radius-codex-control);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--color-leather-dark);
 }
-.input-recessed:focus {
+.codex-input:focus {
   border-color: rgba(140, 98, 57, 0.8);
   box-shadow: 0 0 0 2px rgba(140, 98, 57, 0.2), inset 0 0 8px rgba(140, 98, 57, 0.08);
   outline: none;
 }
-.input-recessed::placeholder {
+.codex-input::placeholder {
   color: var(--color-leather-muted);
   opacity: 0.6;
 }
 
-.dark .input-recessed {
-  background: rgba(13, 17, 34, 0.7);
-  border-color: rgba(179, 136, 255, 0.3);
+.dark .codex-input {
+  background: rgba(36, 24, 16, 0.7);
+  border-color: rgba(201, 154, 78, 0.3);
   color: #F8FAFC;
 }
-.dark .input-recessed:focus {
+.dark .codex-input:focus {
   border-color: rgba(242, 201, 76, 0.6);
   box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.25), inset 0 0 10px rgba(242, 201, 76, 0.15);
 }
 
-/* ─── Hover Card Lift ──────────────────────────────────────── */
-.card-lift {
+/* ─── Interaction helpers ──────────────────────────────────── */
+.codex-lift {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.card-lift:hover {
+.codex-lift:hover {
   transform: translateY(-4px);
   border-color: rgba(140, 98, 57, 0.45);
-  box-shadow: 0 12px 32px rgba(140, 98, 57, 0.12);
+  box-shadow: var(--shadow-codex-raised);
 }
 
-.dark .card-lift:hover {
+.dark .codex-lift:hover {
   border-color: rgba(242, 201, 76, 0.45);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(242, 201, 76, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), var(--shadow-codex-glow);
+}
+
+.hover-scale-sm {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-scale-sm:hover {
+  transform: scale(1.02);
+}
+
+.press-scale {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.press-scale:active {
+  transform: scale(0.985);
+}
+
+.codex-glow-gold {
+  box-shadow: var(--shadow-codex-glow);
+}
+
+/* ─── Loading: parchment shimmer + elemental spinner ───────── */
+.codex-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(140, 98, 57, 0.08) 25%,
+    rgba(140, 98, 57, 0.16) 50%,
+    rgba(140, 98, 57, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  animation: codex-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes codex-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.elemental-rotate {
+  animation: elemental-spin var(--codex-spin-duration, 7s) linear infinite;
+}
+
+@keyframes elemental-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─── Segment Progress Bar ─────────────────────────────────── */
@@ -594,6 +687,10 @@ body {
 .segment-bar .segment.active {
   background: #C69214;
   box-shadow: 0 0 6px rgba(198, 146, 20, 0.4);
+}
+.segment-bar .segment.jade {
+  background: var(--color-jade-500);
+  box-shadow: 0 0 6px rgba(25, 196, 106, 0.4);
 }
 
 .dark .segment-bar .segment {
@@ -626,17 +723,17 @@ body {
   color: inherit;
 }
 
-/* ─── Focus Ring ──────────────────────────────────────── */
-.focus-ring-gold:focus-visible {
+/* ─── Focus Ring ──────────────────────────────────────────── */
+.codex-focus:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(140, 98, 57, 0.4);
 }
 
-.dark .focus-ring-gold:focus-visible {
+.dark .codex-focus:focus-visible {
   box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.4);
 }
 
-/* ─── Reduced Motion ──────────────────────────────────── */
+/* ─── Reduced Motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

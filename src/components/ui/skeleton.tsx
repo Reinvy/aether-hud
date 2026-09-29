@@ -1,68 +1,12 @@
 /**
- * AETHER-HUD Skeleton Loading Components
- * Reusable UI skeletons for loading states with HUD aesthetic.
- * Design: Obsidian & Imperial Gold — Luxury Cybernetics.
+ * Teyvat Codex Skeleton Loading Components
+ * Reusable UI skeletons for loading states in the codex aesthetic.
+ * Design: Teyvat Codex — warm fantasy.
  */
 import { cn } from "@/lib/utils";
 
-/** Pulse animation for skeleton segments */
-const pulseClass = "skeleton-hud";
-
-/* ─── Card Skeleton ────────────────────────────────────────── */
-
-interface CardSkeletonProps {
-  className?: string;
-}
-
-export function CardSkeleton({ className }: CardSkeletonProps) {
-  return (
-    <div className={cn("bg-[#FFFFFF] dark:bg-surface-primary/75 parchment-panel dark:glass-panel rounded-3xl overflow-hidden border-2 border-leather-caramel/30 dark:border-gold-400/25 shadow-xl", className)}>
-      {/* Image area */}
-      <div className={cn("relative h-48 bg-[#F3EDDF] dark:bg-surface-primary border-b border-leather-caramel/20", pulseClass)}>
-        {/* Badge placeholders */}
-        <div className="absolute top-3 right-3 flex gap-1.5">
-          <div className="h-6 w-16 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full skeleton-hud" />
-        </div>
-        <div className="absolute top-3 left-3 flex gap-1.5">
-          <div className="h-6 w-20 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full skeleton-hud" />
-        </div>
-      </div>
-      {/* Content area */}
-      <div className="p-6 space-y-4">
-        <div className="flex items-start justify-between">
-          <div className={cn("h-5 w-2/3 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-lg", pulseClass)} />
-          <div className={cn("h-4 w-12 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-lg", pulseClass)} />
-        </div>
-        <div className="space-y-2">
-          <div className={cn("h-3 w-full bg-leather-caramel/10 dark:bg-surface-primary rounded-md", pulseClass)} />
-          <div className={cn("h-3 w-5/6 bg-leather-caramel/10 dark:bg-surface-primary rounded-md", pulseClass)} />
-        </div>
-        {/* Tags */}
-        <div className="flex gap-1.5">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className={cn("h-5 w-16 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full", pulseClass)} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Section Skeleton ─────────────────────────────────────── */
-
-interface SectionSkeletonProps {
-  className?: string;
-}
-
-export function SectionHeaderSkeleton({ className }: SectionSkeletonProps) {
-  return (
-    <div className={cn("mx-auto max-w-2xl text-center", className)}>
-      <div className={cn("mx-auto mb-4 h-7 w-48 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full", pulseClass)} />
-      <div className={cn("mx-auto h-10 w-3/4 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-xl", pulseClass)} />
-      <div className={cn("mx-auto mt-4 h-5 w-1/2 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-lg", pulseClass)} />
-    </div>
-  );
-}
+/** Shimmer animation class applied to every skeleton segment. */
+const pulseClass = "codex-shimmer";
 
 /* ─── Dashboard Stat Skeleton (module-private; used by DashboardPageSkeleton) ── */
 
@@ -72,13 +16,13 @@ interface DashboardStatSkeletonProps {
 
 function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps) {
   return (
-    <div className={cn("glass-panel chamfered p-5", className)}>
+    <div className={cn("codex-card codex-panel-radius p-5", className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <div className={cn("h-3 w-24 bg-glass-300 rounded-none", pulseClass)} />
-          <div className={cn("h-8 w-16 bg-glass-300 rounded-none", pulseClass)} />
+          <div className={cn("h-3 w-24 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full", pulseClass)} />
+          <div className={cn("h-8 w-16 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl", pulseClass)} />
         </div>
-        <div className={cn("h-8 w-8 bg-glass-300 rounded-none", pulseClass)} />
+        <div className={cn("h-8 w-8 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl", pulseClass)} />
       </div>
     </div>
   );
@@ -88,16 +32,16 @@ function DashboardStatSkeleton({ className }: DashboardStatSkeletonProps) {
 
 export function DashboardPageSkeleton() {
   return (
-    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+    <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
             <div className="mb-1 flex items-center gap-2">
-              <div className={cn("h-4 w-4 bg-glass-300 rounded-none", pulseClass)} />
-              <div className={cn("h-3 w-48 bg-glass-300 rounded-none", pulseClass)} />
+              <div className={cn("h-4 w-4 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full", pulseClass)} />
+              <div className={cn("h-3 w-48 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full", pulseClass)} />
             </div>
-            <div className={cn("h-8 w-64 bg-glass-300 rounded-none", pulseClass)} />
+            <div className={cn("h-8 w-64 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl", pulseClass)} />
           </div>
         </div>
       </div>
@@ -112,15 +56,15 @@ export function DashboardPageSkeleton() {
       {/* Content rows */}
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <div className={cn("glass-panel chamfered p-6", pulseClass)}>
+          <div className={cn("codex-card codex-panel-radius p-6", pulseClass)}>
             <div className="space-y-4">
-              <div className="h-5 w-40 bg-glass-300 rounded-none skeleton-hud" />
+              <div className="h-5 w-40 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-glass-200 rounded-none skeleton-hud" />
+                  <div className="h-8 w-8 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-shimmer" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3 w-3/4 bg-glass-200 rounded-none skeleton-hud" />
-                    <div className="h-2 w-1/2 bg-glass-200 rounded-none skeleton-hud" />
+                    <div className="h-3 w-3/4 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
+                    <div className="h-2 w-1/2 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
                   </div>
                 </div>
               ))}
@@ -128,15 +72,15 @@ export function DashboardPageSkeleton() {
           </div>
         </div>
         <div>
-          <div className={cn("glass-panel chamfered p-6 h-full", pulseClass)}>
+          <div className={cn("codex-card codex-panel-radius p-6 h-full", pulseClass)}>
             <div className="space-y-4">
-              <div className="h-5 w-32 bg-glass-300 rounded-none skeleton-hud" />
+              <div className="h-5 w-32 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex gap-3">
-                  <div className="h-4 w-4 bg-glass-200 rounded-none mt-0.5" />
+                  <div className="h-4 w-4 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full mt-0.5" />
                   <div className="flex-1 space-y-1">
-                    <div className="h-3 w-full bg-glass-200 rounded-none skeleton-hud" />
-                    <div className="h-2 w-2/3 bg-glass-200 rounded-none skeleton-hud" />
+                    <div className="h-3 w-full bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
+                    <div className="h-2 w-2/3 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
                   </div>
                 </div>
               ))}
@@ -157,48 +101,48 @@ interface ListSkeletonProps {
 
 export function DashboardListSkeleton({ rows = 5, className }: ListSkeletonProps) {
   return (
-    <div className={cn("dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
+    <div className={cn("codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
       {/* Header */}
       <div className={cn("mb-6 flex items-center justify-between", pulseClass)}>
         <div>
           <div className="mb-1 flex items-center gap-2">
-            <div className="h-4 w-4 bg-glass-300 rounded-none skeleton-hud" />
-            <div className="h-3 w-40 bg-glass-300 rounded-none skeleton-hud" />
+            <div className="h-4 w-4 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
+            <div className="h-3 w-40 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
           </div>
-          <div className="h-8 w-56 bg-glass-300 rounded-none skeleton-hud" />
+          <div className="h-8 w-56 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl codex-shimmer" />
         </div>
-        <div className="h-9 w-32 bg-glass-300 rounded-none tactical-btn" />
+        <div className="h-9 w-32 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-xl codex-btn" />
       </div>
 
       {/* Filters */}
       <div className={cn("mb-6 flex gap-2", pulseClass)}>
-        <div className="h-7 w-24 bg-glass-200 rounded-none tech-badge" />
-        <div className="h-7 w-28 bg-glass-200 rounded-none tech-badge" />
-        <div className="h-7 w-20 bg-glass-200 rounded-none tech-badge" />
+        <div className="h-7 w-24 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-badge" />
+        <div className="h-7 w-28 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-badge" />
+        <div className="h-7 w-20 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-badge" />
       </div>
 
       {/* List rows */}
       <div className="space-y-3">
         <div className="flex items-center gap-4 border-b border-border-subtle px-4 py-2">
-          <div className="h-3 w-8 bg-glass-200 rounded-none skeleton-hud" />
-          <div className="h-3 flex-1 bg-glass-200 rounded-none skeleton-hud" />
-          <div className="h-3 w-24 bg-glass-200 rounded-none hidden sm:block" />
-          <div className="h-3 w-20 bg-glass-200 rounded-none hidden md:block" />
-          <div className="h-3 w-20 bg-glass-200 rounded-none skeleton-hud" />
+          <div className="h-3 w-8 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
+          <div className="h-3 flex-1 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
+          <div className="h-3 w-24 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full hidden sm:block" />
+          <div className="h-3 w-20 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full hidden md:block" />
+          <div className="h-3 w-20 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
         </div>
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className={cn("glass-panel chamfered p-4", pulseClass)}>
+          <div key={i} className={cn("codex-card codex-panel-radius p-4", pulseClass)}>
             <div className="flex items-center gap-4">
-              <div className="h-8 w-8 bg-glass-300 rounded-none shrink-0" />
+              <div className="h-8 w-8 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl shrink-0" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3 w-3/5 bg-glass-300 rounded-none skeleton-hud" />
-                <div className="h-2 w-2/3 bg-glass-200 rounded-none skeleton-hud" />
+                <div className="h-3 w-3/5 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
+                <div className="h-2 w-2/3 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full codex-shimmer" />
               </div>
-              <div className="h-5 w-20 bg-glass-200 rounded-none hidden sm:block" />
-              <div className="h-5 w-16 bg-glass-200 rounded-none hidden md:flex items-center gap-2" />
+              <div className="h-5 w-20 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full hidden sm:block" />
+              <div className="h-5 w-16 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-full hidden md:flex items-center gap-2" />
               <div className="flex gap-1">
-                <div className="h-7 w-7 bg-glass-200 rounded-none skeleton-hud" />
-                <div className="h-7 w-7 bg-glass-200 rounded-none skeleton-hud" />
+                <div className="h-7 w-7 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-shimmer" />
+                <div className="h-7 w-7 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-2xl codex-shimmer" />
               </div>
             </div>
           </div>
@@ -212,26 +156,26 @@ export function DashboardListSkeleton({ rows = 5, className }: ListSkeletonProps
 
 export function DashboardFormSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
+    <div className={cn("codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8", className)}>
       <div className={cn("mb-6", pulseClass)}>
         <div className="mb-1 flex items-center gap-2">
-          <div className="h-4 w-4 bg-glass-300 rounded-none skeleton-hud" />
-          <div className="h-3 w-36 bg-glass-300 rounded-none skeleton-hud" />
+          <div className="h-4 w-4 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
+          <div className="h-3 w-36 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full codex-shimmer" />
         </div>
-        <div className="h-8 w-52 bg-glass-300 rounded-none skeleton-hud" />
+        <div className="h-8 w-52 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-2xl codex-shimmer" />
       </div>
 
-      <div className={cn("glass-panel chamfered p-6 max-w-2xl", pulseClass)}>
+      <div className={cn("codex-card codex-panel-radius p-6 max-w-2xl", pulseClass)}>
         <div className="space-y-5">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i}>
-              <div className="h-3 w-32 bg-glass-300 rounded-none mb-2" />
-              <div className="h-10 w-full bg-glass-200 rounded-none skeleton-hud" />
+              <div className="h-3 w-32 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-full mb-2" />
+              <div className="h-10 w-full bg-leather-caramel/15 dark:bg-gold-400/15 rounded-xl codex-shimmer" />
             </div>
           ))}
           <div className="flex justify-end gap-3 pt-2">
-            <div className="h-9 w-24 bg-glass-200 rounded-none tactical-btn" />
-            <div className="h-9 w-32 bg-glass-300 rounded-none tactical-btn" />
+            <div className="h-9 w-24 bg-leather-caramel/15 dark:bg-gold-400/15 rounded-xl codex-btn" />
+            <div className="h-9 w-32 bg-leather-caramel/20 dark:bg-gold-400/20 rounded-xl codex-btn" />
           </div>
         </div>
       </div>

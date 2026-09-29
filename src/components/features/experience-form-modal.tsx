@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ApiError, apiRequest } from "@/lib/api-client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
 
 /**
- * ExperienceFormModal — create/edit experience record modal for the
- * dashboard experience log.
+ * ExperienceFormModal — create/edit quest modal for the dashboard quest log.
  *
- * Extracted from dashboard/experiences page so the whole form (fields +
- * save logic) can be lazy-loaded as its own chunk via next/dynamic — it
- * only renders when the operator opens the modal, keeping the log list's
- * initial bundle small. Data comes from the API (POST/PUT /api/experiences).
+ * Extracted from dashboard/experiences page so the whole form (fields + save
+ * logic) can be lazy-loaded as its own chunk via next/dynamic — it only
+ * renders when the operator opens the modal, keeping the log list's initial
+ * bundle small. List position is owned by the view's move controls, so the
+ * form never sends `order`. Writes go through `apiRequest`, so a failed save
+ * reports the server's message inside the modal.
  */
 
 export interface ExperienceFormRecord {
@@ -34,7 +36,6 @@ type FormData = {
   startDate: string;
   endDate: string;
   type: "work" | "education" | "freelance";
-  order: string;
 };
 
 const EMPTY_FORM: FormData = {
@@ -44,7 +45,6 @@ const EMPTY_FORM: FormData = {
   startDate: "",
   endDate: "",
   type: "work",
-  order: "0",
 };
 
 function toForm(exp: ExperienceFormRecord | null): FormData {
@@ -56,7 +56,6 @@ function toForm(exp: ExperienceFormRecord | null): FormData {
     startDate: exp.startDate ? exp.startDate.slice(0, 10) : "",
     endDate: exp.endDate ? exp.endDate.slice(0, 10) : "",
     type: exp.type,
-    order: String(exp.order),
   };
 }
 
@@ -77,10 +76,14 @@ export function ExperienceFormModal({
 }: ExperienceFormModalProps) {
   const [form, setForm] = useState<FormData>(() => toForm(experience));
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Re-sync the form whenever the modal opens with a (different) record.
   useEffect(() => {
-    if (open) setForm(toForm(experience));
+    if (open) {
+      setForm(toForm(experience));
+      setError(null);
+    }
   }, [open, experience]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
@@ -89,34 +92,30 @@ export function ExperienceFormModal({
 
   async function handleSave() {
     setSaving(true);
-    try {
-      const body = {
-        company: form.company,
-        role: form.role,
-        description: form.description,
-        startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
-        endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
-        type: form.type,
-        order: parseInt(form.order, 10) || 0,
-      };
+    setError(null);
 
+    const body = {
+      company: form.company,
+      role: form.role,
+      description: form.description,
+      startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
+      endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+      type: form.type,
+    };
+
+    try {
       if (experience) {
-        await fetch("/api/experiences", {
+        await apiRequest<unknown>("/api/experiences", {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: experience.id, ...body }),
+          body: { id: experience.id, ...body },
         });
       } else {
-        await fetch("/api/experiences", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+        await apiRequest<unknown>("/api/experiences", { method: "POST", body });
       }
 
       onSaved();
     } catch (e) {
-      console.error("Failed to save experience", e);
+      setError(e instanceof ApiError ? e.message : "Failed to save the quest");
     } finally {
       setSaving(false);
     }
@@ -126,72 +125,57 @@ export function ExperienceFormModal({
     <FormModal
       open={open}
       onClose={onClose}
-      title={experience ? "EDIT EXPERIENCE RECORD" : "NEW EXPERIENCE RECORD"}
-      sysId={
-        experience
-          ? `DASH//04 // ${experience.id.slice(0, 8)}`
-          : "DASH//04 // NEW"
-      }
+      title={experience ? "Edit quest" : "New quest"}
       size="lg"
-      saveLabel="SAVE RECORD"
+      saveLabel="Save"
+      error={error}
       onSave={handleSave}
       saving={saving}
     >
       <Input
-        label="FIELD_01 // COMPANY"
-        placeholder="Enter company name..."
+        label="Company"
+        placeholder="Enter company name…"
         value={form.company}
         onChange={(e) => updateField("company", e.target.value)}
       />
       <Input
-        label="FIELD_02 // ROLE"
+        label="Role"
         placeholder="e.g., Senior Full-Stack Developer"
         value={form.role}
         onChange={(e) => updateField("role", e.target.value)}
       />
       <Textarea
-        label="FIELD_03 // DESCRIPTION"
-        placeholder="Describe your responsibilities and achievements..."
+        label="Description"
+        placeholder="Responsibilities and achievements…"
         value={form.description}
         onChange={(e) => updateField("description", e.target.value)}
         rows={3}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="FIELD_04 // START DATE"
+          label="Start date"
           type="date"
           value={form.startDate}
           onChange={(e) => updateField("startDate", e.target.value)}
         />
         <Input
-          label="FIELD_05 // END DATE"
+          label="End date"
           type="date"
           value={form.endDate}
           onChange={(e) => updateField("endDate", e.target.value)}
           placeholder="Leave empty for present"
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Select
-          label="FIELD_06 // TYPE"
-          value={form.type}
-          onChange={(e) => updateField("type", e.target.value as FormData["type"])}
-          options={[
-            { value: "work", label: "WORK" },
-            { value: "education", label: "EDUCATION" },
-            { value: "freelance", label: "FREELANCE" },
-          ]}
-        />
-        <div className="sm:col-span-2">
-          <Input
-            label="FIELD_07 // ORDER"
-            type="number"
-            placeholder="0"
-            value={form.order}
-            onChange={(e) => updateField("order", e.target.value)}
-          />
-        </div>
-      </div>
+      <Select
+        label="Type"
+        value={form.type}
+        onChange={(e) => updateField("type", e.target.value as FormData["type"])}
+        options={[
+          { value: "work", label: "Work" },
+          { value: "education", label: "Education" },
+          { value: "freelance", label: "Freelance" },
+        ]}
+      />
     </FormModal>
   );
 }

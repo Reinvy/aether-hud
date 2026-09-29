@@ -1,29 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useData } from "@/lib/use-data";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/features/section-heading";
 import { ProjectCard } from "@/components/features/project-card";
-import { ProjectsGridSkeleton } from "@/components/ui/section-skeleton";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import type { ProjectDto, SectionDto } from "@/lib/dto";
 
-type Project = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  tags: string; // JSON array stored as string
-  category: string;
-  complexity: string;
-  performance: string;
-  year: string;
-  liveUrl: string | null;
-  githubUrl: string | null;
-  order: number;
-};
+interface ProjectsSectionProps {
+  projects: ProjectDto[];
+  section: SectionDto;
+}
 
 const stagger = {
   initial: { opacity: 0 },
@@ -32,23 +21,29 @@ const stagger = {
   transition: { staggerChildren: 0.1 },
 };
 
-export function ProjectsSection() {
-  const { data: projects, loading } = useData<Project[]>("/api/projects");
+/**
+ * ProjectsSection — the artifact archive of forged domains.
+ *
+ * Presentation-only: the domain list is a prop from the server render, so the
+ * section never fetches and always renders its final state.
+ */
+export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
   // Extract unique categories
   const categories = useMemo(() => {
-    if (!projects) return ["ALL"];
     const unique = Array.from(new Set(projects.map((p) => p.category.trim()))).filter(Boolean);
     return ["ALL", ...unique];
   }, [projects]);
 
   // Filter projects by category
   const filteredProjects = useMemo(() => {
-    if (!projects) return [];
     if (selectedCategory === "ALL") return projects;
     return projects.filter((p) => p.category.trim() === selectedCategory);
   }, [projects, selectedCategory]);
+
+  const sectionTitle = section.title.trim();
+  const archiveIsEmpty = projects.length === 0;
 
   return (
     <section id="projects" className="relative py-20 sm:py-28">
@@ -58,7 +53,7 @@ export function ProjectsSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeading
-          badge="ARTIFACT ARCHIVE // DOMAINS OF FORGERY"
+          badge="Artifact Archive // Domains of Forgery"
           icon={
             <div className="w-4 h-4 relative">
               <Image
@@ -67,33 +62,41 @@ export function ProjectsSection() {
                 width={16}
                 height={16}
                 className="object-contain"
+                unoptimized
               />
             </div>
           }
-          title="Domains &"
-          highlight="Artifacts"
-          subtitle="Curated chronicle of 5-star digital architectures, neural systems, and forged platforms across seven realms."
+          title={sectionTitle || "Domains &"}
+          highlight={sectionTitle ? undefined : "Artifacts"}
+          subtitle={
+            section.subtitle ||
+            "Curated chronicle of legendary digital architectures, neural systems, and forged platforms across seven realms."
+          }
         />
 
-        {/* Genshin Domain Category Filter Tabs */}
+        {/* Domain Category Filter Tabs */}
         {categories.length > 1 && (
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label="Domain categories">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
+          <div
+            className="mt-8 flex flex-wrap items-center justify-center gap-2"
+            role="tablist"
+            aria-label="Domain categories"
+          >
+            {categories.map((category) => {
+              const isActive = selectedCategory === category;
               return (
                 <button
-                  key={cat}
+                  key={category}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => setSelectedCategory(category)}
                   className={cn(
                     "px-4 py-1.5 rounded-full font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
                     isActive
-                      ? "bg-[#8C6239] dark:bg-gold-400 text-[#FAF8F5] dark:text-deep-space border-[#8C6239] dark:border-gold-400 shadow-md scale-105"
-                      : "bg-[#FAF8F5] dark:bg-surface-primary/90 text-[#2C1E14] dark:text-platinum-200 border-[#8C6239]/35 dark:border-gold-400/25 hover:border-[#8C6239] dark:hover:border-gold-400"
+                      ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space border-leather-caramel dark:border-gold-400 shadow-md scale-105"
+                      : "bg-parchment-base/80 dark:bg-surface-primary/80 text-leather-dark dark:text-platinum-50 border-leather-caramel/35 dark:border-gold-400/35 hover:border-leather-caramel dark:hover:border-gold-400",
                   )}
                 >
-                  {cat === "ALL" ? "✦ ALL DOMAINS" : cat}
+                  {category === "ALL" ? "All domains" : category}
                 </button>
               );
             })}
@@ -101,37 +104,33 @@ export function ProjectsSection() {
         )}
 
         {/* Projects Grid */}
-        <motion.div
-          className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-2"
-          {...stagger}
-        >
-          {loading && (
-            <div className="col-span-full">
-              <ProjectsGridSkeleton />
-            </div>
-          )}
-
+        <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" {...stagger}>
           {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} {...project} />
+            <ProjectCard key={project.id} project={project} />
           ))}
 
-          {!loading && filteredProjects.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-12 h-12 relative mb-3 opacity-60">
-                <Image
-                  src={GENSHIN_UI_ICONS.archive}
-                  alt="Empty Archive"
-                  width={48}
-                  height={48}
-                  className="object-contain"
-                />
+          {filteredProjects.length === 0 && (
+            <div className="col-span-full">
+              <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                  <Image
+                    src={GENSHIN_UI_ICONS.archive}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                  {archiveIsEmpty ? "The archive awaits its first artifact" : "No artifacts in this domain"}
+                </h3>
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                  {archiveIsEmpty
+                    ? "Commissioned builds will be catalogued here as soon as they are forged."
+                    : "Choose another realm from the filter above, or return to all domains."}
+                </p>
               </div>
-              <p className="font-display text-base font-bold text-[#1E1208] dark:text-platinum-50 uppercase">
-                NO ARTIFACTS IN THIS DOMAIN
-              </p>
-              <p className="font-mono text-xs text-[#5E412A] dark:text-text-muted mt-1">
-                Select another realm category or explore all domains.
-              </p>
             </div>
           )}
         </motion.div>

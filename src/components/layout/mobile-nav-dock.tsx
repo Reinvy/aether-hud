@@ -1,122 +1,90 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sun, Moon } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { PUBLIC_NAV } from "@/lib/navigation";
+import { useActiveSection } from "@/lib/use-active-section";
 import { useTheme } from "@/components/theme-provider";
 
-interface NavItem {
-  id: string;
-  label: string;
-  href: string;
-  icon: string;
-}
-
-const MOBILE_NAV_ITEMS: NavItem[] = [
-  { id: "hero", label: "Traveler", href: "/#hero", icon: GENSHIN_UI_ICONS.character },
-  { id: "projects", label: "Domains", href: "/#projects", icon: GENSHIN_UI_ICONS.domain },
-  { id: "skills", label: "Talents", href: "/#skills", icon: GENSHIN_UI_ICONS.talents },
-  { id: "experience", label: "Quests", href: "/#experience", icon: GENSHIN_UI_ICONS.handbook },
-  { id: "testimonials", label: "Allies", href: "/#testimonials", icon: GENSHIN_UI_ICONS.friends },
-  { id: "contact", label: "Summon", href: "/#contact", icon: GENSHIN_UI_ICONS.mail },
-];
-
+/**
+ * MobileNavDock — floating bottom navigation for phones and tablets.
+ *
+ * Rendered from `PUBLIC_NAV` and the shared `useActiveSection` observer, so the
+ * dock, the desktop rail and the header can never disagree about where the
+ * visitor is.
+ */
 export function MobileNavDock() {
-  const [activeSection, setActiveSection] = useState("hero");
+  const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
   const { themePreset, toggleTheme } = useTheme();
   const isNight = themePreset === "celestial-night";
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = MOBILE_NAV_ITEMS.map((item) => document.getElementById(item.id));
-      const scrollPos = window.scrollY + 300;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const sec = sections[i];
-        if (sec && sec.offsetTop <= scrollPos) {
-          setActiveSection(MOBILE_NAV_ITEMS[i].id);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <nav
-      aria-label="Mobile Navigation Dock"
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 lg:hidden w-[calc(100%-1.5rem)] max-w-md"
+      aria-label="Codex sections"
+      className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 lg:hidden"
     >
-      <div className="bg-[#FAF7EE]/95 dark:bg-surface-primary/90 parchment-panel-strong dark:glass-panel-strong rounded-full px-3 py-1.5 border-2 border-leather-caramel/35 dark:border-gold-400/35 shadow-2xl flex items-center justify-between gap-1 backdrop-blur-xl">
-        {MOBILE_NAV_ITEMS.map((item) => {
-          const isActive = activeSection === item.id;
+      <div className="flex items-center justify-between gap-1 rounded-full border-2 border-leather-caramel/35 bg-parchment-subtle/95 px-3 py-1.5 shadow-2xl backdrop-blur-xl dark:border-gold-400/35 dark:bg-surface-primary/90">
+        {PUBLIC_NAV.map((item) => {
+          const isActive = activeSection === item.sectionId;
           return (
             <a
-              key={item.id}
+              key={item.sectionId}
               href={item.href}
               aria-label={item.label}
+              aria-current={isActive ? "location" : undefined}
               className={cn(
-                "relative flex flex-col items-center justify-center p-1.5 rounded-full transition-all duration-200 min-w-[38px] min-h-[38px]",
+                "relative flex min-h-[38px] min-w-[38px] flex-col items-center justify-center rounded-full p-1.5 transition-all duration-200",
                 isActive
-                  ? "bg-[#8C6239] dark:bg-gold-400 shadow-sm scale-105"
+                  ? "scale-105 bg-leather-caramel shadow-sm dark:bg-gold-400"
                   : "hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10"
               )}
             >
-              <div className="w-5 h-5 relative">
-                <Image
-                  src={item.icon}
-                  alt={item.label}
-                  width={20}
-                  height={20}
-                  className={cn(
-                    "object-contain transition-transform",
-                    isActive ? "brightness-0 invert dark:brightness-0" : "opacity-90"
-                  )}
-                  unoptimized
-                />
-              </div>
-              <span className="sr-only">{item.label}</span>
+              <Image
+                src={GENSHIN_UI_ICONS[item.icon]}
+                alt=""
+                width={20}
+                height={20}
+                className={cn(
+                  "h-5 w-5 object-contain transition-transform",
+                  isActive ? "brightness-0 invert" : "opacity-90"
+                )}
+                unoptimized
+              />
             </a>
           );
         })}
 
-        {/* Vertical divider */}
-        <div className="h-5 w-px bg-leather-caramel/30 dark:bg-gold-400/30 shrink-0 mx-0.5" />
+        <div className="mx-0.5 h-5 w-px shrink-0 bg-leather-caramel/30 dark:bg-gold-400/30" />
 
-        {/* Theme Switcher Button */}
         <button
           type="button"
           onClick={toggleTheme}
-          aria-label={isNight ? "Switch to Ivory Codex theme" : "Switch to Celestial Night theme"}
-          className="flex items-center justify-center p-1.5 rounded-full min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
+          aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 text-leather-dark transition-transform hover:scale-105 dark:bg-gold-400/10 dark:text-gold-400"
         >
           {isNight ? (
             <Sun className="h-4 w-4 text-gold-400" />
           ) : (
-            <Moon className="h-4 w-4 text-[#8C6239]" />
+            <Moon className="h-4 w-4 text-leather-caramel" />
           )}
         </button>
 
-        {/* Staff Portal Link */}
         <Link
           href="/login"
-          aria-label="Staff Portal"
-          className="flex items-center justify-center p-1.5 rounded-full min-w-[36px] min-h-[36px] bg-leather-caramel/10 dark:bg-gold-400/10 text-leather-dark dark:text-gold-400 hover:scale-105 transition-transform"
+          aria-label="Codex Console"
+          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 transition-transform hover:scale-105 dark:bg-gold-400/10"
         >
-          <div className="w-4 h-4 relative">
-            <Image
-              src={GENSHIN_UI_ICONS.archive}
-              alt="Staff Portal"
-              width={16}
-              height={16}
-              className="object-contain"
-            />
-          </div>
+          <Image
+            src={GENSHIN_UI_ICONS.archive}
+            alt=""
+            width={16}
+            height={16}
+            className="h-4 w-4 object-contain"
+            unoptimized
+          />
         </Link>
       </div>
     </nav>

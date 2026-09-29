@@ -1,0 +1,154 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu, Moon, Sun, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/lib/constants";
+import { PUBLIC_NAV } from "@/lib/navigation";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { useActiveSection } from "@/lib/use-active-section";
+import { useTheme } from "@/components/theme-provider";
+
+interface SiteHeaderProps {
+  /** Site name from the codex config; falls back to the build-time identity. */
+  siteName?: string;
+}
+
+/**
+ * SiteHeader — the persistent public shell header.
+ *
+ * Renders from `PUBLIC_NAV` (the single navigation registry) and reports the
+ * section currently on screen via `aria-current="location"`. The previous
+ * `HudHeader` was never imported by any route, so the public site had no
+ * header at all.
+ */
+export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
+  const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
+  const { themePreset, toggleTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isNight = themePreset === "celestial-night";
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMenu();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen, closeMenu]);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-leather-caramel/25 dark:border-border-subtle bg-parchment-base/92 dark:bg-deep-space/92 backdrop-blur-xl transition-colors">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+        {/* Brand crest */}
+        <a
+          href="/#hero"
+          className="flex min-w-0 items-center gap-3 codex-radius-sm codex-focus"
+          aria-label={`${siteName} — back to the traveler dossier`}
+        >
+          <Image
+            src={GENSHIN_UI_ICONS.characterAether}
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8 object-contain"
+            unoptimized
+          />
+          <span className="min-w-0">
+            <span className="block truncate font-display text-sm font-bold tracking-[0.12em] text-leather-dark dark:text-text-main">
+              {siteName}
+            </span>
+            <span className="codex-label block text-[9px]">Traveler Dossier</span>
+          </span>
+        </a>
+
+        {/* Desktop navigation */}
+        <nav aria-label="Codex sections" className="ml-auto hidden items-center gap-1 lg:flex">
+          {PUBLIC_NAV.map((item) => {
+            const isActive = activeSection === item.sectionId;
+            return (
+              <a
+                key={item.sectionId}
+                href={item.href}
+                aria-current={isActive ? "location" : undefined}
+                className={cn(
+                  "codex-radius-sm px-3 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-colors codex-focus",
+                  isActive
+                    ? "bg-leather-caramel/15 text-leather-dark dark:bg-gold-400/15 dark:text-gold-400"
+                    : "text-leather-muted dark:text-text-muted hover:bg-leather-caramel/10 hover:text-leather-dark dark:hover:text-gold-400"
+                )}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        <div className="ml-auto flex items-center gap-2 lg:ml-2">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle text-leather-muted dark:text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 codex-focus"
+          >
+            {isNight ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <Link
+            href="/login"
+            className="hidden codex-radius-sm border border-leather-caramel/35 dark:border-border-glass px-3.5 py-2 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark dark:text-gold-400 transition-colors hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10 codex-focus sm:block"
+          >
+            Codex Console
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="codex-mobile-menu"
+            aria-label={menuOpen ? "Close section menu" : "Open section menu"}
+            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle text-leather-muted dark:text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 codex-focus lg:hidden"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <nav
+          id="codex-mobile-menu"
+          aria-label="Codex sections"
+          className="border-t border-leather-caramel/20 dark:border-border-subtle px-4 pb-3 pt-2 sm:px-6 lg:hidden"
+        >
+          <ul className="grid gap-1">
+            {PUBLIC_NAV.map((item) => (
+              <li key={item.sectionId}>
+                <a
+                  href={item.href}
+                  onClick={closeMenu}
+                  aria-current={activeSection === item.sectionId ? "location" : undefined}
+                  className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-muted dark:text-text-muted transition-colors hover:bg-leather-caramel/10 hover:text-leather-dark dark:hover:text-gold-400 codex-focus"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/login"
+                onClick={closeMenu}
+                className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark dark:text-gold-400 transition-colors hover:bg-leather-caramel/10 codex-focus"
+              >
+                Codex Console
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      )}
+    </header>
+  );
+}

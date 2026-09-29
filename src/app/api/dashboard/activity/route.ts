@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { LIVE_CACHE_HEADERS } from "@/lib/api-helpers";
 
 export const dynamic = "force-dynamic";
-
-const CACHE_HEADERS = { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" };
 
 export type ActivityItem = {
   id: string;
@@ -126,7 +125,7 @@ export async function GET() {
         {
           id: "fallback-1",
           action: "System online",
-          detail: "AETHER-HUD Core v2.4.1 operational",
+          detail: "Teyvat Codex Core v2.4.1 operational",
           time: "just now",
           type: "deploy",
           timestamp: new Date().toISOString(),
@@ -150,7 +149,7 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ activities: activities.slice(0, 8) }, { headers: CACHE_HEADERS });
+    return NextResponse.json({ activities: activities.slice(0, 8) }, { headers: LIVE_CACHE_HEADERS });
   } catch (err) {
     console.error("[ACTIVITY_GET]", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Failed to fetch activity stream" }, { status: 500 });

@@ -98,8 +98,8 @@ model PortfolioConfig {
   status            String   @default("ONLINE")
   sysVersion        String   @default("v2.4.1")
   // Web config
-  siteName          String   @default("AETHER-HUD")
-  siteDescription   String   @default("Teyvat Codex & Tactical Portfolio")
+  siteName          String   @default("Teyvat Codex")
+  siteDescription   String   @default("Teyvat Codex — Interactive Traveler Dossier")
   themePreset       String   @default("teyvat-codex")
   animationsEnabled Boolean  @default(true)
   createdAt         DateTime @default(now())

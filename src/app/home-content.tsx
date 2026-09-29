@@ -1,138 +1,123 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { HudFooter } from "@/components/layout/hud-footer";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
 import { NavRail } from "@/components/layout/nav-rail";
 import { MobileNavDock } from "@/components/layout/mobile-nav-dock";
 import { SakuraCanvas } from "@/components/features/sakura-canvas";
 import { IntroGate } from "@/components/features/intro-gate";
-import { useData } from "@/lib/use-data";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { SectionSkeleton } from "@/components/ui/section-skeleton";
-
-// ─── Lazy-loaded sections (dynamic imports for bundle splitting) ───
-const HeroSection = dynamic(
-  () => import("@/components/sections/hero-section").then((m) => ({ default: m.HeroSection })),
-  { loading: () => <SectionSkeleton variant="hero" /> }
-);
-
-const ProjectsSection = dynamic(
-  () => import("@/components/sections/projects-section").then((m) => ({ default: m.ProjectsSection })),
-  { loading: () => <SectionSkeleton variant="projects" /> }
-);
-
-const SkillsSection = dynamic(
-  () => import("@/components/sections/skills-section").then((m) => ({ default: m.SkillsSection })),
-  { loading: () => <SectionSkeleton variant="skills" /> }
-);
-
-const ExperienceSection = dynamic(
-  () => import("@/components/sections/experience-section").then((m) => ({ default: m.ExperienceSection })),
-  { loading: () => <SectionSkeleton variant="experience" /> }
-);
-
-const TestimonialsSection = dynamic(
-  () => import("@/components/sections/testimonials-section").then((m) => ({ default: m.TestimonialsSection })),
-  { loading: () => <SectionSkeleton variant="testimonials" /> }
-);
-
-const ContactSection = dynamic(
-  () => import("@/components/sections/contact-section").then((m) => ({ default: m.ContactSection })),
-  { loading: () => <SectionSkeleton variant="contact" /> }
-);
-
-// ─── Section interface ──────────────────────────────────────────
-interface Section {
-  id: string;
-  key: string;
-  title: string;
-  subtitle: string | null;
-  enabled: boolean;
-  order: number;
-}
-
-const SECTION_MAP: Record<string, React.ElementType> = {
-  hero: HeroSection,
-  projects: ProjectsSection,
-  skills: SkillsSection,
-  experience: ExperienceSection,
-  testimonials: TestimonialsSection,
-  contact: ContactSection,
-};
+import type {
+  ConfigDto,
+  ExperienceDto,
+  ProjectDto,
+  SectionDto,
+  SkillDto,
+  SocialDto,
+  TestimonialDto,
+} from "@/lib/dto";
 
 /**
- * HomeContent — client-side Teyvat Codex homepage composition.
- *
- * Mounts the IntroGate ("Click to Proceed" with 7 Elements),
- * ambient SakuraCanvas particle overlay, Left NavRail, Top HudHeader,
- * and lazy-loaded Teyvat sections with error boundaries.
+ * Section chunks. The data arrives with the server render, so splitting here
+ * only trims the interactive client bundle — no loading state is needed and a
+ * skeleton would flash over already-rendered content.
  */
-export function HomeContent() {
-  const { data: sections, loading } = useData<Section[]>("/api/sections");
+const HeroSection = dynamic(() =>
+  import("@/components/sections/hero-section").then((m) => ({ default: m.HeroSection }))
+);
+const ProjectsSection = dynamic(() =>
+  import("@/components/sections/projects-section").then((m) => ({ default: m.ProjectsSection }))
+);
+const SkillsSection = dynamic(() =>
+  import("@/components/sections/skills-section").then((m) => ({ default: m.SkillsSection }))
+);
+const ExperienceSection = dynamic(() =>
+  import("@/components/sections/experience-section").then((m) => ({ default: m.ExperienceSection }))
+);
+const TestimonialsSection = dynamic(() =>
+  import("@/components/sections/testimonials-section").then((m) => ({ default: m.TestimonialsSection }))
+);
+const ContactSection = dynamic(() =>
+  import("@/components/sections/contact-section").then((m) => ({ default: m.ContactSection }))
+);
 
-  const sectionList =
-    !loading && sections && sections.length > 0
-      ? sections.filter((s) => s.enabled).sort((a, b) => a.order - b.order)
-      : null;
+interface HomeContentProps {
+  config: ConfigDto;
+  sections: SectionDto[];
+  projects: ProjectDto[];
+  skills: SkillDto[];
+  experiences: ExperienceDto[];
+  testimonials: TestimonialDto[];
+  socials: SocialDto[];
+}
+
+/** Ordered section renderers, keyed by the codex page `key` column. */
+function renderSection(section: SectionDto, props: HomeContentProps) {
+  switch (section.key) {
+    case "hero":
+      return <HeroSection config={props.config} />;
+    case "projects":
+      return <ProjectsSection projects={props.projects} section={section} />;
+    case "skills":
+      return <SkillsSection skills={props.skills} section={section} />;
+    case "experience":
+      return <ExperienceSection experiences={props.experiences} section={section} />;
+    case "testimonials":
+      return <TestimonialsSection testimonials={props.testimonials} section={section} />;
+    case "contact":
+      return <ContactSection config={props.config} socials={props.socials} section={section} />;
+    default:
+      return null;
+  }
+}
+
+/**
+ * HomeContent — the public dossier composition.
+ *
+ * Mounts the intro gate, the ambient sakura layer, the three navigation
+ * surfaces (header, desktop rail, mobile dock) and the enabled codex pages in
+ * their configured order. Presentation-only: every dataset is a prop from the
+ * server render, so a failure in one section cannot blank another and an API
+ * outage can never leave the page half-built.
+ */
+export function HomeContent(props: HomeContentProps) {
+  const ordered = [...props.sections]
+    .filter((section) => section.enabled)
+    .sort((a, b) => a.order - b.order);
 
   return (
     <>
-      {/* Skip to main content for keyboard accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-parchment-base focus:text-leather-dark focus:border focus:border-leather-caramel/60 focus:outline-none focus:ring-2 focus:ring-leather-caramel/40 chamfered-sm font-mono text-xs tracking-wider shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-parchment-base focus:text-leather-dark focus:border focus:border-leather-caramel/60 focus:outline-none focus:ring-2 focus:ring-leather-caramel/40 codex-radius-sm text-xs tracking-wider shadow-lg"
       >
-        SKIP TO MAIN CONTENT [↓]
+        Skip to main content
       </a>
 
-      {/* Interactive 7 Elements Intro Gate */}
       <IntroGate />
 
-      {/* Atmospheric Falling Sakura & Stardust Canvas */}
       <SakuraCanvas />
 
-      {/* Left Navigation Rail (Desktop) */}
+      <SiteHeader siteName={props.config.siteName} />
+
       <NavRail />
 
-      {/* Floating Tactical Bottom Dock (Mobile & Tablet) */}
       <MobileNavDock />
 
       <main id="main-content" tabIndex={-1} className="outline-none relative z-20">
-        {sectionList === null ? (
-          <>
-            <ErrorBoundary section="hero">
-              <HeroSection />
-            </ErrorBoundary>
-            <ErrorBoundary section="projects">
-              <ProjectsSection />
-            </ErrorBoundary>
-            <ErrorBoundary section="skills">
-              <SkillsSection />
-            </ErrorBoundary>
-            <ErrorBoundary section="experience">
-              <ExperienceSection />
-            </ErrorBoundary>
-            <ErrorBoundary section="testimonials">
-              <TestimonialsSection />
-            </ErrorBoundary>
-            <ErrorBoundary section="contact">
-              <ContactSection />
-            </ErrorBoundary>
-          </>
-        ) : (
-          sectionList.map((section) => {
-            const SectionComponent = SECTION_MAP[section.key];
-            if (!SectionComponent) return null;
-            return (
-              <ErrorBoundary key={section.id} section={section.key}>
-                <SectionComponent />
-              </ErrorBoundary>
-            );
-          })
-        )}
+        {ordered.map((section) => (
+          <ErrorBoundary key={section.id} section={section.key}>
+            {renderSection(section, props)}
+          </ErrorBoundary>
+        ))}
       </main>
 
-      <HudFooter />
+      <SiteFooter
+        siteName={props.config.siteName}
+        authorName={props.config.name}
+        version={props.config.sysVersion}
+      />
     </>
   );
 }

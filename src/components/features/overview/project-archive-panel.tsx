@@ -3,47 +3,51 @@
 import { Boxes } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProjectRow, type ProjectRowData } from "@/components/features/project-row";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ProjectRow } from "@/components/features/project-row";
+import type { ProjectDto } from "@/lib/dto";
 
-export interface ArchiveProject extends ProjectRowData {
-  id: string;
+interface ProjectArchivePanelProps {
+  /** Domain records to list, in codex order. */
+  projects: ProjectDto[];
 }
 
 /**
- * ProjectArchivePanel — "Deployed Archives" quick-overview panel for the
- * dashboard overview page.
+ * ProjectArchivePanel — "Domain Archive" overview panel.
  *
- * Extracted from overview-view so the panel is a self-contained unit:
- * it owns its header (icon + title + active count badge) and renders the
- * compact ProjectRow list with a HUD-styled [EMPTY] fallback. The view
- * stays a thin data orchestrator that just feeds projects in.
+ * Self-contained unit: it owns its header (icon, title, record count) and
+ * renders the compact ProjectRow list, falling back to the shared EmptyState
+ * when the codex has no domains yet. The view stays a thin data orchestrator
+ * that feeds the records in.
  */
-export function ProjectArchivePanel({ projects }: { projects: ArchiveProject[] }) {
+export function ProjectArchivePanel({ projects }: ProjectArchivePanelProps) {
   return (
-    <Card variant="glass" hover="none" diamond>
+    <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Boxes className="h-4 w-4 text-gold-400" />
-            <CardTitle>Deployed Archives</CardTitle>
+            <Boxes className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <CardTitle>Domain Archive</CardTitle>
           </div>
           <Badge variant="gold" size="sm">
-            {projects.length} ACTIVE
+            {projects.length} RECORDED
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {projects.length === 0 ? (
-            <p className="py-4 text-center font-mono text-xs text-text-muted">
-              [EMPTY] // No projects deployed
-            </p>
-          ) : (
-            projects.map((project) => (
+        {projects.length === 0 ? (
+          <EmptyState
+            icon={<Boxes className="h-4 w-4" aria-hidden="true" />}
+            title="No domains yet"
+            message="Domains added to the codex appear here with their rank, tags and live link."
+          />
+        ) : (
+          <div className="space-y-3">
+            {projects.map((project) => (
               <ProjectRow key={project.id} project={project} />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

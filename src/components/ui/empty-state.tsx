@@ -3,21 +3,21 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 /**
- * EmptyState — reusable HUD "no data" placeholder card.
+ * EmptyState — reusable "no data" placeholder card.
  *
  * Extracted from dashboard list pages (projects, experiences,
  * testimonials, sections) which all rendered the same
- * `[EMPTY] // ...` glass card with centered mono text.
+ * `...` glass card with centered mono text.
  *
  * Optional `icon`, `title`, and `action` props let callers turn the
- * bare placeholder into a rich empty state with a diamond accent,
- * HUD-styled title, and a primary call-to-action (e.g. "NEW DOSSIER").
+ * bare placeholder into a rich empty state with a accent,
+ * designed title, and a primary call-to-action (e.g. "NEW DOSSIER").
  */
 interface EmptyStateProps {
   message: string;
-  /** Optional HUD-styled title rendered above the message (e.g. "NO DATA"). */
+  /** Optional designed title rendered above the message (e.g. "NO DATA"). */
   title?: string;
-  /** Optional icon rendered inside a chamfered icon box above the title. */
+  /** Optional icon rendered inside a icon box above the title. */
   icon?: ReactNode;
   /** Optional call-to-action rendered below the message. */
   action?: ReactNode;
@@ -33,7 +33,7 @@ export function EmptyState({ message, title, icon, action, className }: EmptySta
         <span className="pointer-events-none absolute bottom-3 right-3 h-1.5 w-1.5 rotate-45 border border-border-glass" />
 
         {icon && (
-          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center chamfered-xs border border-leather-caramel/30 bg-leather-caramel/10 text-leather-caramel dark:border-border-subtle dark:bg-deep-space/50 dark:text-gold-400/60">
+          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center codex-radius-xs border border-leather-caramel/30 bg-leather-caramel/10 text-leather-caramel dark:border-border-subtle dark:bg-deep-space/50 dark:text-gold-400/60">
             {icon}
           </div>
         )}
@@ -44,7 +44,7 @@ export function EmptyState({ message, title, icon, action, className }: EmptySta
           </p>
         )}
 
-        <p className="font-mono text-sm text-text-muted">[EMPTY] // {message}</p>
+        <p className="text-sm text-text-muted">{message}</p>
 
         {action && <div className="mt-4 flex justify-center">{action}</div>}
       </CardContent>

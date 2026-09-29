@@ -1,10 +1,10 @@
 /**
  * ListTableHeader — reusable column-header row for dashboard list views.
- * AETHER-HUD Design System: Obsidian & Imperial Gold
+ * Teyvat Codex design system
  *
  * Dedupes the identical `flex items-center gap-4 border-b border-border-subtle
  * px-4 py-2` header row that projects/experiences (and future list views)
- * hand-rolled. Each column renders as a sys-label; pass Tailwind sizing +
+ * hand-rolled. Each column renders as a codex-label; pass Tailwind sizing +
  * responsive-visibility classes via `className` (e.g. "hidden w-24 sm:block")
  * and alignment via `align`.
  */
@@ -34,7 +34,7 @@ export function ListTableHeader({ columns, className }: ListTableHeaderProps) {
         <span
           key={column.label}
           className={cn(
-            "sys-label",
+            "codex-label",
             column.align === "center" && "text-center",
             column.align === "right" && "text-right",
             column.className

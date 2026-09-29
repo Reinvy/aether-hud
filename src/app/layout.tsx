@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Chakra_Petch, Cinzel, Cormorant_Garamond, Inter, JetBrains_Mono, Orbitron } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
- * Self-hosted typography — includes Cormorant Garamond & Cinzel display serif
- * for majestic Teyvat Codex headings, Inter for body reading, and JetBrains Mono.
+ * Self-hosted typography — Cormorant Garamond & Cinzel carry the display
+ * serif headings, Inter the body copy, JetBrains Mono the technical values.
  */
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -21,13 +21,6 @@ const cinzel = Cinzel({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800", "900"],
   variable: "--font-cinzel",
-  display: "swap",
-});
-
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
-  variable: "--font-orbitron",
   display: "swap",
 });
 
@@ -45,16 +38,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const chakraPetch = Chakra_Petch({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-chakra",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
-    default: `${APP_NAME} — High-End Tactical Portfolio`,
+    default: `${APP_NAME} — Interactive Traveler Dossier`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
@@ -67,9 +53,9 @@ export const metadata: Metadata = {
   },
   keywords: [
     "portfolio", "developer", "full-stack", "AI", "Next.js",
-    "game UI", "HUD design", "Honkai Star Rail", "tactical design",
+    "Teyvat Codex", "dossier", "portfolio website",
     "frontend", "TypeScript", "React", "Bahrul Ulumul Haq",
-    "web developer", "portfolio website", "AAA game UI",
+    "web developer", "interactive dossier",
   ],
   authors: [{ name: "Bahrul Ulumul Haq" }],
   creator: "Bahrul Ulumul Haq",
@@ -81,37 +67,19 @@ export const metadata: Metadata = {
     apple: "/icon.svg",
   },
   openGraph: {
-    title: `${APP_NAME} — High-End Tactical Portfolio`,
+    title: `${APP_NAME} — Interactive Traveler Dossier`,
     description: APP_DESCRIPTION,
     type: "website",
     locale: "en_US",
     siteName: APP_NAME,
     url: APP_URL,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: `${APP_NAME} — Tactical Portfolio`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} — High-End Tactical Portfolio`,
+    title: `${APP_NAME} — Interactive Traveler Dossier`,
     description: APP_DESCRIPTION,
     creator: "@reinvy",
     site: "@reinvy",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: `${APP_NAME} — Tactical Portfolio`,
-      },
-    ],
   },
   robots: {
     index: true,
@@ -131,16 +99,13 @@ export const metadata: Metadata = {
     },
   },
   category: "technology",
-  verification: {
-    // google: "google-site-verification-code",
-  },
   appleWebApp: {
     capable: true,
     title: APP_NAME,
     statusBarStyle: "black-translucent",
   },
   other: {
-    "msapplication-TileColor": "#030407",
+    "msapplication-TileColor": "#FAF8F5",
   },
 };
 
@@ -149,11 +114,21 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF7EE" },
-    { media: "(prefers-color-scheme: dark)", color: "#070913" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A120C" },
   ],
   colorScheme: "light dark",
 };
+
+/**
+ * Resolves the stored theme before first paint.
+ *
+ * ThemeProvider applies `data-theme` in an effect, which runs after the first
+ * paint — an OS-dark visitor in light mode would see one frame of the espresso
+ * palette. This blocking script mirrors the provider's logic (same
+ * `aether_theme` key, same `dark` class) so the first paint already matches.
+ */
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("aether_theme");var n=t==="celestial-night";var r=document.documentElement;r.dataset.theme=n?"celestial-night":"teyvat-codex";r.classList.toggle("dark",n);}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -166,14 +141,13 @@ export default function RootLayout({
     name: PORTFOLIO_CONFIG.name,
     url: APP_URL,
     jobTitle: PORTFOLIO_CONFIG.tagline,
-    email: "mailto:hello@aether-hud.dev",
+    email: `mailto:${PORTFOLIO_CONFIG.email}`,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Jakarta",
+      addressLocality: PORTFOLIO_CONFIG.location.split(",")[0]?.trim() ?? "",
       addressCountry: "ID",
     },
     knowsAbout: ["Next.js", "TypeScript", "React", "AI", "Full-Stack Development"],
-    alumniOf: [],
     sameAs: [
       "https://github.com/Reinvy",
       "https://linkedin.com/in/bahrul-ulumul-haq",
@@ -208,10 +182,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${cinzel.variable} ${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${chakraPetch.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
+        {/* Theme resolution must precede the first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"

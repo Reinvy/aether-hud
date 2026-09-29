@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { HudLoader } from "@/components/ui/hud-loader";
+import { CodexLoader } from "@/components/ui/codex-loader";
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { APP_NAME } from "@/lib/constants";
 
 /**
  * DashboardShell — client-side dashboard chrome.
@@ -26,11 +27,11 @@ function DashboardLayoutContent({
   const { toggle } = useSidebar();
 
   return (
-    <div className="flex min-h-screen bg-deep-space">
+    <div className="flex min-h-screen bg-parchment-base dark:bg-deep-space">
       <DashboardSidebar />
       <main className="relative flex-1 overflow-auto lg:ml-64">
         {/* Mobile hamburger — sticky top bar */}
-        <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-border-subtle bg-deep-space/80 px-4 py-3 backdrop-blur-xl lg:hidden">
+        <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-border-subtle bg-parchment-base/85 px-4 py-3 backdrop-blur-xl dark:bg-deep-space/85 lg:hidden">
           <IconButton
             size="md"
             label="Toggle sidebar"
@@ -39,7 +40,7 @@ function DashboardLayoutContent({
             <Menu className="h-5 w-5" />
           </IconButton>
           <span className="font-display text-xs font-bold tracking-[0.15em] text-text-main">
-            AETHER // DASH
+            {APP_NAME}
           </span>
         </div>
         <ErrorBoundary section="dashboard">
@@ -67,8 +68,8 @@ export function DashboardShell({
   // Show loading while checking auth
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-deep-space">
-        <HudLoader label="VERIFYING SESSION" size="lg" />
+      <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
+        <CodexLoader label="Verifying session" size="lg" />
       </div>
     );
   }
@@ -76,8 +77,8 @@ export function DashboardShell({
   // Don't render dashboard content if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-deep-space">
-        <HudLoader label="REDIRECTING TO LOGIN" size="lg" />
+      <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
+        <CodexLoader label="Redirecting to sign-in" size="lg" />
       </div>
     );
   }

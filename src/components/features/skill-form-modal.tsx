@@ -1,18 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ApiError, apiRequest } from "@/lib/api-client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
 
 /**
- * SkillFormModal — create/edit skill module modal for the dashboard skill
- * matrix.
+ * SkillFormModal — create/edit module modal for the dashboard talent matrix.
  *
  * Extracted from dashboard/skills page so the whole form (fields + save
  * logic) can be lazy-loaded as its own chunk via next/dynamic — it only
  * renders when the operator opens the modal, keeping the matrix list's
- * initial bundle small. Data comes from the API (POST/PUT /api/skills).
+ * initial bundle small. Writes go through `apiRequest`, so a failed save
+ * reports the server's message inside the modal.
  */
 
 export interface SkillFormRecord {
@@ -21,6 +22,7 @@ export interface SkillFormRecord {
   level: number;
   category: string;
   icon: string;
+  order: number;
 }
 
 type FormData = {
@@ -36,6 +38,25 @@ const EMPTY_FORM: FormData = {
   category: "",
   icon: "Zap",
 };
+
+const ICON_OPTIONS = [
+  { value: "Zap", label: "Zap — Energy & Speed" },
+  { value: "Globe", label: "Globe — Web & Frontend" },
+  { value: "FileCode", label: "FileCode — Languages" },
+  { value: "Palette", label: "Palette — Styling & CSS" },
+  { value: "Server", label: "Server — Backend & APIs" },
+  { value: "Database", label: "Database — Data & SQL" },
+  { value: "Brain", label: "Brain — AI & Machine Learning" },
+  { value: "Bot", label: "Bot — AI Agents & LLMs" },
+  { value: "Terminal", label: "Terminal — Systems & CLI" },
+  { value: "Radio", label: "Radio — Realtime & WebSockets" },
+  { value: "Network", label: "Network — Architecture" },
+  { value: "Container", label: "Container — Docker & K8s" },
+  { value: "Rocket", label: "Rocket — DevOps & Cloud" },
+  { value: "PenTool", label: "PenTool — Design & Figma" },
+  { value: "Code", label: "Code — General Development" },
+  { value: "Cpu", label: "Cpu — Compute Core" },
+];
 
 function toForm(skill: SkillFormRecord | null): FormData {
   if (!skill) return EMPTY_FORM;
@@ -64,10 +85,14 @@ export function SkillFormModal({
 }: SkillFormModalProps) {
   const [form, setForm] = useState<FormData>(() => toForm(skill));
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Re-sync the form whenever the modal opens with a (different) skill.
   useEffect(() => {
-    if (open) setForm(toForm(skill));
+    if (open) {
+      setForm(toForm(skill));
+      setError(null);
+    }
   }, [open, skill]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
@@ -76,31 +101,30 @@ export function SkillFormModal({
 
   async function handleSave() {
     setSaving(true);
-    try {
-      const body = {
-        name: form.name,
-        level: parseInt(form.level, 10) || 0,
-        category: form.category,
-        icon: form.icon,
-      };
+    setError(null);
 
+    const body = {
+      name: form.name,
+      level: parseInt(form.level, 10) || 0,
+      category: form.category,
+      icon: form.icon,
+    };
+
+    try {
       if (skill) {
-        await fetch("/api/skills", {
+        await apiRequest<unknown>("/api/skills", {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: skill.id, ...body }),
+          body: { id: skill.id, ...body },
         });
       } else {
-        await fetch("/api/skills", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
+        await apiRequest<unknown>("/api/skills", { method: "POST", body });
       }
 
       onSaved();
     } catch (e) {
-      console.error("Failed to save skill", e);
+      setError(
+        e instanceof ApiError ? e.message : "Failed to save the talent"
+      );
     } finally {
       setSaving(false);
     }
@@ -110,27 +134,27 @@ export function SkillFormModal({
     <FormModal
       open={open}
       onClose={onClose}
-      title={skill ? "EDIT SKILL MODULE" : "NEW SKILL MODULE"}
-      sysId={skill ? `DASH//02 // ${skill.id.slice(0, 8)}` : "DASH//02 // NEW"}
-      saveLabel="CALIBRATE"
+      title={skill ? "Edit talent" : "New talent"}
+      saveLabel="Save"
+      error={error}
       onSave={handleSave}
       saving={saving}
     >
       <Input
-        label="FIELD_01 // SKILL NAME"
+        label="Name"
         placeholder="e.g., React Native"
         value={form.name}
         onChange={(e) => updateField("name", e.target.value)}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="FIELD_02 // CATEGORY"
+          label="Category"
           placeholder="Frontend"
           value={form.category}
           onChange={(e) => updateField("category", e.target.value)}
         />
         <Input
-          label="FIELD_03 // LEVEL (0-100)"
+          label="Level (0-100)"
           type="number"
           min={0}
           max={100}
@@ -140,27 +164,10 @@ export function SkillFormModal({
         />
       </div>
       <Select
-        label="FIELD_04 // ICON"
+        label="Icon"
         value={form.icon}
         onChange={(e) => updateField("icon", e.target.value)}
-        options={[
-          { value: "Zap", label: "Zap // Energy & Speed" },
-          { value: "Globe", label: "Globe // Web & Frontend" },
-          { value: "FileCode", label: "FileCode // Languages" },
-          { value: "Palette", label: "Palette // Styling & CSS" },
-          { value: "Server", label: "Server // Backend & APIs" },
-          { value: "Database", label: "Database // Data & SQL" },
-          { value: "Brain", label: "Brain // AI & Machine Learning" },
-          { value: "Bot", label: "Bot // AI Agents & LLMs" },
-          { value: "Terminal", label: "Terminal // Systems & CLI" },
-          { value: "Radio", label: "Radio // Realtime & WebSockets" },
-          { value: "Network", label: "Network // Architecture" },
-          { value: "Container", label: "Container // Docker & K8s" },
-          { value: "Rocket", label: "Rocket // DevOps & Cloud" },
-          { value: "PenTool", label: "PenTool // Design & Figma" },
-          { value: "Code", label: "Code // General Development" },
-          { value: "Cpu", label: "Cpu // Compute Core" },
-        ]}
+        options={ICON_OPTIONS}
       />
     </FormModal>
   );
