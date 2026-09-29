@@ -89,7 +89,7 @@ export function DashboardSidebar() {
         </div>
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <p className="truncate font-display text-sm font-bold tracking-[0.1em] text-text-main">
+            <p className="truncate font-display text-sm font-bold tracking-[0.1em] text-leather-dark">
               {siteName}
             </p>
             <p className="codex-label text-[9px]">Codex Console</p>
@@ -121,8 +121,8 @@ export function DashboardSidebar() {
                         "flex items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider transition-all duration-200 hover-scale-sm press-scale codex-focus",
                         collapsed && "justify-center px-2",
                         isActive
-                          ? "bg-leather-caramel/10 text-leather-dark border-l-2 border-leather-caramel dark:bg-gold-400/10 dark:text-gold-400 dark:border-gold-400"
-                          : "text-text-muted hover:bg-glass-200 hover:text-leather-dark border-l-2 border-transparent dark:hover:text-gold-400"
+                          ? "bg-leather-caramel/15 text-leather-dark border-l-2 border-leather-caramel"
+                          : "text-leather-muted hover:bg-leather-caramel/10 hover:text-leather-dark border-l-2 border-transparent"
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -142,7 +142,7 @@ export function DashboardSidebar() {
           onClick={close}
           title={collapsed ? "Return to the dossier" : undefined}
           className={cn(
-            "flex items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider text-text-muted transition-all duration-200 hover:bg-glass-200 hover:text-leather-dark hover-scale-sm press-scale codex-focus dark:hover:text-gold-400",
+            "flex items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider text-leather-muted transition-all duration-200 hover:bg-leather-caramel/10 hover:text-leather-dark hover-scale-sm press-scale codex-focus",
             collapsed && "justify-center px-2"
           )}
         >
@@ -155,7 +155,7 @@ export function DashboardSidebar() {
           onClick={logout}
           title={collapsed ? "Log out" : undefined}
           className={cn(
-            "flex w-full items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider text-text-muted transition-all duration-200 hover:bg-hud-danger/10 hover:text-hud-danger hover-scale-sm press-scale codex-focus",
+            "flex w-full items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider text-leather-muted transition-all duration-200 hover:bg-crimson-600/8 hover:text-crimson-600 hover-scale-sm press-scale codex-focus",
             collapsed && "justify-center px-2"
           )}
         >
@@ -164,14 +164,14 @@ export function DashboardSidebar() {
         </button>
 
         {!collapsed && (
-          <p className="codex-label px-4 pt-3 text-[9px] tabular-nums">Version {version}</p>
+          <p className="codex-label px-4 pt-3 text-[9px]">Edition {version}</p>
         )}
 
         <button
           type="button"
           onClick={toggleCollapsed}
           aria-expanded={!collapsed}
-          className="mt-2 hidden w-full items-center justify-center gap-2 codex-radius-sm px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted transition-colors hover:text-leather-dark codex-focus lg:flex dark:hover:text-gold-400"
+          className="mt-2 hidden w-full items-center justify-center gap-2 codex-radius-sm px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:flex"
         >
           {collapsed ? (
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -192,7 +192,7 @@ export function DashboardSidebar() {
       <aside
         aria-label="Codex console sidebar"
         className={cn(
-          "fixed left-0 top-0 z-30 hidden h-full flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl transition-[width] duration-300 lg:flex",
+          "fixed left-0 top-0 z-30 hidden h-full flex-col border-r border-leather-caramel/25 bg-parchment-base/95 backdrop-blur-xl transition-[width] duration-300 lg:flex",
           panelWidth
         )}
       >
@@ -208,7 +208,7 @@ export function DashboardSidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-deep-space/60 backdrop-blur-sm lg:hidden"
+              className="codex-scrim fixed inset-0 z-40 lg:hidden"
               onClick={close}
               aria-hidden="true"
             />
@@ -218,7 +218,7 @@ export function DashboardSidebar() {
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               aria-label="Mobile console sidebar"
-              className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-border-subtle bg-surface-primary/95 backdrop-blur-xl lg:hidden"
+              className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-leather-caramel/25 bg-parchment-base/95 backdrop-blur-xl lg:hidden"
             >
               {sidebarContent}
             </motion.aside>

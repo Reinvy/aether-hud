@@ -120,7 +120,7 @@ export function ContactSection({
 
   return (
     <section id="contact" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
@@ -148,7 +148,7 @@ export function ContactSection({
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
             <motion.div className="lg:col-span-3" {...fadeInView}>
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 shadow-2xl h-full">
+              <div className="codex-card codex-radius-card p-6 sm:p-8 h-full">
                 {/* Form header */}
                 <div className="flex flex-wrap items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20">
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
@@ -160,12 +160,12 @@ export function ContactSection({
                       className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
                   </span>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  <span className="codex-label-active">
                     Encrypted Dispatch Scroll
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-jade-500/10 border border-jade-500/30">
                     <StatusDot tone="active" pulse label="Dispatch portal online" />
-                    <span className="font-mono text-[9px] text-jade-600 dark:text-jade-300 font-bold uppercase">
+                    <span className="font-mono text-[9px] text-jade-ink font-bold uppercase">
                       Open
                     </span>
                   </span>
@@ -178,11 +178,11 @@ export function ContactSection({
                     className="flex flex-col items-center justify-center py-12 text-center"
                     aria-live="polite"
                   >
-                    <CheckCircle className="h-12 w-12 text-jade-500 mb-4" aria-hidden="true" />
+                    <CheckCircle className="h-12 w-12 text-jade-ink mb-4" aria-hidden="true" />
                     <p className="font-serif text-lg font-bold tracking-wider text-leather-dark uppercase">
                       Dispatch Delivered
                     </p>
-                    <p className="mt-2 text-sm text-leather-caramel dark:text-text-muted font-mono font-medium">
+                    <p className="mt-2 text-sm text-leather-caramel font-mono font-medium">
                       Summoning scroll received. Seal ID:
                     </p>
                     <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-caramel font-bold tabular-nums">
@@ -267,7 +267,7 @@ export function ContactSection({
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="flex items-center gap-2 rounded-xl border border-hud-danger/40 bg-hud-danger/10 px-4 py-3 text-hud-danger"
+                          className="flex items-center gap-2 codex-radius-card border border-crimson-600/30 bg-crimson-600/8 px-4 py-3 text-crimson-600"
                           role="alert"
                           aria-live="polite"
                         >
@@ -301,7 +301,7 @@ export function ContactSection({
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
@@ -312,7 +312,7 @@ export function ContactSection({
                       className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
                   </span>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  <span className="codex-label-active">
                     Guild Channels
                   </span>
                 </div>
@@ -331,7 +331,7 @@ export function ContactSection({
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={`Connect on ${social.platform}`}
-                          className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
+                          className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
                         >
                           <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
                           <span className="flex-1 font-bold">{social.platform}</span>
@@ -341,7 +341,7 @@ export function ContactSection({
                     })}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-leather-caramel/30 dark:border-border-subtle px-4 py-8 text-center">
+                  <div className="flex flex-col items-center gap-2 codex-radius-card border border-dashed border-leather-caramel/30 px-4 py-8 text-center">
                     <Users className="h-6 w-6 text-leather-caramel/70" aria-hidden="true" />
                     <p className="font-serif text-sm font-bold text-leather-dark">
                       No guild channels inscribed yet
@@ -355,7 +355,7 @@ export function ContactSection({
               </div>
 
               {/* Direct Letter */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
@@ -366,14 +366,14 @@ export function ContactSection({
                       className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
                   </span>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  <span className="codex-label-active">
                     Direct Letter
                   </span>
                 </div>
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
+                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
                 >
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
@@ -392,10 +392,10 @@ export function ContactSection({
               </div>
 
               {/* Availability */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2">
                   <StatusDot tone={isAvailable ? "active" : "warning"} pulse={isAvailable} />
-                  <span className="font-mono text-[10px] font-bold text-jade-600 dark:text-jade-300 uppercase">
+                  <span className="font-mono text-[10px] font-bold text-jade-ink uppercase">
                     {isAvailable ? "Available for commissions" : config.status}
                   </span>
                 </div>

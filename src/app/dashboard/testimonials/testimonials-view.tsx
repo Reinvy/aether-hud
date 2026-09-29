@@ -32,7 +32,7 @@ const TestimonialFormModal = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading testimonial form" size="md" />
       </div>
     ),
@@ -49,7 +49,7 @@ const ConfirmDialog = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading confirmation" size="md" />
       </div>
     ),
@@ -243,7 +243,7 @@ export default function DashboardTestimonials() {
       {error && (
         <p
           role="alert"
-          className="mb-4 codex-radius-sm border border-hud-danger/30 bg-hud-danger/10 px-4 py-2.5 text-sm text-hud-danger"
+          className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-sm text-crimson-600"
         >
           {error}
         </p>
@@ -314,10 +314,10 @@ export default function DashboardTestimonials() {
           title="Remove testimonial"
           message={
             <>
-              Remove <span className="text-gold-400">{deleteRequest.label}</span> from the
+              Remove <span className="text-gold-ink">{deleteRequest.label}</span> from the
               archive? This cannot be undone.
               {deleteError && (
-                <span role="alert" className="mt-2 block text-hud-danger">
+                <span role="alert" className="mt-2 block text-crimson-600">
                   {deleteError}
                 </span>
               )}

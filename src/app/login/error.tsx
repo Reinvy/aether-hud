@@ -17,28 +17,28 @@ export default function LoginError({
   reset: () => void;
 }) {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 dark:bg-deep-space">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70 dark:opacity-50" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" />
 
-      <div className="codex-panel codex-panel-radius relative w-full max-w-lg p-8">
+      <div className="codex-panel codex-panel-radius codex-rise relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex h-14 w-14 items-center justify-center codex-radius-sm border border-hud-danger/30 bg-hud-danger/5">
-            <AlertTriangle className="h-6 w-6 text-hud-danger" aria-hidden="true" />
+          <div className="flex h-14 w-14 items-center justify-center codex-radius-card border border-crimson-600/30 bg-crimson-600/8">
+            <AlertTriangle className="h-6 w-6 text-crimson-600" aria-hidden="true" />
           </div>
 
           <div className="space-y-2">
             <span className="codex-label-gold block">Codex Console</span>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Sign-in is <span className="text-hud-danger">unavailable</span>
+            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-leather-dark">
+              Sign-in is <span className="text-crimson-600">unavailable</span>
             </h1>
-            <p className="mx-auto max-w-sm text-sm font-body text-text-muted">
+            <p className="mx-auto max-w-sm text-sm font-body text-leather-muted">
               The sign-in form failed to load. Your password was never sent — try
               again to reopen the console.
             </p>
           </div>
 
           {error.digest && (
-            <span className="text-[10px] tracking-wider text-text-muted/60 dark:text-platinum-200/70 tabular-nums">
+            <span className="text-[10px] tracking-wider text-leather-muted tabular-nums">
               Reference {error.digest}
             </span>
           )}

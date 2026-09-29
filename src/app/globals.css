@@ -126,10 +126,6 @@ select option {
   border-radius: 0.75rem;
 }
 
-.codex-radius-lg {
-  border-radius: 2rem;
-}
-
 .codex-btn {
   border-radius: var(--radius-codex-control);
 }

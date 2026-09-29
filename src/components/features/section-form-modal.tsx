@@ -137,7 +137,7 @@ export function SectionFormModal({
         />
       </div>
 
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-leather-muted">
         {editing
           ? "The key is the page anchor on the landing screen and cannot be changed once the page exists."
           : "The key becomes the page anchor on the landing screen. Use lowercase letters, digits and dashes."}
@@ -150,7 +150,7 @@ export function SectionFormModal({
         onChange={(e) => updateField("subtitle", e.target.value)}
       />
 
-      <div className="flex items-center gap-3 codex-radius-sm border border-border-subtle px-4 py-3">
+      <div className="flex items-center gap-3 codex-radius-card border border-border-subtle px-4 py-3">
         <Toggle
           id="section-enabled"
           checked={form.enabled}

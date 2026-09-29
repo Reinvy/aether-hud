@@ -34,10 +34,10 @@ export function CodexLoader({ label = "Loading…", size = "md", className }: Co
       className={cn("flex flex-col items-center justify-center gap-3", className)}
     >
       <span className={cn("relative block", s.spinner)}>
-        <span className="absolute inset-0 rotate-45 codex-radius-xs border-2 border-leather-caramel/35 dark:border-gold-400/25" />
+        <span className="absolute inset-0 rotate-45 codex-radius-xs border-2 border-leather-caramel/35" />
         <span
           style={spin}
-          className="elemental-rotate absolute inset-0 rotate-45 codex-radius-xs border-2 border-transparent border-t-leather-caramel dark:border-t-gold-400"
+          className="elemental-rotate absolute inset-0 rotate-45 codex-radius-xs border-2 border-transparent border-t-leather-caramel"
         />
       </span>
       <p className={cn("codex-label-gold tracking-[0.2em]", s.label)}>{label}</p>

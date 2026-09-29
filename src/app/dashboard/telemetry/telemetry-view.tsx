@@ -49,8 +49,8 @@ function SourceBadge({ source }: { source: "database" | "memory" }) {
       className={cn(
         "codex-radius-sm inline-flex items-center gap-2 border px-4 py-2 text-xs font-semibold",
         isDb
-          ? "border-jade-400/30 bg-jade-400/10 text-jade-600 dark:text-jade-400"
-          : "border-gold-400/30 bg-gold-400/10 text-gold-600 dark:text-gold-400"
+          ? "border-jade-400/30 bg-jade-400/10 text-jade-ink"
+          : "border-gold-400/30 bg-gold-400/10 text-gold-ink"
       )}
     >
       {isDb ? (
@@ -69,13 +69,13 @@ function TelemetrySkeleton() {
       {Array.from({ length: 5 }).map((_, i) => (
         <Card key={i} variant="glass" hover="none" className="h-full">
           <CardContent className="space-y-4 p-5">
-            <div className="h-3 w-2/3 rounded-full bg-leather-caramel/15 codex-shimmer dark:bg-gold-400/15" />
-            <div className="h-8 w-1/2 rounded-2xl bg-leather-caramel/15 codex-shimmer dark:bg-gold-400/15" />
+            <div className="h-3 w-2/3 rounded-full bg-leather-caramel/15 codex-shimmer" />
+            <div className="h-8 w-1/2 codex-radius-card bg-leather-caramel/15 codex-shimmer" />
             <div className="grid grid-cols-2 gap-2">
               {Array.from({ length: 6 }).map((_, j) => (
                 <div
                   key={j}
-                  className="h-8 rounded-2xl bg-leather-caramel/10 codex-shimmer dark:bg-gold-400/10"
+                  className="h-8 codex-radius-card bg-leather-caramel/10 codex-shimmer"
                 />
               ))}
             </div>
@@ -131,7 +131,7 @@ export function TelemetryView() {
             {/* Source + collection window */}
             <motion.div variants={fadeInUpItem} className="flex flex-wrap items-center justify-between gap-3">
               <SourceBadge source={data.source} />
-              <span className="text-xs text-text-muted tabular-nums">
+              <span className="text-xs text-leather-muted tabular-nums">
                 Collecting since{" "}
                 {new Date(data.startedAt).toLocaleString("en-GB", { hour12: false })}
               </span>
@@ -175,9 +175,9 @@ export function TelemetryView() {
                 variants={fadeInUpItem}
                 className="codex-panel codex-panel-radius flex flex-col items-center gap-3 p-10 text-center"
               >
-                <Gauge className="h-6 w-6 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+                <Gauge className="h-6 w-6 text-leather-caramel" aria-hidden="true" />
                 <span className="codex-label">No telemetry captured yet</span>
-                <p className="max-w-md text-xs font-body text-text-muted">
+                <p className="max-w-md text-xs font-body text-leather-muted">
                   Samples arrive from real browsers through the Web Vitals reporter. Open the
                   portal, browse a while, and the first readings will appear here.
                 </p>

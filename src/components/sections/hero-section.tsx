@@ -23,8 +23,8 @@ export function HeroSection({ config }: HeroSectionProps) {
   return (
     <section id="hero" className="relative min-h-screen overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20">
       {/* Atmosphere Background Layers */}
-      <div className="pointer-events-none absolute inset-0 bg-parchment-base dark:bg-deep-space transition-colors duration-500" />
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-parchment-base transition-colors duration-500" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-[1480px] px-4 sm:px-6 lg:px-8">
         {/* Traveler Status Line */}
@@ -34,13 +34,13 @@ export function HeroSection({ config }: HeroSectionProps) {
           transition={{ duration: 0.5 }}
           className="flex items-center justify-center gap-3 mb-5"
         >
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm dark:bg-surface-primary/90 dark:border-gold-400/30">
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-jade-400 animate-pulse" />
-            <span className="font-serif text-[10px] font-bold tracking-[0.18em] text-leather-dark dark:text-platinum-50 uppercase">
+            <span className="codex-label">
               Traveler status: {config.status}
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-4 py-1 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm dark:bg-surface-primary/90 dark:border-gold-400/30">
+          <div className="hidden sm:flex items-center gap-2 px-4 py-1 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm">
             <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.handbook}
@@ -51,7 +51,7 @@ export function HeroSection({ config }: HeroSectionProps) {
                 unoptimized
               />
             </span>
-            <span className="font-serif text-[10px] font-bold tracking-[0.18em] text-leather-caramel dark:text-gold-400 uppercase">
+            <span className="codex-label-active">
               Region: {config.location}
             </span>
           </div>

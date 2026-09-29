@@ -95,7 +95,7 @@ function ElementRuneButton({
       aria-pressed={active}
       title={`${element.name} Vision · ${element.domain}`}
       className={cn(
-        "w-8 h-8 rounded-2xl flex items-center justify-center p-1 transition-all",
+        "w-8 h-8 codex-btn flex items-center justify-center p-1 transition-all",
         active
           ? "bg-gold-50/25 ring-2 ring-gold-50 scale-110"
           : "opacity-75 hover:opacity-100 hover:scale-105 hover:bg-gold-50/10",
@@ -131,7 +131,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
   const selectedElement = getElementByKey(activeElementKey);
 
   return (
-    <div className="relative w-full rounded-3xl border-2 border-leather-caramel/35 bg-parchment-subtle dark:bg-deep-space dark:border-gold-400/40 shadow-2xl overflow-hidden select-none transition-colors duration-500">
+    <div className="relative w-full codex-panel-radius border-2 border-leather-caramel/35 bg-parchment-subtle shadow-2xl overflow-hidden select-none transition-colors duration-500">
       {/* ─── Hanging Saddle Leather Bookmark Ribbon with Heart (ref2.png) ─── */}
       <span className="bookmark-ribbon" aria-hidden="true">
         <Heart className="h-4 w-4 fill-current" />
@@ -142,12 +142,12 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
         {/* ════════════════════════════════════════════════════════════════════════
             LEFT: PARCHMENT CANVAS
            ════════════════════════════════════════════════════════════════════════ */}
-        <div className="flex-1 flex flex-col relative bg-parchment-subtle dark:bg-deep-space transition-colors duration-500">
+        <div className="flex-1 flex flex-col relative bg-parchment-subtle transition-colors duration-500">
           {/* Top Header Bar inside Parchment Canvas */}
           <div className="relative flex items-center justify-between px-6 sm:px-10 pt-5 pb-3">
             {/* Top-Left: Deep Espresso Medallion Seal Badge */}
             <div className="relative z-10 flex items-center gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-900 border-2 border-leather-caramel/60 dark:border-gold-400/60 flex items-center justify-center p-1.5 shadow-md">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-900 border-2 border-leather-caramel/60 flex items-center justify-center p-1.5 shadow-md">
                 <Image
                   src={GENSHIN_UI_ICONS.archive}
                   alt="Teyvat Archive"
@@ -160,26 +160,26 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
             </div>
 
             {/* Hairline Horizontal Rule stretching across the top */}
-            <div className="absolute left-18 sm:left-24 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-leather-caramel/25 dark:bg-gold-400/25" />
+            <div className="absolute left-18 sm:left-24 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-leather-caramel/25" />
 
             {/* Top-Right: Character Switcher (LUMINE ◄► AETHER).
                 `pr-20` keeps the labels clear of the hanging bookmark ribbon,
                 which is pinned at `right: 28px` with a 44px width. */}
-            <div className="relative z-10 flex items-center gap-4 bg-parchment-subtle pl-4 pr-20 sm:gap-6 dark:bg-deep-space">
+            <div className="relative z-10 flex items-center gap-4 bg-parchment-subtle pl-4 pr-20 sm:gap-6">
               <button
                 type="button"
                 onClick={() => setCharacter("lumine")}
                 className={cn(
                   "font-serif text-xs sm:text-sm tracking-[0.2em] uppercase transition-all pb-0.5",
                   character === "lumine"
-                    ? "text-leather-dark dark:text-platinum-50 font-extrabold border-b-2 border-leather-caramel dark:border-gold-400"
-                    : "text-leather-muted/70 dark:text-platinum-300/70 hover:text-leather-dark dark:hover:text-platinum-50 font-bold",
+                    ? "text-leather-dark font-extrabold border-b-2 border-leather-caramel"
+                    : "text-leather-muted/70 hover:text-leather-dark font-bold",
                 )}
               >
                 Lumine
               </button>
 
-              <span className="text-leather-caramel/60 dark:text-gold-400/60 font-serif text-xs tracking-tighter select-none">
+              <span className="text-leather-caramel/60 font-serif text-xs tracking-tighter select-none">
                 ◄►
               </span>
 
@@ -189,8 +189,8 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
                 className={cn(
                   "font-serif text-xs sm:text-sm tracking-[0.2em] uppercase transition-all pb-0.5",
                   character === "aether"
-                    ? "text-leather-dark dark:text-platinum-50 font-extrabold border-b-2 border-leather-caramel dark:border-gold-400"
-                    : "text-leather-muted/70 dark:text-platinum-300/70 hover:text-leather-dark dark:hover:text-platinum-50 font-bold",
+                    ? "text-leather-dark font-extrabold border-b-2 border-leather-caramel"
+                    : "text-leather-muted/70 hover:text-leather-dark font-bold",
                 )}
               >
                 Aether
@@ -201,7 +201,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
           {/* ── Center Stage: Character + Typography ── */}
           <div className="flex-1 grid grid-cols-1 md:grid-cols-12 relative px-6 sm:px-10 pb-8 pt-2 items-center gap-6 lg:gap-8">
             {/* Watermark Crest (Bottom-Right of Parchment Canvas, ref2.png) */}
-            <div className="pointer-events-none absolute right-4 sm:right-8 bottom-4 w-64 h-64 sm:w-80 sm:h-80 text-leather-caramel dark:text-gold-400 opacity-20 dark:opacity-15 -z-0">
+            <div className="pointer-events-none absolute right-4 sm:right-8 bottom-4 w-64 h-64 sm:w-80 sm:h-80 text-leather-caramel opacity-20 -z-0">
               <TravelerStarWatermark className="w-full h-full" />
             </div>
 
@@ -253,26 +253,26 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
             <div className="md:col-span-7 flex flex-col justify-center space-y-4 relative z-10">
               {/* Category / Japanese Kanji Subtitle */}
               <div className="flex items-center gap-2">
-                <span className="font-serif text-sm sm:text-base tracking-[0.2em] text-leather-muted dark:text-platinum-200 font-medium">
+                <span className="font-serif text-sm sm:text-base tracking-[0.2em] text-leather-muted font-medium">
                   The Traveler //
                 </span>
-                <span className="font-serif text-base sm:text-lg text-leather-dark dark:text-platinum-50 font-bold">
+                <span className="font-serif text-base sm:text-lg text-leather-dark font-bold">
                   旅人
                 </span>
               </div>
 
               {/* Main Title: Large High-Contrast Serif */}
-              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-leather-dark dark:text-platinum-50 leading-none capitalize">
+              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-leather-dark leading-none capitalize">
                 {copy.title}
               </h1>
 
               {/* Editorial Paragraphs with Solid Cognac Accent Box (ref2.png) */}
               <div className="flex items-start gap-3 sm:gap-4 pt-1">
                 {/* Vertical Solid Cognac Accent Box */}
-                <div className="w-6 sm:w-7 h-14 sm:h-16 bg-leather-caramel dark:bg-gold-400 shrink-0 mt-1 shadow-sm" />
+                <div className="w-6 sm:w-7 h-14 sm:h-16 bg-leather-caramel shrink-0 mt-1 shadow-sm" />
 
                 {/* Paragraph Content */}
-                <div className="space-y-3 font-body text-xs sm:text-[13px] lg:text-[14px] leading-relaxed text-leather-muted dark:text-platinum-200">
+                <div className="space-y-3 font-body text-xs sm:text-[13px] lg:text-[14px] leading-relaxed text-leather-muted">
                   {copy.paragraphs.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
@@ -280,7 +280,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
               </div>
 
               {/* Identity & Traveler Actions */}
-              <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-leather-caramel/30 dark:border-gold-400/30 mt-2">
+              <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-leather-caramel/30 mt-2">
                 <div className="flex items-center gap-2.5">
                   {avatar && (
                     <Image
@@ -288,18 +288,18 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
                       alt={name}
                       width={28}
                       height={28}
-                      className="h-7 w-7 rounded-full object-cover border border-leather-caramel/40 dark:border-gold-400/40"
+                      className="h-7 w-7 rounded-full object-cover border border-leather-caramel/40"
                       unoptimized
                     />
                   )}
                   <span
-                    className="font-serif text-[11px] font-bold text-leather-dark dark:text-platinum-50 uppercase tracking-[0.18em]"
+                    className="codex-label"
                     title={bio}
                   >
                     {name}
                   </span>
-                  <span className="text-leather-caramel dark:text-gold-400 text-xs">•</span>
-                  <span className="font-body text-[10px] text-leather-muted dark:text-platinum-200" title={bio}>
+                  <span className="text-leather-caramel text-xs">•</span>
+                  <span className="font-body text-[10px] text-leather-muted" title={bio}>
                     {tagline}
                   </span>
                 </div>
@@ -307,13 +307,13 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
                 <div className="flex items-center gap-2.5">
                   <a
                     href="#projects"
-                    className="px-4 py-2 font-serif text-[11px] font-bold tracking-widest uppercase bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space hover:bg-leather-caramel/90 dark:hover:bg-gold-400/90 rounded-full shadow-sm transition-all inline-flex items-center gap-1.5"
+                    className="codex-btn-primary codex-sheen codex-focus px-4 py-2 font-serif text-[11px] font-bold tracking-widest uppercase inline-flex items-center gap-1.5"
                   >
                     <span>Explore Domains</span>
                   </a>
                   <a
                     href="#contact"
-                    className="px-4 py-2 font-serif text-[11px] font-bold tracking-widest uppercase border border-leather-caramel dark:border-gold-400 text-leather-dark dark:text-platinum-50 hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10 rounded-full transition-all"
+                    className="codex-btn-secondary codex-sheen codex-focus px-4 py-2 font-serif text-[11px] font-bold tracking-widest uppercase"
                   >
                     <span>Summon</span>
                   </a>
@@ -394,17 +394,17 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
               <div className="h-[1px] bg-gold-50/20 mt-1.5 mb-2" />
 
               {accordions.wishful && (
-                <div className="cognac-card-subtle rounded-2xl p-3 space-y-1">
+                <div className="cognac-card-subtle codex-radius-card p-3 space-y-1">
                   <div className="flex items-center gap-2 text-gold-100 text-[10px]">
                     <span>★★★★★</span>
-                    <span className="font-serif text-[9px] font-bold text-gold-50/80 tracking-wider uppercase">
+                    <span className="font-serif text-[9px] font-bold text-gold-50 tracking-wider uppercase">
                       Event Wish
                     </span>
                   </div>
                   <p className="font-serif font-bold text-gold-50 text-xs">
                     Aether HUD Portfolio
                   </p>
-                  <p className="font-body text-gold-50/75 text-[10px] leading-tight">
+                  <p className="font-body text-gold-50 text-[10px] leading-tight">
                     Forged for grand-scale web architecture and AI engineering systems.
                   </p>
                 </div>
@@ -429,7 +429,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
               <div className="h-[1px] bg-gold-50/20 mt-1.5 mb-2" />
 
               {accordions.memory && (
-                <div className="cognac-card-subtle rounded-2xl p-3 text-xs font-serif italic text-gold-100/90 leading-relaxed">
+                <div className="cognac-card-subtle codex-radius-card p-3 text-xs font-serif italic text-gold-100 leading-relaxed">
                   memoria nostra sit aeterna, quam nullus in hoc mundo pereat
                 </div>
               )}
@@ -468,7 +468,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
           </div>
 
           {/* Panel Footer Metadata */}
-          <div className="pt-4 mt-auto border-t border-gold-50/20 text-[10px] font-serif text-gold-50/80 flex items-center justify-between">
+          <div className="pt-4 mt-auto border-t border-gold-50/20 text-[10px] font-serif text-gold-50 flex items-center justify-between">
             <span>Vision: {selectedElement.name}</span>
             <span className="text-gold-100 font-bold">AR 60</span>
           </div>

@@ -98,7 +98,7 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <span className="codex-label-gold text-[9px]">{name}</span>
-            <h3 className="mt-1 truncate font-display text-xs font-bold tracking-[0.08em] text-text-main">
+            <h3 className="mt-1 truncate font-display text-xs font-bold tracking-[0.08em] text-leather-dark">
               {label}
             </h3>
           </div>
@@ -125,15 +125,15 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
         <div className="mt-auto space-y-1.5 border-t border-border-subtle pt-3">
           {summary.last ? (
             <>
-              <p className="font-mono text-[10px] text-text-muted truncate tabular-nums">
+              <p className="font-mono text-[10px] text-leather-muted truncate tabular-nums">
                 {summary.last.path}
               </p>
-              <p className="text-[10px] font-body text-text-muted">
+              <p className="text-[10px] font-body text-leather-muted">
                 {formatDate(summary.last.recordedAt)} · {formatTime(summary.last.recordedAt)}
               </p>
             </>
           ) : (
-            <p className="text-[10px] font-body text-text-muted">No sample yet</p>
+            <p className="text-[10px] font-body text-leather-muted">No sample yet</p>
           )}
         </div>
       </CardContent>

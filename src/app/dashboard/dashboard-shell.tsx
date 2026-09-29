@@ -27,11 +27,11 @@ function DashboardLayoutContent({
   const { toggle } = useSidebar();
 
   return (
-    <div className="flex min-h-screen bg-parchment-base dark:bg-deep-space">
+    <div className="flex min-h-screen bg-parchment-base">
       <DashboardSidebar />
       <main className="relative flex-1 overflow-auto lg:ml-64">
         {/* Mobile hamburger — sticky top bar */}
-        <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-border-subtle bg-parchment-base/85 px-4 py-3 backdrop-blur-xl dark:bg-deep-space/85 lg:hidden">
+        <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-border-subtle bg-parchment-base/85 px-4 py-3 backdrop-blur-xl lg:hidden">
           <IconButton
             size="md"
             label="Toggle sidebar"
@@ -39,7 +39,7 @@ function DashboardLayoutContent({
           >
             <Menu className="h-5 w-5" />
           </IconButton>
-          <span className="font-display text-xs font-bold tracking-[0.15em] text-text-main">
+          <span className="font-display text-xs font-bold tracking-[0.15em] text-leather-dark">
             {APP_NAME}
           </span>
         </div>

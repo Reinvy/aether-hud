@@ -31,36 +31,36 @@ export function ProfilePreviewCard({ data }: ProfilePreviewCardProps) {
     <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
+          <Globe className="h-4 w-4 text-gold-ink" aria-hidden="true" />
           <CardTitle>Profile Preview</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap items-center gap-6">
           {/* Avatar frame */}
-          <div className="flex h-16 w-16 items-center justify-center codex-panel-radius border-2 border-leather-caramel/30 bg-parchment-subtle dark:border-gold-400/30 dark:bg-deep-space">
-            <User className="h-7 w-7 text-leather-caramel/60 dark:text-gold-400/50" aria-hidden="true" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-leather-caramel/30 bg-parchment-subtle">
+            <User className="h-7 w-7 text-leather-caramel/60" aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-lg font-bold tracking-[0.08em] text-text-main dark:text-platinum-50">
+            <h3 className="font-display text-lg font-bold tracking-[0.08em] text-leather-dark">
               {data.name || "Display name"}
             </h3>
-            <p className="font-body text-xs font-medium text-leather-caramel dark:text-gold-400/80">
+            <p className="font-body text-xs font-medium text-leather-caramel">
               {data.tagline || "Tagline"}
             </p>
             <div className="mt-2 flex flex-wrap gap-4">
               {data.location && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted dark:text-platinum-200">
+                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
                   <MapPin className="h-3 w-3" aria-hidden="true" /> {data.location}
                 </span>
               )}
               {data.email && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted dark:text-platinum-200">
+                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
                   <Mail className="h-3 w-3" aria-hidden="true" /> {data.email}
                 </span>
               )}
               {data.edition && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted dark:text-platinum-200">
+                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
                   <Tag className="h-3 w-3" aria-hidden="true" /> {data.edition}
                 </span>
               )}

@@ -36,7 +36,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
 
   return (
     <section id="experience" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -66,7 +66,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
         <motion.div className="relative mt-14" {...stagger}>
           {/* Vertical guild line */}
           {experiences.length > 0 && (
-            <div className="absolute left-[20px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-leather-caramel/50 via-leather-caramel/25 to-transparent dark:from-gold-400/50 dark:via-gold-400/25" />
+            <div className="absolute left-[20px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-leather-caramel/50 via-leather-caramel/25 to-transparent" />
           )}
 
           {experiences.map((experience, index) => (
@@ -92,14 +92,14 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
               </div>
 
               {/* Node connector line */}
-              <div className="absolute left-[20px] top-11 bottom-0 w-0.5 bg-leather-caramel/20 dark:bg-gold-400/20 group-last:hidden" />
+              <div className="absolute left-[20px] top-11 bottom-0 w-0.5 bg-leather-caramel/20 group-last:hidden" />
 
               {/* Commission card */}
-              <div className="codex-panel rounded-3xl p-6 sm:p-7">
+              <div className="codex-card codex-radius-card p-6 sm:p-7">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className="px-3 py-0.5 rounded-full bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/30 dark:border-gold-400/30 text-leather-dark dark:text-platinum-50 text-[10px] font-serif font-bold tracking-wider uppercase">
+                      <span className="codex-badge">
                         {COMMISSION_LABEL[experience.type] ?? "Commission"}
                       </span>
 
@@ -115,7 +115,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                             unoptimized
                           />
                         </span>
-                        <span className="font-serif text-[10px] text-jade-600 dark:text-jade-300 font-bold">
+                        <span className="font-serif text-[10px] text-jade-ink font-bold">
                           Primogems +60
                         </span>
                         <span className="codex-icon-plate ml-1.5 h-7 w-7 shrink-0">
@@ -128,21 +128,21 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                             unoptimized
                           />
                         </span>
-                        <span className="font-serif text-[10px] text-gold-700 dark:text-gold-300 font-bold">
+                        <span className="font-serif text-[10px] text-gold-ink font-bold">
                           Mora +25K
                         </span>
                       </div>
                     </div>
-                    <h3 className="font-serif text-lg sm:text-xl font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors">
+                    <h3 className="font-serif text-lg sm:text-xl font-bold tracking-wide text-leather-dark uppercase group-hover:text-leather-caramel transition-colors">
                       {experience.role}
                     </h3>
-                    <p className="mt-0.5 font-serif text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold">
+                    <p className="mt-0.5 font-serif text-xs tracking-wider text-leather-caramel font-bold">
                       {experience.company}
                     </p>
                   </div>
 
                   {/* Date range */}
-                  <div className="flex items-center gap-1.5 shrink-0 bg-parchment-subtle dark:bg-surface-primary px-3.5 py-1.5 rounded-full border border-leather-caramel/25 dark:border-gold-400/25 shadow-sm">
+                  <div className="flex items-center gap-1.5 shrink-0 bg-parchment-subtle px-3.5 py-1.5 rounded-full border border-leather-caramel/25 shadow-sm">
                     <span className="codex-icon-plate h-7 w-7 shrink-0">
                       <Image
                         src={GENSHIN_UI_ICONS.time}
@@ -153,18 +153,18 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                         unoptimized
                       />
                     </span>
-                    <span className="font-body text-xs text-leather-dark dark:text-platinum-50 tracking-wider tabular-nums font-semibold">
+                    <span className="font-body text-xs text-leather-dark tracking-wider tabular-nums font-semibold">
                       {experience.startDate} — {experience.endDate || "Present"}
                     </span>
                   </div>
                 </div>
 
-                <p className="mt-3 text-sm leading-relaxed text-leather-muted dark:text-platinum-200 font-body font-medium">
+                <p className="mt-3 text-sm leading-relaxed text-leather-muted font-body font-medium">
                   {experience.description}
                 </p>
 
                 {/* Commission seal */}
-                <div className="mt-4 flex items-center gap-2 pt-3 border-t border-leather-caramel/20 dark:border-gold-400/20">
+                <div className="mt-4 flex items-center gap-2 pt-3 border-t border-leather-caramel/20">
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.achievements}
@@ -175,7 +175,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                       unoptimized
                     />
                   </span>
-                  <span className="font-serif text-[11px] tracking-wider text-leather-muted dark:text-platinum-200 uppercase font-bold">
+                  <span className="font-serif text-[11px] tracking-wider text-leather-muted uppercase font-bold">
                     Commission {String(index + 1).padStart(2, "0")} · sealed by the guild
                   </span>
                 </div>
@@ -184,7 +184,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
           ))}
 
           {experiences.length === 0 && (
-            <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
+            <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
               <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                 <Image
                   src={GENSHIN_UI_ICONS.quests}
@@ -195,10 +195,10 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                   unoptimized
                 />
               </div>
-              <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+              <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                 No commissions recorded
               </h3>
-              <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+              <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted">
                 The expedition chronicle is waiting for its first entry — guild appointments and
                 freelance quests will be logged here.
               </p>

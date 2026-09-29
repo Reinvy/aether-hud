@@ -33,7 +33,7 @@ const ProjectFormModal = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-parchment-base/80 backdrop-blur-sm dark:bg-deep-space/80">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading domain form" size="md" />
       </div>
     ),
@@ -51,7 +51,7 @@ const ConfirmDialog = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-parchment-base/80 backdrop-blur-sm dark:bg-deep-space/80">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading confirmation" size="md" />
       </div>
     ),
@@ -245,7 +245,7 @@ export default function DashboardProjects() {
         {actionError && (
           <p
             role="alert"
-            className="mb-4 codex-radius-sm border border-hud-danger/30 bg-hud-danger/5 px-4 py-2.5 text-xs text-hud-danger"
+            className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-xs text-crimson-600"
           >
             {actionError}
           </p>
@@ -329,7 +329,7 @@ export default function DashboardProjects() {
             <>
               {deleteIds.length === 1 ? (
                 <>
-                  Target: <span className="text-gold-400">{targets[0]?.title ?? "…"}</span>
+                  Target: <span className="text-gold-ink">{targets[0]?.title ?? "…"}</span>
                   <br />
                 </>
               ) : (
@@ -342,7 +342,7 @@ export default function DashboardProjects() {
                 ? "This domain leaves the archive permanently."
                 : "They leave the archive permanently."}
               {deleteError && (
-                <p role="alert" className="mt-2 text-hud-danger">
+                <p role="alert" className="mt-2 text-crimson-600">
                   {deleteError}
                 </p>
               )}

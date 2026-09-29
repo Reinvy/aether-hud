@@ -33,7 +33,7 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <Globe className="h-4 w-4 text-gold-ink" aria-hidden="true" />
             <CardTitle>Codex Identity</CardTitle>
           </div>
         </CardHeader>
@@ -52,7 +52,7 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
             placeholder="Interactive Traveler Dossier — portfolio, domains, talents and commissions"
             className="resize-none"
           />
-          <p className="mt-1 codex-label text-[9px] text-text-muted">
+          <p className="mt-1 codex-label text-[9px] text-leather-muted">
             Appears in search results and link previews
           </p>
           <Input

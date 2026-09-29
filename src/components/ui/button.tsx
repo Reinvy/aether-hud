@@ -20,7 +20,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
-          "codex-radius-sm codex-sheen codex-focus",
+          "codex-btn codex-sheen codex-focus",
           "active:scale-[0.97] disabled:active:scale-100",
 
           /* Size */
@@ -30,15 +30,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
           /* Variant */
           variant === "primary" &&
-            "bg-leather-caramel dark:bg-gradient-to-r dark:from-gold-600 dark:to-gold-500 text-parchment-base dark:text-deep-space font-semibold hover:opacity-90 shadow-md",
+            "bg-leather-caramel text-parchment-base font-semibold hover:opacity-90 shadow-md",
           variant === "secondary" &&
-            "bg-parchment-subtle dark:bg-glass-card border border-leather-caramel/30 dark:border-border-glass text-leather-dark dark:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10",
+            "bg-parchment-subtle border border-leather-caramel/30 text-leather-dark hover:bg-leather-caramel/10",
           variant === "outline" &&
-            "border border-leather-caramel/25 dark:border-border-subtle text-leather-dark dark:text-text-main hover:border-leather-caramel dark:hover:border-border-glass hover:bg-parchment-subtle/50 dark:hover:bg-glass-card",
+            "border border-leather-caramel/30 text-leather-dark hover:border-leather-caramel hover:bg-parchment-subtle/60",
           variant === "ghost" &&
-            "text-leather-muted dark:text-text-muted hover:text-leather-dark dark:hover:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-glass-200",
+            "text-leather-muted hover:text-leather-dark hover:bg-leather-caramel/10",
           variant === "danger" &&
-            "bg-gradient-to-r from-hud-danger to-rose-700 text-white hover:from-rose-600 hover:to-rose-800",
+            "bg-crimson-600 text-parchment-base hover:bg-crimson-700",
 
           /* Glow */
           glow === "gold" && "codex-glow-gold",

@@ -104,7 +104,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-gold-400" />
+            <Link2 className="h-4 w-4 text-gold-ink" />
             <CardTitle>Social Links</CardTitle>
           </div>
           <Button variant="primary" size="sm" onClick={onAdd}>
@@ -132,12 +132,12 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                   className={cn(
-                    "group relative flex items-center justify-between gap-3 codex-radius-sm border border-border-subtle bg-deep-space/30 px-4 py-3 transition-all duration-300 hover:border-border-glass hover:bg-glass-200 hover-scale-sm",
-                    selected && "border-leather-caramel/50 dark:border-gold-400/50"
+                    "group relative flex items-center justify-between gap-3 codex-card codex-radius-card px-4 py-3 transition-all duration-300 hover:bg-leather-caramel/10 hover-scale-sm",
+                    selected && "border-leather-caramel/50"
                   )}
                 >
                   {/* Diamond accent on hover — mirrors Card micro-interaction */}
-                  <span className="pointer-events-none absolute -top-px -right-px h-2.5 w-2.5 rotate-45 border-t border-r border-border-glass opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
+                  <span className="pointer-events-none absolute -top-px -right-px h-2.5 w-2.5 rotate-45 border-t border-r border-leather-caramel/40 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:border-gold-400/40" />
                   <div className="flex min-w-0 items-center gap-3">
                     {selectable && (
                       <input
@@ -145,17 +145,17 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                         checked={selected}
                         onChange={() => onSelect(s.id)}
                         aria-label={`Select ${s.platform}`}
-                        className="h-4 w-4 shrink-0 cursor-pointer accent-leather-caramel codex-focus dark:accent-gold-400"
+                        className="h-4 w-4 shrink-0 cursor-pointer accent-leather-caramel codex-focus"
                       />
                     )}
                     <IconBox>
-                      <Icon className="h-4 w-4 text-gold-400/60" />
+                      <Icon className="h-4 w-4 text-gold-ink" />
                     </IconBox>
                     <div className="min-w-0">
-                      <p className="font-mono text-xs font-medium tracking-wider text-text-main">
+                      <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
                         {s.platform}
                       </p>
-                      <p className="mt-0.5 max-w-[200px] truncate font-mono text-[9px] text-text-muted">
+                      <p className="mt-0.5 max-w-[200px] truncate font-mono text-[9px] text-leather-muted">
                         {s.url}
                       </p>
                     </div>

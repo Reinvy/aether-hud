@@ -71,7 +71,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
 
   return (
     <section id="skills" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
@@ -98,8 +98,8 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
 
         {/* Talent Tree Container */}
         <motion.div className="mt-12 mx-auto max-w-4xl" {...stagger}>
-          <div className="codex-panel rounded-3xl p-6 sm:p-8">
-            <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
+          <div className="codex-card codex-radius-card p-6 sm:p-8">
+            <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20">
               <div className="codex-icon-plate h-7 w-7 shrink-0">
                 <Image
                   src={GENSHIN_UI_ICONS.talents}
@@ -110,16 +110,16 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                   unoptimized
                 />
               </div>
-              <span className="font-serif text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+              <span className="codex-label-active">
                 Talent Tree // Active Constellations
               </span>
-              <span className="ml-auto font-body text-[10px] tracking-wider text-leather-muted dark:text-platinum-200 font-bold uppercase tabular-nums">
+              <span className="ml-auto font-body text-[10px] tracking-wider text-leather-muted font-bold uppercase tabular-nums">
                 {skills.length} talents attuned
               </span>
             </div>
 
             {skills.length === 0 ? (
-              <div className="rounded-2xl border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/60 px-6 py-10 text-center dark:bg-glass-200">
+              <div className="codex-radius-card border border-leather-caramel/25 bg-parchment-subtle/60 px-6 py-10 text-center">
                 <div className="codex-icon-plate mx-auto mb-3 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.talents}
@@ -130,10 +130,10 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                     unoptimized
                   />
                 </div>
-                <h3 className="font-serif text-base font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                <h3 className="font-serif text-base font-bold uppercase tracking-wide text-leather-dark">
                   No talents attuned yet
                 </h3>
-                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted">
                   The constellation map is still unwritten — talent records will appear here once
                   they are inscribed in the console.
                 </p>
@@ -157,7 +157,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                         </span>
                         {group.element.name}
                       </span>
-                      <span className="font-serif text-xs font-bold tracking-widest text-leather-dark dark:text-platinum-50 uppercase">
+                      <span className="codex-label">
                         {group.category}
                       </span>
                       <span className="codex-label ml-auto tabular-nums">
@@ -194,7 +194,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
         {/* Elemental Resonance // Category Average */}
         {categoryStats.length > 0 && (
           <motion.div className="mt-10 mx-auto max-w-2xl text-center" {...fadeInView}>
-            <div className="codex-panel-strong rounded-3xl p-6">
+            <div className="codex-card codex-radius-card p-6">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <div className="codex-icon-plate h-7 w-7 shrink-0">
                   <Image
@@ -206,7 +206,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                     unoptimized
                   />
                 </div>
-                <span className="font-serif text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                <span className="codex-label-active">
                   Elemental Resonance // Category Average
                 </span>
               </div>
@@ -214,9 +214,9 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                 {categoryStats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="text-center min-w-[84px] p-3 rounded-2xl bg-parchment-base dark:bg-surface-primary border border-leather-caramel/25 dark:border-gold-400/25 shadow-sm"
+                    className="text-center min-w-[84px] p-3 codex-radius-card bg-parchment-base border border-leather-caramel/25 shadow-sm"
                   >
-                    <div className="text-2xl font-bold font-serif text-leather-dark dark:text-platinum-50 tabular-nums">
+                    <div className="text-2xl font-bold font-serif text-leather-dark tabular-nums">
                       {stat.pct}%
                     </div>
                     <div className="codex-label mt-1 tabular-nums">{stat.label}</div>

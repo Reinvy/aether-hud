@@ -50,9 +50,9 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
 
   return (
     <motion.div {...cardMotion} className="h-full">
-      <div className="group relative h-full codex-panel rounded-3xl overflow-hidden codex-lift flex flex-col justify-between">
+      <div className="group relative h-full codex-card codex-radius-card overflow-hidden codex-lift flex flex-col justify-between">
         {/* Top Media & Artifact Realm Frame */}
-        <div className="relative h-48 sm:h-52 overflow-hidden bg-parchment-subtle dark:bg-surface-primary border-b border-leather-caramel/25 dark:border-gold-400/25">
+        <div className="relative h-48 sm:h-52 overflow-hidden bg-parchment-subtle border-b border-leather-caramel/25">
           {project.image && project.image !== "/placeholder.svg" ? (
             <Image
               src={project.image}
@@ -63,7 +63,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
               unoptimized
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle dark:from-gold-400/10 dark:via-surface-primary dark:to-deep-space" />
+            <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle" />
           )}
 
           {/* Ambient Elemental Glow on Card Media */}
@@ -73,17 +73,17 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
           />
 
           {/* Top-Right: Artifact Rarity Stars */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-parchment-base/95 border border-leather-caramel/40 px-3.5 py-1 rounded-full shadow-md dark:bg-deep-space/85 dark:border-gold-400/30">
-            <span className="text-gold-500 dark:text-gold-400 text-xs tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-parchment-base/95 border border-leather-caramel/40 px-3.5 py-1 rounded-full shadow-md">
+            <span className="text-gold-ink text-xs tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
               {is5Star ? "★★★★★" : "★★★★☆"}
             </span>
-            <span className="font-serif text-[9px] text-leather-dark dark:text-platinum-50 font-bold uppercase">
+            <span className="font-serif text-[9px] text-leather-dark font-bold uppercase">
               Artifact
             </span>
           </div>
 
           {/* Top-Left: Official Elemental Vision Medallion */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-parchment-base/95 backdrop-blur-md px-3 py-1 rounded-full border border-leather-caramel/40 shadow-md dark:bg-deep-space/70 dark:border-gold-400/40">
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-parchment-base/95 backdrop-blur-md px-3 py-1 rounded-full border border-leather-caramel/40 shadow-md">
             <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={element.whiteIcon}
@@ -103,7 +103,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
           </div>
 
           {/* Bottom Domain Strip */}
-          <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between gap-2 rounded-full border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-base/90 px-3 py-1 backdrop-blur-sm dark:bg-deep-space/85">
+          <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between gap-2 rounded-full border border-leather-caramel/25 bg-parchment-base/90 px-3 py-1 backdrop-blur-sm">
             <span className="codex-label">Domain · {project.category}</span>
             <span className="codex-label-gold tabular-nums">Performance {project.performance}</span>
           </div>
@@ -113,7 +113,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
         <div className="p-6 flex-1 flex flex-col justify-between space-y-4 bg-transparent">
           <div>
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-serif text-lg font-bold tracking-wide text-leather-dark dark:text-platinum-50 group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors uppercase">
+              <h3 className="font-serif text-lg font-bold tracking-wide text-leather-dark group-hover:text-leather-caramel transition-colors uppercase">
                 <Link
                   href={dossierHref}
                   className="codex-focus after:absolute after:inset-0 after:content-['']"
@@ -121,12 +121,12 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                   {project.title}
                 </Link>
               </h3>
-              <span className="text-[11px] font-serif text-leather-caramel dark:text-gold-400 shrink-0 tabular-nums font-bold">
+              <span className="text-[11px] font-serif text-leather-caramel shrink-0 tabular-nums font-bold">
                 {project.year}
               </span>
             </div>
 
-            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-leather-muted dark:text-platinum-200 font-body font-medium line-clamp-3">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-leather-muted font-body font-medium line-clamp-3">
               {project.description}
             </p>
 
@@ -136,7 +136,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 {project.tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
-                    className="px-2.5 py-0.5 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25 text-leather-dark dark:text-platinum-50 text-[11px] font-body font-semibold"
+                    className="codex-badge"
                   >
                     {tag}
                   </span>
@@ -146,14 +146,14 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
           </div>
 
           {/* Action Links — external domains & source forges */}
-          <div className="pt-3 border-t border-leather-caramel/20 dark:border-gold-400/20 flex items-center gap-2.5">
+          <div className="pt-3 border-t border-leather-caramel/20 flex items-center gap-2.5">
             {project.liveUrl && (
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Enter Domain ${project.title}`}
-                className="codex-btn-primary codex-focus relative z-10 px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
+                className="codex-btn-primary codex-sheen codex-focus relative z-10 px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
                 <span className="w-3.5 h-3.5 relative">
                   <Image
@@ -174,7 +174,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`View code for ${project.title}`}
-                className="codex-btn-secondary codex-focus relative z-10 px-3.5 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
+                className="codex-btn-secondary codex-sheen codex-focus relative z-10 px-3.5 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
                 <span className="codex-icon-plate h-7 w-7 shrink-0">
                   <Image

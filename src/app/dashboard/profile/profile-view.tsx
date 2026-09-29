@@ -98,10 +98,10 @@ export default function DashboardProfile() {
       {(loadError || saveError) && (
         <div
           role="alert"
-          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
+          className="mb-6 flex items-start gap-3 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-3"
         >
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
-          <p className="font-body text-xs text-hud-danger">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-crimson-600" aria-hidden="true" />
+          <p className="font-body text-xs text-crimson-600">
             {saveError ?? loadError}
           </p>
         </div>
@@ -139,13 +139,13 @@ export default function DashboardProfile() {
 
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
+        <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+            <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Traveler dossier ready to save
             </p>
-            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+            <p className="font-body text-[11px] text-leather-muted">
               Changes are applied to the codex as soon as they are saved
             </p>
           </div>

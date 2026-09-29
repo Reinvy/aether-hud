@@ -27,7 +27,7 @@ const ConfirmDialog = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Opening confirmation" size="md" />
       </div>
     ),
@@ -133,10 +133,10 @@ export default function DashboardSettings() {
       {(loadError || saveError) && (
         <div
           role="alert"
-          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
+          className="mb-6 flex items-start gap-3 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-3"
         >
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
-          <p className="font-body text-xs text-hud-danger">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-crimson-600" aria-hidden="true" />
+          <p className="font-body text-xs text-crimson-600">
             {saveError ?? loadError}
           </p>
         </div>
@@ -177,13 +177,13 @@ export default function DashboardSettings() {
 
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
+        <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+            <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Settings ready to save
             </p>
-            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+            <p className="font-body text-[11px] text-leather-muted">
               Theme and identity changes apply as soon as they are saved
             </p>
           </div>
@@ -206,7 +206,7 @@ export default function DashboardSettings() {
               <br />
               This action cannot be undone.
               {resetError && (
-                <p role="alert" className="mt-3 flex items-start gap-2 text-hud-danger">
+                <p role="alert" className="mt-3 flex items-start gap-2 text-crimson-600">
                   <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   {resetError}
                 </p>

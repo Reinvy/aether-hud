@@ -9,6 +9,7 @@ import { AlertCircle, ArrowLeft, ArrowRight, Eye, EyeOff, KeyRound } from "lucid
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { EASE_CODEX } from "@/lib/motion-variants";
 
@@ -24,8 +25,8 @@ const SPIN_FAST = { "--codex-spin-duration": "1s" } as CSSProperties;
  * message is rendered inline with `role="alert"`. A resolved login flips the
  * session flag, and the effect below routes the traveler into the dashboard.
  *
- * The panel follows the Teyvat Codex surface language — warm parchment in
- * light mode, celestial espresso at night — with no terminal chrome.
+ * The panel follows the Teyvat Codex surface language — warm parchment,
+ * saddle leather and imperial gold — with no terminal chrome.
  */
 export default function LoginForm() {
   const [password, setPassword] = useState("");
@@ -70,8 +71,8 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 sm:p-6 dark:bg-deep-space">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70 dark:opacity-50" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 sm:p-6">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" />
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -81,26 +82,27 @@ export default function LoginForm() {
       >
         <div className="codex-panel codex-panel-radius overflow-hidden">
           {/* Gilded crest + console wordmark */}
-          <div className="flex items-center gap-3 border-b border-leather-caramel/20 px-6 py-4 dark:border-border-subtle">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-leather-caramel/50 bg-surface-primary p-2 shadow-md">
+          <div className="flex items-center gap-3 border-b border-leather-caramel/20 px-6 py-4">
+            <span className="codex-icon-plate h-11 w-11 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.archive}
                 alt=""
                 width={22}
                 height={22}
-                className="object-contain brightness-0 invert"
+                className="codex-icon-on-plate h-6 w-6 object-contain"
                 unoptimized
               />
             </span>
             <div className="min-w-0">
               <span className="codex-label-gold block">Teyvat Codex</span>
-              <p className="font-display text-sm font-bold tracking-[0.12em] text-text-main">
+              <p className="font-display text-sm font-bold tracking-[0.12em] text-leather-dark">
                 Codex Console
               </p>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8">
+          <div className="p-5 sm:p-6">
+            <div className="codex-card codex-radius-card p-5 sm:p-6">
             <AnimatePresence mode="wait">
               {step === "intro" ? (
                 <motion.section
@@ -111,14 +113,14 @@ export default function LoginForm() {
                   transition={{ duration: 0.35, ease: EASE_CODEX }}
                   className="text-center"
                 >
-                  <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-leather-caramel/30 bg-leather-caramel/10 dark:border-border-glass dark:bg-glass-200">
-                    <KeyRound className="h-9 w-9 text-leather-caramel dark:text-gold-400" />
+                  <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-leather-caramel/30 bg-leather-caramel/10">
+                    <KeyRound className="h-9 w-9 text-leather-caramel" />
                   </span>
 
-                  <h1 className="mt-6 font-display text-2xl font-bold tracking-[0.08em] text-text-main">
+                  <h1 className="mt-6 font-display text-2xl font-bold tracking-[0.08em] text-leather-dark">
                     Sign in to the <span className="codex-gradient-text">console</span>
                   </h1>
-                  <p className="mx-auto mt-3 max-w-xs text-sm font-body text-text-muted">
+                  <p className="mx-auto mt-3 max-w-xs text-sm font-body text-leather-muted">
                     The archive is sealed. Present your key to manage the dossier.
                   </p>
 
@@ -141,10 +143,10 @@ export default function LoginForm() {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.35, ease: EASE_CODEX }}
                 >
-                  <h1 className="font-display text-xl font-bold tracking-[0.08em] text-text-main">
+                  <h1 className="font-display text-xl font-bold tracking-[0.08em] text-leather-dark">
                     Who goes there?
                   </h1>
-                  <p className="mt-2 text-sm font-body text-text-muted">
+                  <p className="mt-2 text-sm font-body text-leather-muted">
                     Enter the archivist password to open the Codex Console.
                   </p>
 
@@ -170,7 +172,7 @@ export default function LoginForm() {
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label={showPassword ? "Hide password" : "Show password"}
                           aria-pressed={showPassword}
-                          className="codex-focus flex h-9 w-9 items-center justify-center codex-radius-xs text-text-muted transition-colors duration-300 hover:text-leather-caramel dark:hover:text-gold-400"
+                          className="codex-focus flex h-9 w-9 items-center justify-center codex-radius-xs text-leather-muted transition-colors duration-300 hover:text-leather-caramel"
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -184,7 +186,7 @@ export default function LoginForm() {
                     {error && (
                       <p
                         role="alert"
-                        className="flex items-start gap-2 codex-radius-sm border border-hud-danger/30 bg-hud-danger/5 px-4 py-3 text-xs font-medium text-hud-danger"
+                        className="flex items-start gap-2 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-3 text-xs font-medium text-crimson-600"
                       >
                         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                         <span>{error}</span>
@@ -192,19 +194,21 @@ export default function LoginForm() {
                     )}
 
                     <div className="flex items-center gap-3">
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
+                        glow="none"
                         onClick={() => {
                           setStep("intro");
                           setError("");
                           setPassword("");
                         }}
                         disabled={submitting}
-                        className="codex-focus inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-leather-caramel/30 px-4 py-3 text-sm font-semibold text-text-muted transition-colors duration-300 hover:border-leather-caramel/60 hover:text-leather-caramel disabled:cursor-not-allowed disabled:opacity-40 dark:border-border-subtle dark:hover:border-border-glass dark:hover:text-gold-400"
+                        className="flex-1"
                       >
                         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                         Back
-                      </button>
+                      </Button>
                       <button
                         type="submit"
                         disabled={!password.trim() || submitting}
@@ -214,10 +218,10 @@ export default function LoginForm() {
                         {submitting ? (
                           <>
                             <span className="relative block h-4 w-4 shrink-0" aria-hidden="true">
-                              <span className="absolute inset-0 rotate-45 codex-radius-xs border-2 border-surface-primary/50" />
+                              <span className="absolute inset-0 rotate-45 codex-radius-xs border-2 border-gold-900/35" />
                               <span
                                 style={SPIN_FAST}
-                                className="elemental-rotate absolute inset-0 rotate-45 codex-radius-xs border-2 border-transparent border-t-surface-primary"
+                                className="elemental-rotate absolute inset-0 rotate-45 codex-radius-xs border-2 border-transparent border-t-gold-900"
                               />
                             </span>
                             Opening…
@@ -238,13 +242,14 @@ export default function LoginForm() {
                 </motion.section>
               )}
             </AnimatePresence>
+            </div>
           </div>
         </div>
 
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="codex-focus inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted transition-colors duration-300 hover:text-leather-caramel dark:hover:text-gold-400"
+            className="codex-focus inline-flex items-center gap-1.5 text-xs font-semibold text-leather-muted transition-colors duration-300 hover:text-leather-caramel"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Return to the dossier

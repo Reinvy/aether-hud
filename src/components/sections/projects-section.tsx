@@ -90,10 +90,10 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
                   aria-selected={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "px-4 py-1.5 rounded-full font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
+                    "px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
                     isActive
-                      ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space border-leather-caramel dark:border-gold-400 shadow-md scale-105"
-                      : "bg-parchment-base/80 dark:bg-surface-primary/80 text-leather-dark dark:text-platinum-50 border-leather-caramel/35 dark:border-gold-400/35 hover:border-leather-caramel dark:hover:border-gold-400",
+                      ? "bg-leather-caramel text-parchment-base border-leather-caramel shadow-md scale-105"
+                      : "bg-parchment-base/80 text-leather-dark border-leather-caramel/35 hover:border-leather-caramel",
                   )}
                 >
                   {category === "ALL" ? "All domains" : category}
@@ -111,7 +111,7 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
 
           {filteredProjects.length === 0 && (
             <div className="col-span-full">
-              <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
+              <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
                 <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.archive}
@@ -122,10 +122,10 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
                     unoptimized
                   />
                 </div>
-                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                   {archiveIsEmpty ? "The archive awaits its first artifact" : "No artifacts in this domain"}
                 </h3>
-                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted">
                   {archiveIsEmpty
                     ? "Commissioned builds will be catalogued here as soon as they are forged."
                     : "Choose another realm from the filter above, or return to all domains."}

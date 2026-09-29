@@ -23,14 +23,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={id}
-            className="codex-label mb-2 block text-leather-dark dark:text-platinum-200 font-bold tracking-wider"
+            className="codex-label mb-2 block text-leather-dark font-bold"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {prefix && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-leather-caramel dark:text-gold-400">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-leather-caramel">
               {prefix}
             </div>
           )}
@@ -38,11 +38,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             className={cn(
-              "codex-input rounded-xl w-full px-4 py-2.5 text-sm font-body transition-all duration-300 font-medium",
-              "text-leather-dark dark:text-platinum-50 placeholder:text-leather-muted/60 dark:placeholder:text-text-muted/60",
+              "codex-input w-full px-4 py-2.5 text-sm font-body transition-all duration-300 font-medium",
+              "text-leather-dark",
               prefix && "pl-10",
               suffix && "pr-10",
-              error && "border-hud-danger",
+              error && "border-crimson-600/30",
               className
             )}
             {...props}
@@ -50,7 +50,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {suffix && (
             <div
               className={cn(
-                "absolute inset-y-0 right-0 flex items-center pr-3 text-leather-muted dark:text-text-muted",
+                "absolute inset-y-0 right-0 flex items-center pr-3 text-leather-muted",
                 !suffixInteractive && "pointer-events-none"
               )}
             >
@@ -59,7 +59,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p role="alert" className="mt-1.5 text-xs text-hud-danger">
+          <p role="alert" className="mt-1.5 text-[11px] text-crimson-600">
             {error}
           </p>
         )}

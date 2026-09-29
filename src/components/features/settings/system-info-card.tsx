@@ -32,7 +32,7 @@ export function SystemInfoCard({ delay = 0 }: SystemInfoCardProps) {
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <ScrollText className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <ScrollText className="h-4 w-4 text-gold-ink" aria-hidden="true" />
             <CardTitle>System Information</CardTitle>
           </div>
         </CardHeader>

@@ -30,7 +30,7 @@ const sizeStyles: Record<string, string> = {
 
 const variantStyles: Record<string, string> = {
   default: "",
-  danger: "border-hud-danger/30",
+  danger: "border-crimson-600/30",
 };
 
 const FOCUSABLE_SELECTOR =
@@ -54,10 +54,9 @@ export function Modal({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
+      // Escape honours the same switch as the backdrop, so an in-flight save
+      // (disableBackdropClose) can never be aborted by a stray key press.
+      if (e.key === "Escape" && !disableBackdropClose) onClose();
       // Focus trap: keep Tab cycling inside the dialog, never behind it.
       if (e.key !== "Tab") return;
       const panel = panelRef.current;
@@ -81,7 +80,7 @@ export function Modal({
         }
       }
     },
-    [onClose]
+    [onClose, disableBackdropClose]
   );
 
   useEffect(() => {
@@ -141,7 +140,7 @@ export function Modal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-deep-space/80 backdrop-blur-sm"
+            className="codex-scrim absolute inset-0"
             onClick={disableBackdropClose ? undefined : onClose}
             aria-hidden="true"
           />
@@ -158,7 +157,7 @@ export function Modal({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: EASE_CODEX }}
             className={cn(
-              "codex-card-strong rounded-3xl relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
+              "codex-card-strong codex-panel-radius relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
               sizeStyles[size] || sizeStyles.md,
               variantStyles[variant] || variantStyles.default,
               className
@@ -169,14 +168,15 @@ export function Modal({
               {title && (
                 <h2
                   id={titleId}
-                  className="font-display text-sm font-bold tracking-wider uppercase text-text-main truncate"
+                  className="font-display text-sm font-bold tracking-wider uppercase text-leather-dark truncate"
                 >
                   {title}
                 </h2>
               )}
               <button
                 onClick={onClose}
-                className="min-h-9 min-w-9 rounded-xl p-0 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm press-scale codex-focus shrink-0 sm:min-h-0 sm:min-w-0 sm:p-1.5"
+                title="Close modal"
+                className="codex-btn min-h-9 min-w-9 shrink-0 p-0 text-leather-muted transition-all duration-200 hover:text-gold-ink hover-scale-sm press-scale codex-focus sm:min-h-0 sm:min-w-0 sm:p-1.5"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -185,15 +185,15 @@ export function Modal({
 
             {/* Diamond indicator */}
             <div className="absolute top-3 right-3 flex gap-1 pointer-events-none">
-              <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/40" />
-              <span className="h-1.5 w-1.5 rotate-45 bg-gold-400/20" />
+              <span className="h-1.5 w-1.5 rotate-45 bg-leather-caramel/40" />
+              <span className="h-1.5 w-1.5 rotate-45 bg-leather-caramel/20" />
             </div>
 
             {/* Content */}
             <div className="p-4 sm:p-6">{children}</div>
 
             {error && (
-              <p role="alert" className="px-4 pb-3 sm:px-6 codex-label-active">
+              <p role="alert" className="px-4 pb-3 text-[11px] text-crimson-600 sm:px-6">
                 {error}
               </p>
             )}

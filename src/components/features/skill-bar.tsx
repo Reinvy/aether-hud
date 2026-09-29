@@ -27,17 +27,17 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
   const isCrowned = talentLevel === 10;
 
   return (
-    <div className="group space-y-2.5 p-3.5 rounded-2xl transition-all bg-parchment-base dark:bg-surface-primary hover:bg-parchment-subtle dark:hover:bg-surface-primary border-2 border-leather-caramel/25 dark:border-gold-400/20">
+    <div className="group space-y-2.5 p-3.5 codex-card codex-radius-card transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-leather-caramel/15 dark:bg-gold-400/15 border border-leather-caramel/35 dark:border-gold-400/35 flex items-center justify-center p-1.5 shadow-inner">
-            <Icon className="h-4 w-4 text-leather-caramel dark:text-gold-400 transition-transform group-hover:scale-110" />
+          <div className="w-8 h-8 rounded-full bg-leather-caramel/15 border border-leather-caramel/35 flex items-center justify-center p-1.5 shadow-inner">
+            <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover:scale-110" />
           </div>
           <div>
-            <span className="font-serif text-xs tracking-wide text-leather-dark dark:text-platinum-50 font-bold group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors block">
+            <span className="font-serif text-xs tracking-wide text-leather-dark font-bold group-hover:text-leather-caramel transition-colors block">
               {name}
             </span>
-            <span className="font-body text-[10px] font-semibold tracking-wider text-leather-muted dark:text-platinum-200 uppercase">
+            <span className="codex-label">
               {category}
             </span>
           </div>
@@ -47,8 +47,8 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
             className={cn(
               "font-serif text-[9px] px-3 py-1 rounded-full font-bold flex items-center gap-1.5",
               isCrowned
-                ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space shadow-sm"
-                : "bg-leather-caramel/15 dark:bg-gold-400/15 text-leather-dark dark:text-platinum-50 border border-leather-caramel/25 dark:border-gold-400/25",
+                ? "bg-leather-caramel text-parchment-base shadow-sm"
+                : "bg-leather-caramel/15 text-leather-dark border border-leather-caramel/25",
             )}
           >
             {isCrowned && (
@@ -65,7 +65,7 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
             )}
             <span>{isCrowned ? "Crowned Lv. 10" : `Lv. ${talentLevel}`}</span>
           </div>
-          <span className="font-body text-xs text-leather-caramel dark:text-gold-400 font-bold tabular-nums">
+          <span className="font-body text-xs text-leather-caramel font-bold tabular-nums">
             {level}%
           </span>
         </div>

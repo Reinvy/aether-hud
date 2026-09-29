@@ -7,7 +7,7 @@ import { CodexLoader } from "@/components/ui/codex-loader";
  */
 export default function RootLoading() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
+    <div className="codex-rise relative flex min-h-screen items-center justify-center bg-parchment-base">
       <div className="pointer-events-none absolute inset-0 codex-grid-bg opacity-10" />
       <CodexLoader label="Opening the codex" size="lg" />
     </div>

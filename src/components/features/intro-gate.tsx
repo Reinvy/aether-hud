@@ -61,7 +61,7 @@ export function IntroGate() {
           className="fixed inset-0 z-50 flex flex-col items-center justify-center select-none bg-gradient-to-b from-parchment-base via-parchment-base to-parchment-subtle px-4 text-leather-dark"
         >
           {/* Subtle Outer Frame Inset */}
-          <div className="absolute inset-4 sm:inset-8 border border-leather-caramel/15 pointer-events-none rounded-2xl" />
+          <div className="absolute inset-4 sm:inset-8 border border-leather-caramel/15 pointer-events-none codex-panel-radius" />
 
           {/* Central Content */}
           <div className="relative z-10 flex flex-col items-center text-center max-w-lg space-y-10 sm:space-y-12">

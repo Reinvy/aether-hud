@@ -53,9 +53,9 @@ export const SectionRow = memo(function SectionRow({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.04 }}
       className={cn(
-        "border-b border-border-subtle/50 transition-colors hover:bg-glass-200/40",
+        "border-b border-border-subtle/50 transition-colors hover:bg-leather-caramel/10",
         !section.enabled && "opacity-60",
-        selected && "bg-leather-caramel/5 dark:bg-glass-200/60"
+        selected && "bg-leather-caramel/5"
       )}
     >
       {/* Selection */}
@@ -66,14 +66,14 @@ export const SectionRow = memo(function SectionRow({
             checked={selected}
             onChange={() => onSelect(section.id)}
             aria-label={`Select ${section.title}`}
-            className="h-4 w-4 cursor-pointer accent-leather-caramel codex-focus dark:accent-gold-400"
+            className="h-4 w-4 cursor-pointer accent-leather-caramel codex-focus"
           />
         )}
       </td>
       {/* Order */}
       <td className="px-4 py-4">
         <div className="flex items-center gap-1">
-          <span className="font-mono text-[11px] tabular-nums text-text-muted">
+          <span className="font-mono text-[11px] tabular-nums text-leather-muted">
             {String(section.order).padStart(2, "0")}
           </span>
           <IconButton
@@ -98,15 +98,15 @@ export const SectionRow = memo(function SectionRow({
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
           <IconBox>
-            <span className="font-mono text-[10px] text-gold-400">
+            <span className="font-mono text-[10px] text-gold-ink">
               {String(section.order + 1).padStart(2, "0")}
             </span>
           </IconBox>
           <div>
-            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
+            <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
               {section.title}
             </p>
-            <p className="font-mono text-[9px] tracking-wider text-text-muted/60 dark:text-platinum-200/70">
+            <p className="font-mono text-[9px] tracking-wider text-leather-muted">
               {section.key}
             </p>
           </div>
@@ -120,7 +120,7 @@ export const SectionRow = memo(function SectionRow({
       </td>
       {/* Subtitle */}
       <td className="px-4 py-4 hidden sm:table-cell">
-        <span className="font-mono text-[10px] text-text-muted">
+        <span className="font-mono text-[10px] text-leather-muted">
           {section.subtitle || "—"}
         </span>
       </td>
@@ -132,10 +132,10 @@ export const SectionRow = memo(function SectionRow({
           aria-pressed={section.enabled}
           aria-label={`${section.enabled ? "Hide" : "Show"} ${section.title}`}
           className={cn(
-            "inline-flex items-center gap-1.5 codex-radius-xs px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale codex-focus",
+            "inline-flex items-center gap-1.5 codex-btn px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale codex-focus",
             section.enabled
-              ? "bg-jade-400/10 text-jade-600 hover:bg-jade-400/20 dark:text-jade-400"
-              : "bg-hud-danger/10 text-hud-danger hover:bg-hud-danger/20"
+              ? "bg-jade-400/10 text-jade-ink hover:bg-jade-400/20"
+              : "bg-crimson-600/8 text-crimson-600 hover:bg-crimson-600/8"
           )}
         >
           {section.enabled ? (

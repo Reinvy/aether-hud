@@ -41,7 +41,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
   }, [menuOpen, closeMenu]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-leather-caramel/25 dark:border-border-subtle bg-parchment-base/92 dark:bg-deep-space/92 backdrop-blur-xl transition-colors">
+    <header className="sticky top-0 z-40 border-b border-leather-caramel/25 bg-parchment-base/92 backdrop-blur-xl transition-colors">
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand crest */}
         <a
@@ -60,7 +60,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             />
           </span>
           <span className="min-w-0">
-            <span className="block truncate font-display text-sm font-bold tracking-[0.12em] text-leather-dark dark:text-text-main">
+            <span className="block truncate font-display text-sm font-bold tracking-[0.12em] text-leather-dark">
               {siteName}
             </span>
             <span className="codex-label block text-[9px]">Traveler Dossier</span>
@@ -79,8 +79,8 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
                 className={cn(
                   "codex-radius-sm px-3 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-colors codex-focus",
                   isActive
-                    ? "bg-leather-caramel/15 text-leather-dark dark:bg-gold-400/15 dark:text-gold-400"
-                    : "text-leather-muted dark:text-text-muted hover:bg-leather-caramel/10 hover:text-leather-dark dark:hover:text-gold-400"
+                    ? "bg-leather-caramel/15 text-leather-dark"
+                    : "text-leather-muted hover:bg-leather-caramel/10 hover:text-leather-dark"
                 )}
               >
                 {item.label}
@@ -95,14 +95,14 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             onClick={() => setAnimationsEnabled(!animationsEnabled)}
             aria-pressed={animationsEnabled}
             aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
-            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle text-leather-muted dark:text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 codex-focus"
+            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus"
           >
             <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
           </button>
 
           <Link
             href="/login"
-            className="hidden codex-radius-sm border border-leather-caramel/35 dark:border-border-glass px-3.5 py-2 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark dark:text-gold-400 transition-colors hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10 codex-focus sm:block"
+            className="hidden codex-radius-sm border border-leather-caramel/35 px-3.5 py-2 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark transition-colors hover:bg-leather-caramel/10 codex-focus sm:block"
           >
             Codex Console
           </Link>
@@ -113,7 +113,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             aria-expanded={menuOpen}
             aria-controls="codex-mobile-menu"
             aria-label={menuOpen ? "Close section menu" : "Open section menu"}
-            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle text-leather-muted dark:text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 codex-focus lg:hidden"
+            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:hidden"
           >
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -124,7 +124,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
         <nav
           id="codex-mobile-menu"
           aria-label="Codex sections"
-          className="border-t border-leather-caramel/20 dark:border-border-subtle px-4 pb-3 pt-2 sm:px-6 lg:hidden"
+          className="border-t border-leather-caramel/20 px-4 pb-3 pt-2 sm:px-6 lg:hidden"
         >
           <ul className="grid gap-1">
             {PUBLIC_NAV.map((item) => (
@@ -133,7 +133,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
                   href={item.href}
                   onClick={closeMenu}
                   aria-current={activeSection === item.sectionId ? "location" : undefined}
-                  className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-muted dark:text-text-muted transition-colors hover:bg-leather-caramel/10 hover:text-leather-dark dark:hover:text-gold-400 codex-focus"
+                  className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-muted transition-colors hover:bg-leather-caramel/10 hover:text-leather-dark codex-focus"
                 >
                   {item.label}
                 </a>
@@ -143,7 +143,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
               <Link
                 href="/login"
                 onClick={closeMenu}
-                className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark dark:text-gold-400 transition-colors hover:bg-leather-caramel/10 codex-focus"
+                className="block codex-radius-sm px-3 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark transition-colors hover:bg-leather-caramel/10 codex-focus"
               >
                 Codex Console
               </Link>

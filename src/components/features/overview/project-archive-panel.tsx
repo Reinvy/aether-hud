@@ -26,7 +26,7 @@ export function ProjectArchivePanel({ projects }: ProjectArchivePanelProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Boxes className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <Boxes className="h-4 w-4 text-gold-ink" aria-hidden="true" />
             <CardTitle>Domain Archive</CardTitle>
           </div>
           <Badge variant="gold" size="sm">

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 
@@ -29,6 +29,10 @@ interface FormModalProps {
  * save with the elemental loading spinner) and a consistent `space-y-4`
  * content gutter, so every CRUD form shares the same chrome instead of
  * re-declaring footer buttons inline.
+ *
+ * The body is a real `<form>`: Enter inside any field submits (the primary
+ * button is `type="submit"` and bound to the form by id), and Escape /
+ * backdrop clicks are ignored while `saving` is true.
  */
 export function FormModal({
   open,
@@ -42,6 +46,8 @@ export function FormModal({
   saving = false,
   children,
 }: FormModalProps) {
+  const formId = useId();
+
   return (
     <Modal
       open={open}
@@ -50,9 +56,11 @@ export function FormModal({
       size={size}
       variant={variant}
       error={error}
+      disableBackdropClose={saving}
       footer={
         <>
           <Button
+            type="button"
             variant="secondary"
             size="sm"
             onClick={onClose}
@@ -60,13 +68,28 @@ export function FormModal({
           >
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={onSave} loading={saving}>
+          <Button
+            type="submit"
+            form={formId}
+            variant="primary"
+            size="sm"
+            loading={saving}
+          >
             {saveLabel}
           </Button>
         </>
       }
     >
-      <div className="space-y-4">{children}</div>
+      <form
+        id={formId}
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!saving) onSave();
+        }}
+        className="space-y-4"
+      >
+        {children}
+      </form>
     </Modal>
   );
 }

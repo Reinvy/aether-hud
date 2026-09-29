@@ -33,7 +33,7 @@ export function PersonalInfoCard({ form, onFieldChange }: PersonalInfoCardProps)
     <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <UserRound className="h-4 w-4 text-gold-400" aria-hidden="true" />
+          <UserRound className="h-4 w-4 text-gold-ink" aria-hidden="true" />
           <CardTitle>Personal Info</CardTitle>
         </div>
       </CardHeader>

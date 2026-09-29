@@ -33,7 +33,7 @@ const SkillFormModal = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-parchment-base/80 backdrop-blur-sm dark:bg-deep-space/80">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading talent form" size="md" />
       </div>
     ),
@@ -50,7 +50,7 @@ const ConfirmDialog = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-parchment-base/80 backdrop-blur-sm dark:bg-deep-space/80">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading confirmation" size="md" />
       </div>
     ),
@@ -291,7 +291,7 @@ export default function DashboardSkills() {
         {actionError && (
           <p
             role="alert"
-            className="mb-4 codex-radius-sm border border-hud-danger/30 bg-hud-danger/5 px-4 py-2.5 text-xs text-hud-danger"
+            className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-xs text-crimson-600"
           >
             {actionError}
           </p>
@@ -370,7 +370,7 @@ export default function DashboardSkills() {
           onSave={applyCategory}
           saving={bulkSaving}
         >
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-leather-muted">
             {list.selected.size} selected talents will move to the chosen category.
           </p>
           <Select
@@ -393,7 +393,7 @@ export default function DashboardSkills() {
             <>
               {deleteIds.length === 1 ? (
                 <>
-                  Target: <span className="text-gold-400">{targets[0]?.name ?? "…"}</span>
+                  Target: <span className="text-gold-ink">{targets[0]?.name ?? "…"}</span>
                   <br />
                 </>
               ) : (
@@ -404,7 +404,7 @@ export default function DashboardSkills() {
               )}
               This proficiency and its level data leave the tree permanently.
               {deleteError && (
-                <p role="alert" className="mt-2 text-hud-danger">
+                <p role="alert" className="mt-2 text-crimson-600">
                   {deleteError}
                 </p>
               )}

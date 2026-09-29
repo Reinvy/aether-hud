@@ -29,7 +29,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
 
   return (
     <section id="testimonials" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-25" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -66,7 +66,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
               }}
               transition={{ duration: 0.4 }}
             >
-              <div className="codex-panel rounded-3xl p-6 sm:p-7 codex-lift h-full flex flex-col justify-between relative">
+              <div className="codex-card codex-radius-card p-6 sm:p-7 codex-lift h-full flex flex-col justify-between relative">
                 {/* Letter Seal & Serenitea Trust Badge */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
@@ -80,7 +80,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                         unoptimized
                       />
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 border border-leather-caramel/25">
                       <div className="codex-icon-plate h-7 w-7 shrink-0">
                         <Image
                           src={GENSHIN_UI_ICONS.sereniteaPot}
@@ -91,22 +91,22 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                           unoptimized
                         />
                       </div>
-                      <span className="font-serif text-[10px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                      <span className="codex-label-active">
                         Serenitea trust · Lv. 10
                       </span>
                     </div>
                   </div>
 
                   {/* Letter body */}
-                  <blockquote className="text-sm leading-relaxed text-leather-dark dark:text-platinum-50 font-body font-medium italic text-pretty">
+                  <blockquote className="text-sm leading-relaxed text-leather-dark font-body font-medium italic text-pretty">
                     “{testimonial.content}”
                   </blockquote>
                 </div>
 
                 {/* Author Info */}
-                <div className="mt-6 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/20 flex items-center gap-3.5">
+                <div className="mt-6 pt-4 border-t border-leather-caramel/20 flex items-center gap-3.5">
                   {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
-                    <div className="relative h-12 w-12 overflow-hidden rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/40 shrink-0 shadow-sm">
+                    <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-leather-caramel/40 shrink-0 shadow-sm">
                       <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
@@ -117,24 +117,24 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/40 bg-leather-caramel/15 dark:bg-gold-400/15 shrink-0 shadow-sm">
-                      <span className="font-serif text-base font-bold text-leather-dark dark:text-platinum-50">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-leather-caramel/40 bg-leather-caramel/15 shrink-0 shadow-sm">
+                      <span className="font-serif text-base font-bold text-leather-dark">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="font-serif text-sm sm:text-base font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase truncate">
+                    <p className="font-serif text-sm sm:text-base font-bold tracking-wide text-leather-dark uppercase truncate">
                       {testimonial.name}
                     </p>
-                    <p className="font-body text-xs tracking-wider text-leather-caramel dark:text-gold-400 truncate font-semibold">
+                    <p className="font-body text-xs tracking-wider text-leather-caramel truncate font-semibold">
                       {testimonial.role}
                     </p>
                   </div>
 
                   {/* Verified Seal */}
-                  <div className="flex items-center gap-1.5 shrink-0 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/30 dark:border-gold-400/30">
+                  <div className="flex items-center gap-1.5 shrink-0 px-3 py-1 rounded-full bg-leather-caramel/10 border border-leather-caramel/30">
                     <div className="codex-icon-plate h-6 w-6 shrink-0">
                       <Image
                         src={GENSHIN_UI_ICONS.achievements}
@@ -145,7 +145,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                         unoptimized
                       />
                     </div>
-                    <span className="font-serif text-[10px] font-bold text-leather-caramel dark:text-gold-400 uppercase">
+                    <span className="codex-label-active">
                       Sealed
                     </span>
                   </div>
@@ -156,7 +156,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
 
           {testimonials.length === 0 && (
             <div className="col-span-full">
-              <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
+              <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
                 <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.mail}
@@ -167,10 +167,10 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                     unoptimized
                   />
                 </div>
-                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                   No companion letters yet
                 </h3>
-                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted">
                   Endorsements from allies and guild partners will be delivered to this notice board
                   as they arrive.
                 </p>

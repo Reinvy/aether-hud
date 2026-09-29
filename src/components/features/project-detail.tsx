@@ -23,20 +23,20 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
   ];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-parchment-base py-16 dark:bg-deep-space sm:py-24">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25 dark:opacity-40" />
+    <main className="relative min-h-screen overflow-hidden bg-parchment-base py-16 sm:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25" />
       <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/#projects"
-          className="codex-focus inline-flex items-center gap-2 rounded-full border border-leather-caramel/35 bg-parchment-subtle px-4 py-2 text-xs font-semibold tracking-wider text-leather-dark transition-all hover:border-leather-caramel hover:text-leather-caramel"
+          className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back to domains
         </Link>
 
-        <article className="codex-panel mt-6 overflow-hidden rounded-3xl">
+        <article className="codex-panel codex-panel-radius mt-6 overflow-hidden">
           <div className="relative h-56 w-full overflow-hidden border-b border-leather-caramel/25 bg-parchment-subtle sm:h-72">
             <Image
               src={project.image}
@@ -63,7 +63,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-leather-caramel/25 bg-parchment-subtle px-4 py-3 dark:border-gold-400/20 dark:bg-glass-200"
+                  className="codex-card codex-radius-card px-4 py-3"
                 >
                   <dt className="codex-label">{stat.label}</dt>
                   <dd className="mt-1 font-serif text-sm font-bold text-leather-dark">
@@ -100,7 +100,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Enter the ${project.title} domain`}
-                    className="codex-btn-primary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                    className="codex-btn-primary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     Enter Domain
@@ -112,7 +112,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`View the ${project.title} source`}
-                    className="codex-btn-secondary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                    className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
                     <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                     Forge Lore
