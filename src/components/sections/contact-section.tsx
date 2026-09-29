@@ -334,7 +334,7 @@ export function ContactSection({
                     <button
                       type="submit"
                       disabled={sending || sent}
-                      className="w-full codex-btn-primary py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
+                      className="w-full codex-btn-primary codex-focus py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
                       <div className="w-4 h-4 relative">
                         <Image
@@ -436,7 +436,7 @@ export function ContactSection({
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
+                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm codex-focus"
                 >
                   <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image

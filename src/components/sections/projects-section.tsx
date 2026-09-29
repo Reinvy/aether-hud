@@ -90,7 +90,7 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
                   aria-pressed={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "press-scale px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
+                    "press-scale px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2 codex-focus",
                     isActive
                       ? "bg-leather-caramel text-parchment-base border-leather-caramel shadow-md scale-105"
                       : "bg-parchment-base/80 text-leather-dark border-leather-caramel/35 hover:border-leather-caramel",

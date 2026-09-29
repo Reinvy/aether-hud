@@ -35,7 +35,7 @@ export function MobileNavDock() {
               aria-label={item.label}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "relative flex min-h-[38px] min-w-[38px] flex-col items-center justify-center rounded-full transition-all duration-200",
+                "relative flex min-h-[38px] min-w-[38px] flex-col items-center justify-center rounded-full transition-all duration-200 codex-focus",
                 isActive
                   ? "scale-105 bg-leather-caramel shadow-sm"
                   : "hover:bg-leather-caramel/10"
@@ -62,7 +62,7 @@ export function MobileNavDock() {
           onClick={() => setAnimationsEnabled(!animationsEnabled)}
           aria-pressed={animationsEnabled}
           aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
-          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 text-leather-dark transition-transform hover:scale-105"
+          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 text-leather-dark transition-transform hover:scale-105 codex-focus"
         >
           <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
         </button>
@@ -70,7 +70,7 @@ export function MobileNavDock() {
         <Link
           href="/login"
           aria-label="Codex Console"
-          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 transition-transform hover:scale-105"
+          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 transition-transform hover:scale-105 codex-focus"
         >
           <span className="codex-icon-plate h-7 w-7">
             <Image

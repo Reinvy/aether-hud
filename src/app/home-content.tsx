@@ -106,7 +106,7 @@ export function HomeContent(props: HomeContentProps) {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-parchment-base focus:text-leather-dark focus:border focus:border-leather-caramel/60 focus:outline-none focus:ring-2 focus:ring-leather-caramel/40 codex-radius-sm text-xs tracking-wider shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-parchment-base focus:text-leather-dark focus:border focus:border-leather-caramel/60 codex-focus codex-radius-sm text-xs tracking-wider shadow-lg"
       >
         Skip to main content
       </a>

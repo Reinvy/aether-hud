@@ -141,7 +141,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
               onDelete={() => onDelete(project)}
               leading={
                 project.liveUrl ? (
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`}>
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`} className="codex-focus codex-btn">
                     <Button variant="ghost" size="sm" glow="none" className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-leather-caramel/10 hover-scale-sm">
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Button>
