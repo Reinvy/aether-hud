@@ -14,7 +14,7 @@ export const APP_DESCRIPTION =
   "Interactive Traveler Dossier — portfolio, domains, talents and commissions";
 
 // NOTE: aether-hud.vercel.app is TAKEN by another project. The real production
-// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
+// domain is aether-hud-lyart.vercel.app.
 export const APP_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
 
@@ -25,7 +25,7 @@ export const PORTFOLIO_CONFIG = {
   email: "hello@aether-hud.dev",
   location: "Jakarta, Indonesia",
   status: "ONLINE",
-  sysVersion: "v2.4.1",
+  edition: "Teyvat Codex Edition",
 };
 
 /**

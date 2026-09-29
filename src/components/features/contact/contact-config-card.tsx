@@ -65,7 +65,7 @@ export const ContactConfigCard = memo(function ContactConfigCard({
           />
           <Input
             label="Sys version"
-            value={config?.sysVersion ?? "v2.4.1"}
+            value={config?.edition ?? "Teyvat Codex Edition"}
             disabled
             style={{ color: "var(--color-text-muted)" }}
           />

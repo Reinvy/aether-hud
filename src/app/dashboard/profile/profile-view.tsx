@@ -31,7 +31,7 @@ export default function DashboardProfile() {
     tagline: "",
     email: "",
     location: "",
-    sysVersion: "",
+    edition: "",
     bio: "",
     status: "",
     avatar: "",
@@ -45,7 +45,7 @@ export default function DashboardProfile() {
         tagline: config.tagline || "",
         email: config.email || "",
         location: config.location || "",
-        sysVersion: config.sysVersion || "",
+        edition: config.edition || "",
         bio: config.bio || "",
         status: config.status || "ONLINE",
         avatar: config.avatar || "",
@@ -129,7 +129,7 @@ export default function DashboardProfile() {
               tagline: form.tagline,
               location: form.location,
               email: form.email,
-              sysVersion: form.sysVersion,
+              edition: form.edition,
               status: form.status,
             }}
           />

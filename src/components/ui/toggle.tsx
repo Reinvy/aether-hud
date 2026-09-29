@@ -28,15 +28,8 @@ export function Toggle({
   className,
   id,
 }: ToggleProps) {
-  return (
-    <label
-      htmlFor={id}
-      className={cn(
-        "relative inline-flex cursor-pointer items-center after:absolute after:-inset-1.5 after:content-['']",
-        disabled && "cursor-not-allowed opacity-50",
-        className
-      )}
-    >
+  const control = (
+    <>
       <input
         id={id}
         type="checkbox"
@@ -62,11 +55,25 @@ export function Toggle({
           "peer-checked:shadow-[0_0_10px_rgba(140,98,57,0.4)] dark:peer-checked:shadow-[0_0_10px_rgba(242,201,76,0.55)]"
         )}
       />
-      {label && (
-        <span className="ml-3 font-mono text-[10px] tracking-wider text-text-muted">
-          {label}
-        </span>
-      )}
+    </>
+  );
+
+  const shell = cn(
+    "relative inline-flex cursor-pointer items-center after:absolute after:-inset-1.5 after:content-['']",
+    disabled && "cursor-not-allowed opacity-50",
+    className
+  );
+
+  // Without its own label text the switch must not introduce a second
+  // `<label>` for the control — the caller owns the single description.
+  if (!label) {
+    return <span className={shell}>{control}</span>;
+  }
+
+  return (
+    <label htmlFor={id} className={shell}>
+      {control}
+      <span className="ml-3 font-mono text-[10px] tracking-wider text-leather-muted">{label}</span>
     </label>
   );
 }

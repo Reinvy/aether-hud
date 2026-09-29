@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
-import { useTheme } from "@/components/theme-provider";
+import { useMotionPrefs } from "@/components/motion-provider";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { SiteIdentityCard } from "@/components/features/settings/site-identity-card";
-import { ThemeAppearanceCard } from "@/components/features/settings/theme-appearance-card";
+import { AppearanceCard } from "@/components/features/settings/appearance-card";
 import { SystemInfoCard } from "@/components/features/settings/system-info-card";
 import { DangerZoneCard } from "@/components/features/settings/danger-zone-card";
 import { ApiError, apiRequest } from "@/lib/api-client";
@@ -36,7 +36,7 @@ const ConfirmDialog = dynamic(
 
 export default function DashboardSettings() {
   const { data: config, loading, error: loadError, refetch } = useData<ConfigDto>("/api/config");
-  const { setThemePreset, setAnimationsEnabled } = useTheme();
+  const { setAnimationsEnabled, syncConfig } = useMotionPrefs();
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
@@ -47,9 +47,8 @@ export default function DashboardSettings() {
   const [form, setForm] = useState({
     siteName: "",
     siteDescription: "",
-    themePreset: "teyvat-codex",
     animationsEnabled: true,
-    sysVersion: "",
+    edition: "",
   });
 
   useEffect(() => {
@@ -57,9 +56,8 @@ export default function DashboardSettings() {
       setForm({
         siteName: config.siteName || "Teyvat Codex",
         siteDescription: config.siteDescription || "",
-        themePreset: config.themePreset || "teyvat-codex",
         animationsEnabled: config.animationsEnabled !== false,
-        sysVersion: config.sysVersion || "v2.4.1",
+        edition: config.edition || "Teyvat Codex Edition",
       });
       setInitialized(true);
     }
@@ -74,8 +72,8 @@ export default function DashboardSettings() {
     setSaveError(null);
     try {
       await apiRequest<ConfigDto>("/api/config", { method: "PUT", body: form });
-      setThemePreset(form.themePreset);
       setAnimationsEnabled(form.animationsEnabled);
+      syncConfig();
       refetch();
     } catch (e) {
       setSaveError(
@@ -95,8 +93,8 @@ export default function DashboardSettings() {
       });
       setConfirmResetOpen(false);
       setSaveError(null);
-      setThemePreset("teyvat-codex");
       setAnimationsEnabled(true);
+      syncConfig();
       setInitialized(false);
       refetch();
     } catch (e) {
@@ -108,7 +106,7 @@ export default function DashboardSettings() {
     } finally {
       setResetting(false);
     }
-  }, [refetch, setThemePreset, setAnimationsEnabled]);
+  }, [refetch, setAnimationsEnabled, syncConfig]);
 
   if (loading) {
     return <DashboardFormSkeleton />;
@@ -153,15 +151,14 @@ export default function DashboardSettings() {
           values={{
             siteName: form.siteName,
             siteDescription: form.siteDescription,
-            sysVersion: form.sysVersion,
+            edition: form.edition,
           }}
           onChange={(field, value) => updateField(field, value)}
         />
 
-        <ThemeAppearanceCard
-          themePreset={form.themePreset}
+        <AppearanceCard
           animationsEnabled={form.animationsEnabled}
-          onChange={(field, value) => updateField(field, value)}
+          onAnimationsChange={(enabled) => updateField("animationsEnabled", enabled)}
           delay={0.1}
         />
 

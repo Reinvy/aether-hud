@@ -33,7 +33,7 @@ async function main() {
       email: "hello@aether-hud.dev",
       location: "Jakarta, Indonesia",
       status: "ONLINE",
-      sysVersion: "v2.4.1",
+      edition: "Teyvat Codex Edition",
     },
   });
 

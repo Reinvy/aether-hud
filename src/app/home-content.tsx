@@ -116,7 +116,7 @@ export function HomeContent(props: HomeContentProps) {
       <SiteFooter
         siteName={props.config.siteName}
         authorName={props.config.name}
-        version={props.config.sysVersion}
+        version={props.config.edition}
       />
     </>
   );

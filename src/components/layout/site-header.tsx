@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 import { PUBLIC_NAV } from "@/lib/navigation";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { useActiveSection } from "@/lib/use-active-section";
-import { useTheme } from "@/components/theme-provider";
+import { useMotionPrefs } from "@/components/motion-provider";
 
 interface SiteHeaderProps {
   /** Site name from the codex config; falls back to the build-time identity. */
@@ -26,9 +26,8 @@ interface SiteHeaderProps {
  */
 export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
   const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
-  const { themePreset, toggleTheme } = useTheme();
+  const { animationsEnabled, setAnimationsEnabled } = useMotionPrefs();
   const [menuOpen, setMenuOpen] = useState(false);
-  const isNight = themePreset === "celestial-night";
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
@@ -91,11 +90,12 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
         <div className="ml-auto flex items-center gap-2 lg:ml-2">
           <button
             type="button"
-            onClick={toggleTheme}
-            aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+            onClick={() => setAnimationsEnabled(!animationsEnabled)}
+            aria-pressed={animationsEnabled}
+            aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
             className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle text-leather-muted dark:text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 codex-focus"
           >
-            {isNight ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
           </button>
 
           <Link

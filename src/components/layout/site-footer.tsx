@@ -21,7 +21,7 @@ interface SiteFooterProps {
 export function SiteFooter({
   siteName = APP_NAME,
   authorName = PORTFOLIO_CONFIG.name,
-  version = PORTFOLIO_CONFIG.sysVersion,
+  version = PORTFOLIO_CONFIG.edition,
 }: SiteFooterProps) {
   return (
     <footer

@@ -17,14 +17,14 @@ interface SystemInfoCardProps {
  * SystemInfoCard — read-only codex readout for the settings page.
  *
  * Reports the identity and platform facts of this deployment: the codex name
- * and version the operator published (`siteName` / `sysVersion` from
+ * and edition the operator published (`siteName` / `edition` from
  * `/api/config`), its availability, and the stack serving it.
  */
 export function SystemInfoCard({ delay = 0 }: SystemInfoCardProps) {
   const { data: config } = useData<ConfigDto>("/api/config");
 
   const siteName = config?.siteName || "Teyvat Codex";
-  const sysVersion = config?.sysVersion || "v2.4.1";
+  const edition = config?.edition || "Teyvat Codex Edition";
   const sysStatus = config?.status || "ONLINE";
 
   return (
@@ -43,7 +43,7 @@ export function SystemInfoCard({ delay = 0 }: SystemInfoCardProps) {
           />
           <InfoRow
             label="Codex version"
-            value={sysVersion}
+            value={edition}
             tone="gold"
           />
           <InfoRow

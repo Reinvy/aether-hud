@@ -9,7 +9,7 @@ interface ProfilePreviewData {
   tagline: string;
   location: string;
   email: string;
-  sysVersion: string;
+  edition: string;
   status: string;
 }
 
@@ -59,9 +59,9 @@ export function ProfilePreviewCard({ data }: ProfilePreviewCardProps) {
                   <Mail className="h-3 w-3" aria-hidden="true" /> {data.email}
                 </span>
               )}
-              {data.sysVersion && (
+              {data.edition && (
                 <span className="flex items-center gap-1 font-mono text-[10px] text-text-muted dark:text-platinum-200">
-                  <Tag className="h-3 w-3" aria-hidden="true" /> {data.sysVersion}
+                  <Tag className="h-3 w-3" aria-hidden="true" /> {data.edition}
                 </span>
               )}
             </div>

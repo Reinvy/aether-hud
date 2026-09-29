@@ -45,7 +45,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 interface SiteConfig {
   siteName: string;
-  sysVersion: string;
+  edition: string;
 }
 
 const COLLAPSE_KEY = "aether_sidebar";
@@ -58,7 +58,7 @@ export function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   const siteName = config?.siteName || APP_NAME;
-  const version = config?.sysVersion || PORTFOLIO_CONFIG.sysVersion;
+  const version = config?.edition || PORTFOLIO_CONFIG.edition;
 
   // Restore the operator's rail preference once, on mount.
   useEffect(() => {

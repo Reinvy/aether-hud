@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { CodexLoader } from "@/components/ui/codex-loader";
+import { CodexSessionGate } from "@/components/features/codex-session-gate";
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
@@ -67,20 +67,12 @@ export function DashboardShell({
 
   // Show loading while checking auth
   if (isLoading) {
-    return (
-      <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
-        <CodexLoader label="Verifying session" size="lg" />
-      </div>
-    );
+    return <CodexSessionGate label="Verifying session" />;
   }
 
   // Don't render dashboard content if not authenticated
   if (!isAuthenticated) {
-    return (
-      <div className="relative flex min-h-screen items-center justify-center bg-parchment-base dark:bg-deep-space">
-        <CodexLoader label="Redirecting to sign-in" size="lg" />
-      </div>
-    );
+    return <CodexSessionGate label="Redirecting to sign-in" />;
   }
 
   return (

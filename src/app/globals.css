@@ -1,55 +1,39 @@
 /* ============================================================
    TEYVAT CODEX — Design System
    Warm parchment, saddle leather, imperial gold, organic curves.
-   Dual-Theme Engine:
-     1. ☀️ Teyvat Codex    (default warm ivory parchment)
-     2. 🌙 Celestial Night (midnight indigo & electro gold)
+   Light-only: one palette for every surface, no theme switching.
    ============================================================ */
 
 @import "tailwindcss";
 
-/*
- * The app theme is driven by `data-theme` on <html> (ThemeProvider) — never by
- * the OS preference. Without this variant, every `dark:` utility followed
- * `prefers-color-scheme`, so an OS-dark visitor in light mode got the espresso
- * palette (the hero card rendered rgb(26,18,12)).
- *
- * Both the theme root and its descendants must match: Tailwind appends the
- * `:where(...)` argument to the utility class itself, so a variant listing only
- * `.dark` would restrict `dark:` utilities to the <html> element and leave every
- * nested element on the light palette. `night-ops` survives as a legacy alias
- * for one release; see theme-provider.tsx.
- */
-@custom-variant dark (&:where(
-  [data-theme="celestial-night"], [data-theme="celestial-night"] *,
-  [data-theme="night-ops"], [data-theme="night-ops"] *,
-  .dark, .dark *
-));
-
 /* ─── Design Tokens ────────────────────────────────────────── */
 /*
- * Deliberately NOT `@theme inline`. With inlining, every utility compiles to
- * the literal hex (`text-leather-dark` → `color: #2c1e14`), so the
- * `[data-theme="celestial-night"]` overrides below could never reach them and
- * dark surfaces ended up with espresso text on an espresso panel. Referencing
- * the variables (`color: var(--color-leather-dark)`) lets each token flip with
- * the theme from one place, so a component never has to restate the pair.
+ * Deliberately NOT `@theme inline`. Referencing the variables
+ * (`color: var(--color-leather-dark)`) keeps the palette readable from one
+ * place instead of compiling every utility down to a literal hex.
+ *
+ * Every ink value below is verified at ≥4.5:1 contrast on the darkest light
+ * surface (`--color-parchment-subtle` #F3EDDF); the elemental *fills* are
+ * decoration only and never carry text — text uses the *Ink* values.
  */
 @theme {
-  /* Teyvat Codex (warm parchment & saddle leather) */
+  /* Surfaces — warm parchment only */
   --color-parchment-base: #FAF8F5;
   --color-parchment-subtle: #F3EDDF;
   --color-parchment-elevated: #EDE5D2;
+
+  /* Ink — every value verified ≥4.5:1 on parchment-subtle (#F3EDDF) */
   --color-leather-dark: #2C1E14;
-  --color-leather-caramel: #8C6239;
   --color-leather-muted: #5E412A;
+  --color-leather-caramel: #8C6239;
+  --color-gold-ink: #6E4F0E;
+  --color-jade-ink: #0A6E3A;
+  --color-amber-ink: #8A5A00;
+  --color-info-ink: #01579B;
+  --color-crimson-600: #B3261E;
+  --color-crimson-700: #8C1D18;
 
-  /* Celestial Night surfaces */
-  --color-deep-space: #1A120C;
-  --color-surface-primary: #241810;
-  --color-glass-card: rgba(45, 30, 21, 0.90);
-
-  /* Brand / luxury accents (imperial gold) */
+  /* Fills, gradients, borders (non-text) */
   --color-gold-50: #FEFAEE;
   --color-gold-100: #FDF2CA;
   --color-gold-200: #FCE69C;
@@ -60,20 +44,11 @@
   --color-gold-700: #936B14;
   --color-gold-800: #6E4F0E;
   --color-gold-900: #4A3509;
-
-  /* Jade — the sanctioned green (growth, health, "deployed") */
   --color-jade-300: #86E29B;
   --color-jade-400: #38EF7D;
   --color-jade-500: #19C46A;
-  --color-jade-600: #0E9B52;
 
-  /* Platinum — neutral metal for dark-surface text */
-  --color-platinum-50: #F4F6F8;
-  --color-platinum-100: #E0E6ED;
-  --color-platinum-200: #C7D0DB;
-  --color-platinum-300: #ADB6C4;
-
-  /* 7 Elemental Vision scales */
+  /* Elemental hues — fills/glows only; text uses the *Ink* values */
   --color-element-pyro: #FF5E41;
   --color-element-hydro: #29B6F6;
   --color-element-anemo: #4DD0E1;
@@ -82,21 +57,9 @@
   --color-element-cryo: #80DEEA;
   --color-element-geo: #FFB74D;
 
-  /* Status */
-  --color-hud-active: #00E676;
-  --color-hud-warning: #FFA000;
-  --color-hud-danger: #FF1744;
-
-  /* Glass & borders */
-  --color-glass-200: rgba(255, 255, 255, 0.08);
-  --color-glass-300: rgba(255, 255, 255, 0.14);
-  --color-border-glass: rgba(242, 201, 76, 0.35);
-  --color-border-subtle: rgba(140, 98, 57, 0.22);
-  --color-border-active: #B88414;
-
-  /* Text */
-  --color-text-main: #2C1E14;
-  --color-text-muted: #5E412A;
+  /* Hairlines */
+  --color-border-subtle: rgba(140, 98, 57, 0.28);
+  --color-border-strong: rgba(140, 98, 57, 0.48);
 
   /* Typography */
   --font-serif: var(--font-cormorant), var(--font-cinzel), Georgia, serif;
@@ -127,34 +90,13 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ─── Celestial Night token overrides ──────────────────────── */
-[data-theme="celestial-night"],
-[data-theme="night-ops"],
-.dark {
-  --color-parchment-base: #1A120C;
-  --color-parchment-subtle: #241810;
-  --color-parchment-elevated: #352319;
-  --color-leather-dark: #FAF8F5;
-  --color-leather-caramel: #F2C94C;
-  --color-leather-muted: #D4B89B;
-  --color-surface-primary: #241810;
-  --color-glass-card: rgba(36, 24, 16, 0.94);
-  --color-jade-400: #86E29B;
-  --color-border-subtle: rgba(201, 154, 78, 0.28);
-  --color-text-main: #FAF8F5;
-  --color-text-muted: #D4B89B;
-  --color-border-glass: rgba(242, 201, 76, 0.45);
-  --color-border-active: #F2C94C;
-}
-
-[data-theme="celestial-night"] body,
-[data-theme="night-ops"] body,
-.dark body {
-  background-color: #1A120C;
-  color: #FAF8F5;
+/* Native dropdown lists inherit neither the surface nor the ink of the
+   closed control (they are OS-rendered), so they are coloured explicitly. */
+select option {
+  background-color: #FFFDF8;
+  color: var(--color-leather-dark);
 }
 
 /* ─── Disabled Animations Override ─────────────────────────── */
@@ -172,8 +114,12 @@ body {
   border-radius: var(--radius-codex-panel);
 }
 
+.codex-radius-card {
+  border-radius: var(--radius-codex-card);
+}
+
 .codex-radius-sm {
-  border-radius: 1rem;
+  border-radius: var(--radius-codex-card);
 }
 
 .codex-radius-xs {
@@ -193,13 +139,13 @@ body {
   background: rgba(255, 253, 248, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(140, 98, 57, 0.28);
+  border: 1.5px solid rgba(140, 98, 57, 0.30);
   box-shadow: var(--shadow-codex-card);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .codex-panel:hover {
-  border-color: rgba(140, 98, 57, 0.48);
+  border-color: rgba(140, 98, 57, 0.50);
   box-shadow: var(--shadow-codex-raised);
 }
 
@@ -207,63 +153,30 @@ body {
   background: rgba(246, 240, 227, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid rgba(140, 98, 57, 0.36);
+  border: 1.5px solid rgba(140, 98, 57, 0.38);
   box-shadow: var(--shadow-codex-card);
-}
-
-[data-theme="celestial-night"] .codex-panel,
-[data-theme="night-ops"] .codex-panel,
-.dark .codex-panel {
-  background: rgba(36, 24, 16, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(201, 154, 78, 0.30);
-  box-shadow: 0 8px 32px rgba(16, 10, 5, 0.55);
-}
-
-[data-theme="celestial-night"] .codex-panel:hover,
-[data-theme="night-ops"] .codex-panel:hover,
-.dark .codex-panel:hover {
-  border-color: rgba(242, 201, 76, 0.55);
-  box-shadow: var(--shadow-codex-glow), 0 8px 32px rgba(201, 154, 78, 0.20);
-}
-
-[data-theme="celestial-night"] .codex-panel-strong,
-[data-theme="night-ops"] .codex-panel-strong,
-.dark .codex-panel-strong {
-  background: rgba(28, 18, 12, 0.97);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid rgba(201, 154, 78, 0.38);
 }
 
 /* ─── Codex Cards ──────────────────────────────────────────── */
 .codex-card {
-  background: var(--color-glass-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-border-subtle);
+  background: rgba(255, 253, 248, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(140, 98, 57, 0.30);
+  box-shadow: var(--shadow-codex-card);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .codex-card:hover {
-  border-color: var(--color-border-glass);
+  border-color: rgba(140, 98, 57, 0.52);
 }
 
 .codex-card-strong {
-  background: rgba(243, 238, 223, 0.92);
+  background: #FDFAF4;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--color-border-subtle);
-}
-
-[data-theme="celestial-night"] .codex-card-strong,
-[data-theme="night-ops"] .codex-card-strong,
-.dark .codex-card-strong {
-  background: rgba(28, 18, 12, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid rgba(201, 154, 78, 0.35);
+  border: 1px solid rgba(140, 98, 57, 0.38);
+  box-shadow: var(--shadow-codex-raised);
 }
 
 /* ─── Codex Buttons ────────────────────────────────────────── */
@@ -311,17 +224,6 @@ body {
   transform: translateY(-1px);
 }
 
-.dark .codex-btn-secondary {
-  background: #0D1122;
-  border-color: rgba(242, 201, 76, 0.4);
-  color: #F2C94C;
-}
-
-.dark .codex-btn-secondary:hover {
-  background: #141933;
-  border-color: rgba(242, 201, 76, 0.7);
-}
-
 /* ─── Bookmark Ribbon (top-right hanging ribbon) ────────────── */
 .bookmark-ribbon {
   position: absolute;
@@ -344,20 +246,6 @@ body {
 .bookmark-ribbon:hover {
   transform: translateY(4px);
   background: #73502E;
-}
-
-[data-theme="celestial-night"] .bookmark-ribbon,
-[data-theme="night-ops"] .bookmark-ribbon,
-.dark .bookmark-ribbon {
-  background: #B388FF;
-  color: #070913;
-  box-shadow: 0 4px 16px rgba(179, 136, 255, 0.35);
-}
-
-[data-theme="celestial-night"] .bookmark-ribbon:hover,
-[data-theme="night-ops"] .bookmark-ribbon:hover,
-.dark .bookmark-ribbon:hover {
-  background: #9D72FF;
 }
 
 /* ─── Figure Shadow Layer ─────────────────────────────────── */
@@ -388,21 +276,13 @@ body {
   color: var(--color-leather-dark);
 }
 
-.vision-pyro { background: rgba(255, 94, 65, 0.12); color: #D32F2F; border-color: rgba(255, 94, 65, 0.35); }
-.vision-hydro { background: rgba(41, 182, 246, 0.12); color: #0288D1; border-color: rgba(41, 182, 246, 0.35); }
-.vision-anemo { background: rgba(77, 208, 225, 0.12); color: #00838F; border-color: rgba(77, 208, 225, 0.35); }
+.vision-pyro { background: rgba(255, 94, 65, 0.12); color: #B3261E; border-color: rgba(255, 94, 65, 0.35); }
+.vision-hydro { background: rgba(41, 182, 246, 0.12); color: #01579B; border-color: rgba(41, 182, 246, 0.35); }
+.vision-anemo { background: rgba(77, 208, 225, 0.12); color: #00696F; border-color: rgba(77, 208, 225, 0.35); }
 .vision-electro { background: rgba(179, 136, 255, 0.12); color: #7B1FA2; border-color: rgba(179, 136, 255, 0.35); }
-.vision-dendro { background: rgba(124, 179, 66, 0.12); color: #558B2F; border-color: rgba(124, 179, 66, 0.35); }
-.vision-cryo { background: rgba(128, 222, 234, 0.12); color: #0097A7; border-color: rgba(128, 222, 234, 0.35); }
-.vision-geo { background: rgba(255, 183, 77, 0.12); color: #E65100; border-color: rgba(255, 183, 77, 0.35); }
-
-[data-theme="celestial-night"] .vision-pyro, .dark .vision-pyro { color: #FF7043; }
-[data-theme="celestial-night"] .vision-hydro, .dark .vision-hydro { color: #4FC3F7; }
-[data-theme="celestial-night"] .vision-anemo, .dark .vision-anemo { color: #80DEEA; }
-[data-theme="celestial-night"] .vision-electro, .dark .vision-electro { color: #CE93D8; }
-[data-theme="celestial-night"] .vision-dendro, .dark .vision-dendro { color: #9CCC65; }
-[data-theme="celestial-night"] .vision-cryo, .dark .vision-cryo { color: #B2EBF2; }
-[data-theme="celestial-night"] .vision-geo, .dark .vision-geo { color: #FFCC80; }
+.vision-dendro { background: rgba(124, 179, 66, 0.12); color: #3E6B1E; border-color: rgba(124, 179, 66, 0.35); }
+.vision-cryo { background: rgba(128, 222, 234, 0.12); color: #006C75; border-color: rgba(128, 222, 234, 0.35); }
+.vision-geo { background: rgba(255, 183, 77, 0.12); color: #9A4A00; border-color: rgba(255, 183, 77, 0.35); }
 
 /* ─── Codex Badge (technology pills) ───────────────────────── */
 .codex-badge {
@@ -414,17 +294,9 @@ body {
   font-size: 0.65rem;
   letter-spacing: 0.05em;
   color: var(--color-leather-dark);
-  background: rgba(140, 98, 57, 0.09);
-  border: 1px solid rgba(140, 98, 57, 0.25);
+  background: rgba(140, 98, 57, 0.10);
+  border: 1px solid rgba(140, 98, 57, 0.28);
   border-radius: 9999px;
-}
-
-[data-theme="celestial-night"] .codex-badge,
-[data-theme="night-ops"] .codex-badge,
-.dark .codex-badge {
-  color: var(--color-platinum-100);
-  background: rgba(179, 136, 255, 0.08);
-  border-color: rgba(179, 136, 255, 0.25);
 }
 
 /* ─── Atmosphere ───────────────────────────────────────────── */
@@ -434,13 +306,6 @@ body {
     radial-gradient(1.5px 1.5px at 100px 150px, rgba(184, 132, 20, 0.3), transparent),
     radial-gradient(1px 1px at 240px 70px, rgba(140, 98, 57, 0.2), transparent);
   background-size: 320px 320px;
-}
-
-.dark .bg-starfield {
-  background-image:
-    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 100px 150px, rgba(242, 201, 76, 0.5), transparent),
-    radial-gradient(1px 1px at 240px 70px, rgba(179, 136, 255, 0.4), transparent);
 }
 
 .bg-ambient-gold {
@@ -454,12 +319,34 @@ body {
   background-size: 44px 44px;
 }
 
-[data-theme="celestial-night"] .codex-grid-bg,
-[data-theme="night-ops"] .codex-grid-bg,
-.dark .codex-grid-bg {
-  background-image:
-    linear-gradient(rgba(242, 201, 76, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(242, 201, 76, 0.06) 1px, transparent 1px);
+/* ─── Modal scrim ──────────────────────────────────────────── */
+.codex-scrim {
+  background: rgba(44, 30, 20, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ─── Icon plates ──────────────────────────────────────────── */
+/* Genshin's icon set is white line art drawn for dark leather. On parchment it
+   vanishes; every UI icon therefore sits on a leather plate, or inverts to ink
+   when it sits on a gold fill. */
+.codex-icon-plate {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #8A5A34, #7A4A2A);
+  border: 1px solid rgba(255, 240, 214, 0.30);
+  box-shadow: inset 0 1px 2px rgba(255, 240, 214, 0.20), 0 2px 6px rgba(60, 40, 15, 0.18);
+}
+
+.codex-icon-on-plate {
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+.codex-icon-ink {
+  filter: brightness(0) saturate(100%);
+  opacity: 0.82;
 }
 
 /* ─── Typography & Labels ──────────────────────────────────── */
@@ -482,21 +369,13 @@ body {
   color: var(--color-leather-muted);
 }
 
-.dark .codex-label {
-  color: #D4B89B;
-}
-
 .codex-label-gold {
   font-family: var(--font-sans);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #B88414;
-}
-
-.dark .codex-label-gold {
-  color: #F2C94C;
+  color: var(--color-gold-ink);
 }
 
 .codex-label-active {
@@ -508,23 +387,9 @@ body {
   color: var(--color-leather-caramel);
 }
 
-.dark .codex-label-active {
-  color: var(--color-gold-400);
-}
-
 /* ─── Gold text gradient ───────────────────────────────────── */
 .codex-gradient-text {
-  background: linear-gradient(135deg, #B88414 0%, #DFAE2A 50%, #8C6239 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  display: inline-block;
-}
-
-.dark .codex-gradient-text,
-[data-theme="celestial-night"] .codex-gradient-text {
-  background: linear-gradient(135deg, #FFE082 0%, #F2C94C 50%, #B388FF 100%);
+  background: linear-gradient(135deg, #6E4F0E 0%, #8A6212 50%, #4A3509 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -534,30 +399,17 @@ body {
 
 /* ─── Warm Cognac Leather Panels (hero right panel & accents) ─── */
 .cognac-panel {
-  background: linear-gradient(180deg, #956845 0%, #835938 100%);
-  border: 1.5px solid rgba(255, 235, 200, 0.25);
+  background: linear-gradient(180deg, #8A5A34 0%, #7A4A2A 100%);
+  border: 1.5px solid rgba(255, 240, 214, 0.30);
   box-shadow: inset 0 2px 8px rgba(40, 20, 5, 0.2), 0 8px 24px rgba(60, 40, 15, 0.15);
   color: #FAF7EE;
 }
 
-.dark .cognac-panel,
-[data-theme="celestial-night"] .cognac-panel {
-  background: linear-gradient(180deg, #422C1F 0%, #301F15 100%);
-  border: 1.5px solid rgba(201, 154, 78, 0.35);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(20, 12, 6, 0.45);
-  color: #FAF8F5;
-}
-
 .cognac-card-subtle {
-  background: rgba(141, 99, 67, 0.22);
-  border: 1px solid rgba(141, 99, 67, 0.35);
+  background: rgba(255, 240, 214, 0.16);
+  border: 1px solid rgba(255, 240, 214, 0.28);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-}
-
-.dark .cognac-card-subtle {
-  background: rgba(20, 13, 8, 0.6);
-  border-color: rgba(201, 154, 78, 0.25);
 }
 
 /* ─── Sheen sweep (buttons & cards) ────────────────────────── */
@@ -582,30 +434,19 @@ body {
 
 /* ─── Recessed input ───────────────────────────────────────── */
 .codex-input {
-  background: rgba(243, 238, 223, 0.6);
-  border: 1.5px solid rgba(140, 98, 57, 0.3);
+  background: #FFFFFF;
+  border: 1.5px solid rgba(140, 98, 57, 0.38);
   border-radius: var(--radius-codex-control);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--color-leather-dark);
 }
 .codex-input:focus {
-  border-color: rgba(140, 98, 57, 0.8);
-  box-shadow: 0 0 0 2px rgba(140, 98, 57, 0.2), inset 0 0 8px rgba(140, 98, 57, 0.08);
+  border-color: rgba(140, 98, 57, 0.85);
+  box-shadow: 0 0 0 3px rgba(184, 132, 20, 0.22);
   outline: none;
 }
 .codex-input::placeholder {
-  color: var(--color-leather-muted);
-  opacity: 0.6;
-}
-
-.dark .codex-input {
-  background: rgba(36, 24, 16, 0.7);
-  border-color: rgba(201, 154, 78, 0.3);
-  color: #F8FAFC;
-}
-.dark .codex-input:focus {
-  border-color: rgba(242, 201, 76, 0.6);
-  box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.25), inset 0 0 10px rgba(242, 201, 76, 0.15);
+  color: rgba(94, 65, 42, 0.72);
 }
 
 /* ─── Interaction helpers ──────────────────────────────────── */
@@ -616,11 +457,6 @@ body {
   transform: translateY(-4px);
   border-color: rgba(140, 98, 57, 0.45);
   box-shadow: var(--shadow-codex-raised);
-}
-
-.dark .codex-lift:hover {
-  border-color: rgba(242, 201, 76, 0.45);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), var(--shadow-codex-glow);
 }
 
 .hover-scale-sm {
@@ -672,6 +508,22 @@ body {
   }
 }
 
+/* ─── Entrance (server-rendered surfaces) ──────────────────── */
+.codex-rise {
+  animation: codex-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes codex-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ─── Segment Progress Bar ─────────────────────────────────── */
 .segment-bar {
   display: flex;
@@ -681,24 +533,16 @@ body {
 .segment-bar .segment {
   flex: 1;
   border-radius: 4px;
-  background: rgba(140, 98, 57, 0.15);
+  background: rgba(140, 98, 57, 0.16);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .segment-bar .segment.active {
-  background: #C69214;
+  background: #B88414;
   box-shadow: 0 0 6px rgba(198, 146, 20, 0.4);
 }
 .segment-bar .segment.jade {
   background: var(--color-jade-500);
   box-shadow: 0 0 6px rgba(25, 196, 106, 0.4);
-}
-
-.dark .segment-bar .segment {
-  background: rgba(255, 255, 255, 0.08);
-}
-.dark .segment-bar .segment.active {
-  background: var(--color-gold-400);
-  box-shadow: 0 0 6px rgba(242, 201, 76, 0.45);
 }
 
 /* ─── Scrollbar ────────────────────────────────────────────── */
@@ -727,10 +571,6 @@ body {
 .codex-focus:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(140, 98, 57, 0.4);
-}
-
-.dark .codex-focus:focus-visible {
-  box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.4);
 }
 
 /* ─── Reduced Motion ──────────────────────────────────────── */

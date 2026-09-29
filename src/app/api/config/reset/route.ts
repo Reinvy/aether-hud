@@ -9,7 +9,7 @@ import { APP_DESCRIPTION, APP_NAME, PORTFOLIO_CONFIG } from "@/lib/constants";
 export const dynamic = "force-dynamic";
 
 /**
- * Restore the MySQL/PostgreSQL tables to the authored dataset.
+ * Restore the PostgreSQL tables to the authored dataset.
  *
  * All seven steps run in ONE `prisma.$transaction` so a failure mid-way can
  * never leave the codex with, say, sections re-seeded but projects deleted.
@@ -28,10 +28,9 @@ export async function POST(req: NextRequest) {
       location: PORTFOLIO_CONFIG.location,
       avatar: portfolioData.avatar,
       status: PORTFOLIO_CONFIG.status,
-      sysVersion: PORTFOLIO_CONFIG.sysVersion,
+      edition: PORTFOLIO_CONFIG.edition,
       siteName: APP_NAME,
       siteDescription: APP_DESCRIPTION,
-      themePreset: "teyvat-codex",
       animationsEnabled: true,
     };
 

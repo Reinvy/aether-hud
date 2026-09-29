@@ -55,7 +55,7 @@ export async function GET() {
         }),
         prisma.portfolioConfig.findUnique({
           where: { id: "main" },
-          select: { siteName: true, sysVersion: true, updatedAt: true, status: true },
+          select: { siteName: true, edition: true, updatedAt: true, status: true },
         }),
       ]);
 
@@ -63,7 +63,7 @@ export async function GET() {
         activities.push({
           id: `cfg-${config.updatedAt.getTime()}`,
           action: "System configured",
-          detail: `${config.siteName} ${config.sysVersion} // ${config.status}`,
+          detail: `${config.siteName} ${config.edition} // ${config.status}`,
           time: formatRelativeTime(config.updatedAt),
           type: "deploy",
           timestamp: config.updatedAt.toISOString(),
@@ -125,7 +125,7 @@ export async function GET() {
         {
           id: "fallback-1",
           action: "System online",
-          detail: "Teyvat Codex Core v2.4.1 operational",
+          detail: "Teyvat Codex Edition operational",
           time: "just now",
           type: "deploy",
           timestamp: new Date().toISOString(),

@@ -59,10 +59,9 @@ function fallbackConfig(): ConfigDto {
     location: PORTFOLIO_CONFIG.location,
     avatar: portfolioData.avatar,
     status: PORTFOLIO_CONFIG.status,
-    sysVersion: PORTFOLIO_CONFIG.sysVersion,
+    edition: PORTFOLIO_CONFIG.edition,
     siteName: APP_NAME,
     siteDescription: APP_DESCRIPTION,
-    themePreset: "teyvat-codex",
     animationsEnabled: true,
   };
 }

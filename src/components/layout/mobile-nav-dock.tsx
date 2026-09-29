@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Moon, Sun } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { PUBLIC_NAV } from "@/lib/navigation";
 import { useActiveSection } from "@/lib/use-active-section";
-import { useTheme } from "@/components/theme-provider";
+import { useMotionPrefs } from "@/components/motion-provider";
 
 /**
  * MobileNavDock — floating bottom navigation for phones and tablets.
@@ -18,8 +18,7 @@ import { useTheme } from "@/components/theme-provider";
  */
 export function MobileNavDock() {
   const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
-  const { themePreset, toggleTheme } = useTheme();
-  const isNight = themePreset === "celestial-night";
+  const { animationsEnabled, setAnimationsEnabled } = useMotionPrefs();
 
   return (
     <nav
@@ -61,15 +60,12 @@ export function MobileNavDock() {
 
         <button
           type="button"
-          onClick={toggleTheme}
-          aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+          onClick={() => setAnimationsEnabled(!animationsEnabled)}
+          aria-pressed={animationsEnabled}
+          aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
           className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 text-leather-dark transition-transform hover:scale-105 dark:bg-gold-400/10 dark:text-gold-400"
         >
-          {isNight ? (
-            <Sun className="h-4 w-4 text-gold-400" />
-          ) : (
-            <Moon className="h-4 w-4 text-leather-caramel" />
-          )}
+          <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
         </button>
 
         <Link

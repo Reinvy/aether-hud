@@ -87,10 +87,9 @@ export interface ConfigDto {
   location: string;
   avatar: string;
   status: string;
-  sysVersion: string;
+  edition: string;
   siteName: string;
   siteDescription: string;
-  themePreset: string;
   animationsEnabled: boolean;
 }
 

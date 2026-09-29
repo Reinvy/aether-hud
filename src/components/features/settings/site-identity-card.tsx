@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface SiteIdentityValues {
   siteName: string;
   siteDescription: string;
-  sysVersion: string;
+  edition: string;
 }
 
 interface SiteIdentityCardProps {
@@ -57,9 +57,9 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
           </p>
           <Input
             label="Codex version"
-            value={values.sysVersion}
-            onChange={(e) => onChange("sysVersion", e.target.value)}
-            placeholder="v2.4.1"
+            value={values.edition}
+            onChange={(e) => onChange("edition", e.target.value)}
+            placeholder="Teyvat Codex Edition"
           />
         </CardContent>
       </Card>

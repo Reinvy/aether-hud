@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Moon, Sun } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { PUBLIC_NAV } from "@/lib/navigation";
 import { useActiveSection } from "@/lib/use-active-section";
-import { useTheme } from "@/components/theme-provider";
+import { useMotionPrefs } from "@/components/motion-provider";
 
 /**
  * NavRail — vertical desktop navigation, rendered from `PUBLIC_NAV`.
@@ -19,9 +19,8 @@ import { useTheme } from "@/components/theme-provider";
  */
 export function NavRail() {
   const activeSection = useActiveSection(PUBLIC_NAV.map((item) => item.sectionId));
+  const { animationsEnabled, setAnimationsEnabled } = useMotionPrefs();
   const [time, setTime] = useState("");
-  const { themePreset, toggleTheme } = useTheme();
-  const isNight = themePreset === "celestial-night";
 
   useEffect(() => {
     const updateTime = () => {
@@ -110,17 +109,14 @@ export function NavRail() {
 
         <button
           type="button"
-          onClick={toggleTheme}
-          aria-label={isNight ? "Switch to the parchment theme" : "Switch to the celestial night theme"}
+          onClick={() => setAnimationsEnabled(!animationsEnabled)}
+          aria-pressed={animationsEnabled}
+          aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
           className="group relative flex h-10 w-10 items-center justify-center rounded-2xl bg-leather-caramel/10 p-2 text-leather-dark transition-all duration-300 hover:scale-105 dark:bg-gold-400/10 dark:text-gold-400 codex-focus"
         >
-          {isNight ? (
-            <Sun className="h-4 w-4 text-gold-400" />
-          ) : (
-            <Moon className="h-4 w-4 text-leather-caramel" />
-          )}
+          <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
           <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
-            {isNight ? "Parchment theme" : "Celestial night"}
+            {animationsEnabled ? "Motion: on" : "Motion: off"}
           </span>
         </button>
 
