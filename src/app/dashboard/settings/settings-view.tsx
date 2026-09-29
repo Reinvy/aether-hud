@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { Eye, RefreshCw, Save, Settings2 } from "lucide-react";
+import { AlertCircle, Save, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -12,11 +12,13 @@ import { useData } from "@/lib/use-data";
 import { useTheme } from "@/components/theme-provider";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
-import { HudLoader } from "@/components/ui/hud-loader";
+import { CodexLoader } from "@/components/ui/codex-loader";
 import { SiteIdentityCard } from "@/components/features/settings/site-identity-card";
 import { ThemeAppearanceCard } from "@/components/features/settings/theme-appearance-card";
 import { SystemInfoCard } from "@/components/features/settings/system-info-card";
 import { DangerZoneCard } from "@/components/features/settings/danger-zone-card";
+import { ApiError, apiRequest } from "@/lib/api-client";
+import type { ConfigDto } from "@/lib/dto";
 
 const ConfirmDialog = dynamic(
   () =>
@@ -26,26 +28,19 @@ const ConfirmDialog = dynamic(
   {
     loading: () => (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
-        <HudLoader label="LOADING PURGE MODULE" size="md" />
+        <CodexLoader label="Opening confirmation" size="md" />
       </div>
     ),
   }
 );
 
-interface ApiConfig {
-  siteName: string;
-  siteDescription: string;
-  themePreset: string;
-  animationsEnabled: boolean;
-  sysVersion: string;
-  id: string;
-}
-
 export default function DashboardSettings() {
-  const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
+  const { data: config, loading, error: loadError, refetch } = useData<ConfigDto>("/api/config");
   const { setThemePreset, setAnimationsEnabled } = useTheme();
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
@@ -60,7 +55,7 @@ export default function DashboardSettings() {
   useEffect(() => {
     if (config && !initialized) {
       setForm({
-        siteName: config.siteName || "AETHER-HUD",
+        siteName: config.siteName || "Teyvat Codex",
         siteDescription: config.siteDescription || "",
         themePreset: config.themePreset || "teyvat-codex",
         animationsEnabled: config.animationsEnabled !== false,
@@ -76,17 +71,16 @@ export default function DashboardSettings() {
 
   async function handleSave() {
     setSaving(true);
+    setSaveError(null);
     try {
-      await fetch("/api/config", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      await apiRequest<ConfigDto>("/api/config", { method: "PUT", body: form });
       setThemePreset(form.themePreset);
       setAnimationsEnabled(form.animationsEnabled);
       refetch();
     } catch (e) {
-      console.error("Failed to save web config", e);
+      setSaveError(
+        e instanceof ApiError ? e.message : "The realm settings could not be saved"
+      );
     } finally {
       setSaving(false);
     }
@@ -94,17 +88,23 @@ export default function DashboardSettings() {
 
   const handleResetData = useCallback(async () => {
     setResetting(true);
+    setResetError(null);
     try {
-      await fetch("/api/config/reset", {
+      await apiRequest<{ success: boolean; message: string }>("/api/config/reset", {
         method: "POST",
       });
       setConfirmResetOpen(false);
-      setThemePreset("obsidian");
+      setSaveError(null);
+      setThemePreset("teyvat-codex");
       setAnimationsEnabled(true);
       setInitialized(false);
       refetch();
     } catch (e) {
-      console.error("Failed to reset portfolio data", e);
+      // A 503 (static-data mode) must read as the server's own message, not
+      // as a successful reset — the dialog stays open with the reason.
+      setResetError(
+        e instanceof ApiError ? e.message : "The codex data could not be reset"
+      );
     } finally {
       setResetting(false);
     }
@@ -115,25 +115,39 @@ export default function DashboardSettings() {
   }
 
   return (
-    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+    <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
         icon={Settings2}
-        label="DASHBOARD // WEB CONFIGURATION"
-        title="Web Settings"
+        eyebrow="REALM SETTINGS"
+        title="Codex Settings"
         titleHighlight="Settings"
         actions={
           <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            <Save className="h-4 w-4" />
-            DEPLOY CHANGES
+            <Save className="h-4 w-4" aria-hidden="true" />
+            Save changes
           </Button>
         }
       />
 
+      {/* Fetch and save failures are reported to the operator instead of
+          leaving a silently stale settings form on screen. */}
+      {(loadError || saveError) && (
+        <div
+          role="alert"
+          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
+          <p className="font-body text-xs text-hud-danger">
+            {saveError ?? loadError}
+          </p>
+        </div>
+      )}
+
       {/* Settings panels — widget-level error boundary keeps a failing
           panel from blanking the whole view. Each panel is a reusable
           sub-component; the view is the thin orchestrator (state + save). */}
-      <ErrorBoundary section="settings-panels" fallback={<WidgetError label="WEB CONFIG" />}>
+      <ErrorBoundary section="settings-panels" fallback={<WidgetError label="REALM SETTINGS" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         <SiteIdentityCard
           values={{
@@ -155,27 +169,29 @@ export default function DashboardSettings() {
 
         <DangerZoneCard
           delay={0.3}
-          onReset={() => setConfirmResetOpen(true)}
+          onReset={() => {
+            setResetError(null);
+            setConfirmResetOpen(true);
+          }}
           resetting={resetting}
         />
       </div>
       </ErrorBoundary>
 
-      {/* Deploy Button */}
+      {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="glass-panel chamfered-sm inline-flex items-center gap-4 px-8 py-4">
-          <Eye className="h-5 w-5 text-gold-400" />
+        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-              Web Config Ready for Deployment
+            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+              Settings ready to save
             </p>
-            <p className="font-mono text-[9px] text-text-muted">
-              Theme and site changes applied immediately
+            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+              Theme and identity changes apply as soon as they are saved
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
-            <RefreshCw className="h-4 w-4" />
-            DEPLOY
+            Save
           </Button>
         </div>
       </motion.div>
@@ -185,17 +201,22 @@ export default function DashboardSettings() {
         <ConfirmDialog
           open
           onClose={() => setConfirmResetOpen(false)}
-          title="RESET ALL PORTFOLIO DATA"
-          sysId="DASH//DANGER // PURGE_ALL"
+          title="Reset all codex data"
           message={
             <>
-              Warning: This operation will <span className="text-hud-danger font-bold">PURGE</span> all custom records
-              and restore default projects, skills, sections, and configuration from the tactical dossier seed.
+              This replaces every custom record with the authored seed: domains, talents,
+              quests, allies, codex pages and settings.
               <br />
               This action cannot be undone.
+              {resetError && (
+                <p role="alert" className="mt-3 flex items-start gap-2 text-hud-danger">
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  {resetError}
+                </p>
+              )}
             </>
           }
-          confirmLabel="PURGE & RE-SEED"
+          confirmLabel="Reset and re-seed"
           onConfirm={handleResetData}
           saving={resetting}
         />

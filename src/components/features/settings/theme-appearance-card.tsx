@@ -12,12 +12,23 @@ interface ThemePreset {
   key: string;
   name: string;
   desc: string;
-  color: string;
+  /** Swatch classes — stable accents, identical in both themes. */
+  swatch: string;
 }
 
 const THEME_PRESETS: ThemePreset[] = [
-  { key: "teyvat-codex", name: "TEYVAT CODEX", desc: "Warm ivory parchment & saddle leather (☀️ Light Default)", color: "bg-[#FAF7EE]" },
-  { key: "celestial-night", name: "CELESTIAL NIGHT", desc: "Midnight indigo & electro stardust (🌙 Dark Mode)", color: "bg-[#070913]" },
+  {
+    key: "teyvat-codex",
+    name: "Teyvat Codex",
+    desc: "Warm ivory parchment & saddle leather — the light default",
+    swatch: "bg-gold-100",
+  },
+  {
+    key: "celestial-night",
+    name: "Celestial Night",
+    desc: "Midnight indigo & electro stardust — the dark realm",
+    swatch: "bg-deep-space",
+  },
 ];
 
 interface ThemeAppearanceCardProps {
@@ -29,12 +40,11 @@ interface ThemeAppearanceCardProps {
 }
 
 /**
- * ThemeAppearanceCard — theme preset selector + animation toggle for the
- * dashboard settings page.
+ * ThemeAppearanceCard — theme preset selector + animation switch for the
+ * settings page.
  *
- * Extracted from settings-view. Owns the THEME_PRESETS registry and
- * renders the hexagonal-color preset rows plus the animations switch.
- * The view feeds current form values in and receives
+ * Owns the THEME_PRESETS registry and renders the preset rows plus the
+ * animations toggle. The view feeds current form values in and receives
  * updates through onChange — the card stays presentation-only.
  */
 export function ThemeAppearanceCard({
@@ -48,39 +58,51 @@ export function ThemeAppearanceCard({
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Palette className="h-4 w-4 text-gold-400" />
+            <Palette className="h-4 w-4 text-gold-400" aria-hidden="true" />
             <CardTitle>Theme & Appearance</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Theme Presets */}
           <div>
-            <span className="sys-label mb-3 block">FIELD_04 // THEME PRESET</span>
+            <span className="codex-label mb-3 block">Theme preset</span>
             <div className="grid grid-cols-1 gap-3">
               {THEME_PRESETS.map((theme) => (
                 <button
                   key={theme.key}
+                  type="button"
                   onClick={() => onChange("themePreset", theme.key)}
+                  aria-pressed={themePreset === theme.key}
                   className={cn(
-                    "flex items-center gap-4 chamfered-sm border-2 px-4 py-3 text-left transition-all duration-300",
-                    "hover-scale-sm press-scale focus-ring-gold",
+                    "flex items-center gap-4 codex-radius-sm border-2 px-4 py-3 text-left transition-all duration-300",
+                    "hover-scale-sm press-scale codex-focus",
                     themePreset === theme.key
-                      ? "border-gold-400 bg-[rgba(242,201,76,0.06)]"
-                      : "border-border-subtle text-text-muted hover:border-border-glass"
+                      ? "border-leather-caramel bg-leather-caramel/10 dark:border-gold-400 dark:bg-gold-400/10"
+                      : "border-border-subtle text-text-muted hover:border-border-glass dark:text-platinum-200"
                   )}
                 >
-                  <span className={cn("h-4 w-4 rotate-45 border border-border-glass/40", theme.color)} />
+                  <span
+                    className={cn(
+                      "h-4 w-4 rotate-45 border border-leather-caramel/40 dark:border-border-glass/40",
+                      theme.swatch
+                    )}
+                    aria-hidden="true"
+                  />
                   <div className="flex-1">
-                    <p className={cn(
-                      "font-mono text-xs font-medium tracking-wider",
-                      themePreset === theme.key ? "text-gold-400" : "text-text-main"
-                    )}>
+                    <p
+                      className={cn(
+                        "font-display text-xs font-semibold tracking-[0.08em]",
+                        themePreset === theme.key
+                          ? "text-leather-caramel dark:text-gold-400"
+                          : "text-text-main dark:text-platinum-50"
+                      )}
+                    >
                       {theme.name}
                     </p>
-                    <p className="font-mono text-[9px] text-text-muted">{theme.desc}</p>
+                    <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">{theme.desc}</p>
                   </div>
                   {themePreset === theme.key && (
-                    <Badge variant="gold" size="sm">ACTIVE</Badge>
+                    <Badge variant="gold" size="sm">Active</Badge>
                   )}
                 </button>
               ))}
@@ -88,14 +110,16 @@ export function ThemeAppearanceCard({
           </div>
 
           {/* Animations Toggle */}
-          <div className="flex items-center justify-between chamfered-sm border border-border-subtle bg-deep-space/40 px-4 py-3 transition-colors duration-300 hover:border-border-glass hover:bg-[rgba(242,201,76,0.04)]">
-            <div className="flex items-center gap-3">
-              <Monitor className="h-4 w-4 text-gold-400/60" />
-              <div>
-                <p className="font-mono text-xs tracking-wider text-text-main">FIELD_05 // ANIMATIONS</p>
-                <p className="font-mono text-[9px] text-text-muted">Framer Motion effects</p>
-              </div>
-            </div>
+          <div className="flex items-center justify-between codex-radius-sm border border-border-subtle bg-parchment-subtle/70 px-4 py-3 transition-colors duration-300 hover:border-border-glass hover:bg-leather-caramel/10 dark:bg-deep-space/40 dark:hover:bg-gold-400/5">
+            <label htmlFor="animations-toggle" className="flex cursor-pointer items-center gap-3">
+              <Monitor className="h-4 w-4 text-leather-caramel dark:text-gold-400/60" aria-hidden="true" />
+              <span>
+                <span className="block font-body text-xs font-medium text-text-main dark:text-platinum-50">Motion effects</span>
+                <span className="block font-body text-[11px] text-text-muted dark:text-platinum-200">
+                  Framer Motion transitions across the codex
+                </span>
+              </span>
+            </label>
             <Toggle
               id="animations-toggle"
               checked={animationsEnabled}

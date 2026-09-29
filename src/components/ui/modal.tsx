@@ -4,6 +4,7 @@ import { useEffect, useCallback, useRef, useId, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EASE_CODEX } from "@/lib/motion-variants";
 
 interface ModalProps {
   open: boolean;
@@ -12,9 +13,10 @@ interface ModalProps {
   children: ReactNode;
   footer?: ReactNode;
   className?: string;
-  sysId?: string;
   size?: "sm" | "md" | "lg" | "xl";
   variant?: "default" | "danger";
+  /** Error message surfaced above the footer (server or validation failure). */
+  error?: string | null;
   /** Prevent close on backdrop click */
   disableBackdropClose?: boolean;
 }
@@ -28,8 +30,7 @@ const sizeStyles: Record<string, string> = {
 
 const variantStyles: Record<string, string> = {
   default: "",
-  danger:
-    "border-hud-danger/30 [&_.angled-bar::before]:bg-gradient-to-r [&_.angled-bar::before]:from-transparent [&_.angled-bar::before]:via-hud-danger/40 [&_.angled-bar::before]:to-transparent",
+  danger: "border-hud-danger/30",
 };
 
 const FOCUSABLE_SELECTOR =
@@ -42,9 +43,9 @@ export function Modal({
   children,
   footer,
   className,
-  sysId = "MODAL//00",
   size = "md",
   variant = "default",
+  error = null,
   disableBackdropClose = false,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -155,30 +156,27 @@ export function Modal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.3, ease: EASE_CODEX }}
             className={cn(
-              "glass-panel-strong rounded-3xl relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
+              "codex-card-strong rounded-3xl relative z-10 w-full max-h-[90vh] overflow-y-auto outline-none",
               sizeStyles[size] || sizeStyles.md,
               variantStyles[variant] || variantStyles.default,
               className
             )}
           >
             {/* Header */}
-            <div className="angled-bar flex items-center justify-between border-b border-border-subtle px-4 py-3 sm:px-6 sm:py-4">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <span className="sys-label-gold shrink-0">{sysId}</span>
-                {title && (
-                  <h2
-                    id={titleId}
-                    className="font-display text-xs sm:text-sm font-bold tracking-wider uppercase text-text-main truncate"
-                  >
-                    {title}
-                  </h2>
-                )}
-              </div>
+            <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3 sm:px-6 sm:py-4">
+              {title && (
+                <h2
+                  id={titleId}
+                  className="font-display text-sm font-bold tracking-wider uppercase text-text-main truncate"
+                >
+                  {title}
+                </h2>
+              )}
               <button
                 onClick={onClose}
-                className="min-h-9 min-w-9 rounded-xl p-0 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold shrink-0 sm:min-h-0 sm:min-w-0 sm:p-1.5"
+                className="min-h-9 min-w-9 rounded-xl p-0 text-text-muted transition-all duration-200 hover:text-gold-400 hover-scale-sm press-scale codex-focus shrink-0 sm:min-h-0 sm:min-w-0 sm:p-1.5"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -194,15 +192,18 @@ export function Modal({
             {/* Content */}
             <div className="p-4 sm:p-6">{children}</div>
 
+            {error && (
+              <p role="alert" className="px-4 pb-3 sm:px-6 codex-label-active">
+                {error}
+              </p>
+            )}
+
             {/* Footer */}
             {footer && (
               <div className="border-t border-border-subtle px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-end gap-3">
                 {footer}
               </div>
             )}
-
-            {/* Bottom sys node */}
-            <span className="sys-node block" />
           </motion.div>
         </div>
       )}

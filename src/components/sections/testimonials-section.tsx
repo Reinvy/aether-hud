@@ -2,19 +2,16 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { TestimonialsGridSkeleton } from "@/components/ui/section-skeleton";
-import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import type { SectionDto, TestimonialDto } from "@/lib/dto";
 
-type Testimonial = {
-  id: string;
-  name: string;
-  role: string;
-  content: string;
-  avatar: string;
-  order: number;
-};
+interface TestimonialsSectionProps {
+  testimonials: TestimonialDto[];
+  section: SectionDto;
+}
+
+const AUTHORED = { title: "Companion", highlight: "Endorsements" };
 
 const stagger = {
   initial: { opacity: 0 },
@@ -23,8 +20,12 @@ const stagger = {
   transition: { staggerChildren: 0.1 },
 };
 
-export function TestimonialsSection() {
-  const { data: testimonials, loading } = useData<Testimonial[]>("/api/testimonials");
+/**
+ * TestimonialsSection — companion letters from allies and guild partners.
+ * Presentation-only: the letters are a prop from the server render.
+ */
+export function TestimonialsSection({ testimonials, section }: TestimonialsSectionProps) {
+  const sectionTitle = (section.title || "").trim();
 
   return (
     <section id="testimonials" className="relative py-20 sm:py-28">
@@ -33,7 +34,7 @@ export function TestimonialsSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeading
-          badge="COMPANION LETTERS // SERENITEA POT TRUST"
+          badge="Companion Letters // Serenitea Pot Trust"
           icon={
             <div className="w-4 h-4 relative">
               <Image
@@ -42,26 +43,21 @@ export function TestimonialsSection() {
                 width={16}
                 height={16}
                 className="object-contain"
+                unoptimized
               />
             </div>
           }
-          title="Companion"
-          highlight="Endorsements"
-          subtitle="Official commendations, letters of transit, and alliance trust records from peers and guild partners across Teyvat."
+          title={sectionTitle || AUTHORED.title}
+          highlight={sectionTitle ? undefined : AUTHORED.highlight}
+          subtitle={
+            section.subtitle ||
+            "Official commendations, letters of transit, and alliance trust records from peers and guild partners across Teyvat."
+          }
         />
 
-        {/* Testimonials Grid */}
-        <motion.div
-          className="mt-14 grid gap-6 sm:grid-cols-2"
-          {...stagger}
-        >
-          {loading && (
-            <div className="col-span-full">
-              <TestimonialsGridSkeleton />
-            </div>
-          )}
-
-          {testimonials?.map((testimonial) => (
+        {/* Companion Letters Grid */}
+        <motion.div className="mt-14 grid gap-6 sm:grid-cols-2" {...stagger}>
+          {testimonials.map((testimonial) => (
             <motion.div
               key={testimonial.id}
               variants={{
@@ -70,8 +66,8 @@ export function TestimonialsSection() {
               }}
               transition={{ duration: 0.4 }}
             >
-              <div className="bg-[#FAF8F5] dark:bg-surface-primary/75 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-7 card-lift border-2 border-leather-caramel/30 dark:border-gold-400/25 h-full flex flex-col justify-between shadow-xl relative">
-                {/* Mail Icon & Serenitea Pot Badge */}
+              <div className="codex-panel rounded-3xl p-6 sm:p-7 codex-lift h-full flex flex-col justify-between relative">
+                {/* Letter Seal & Serenitea Trust Badge */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
                     <div className="w-6 h-6 relative opacity-70">
@@ -81,54 +77,58 @@ export function TestimonialsSection() {
                         width={24}
                         height={24}
                         className="object-contain"
+                        unoptimized
                       />
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
                       <div className="w-3.5 h-3.5 relative">
                         <Image
                           src={GENSHIN_UI_ICONS.sereniteaPot}
-                          alt="Serenitea Pot"
+                          alt=""
                           width={14}
                           height={14}
                           className="object-contain"
+                          unoptimized
                         />
                       </div>
-                      <span className="font-serif text-[9px] text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                        TRUST // LV. 10
+                      <span className="font-serif text-[10px] text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                        Serenitea trust · Lv. 10
                       </span>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <blockquote className="text-sm leading-relaxed text-[#2C1E14] dark:text-platinum-200 font-body font-medium italic text-pretty">
+                  {/* Letter body */}
+                  <blockquote className="text-sm leading-relaxed text-leather-dark dark:text-platinum-50 font-body font-medium italic text-pretty">
                     “{testimonial.content}”
                   </blockquote>
                 </div>
 
                 {/* Author Info */}
-                <div className="mt-6 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/15 flex items-center gap-3.5">
+                <div className="mt-6 pt-4 border-t border-leather-caramel/20 dark:border-gold-400/20 flex items-center gap-3.5">
                   {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
-                    <div className="relative h-12 w-12 overflow-hidden rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/50 shrink-0 shadow-sm">
+                    <div className="relative h-12 w-12 overflow-hidden rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/40 shrink-0 shadow-sm">
                       <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
                         fill
+                        sizes="48px"
                         className="object-cover"
+                        unoptimized
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/50 bg-leather-caramel/15 dark:bg-surface-primary shrink-0 shadow-sm">
-                      <span className="font-serif text-base font-bold text-[#2C1E14] dark:text-gold-400">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-leather-caramel/40 dark:border-gold-400/40 bg-leather-caramel/15 dark:bg-gold-400/15 shrink-0 shadow-sm">
+                      <span className="font-serif text-base font-bold text-leather-dark dark:text-platinum-50">
                         {testimonial.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="font-serif text-sm sm:text-base font-bold tracking-wide text-[#2C1E14] dark:text-platinum-50 uppercase truncate">
+                    <p className="font-serif text-sm sm:text-base font-bold tracking-wide text-leather-dark dark:text-platinum-50 uppercase truncate">
                       {testimonial.name}
                     </p>
-                    <p className="font-mono text-xs tracking-wider text-[#8C6239] dark:text-gold-400 truncate font-bold">
+                    <p className="font-body text-xs tracking-wider text-leather-caramel dark:text-gold-400 truncate font-semibold">
                       {testimonial.role}
                     </p>
                   </div>
@@ -138,14 +138,15 @@ export function TestimonialsSection() {
                     <div className="w-3 h-3 relative">
                       <Image
                         src={GENSHIN_UI_ICONS.achievements}
-                        alt="Sealed"
+                        alt=""
                         width={12}
                         height={12}
                         className="object-contain"
+                        unoptimized
                       />
                     </div>
-                    <span className="font-mono text-[9px] font-bold text-[#8C6239] dark:text-gold-400">
-                      SEALED
+                    <span className="font-serif text-[10px] font-bold text-leather-caramel dark:text-gold-400 uppercase">
+                      Sealed
                     </span>
                   </div>
                 </div>
@@ -153,9 +154,27 @@ export function TestimonialsSection() {
             </motion.div>
           ))}
 
-          {!loading && testimonials?.length === 0 && (
-            <div className="col-span-full flex justify-center py-12">
-              <span className="font-mono text-xs text-leather-muted dark:text-text-muted">NO COMPANION DATA AVAILABLE</span>
+          {testimonials.length === 0 && (
+            <div className="col-span-full">
+              <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                  <Image
+                    src={GENSHIN_UI_ICONS.mail}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                  No companion letters yet
+                </h3>
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                  Endorsements from allies and guild partners will be delivered to this notice board
+                  as they arrive.
+                </p>
+              </div>
             </div>
           )}
         </motion.div>

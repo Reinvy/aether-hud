@@ -7,13 +7,13 @@ import { useReportWebVitals } from "next/web-vitals";
  *
  * Uses Next.js `useReportWebVitals` to capture Core Web Vitals (FCP, LCP,
  * INP, CLS, TTFB). In development the metrics are logged to the console
- * with a HUD label; in production they are beaconed (fire-and-forget) to
+ * with a codex label; in production they are beaconed (fire-and-forget) to
  * the /api/telemetry collector endpoint so real-user performance can be
  * aggregated without a third-party script.
  *
  * Mount once in the root layout. Renders nothing.
  */
-const LABEL = "[SYS_VITALS]";
+const LABEL = "[WEB_VITALS]";
 
 export function WebVitalsReporter() {
   useReportWebVitals((metric) => {

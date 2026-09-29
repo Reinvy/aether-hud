@@ -39,18 +39,18 @@ export function SectionHeading({
       )}
       {...fadeInView}
     >
-      <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#8C6239]/12 dark:bg-gold-400/10 border border-[#8C6239]/35 dark:border-gold-400/30 text-[#2C1E14] dark:text-gold-300 text-xs font-mono tracking-widest font-bold mb-4 shadow-sm">
+      <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-leather-caramel/35 bg-leather-caramel/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-leather-dark shadow-sm dark:border-gold-400/30 dark:bg-gold-400/10 dark:text-gold-300">
         {icon}
         <span>{badge}</span>
       </div>
 
-      <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.04em] text-[#2C1E14] dark:text-platinum-50 uppercase text-balance drop-shadow-sm">
+      <h2 className="font-serif text-3xl font-bold uppercase tracking-[0.04em] text-leather-dark drop-shadow-sm sm:text-4xl lg:text-5xl dark:text-platinum-50 text-balance">
         {title}{" "}
-        {highlight && <span className="text-gradient-gold font-bold">{highlight}</span>}
+        {highlight && <span className="codex-gradient-text font-bold">{highlight}</span>}
       </h2>
 
       {subtitle && (
-        <p className="mt-3 text-sm sm:text-base text-[#2C1E14] dark:text-platinum-200 font-body font-medium leading-relaxed text-pretty max-w-xl mx-auto">
+        <p className="mx-auto mt-3 max-w-xl font-body text-sm font-medium leading-relaxed text-leather-dark sm:text-base dark:text-platinum-200 text-pretty">
           {subtitle}
         </p>
       )}

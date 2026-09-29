@@ -4,13 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "@/components/ui/info-row";
 
 /**
- * TelemetryMetricCard — reusable HUD card for a single Web Vitals metric.
- * AETHER-HUD Design System: Obsidian & Imperial Gold
+ * TelemetryMetricCard — one Web Vitals metric from the Astral Observatory.
  *
- * Renders the aggregated summary (count/min/avg/p95/max) for one metric
- * (LCP, INP, CLS, FCP, TTFB) plus the most recent sample's path + time.
- * Used by the dashboard telemetry view; kept as its own module so the
- * metric → label/unit/rating mapping stays colocated and testable.
+ * Renders the aggregated summary (count/min/avg/p95/max) for a single metric
+ * (LCP, INP, CLS, FCP, TTFB) plus the most recent sample's page and time.
+ * Kept as its own module so the metric → label/unit/rating mapping stays
+ * colocated.
  */
 
 export interface TelemetryMetricSummary {
@@ -41,11 +40,18 @@ const METRIC_UNIT: Record<string, string> = {
   CLS: "",
 };
 
-/** Rating → Badge variant (stellar = good, gold = needs-improvement, default = poor). */
-const RATING_VARIANT: Record<string, "stellar" | "gold" | "default"> = {
-  good: "stellar",
+/** Rating → Badge variant (jade = good, gold = needs improvement, default = poor). */
+const RATING_VARIANT: Record<string, "jade" | "gold" | "default"> = {
+  good: "jade",
   "needs-improvement": "gold",
   poor: "default",
+};
+
+/** Rating → badge copy; anything the server did not rate reads as "No data". */
+const RATING_LABEL: Record<string, string> = {
+  good: "Good",
+  "needs-improvement": "Fair",
+  poor: "Poor",
 };
 
 function formatValue(name: string, value: number | null): string {
@@ -83,15 +89,15 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
   const label = METRIC_LABELS[name] ?? name;
   const rating = summary.last?.rating ?? "unknown";
   const ratingVariant = RATING_VARIANT[rating] ?? "default";
-  const ratingText = rating === "good" ? "GOOD" : rating === "needs-improvement" ? "WARN" : rating === "poor" ? "POOR" : "N/A";
+  const ratingText = RATING_LABEL[rating] ?? "No data";
 
   return (
-    <Card variant="glass" hover="sweep" diamond className={cn("h-full", className)}>
+    <Card variant="glass" hover="sweep" className={cn("h-full", className)}>
       <CardContent className="flex h-full flex-col gap-4 p-5">
         {/* Header — metric label + rating badge */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <span className="sys-label-gold text-[9px]">{name}</span>
+            <span className="codex-label-gold text-[9px]">{name}</span>
             <h3 className="mt-1 truncate font-display text-xs font-bold tracking-[0.08em] text-text-main">
               {label}
             </h3>
@@ -103,30 +109,31 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
 
         {/* Aggregates */}
         <div className="grid grid-cols-2 gap-2">
-          <InfoRow label="SAMPLES" value={String(summary.count)} tone="titanium" />
-          <InfoRow label="MIN" value={formatValue(name, summary.min)} tone="titanium" />
+          <InfoRow label="SAMPLES" value={String(summary.count)} tone="default" />
+          <InfoRow label="MIN" value={formatValue(name, summary.min)} tone="default" />
           <InfoRow label="AVG" value={formatValue(name, summary.avg)} tone="gold" />
           <InfoRow label="P95" value={formatValue(name, summary.p95)} tone="gold" />
-          <InfoRow label="MAX" value={formatValue(name, summary.max)} tone="titanium" />
+          <InfoRow label="MAX" value={formatValue(name, summary.max)} tone="default" />
           <InfoRow
             label="LATEST"
             value={formatValue(name, summary.last?.value ?? null)}
-            tone="stellar"
+            tone="jade"
           />
         </div>
 
         {/* Latest sample origin */}
         <div className="mt-auto space-y-1.5 border-t border-border-subtle pt-3">
-          <div className="flex items-center gap-2">
-            <span className="sys-node" />
-            <span className="min-w-0 truncate font-mono text-[10px] text-text-muted">
-              {summary.last?.path ?? "NO SAMPLE YET"}
-            </span>
-          </div>
-          {summary.last && (
-            <p className="font-mono text-[10px] text-text-muted/70">
-              {formatDate(summary.last.recordedAt)} // {formatTime(summary.last.recordedAt)}
-            </p>
+          {summary.last ? (
+            <>
+              <p className="font-mono text-[10px] text-text-muted truncate tabular-nums">
+                {summary.last.path}
+              </p>
+              <p className="text-[10px] font-body text-text-muted">
+                {formatDate(summary.last.recordedAt)} · {formatTime(summary.last.recordedAt)}
+              </p>
+            </>
+          ) : (
+            <p className="text-[10px] font-body text-text-muted">No sample yet</p>
           )}
         </div>
       </CardContent>

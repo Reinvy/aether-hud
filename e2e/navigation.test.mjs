@@ -26,7 +26,9 @@ const CYAN = "\x1b[36m";
 const YELLOW = "\x1b[33m";
 const RESET = "\x1b[0m";
 
-const PUBLIC_PAGES = ["/", "/login"];
+// `/projects/proj-01` must resolve from the authored dataset, so static-data
+// mode publishes working domain dossiers.
+const PUBLIC_PAGES = ["/", "/login", "/projects/proj-01"];
 const DASHBOARD_PAGES = [
   "/dashboard",
   "/dashboard/contact",
@@ -246,15 +248,15 @@ async function main() {
   }
 
   // ===== TEST 6: Source-Level Nav Integrity =====
-  // The header/sidebar nav is rendered from constants (src/lib/constants.ts).
-  // Every nav href must resolve: plain paths to a real app route, anchors to a
-  // real section id. A missing anchor (e.g. /#hero with no id="hero" in the
-  // hero section) silently breaks the nav — the link renders but scrolls
-  // nowhere. Live HTTP checks cannot catch this (sections are lazy-loaded
-  // client components), so assert against the source directly.
+  // The header, rail, dock, footer and console sidebar all render from the
+  // single registry in src/lib/navigation.ts. Every nav href must resolve:
+  // plain paths to a real app route, anchors to a real section id. A missing
+  // anchor (e.g. /#hero with no id="hero" in the hero section) silently breaks
+  // the nav — the link renders but scrolls nowhere. Live HTTP checks cannot
+  // catch this (sections are client-hydrated), so assert against the source.
   log("TEST 6: Source-Level Nav Integrity (nav hrefs resolve)");
   try {
-    const constantsSrc = readFileSync("src/lib/constants.ts", "utf-8");
+    const navSrc = readFileSync("src/lib/navigation.ts", "utf-8");
     const sectionsDir = "src/components/sections";
     const sectionFiles = readdirSync(sectionsDir).filter((f) => f.endsWith(".tsx"));
     const landingFiles = [
@@ -267,15 +269,15 @@ async function main() {
       .join("\n");
 
     const navBlocks = [
-      ...constantsSrc.matchAll(/export const (?:NAV_ITEMS|DASHBOARD_NAV) = \[([\s\S]*?)\] as const;/g),
+      ...navSrc.matchAll(/export const (PUBLIC_NAV|DASHBOARD_NAV) = \[([\s\S]*?)\] as const;/g),
     ];
     const navHrefs = [];
-    for (const [, block] of navBlocks) {
+    for (const [, , block] of navBlocks) {
       for (const m of block.matchAll(/href:\s*"([^"]+)"/g)) {
         navHrefs.push(m[1]);
       }
     }
-    assert(navHrefs.length > 0, `Extracted nav hrefs from constants (found ${navHrefs.length})`);
+    assert(navHrefs.length > 0, `Extracted nav hrefs from navigation.ts (found ${navHrefs.length})`);
 
     for (const href of [...new Set(navHrefs)]) {
       const anchorMatch = href.match(/^\/?#(.+)$/);
@@ -293,10 +295,29 @@ async function main() {
       }
     }
 
-    // DB-driven nav keys: the header renders nav from /api/sections (key →
-    // /#<key>) whenever sections exist, so keys NOT in NAV_ITEMS (experience,
-    // testimonials) must still resolve to real section ids. Validate every
-    // seed key — a missing id here silently breaks the header scroll link.
+    // Single-source guard: no module may declare its own navigation array.
+    // Four competing definitions once drifted apart — including one on a
+    // header component that no route ever imported.
+    const srcFiles = [];
+    const walk = (dir) => {
+      for (const f of readdirSync(dir)) {
+        const p = join(dir, f);
+        if (statSync(p).isDirectory()) walk(p);
+        else if (f.endsWith(".tsx") || f.endsWith(".ts")) srcFiles.push(p);
+      }
+    };
+    walk("src");
+    const NAV_DECLARATION = /(PUBLIC_NAV|DASHBOARD_NAV|RAIL_ITEMS|MOBILE_NAV_ITEMS|NAV_ITEMS)\s*[:=]/;
+    const navOwners = srcFiles
+      .filter((f) => NAV_DECLARATION.test(readFileSync(f, "utf-8")))
+      .map((f) => f.replace(/\\/g, "/"));
+    assert(
+      navOwners.length === 1 && navOwners[0] === "src/lib/navigation.ts",
+      `Only src/lib/navigation.ts declares a nav registry (got: ${navOwners.join(", ") || "none"})`
+    );
+
+    // DB-driven nav keys: sections created in the console render as /#<key>, so
+    // every seed key must resolve to a real section id.
     const seedSrc = readFileSync("prisma/seed.ts", "utf-8");
     const sectionKeys = [...seedSrc.matchAll(/key:\s*"([^"]+)"/g)].map((m) => m[1]);
     assert(
@@ -312,16 +333,7 @@ async function main() {
 
     // All literal anchor hrefs across src/ (#x or /#x) must resolve to a
     // section id — catches hero CTA buttons (#projects, #contact) and any
-    // future anchor additions the nav constants don't enumerate.
-    const srcFiles = [];
-    const walk = (dir) => {
-      for (const f of readdirSync(dir)) {
-        const p = join(dir, f);
-        if (statSync(p).isDirectory()) walk(p);
-        else if (f.endsWith(".tsx") || f.endsWith(".ts")) srcFiles.push(p);
-      }
-    };
-    walk("src");
+    // future anchor additions the nav registry doesn't enumerate.
     const allSrc = srcFiles.map((f) => readFileSync(f, "utf-8")).join("\n");
     const anchorIds = [...allSrc.matchAll(/href=["'](?:#|\/#)([^"'#]+)["']/g)].map((m) => m[1]);
     for (const anchorId of new Set(anchorIds)) {
@@ -499,11 +511,11 @@ async function main() {
   // sidebar iconMap, so the fallback never fires.
   log("TEST 10: Dashboard Nav Icon Registry Sync (DASHBOARD_NAV icons registered)");
   try {
-    const constantsSrc = readFileSync("src/lib/constants.ts", "utf-8");
-    const navBlock = constantsSrc.match(
+    const navSrc = readFileSync("src/lib/navigation.ts", "utf-8");
+    const navBlock = navSrc.match(
       /export const DASHBOARD_NAV = \[([\s\S]*?)\] as const;/
     );
-    assert(navBlock !== null, "DASHBOARD_NAV block is parseable in constants.ts");
+    assert(navBlock !== null, "DASHBOARD_NAV block is parseable in navigation.ts");
     const navIcons = navBlock
       ? [...navBlock[1].matchAll(/icon:\s*"([^"]+)"/g)].map((m) => m[1])
       : [];
@@ -538,6 +550,52 @@ async function main() {
     }
   } catch (e) {
     assert(false, `Dashboard nav icon registry is checkable: ${e.message}`);
+  }
+
+  // ===== TEST 11: Write Guard =====
+  // The dashboard session is an HMAC cookie minted by /api/auth. Every mutating
+  // endpoint must refuse an unauthenticated caller: `401` when DASHBOARD_SECRET
+  // is configured, `503` when it is not (fail closed). A `200`/`201` here means
+  // the console is writable by anyone who can reach the route — the exact hole
+  // the old forgeable sessionStorage token left open.
+  log("TEST 11: Write Guard (mutations require a session)");
+  const WRITE_PROBES = [
+    ["POST", "/api/projects", {}],
+    ["POST", "/api/skills", {}],
+    ["POST", "/api/sections", { key: "probe", title: "Probe" }],
+    ["DELETE", "/api/projects/nonexistent-id", undefined],
+    ["PUT", "/api/config", { name: "probe" }],
+    ["POST", "/api/config/reset", undefined],
+  ];
+  for (const [method, path, body] of WRITE_PROBES) {
+    try {
+      const resp = await fetchRetry(`${targetUrl}${path}`, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: body === undefined ? undefined : JSON.stringify(body),
+        timeout: 10000,
+      });
+      assert(
+        resp.status === 401 || resp.status === 503,
+        `${method} ${path} is refused without a session (got ${resp.status})`
+      );
+    } catch (e) {
+      assert(false, `${method} ${path} is checkable: ${e.message}`);
+    }
+  }
+
+  // The public form endpoint stays reachable — the summon portal must work for
+  // anonymous visitors.
+  try {
+    const resp = await fetchRetry(`${targetUrl}/api/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Probe", email: "probe@example.com", message: "hello" }),
+      timeout: 10000,
+    });
+    assert(resp.status !== 401 && resp.status !== 403, `POST /api/contact stays public (got ${resp.status})`);
+  } catch (e) {
+    assert(false, `POST /api/contact is checkable: ${e.message}`);
   }
 
   // ===== Summary =====

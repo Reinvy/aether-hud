@@ -1,11 +1,11 @@
 {
-  "name": "AETHER-HUD — High-End Tactical Portfolio",
-  "short_name": "AETHER-HUD",
-  "description": "High-End Tactical Portfolio — Obsidian & Imperial Gold Edition",
+  "name": "Teyvat Codex — Interactive Traveler Dossier",
+  "short_name": "Teyvat Codex",
+  "description": "Interactive Traveler Dossier — portfolio, domains, talents and commissions",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#030407",
-  "theme_color": "#030407",
+  "background_color": "#FAF8F5",
+  "theme_color": "#FAF8F5",
   "icons": [
     {
       "src": "/icon.svg",

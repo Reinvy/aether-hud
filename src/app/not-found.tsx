@@ -3,12 +3,11 @@ import Link from "next/link";
 import { Compass } from "lucide-react";
 
 /**
- * HUD-styled 404 page — unknown coordinates outside the tactical grid.
+ * 404 page — the requested page is not in the codex.
  */
-
 export const metadata: Metadata = {
-  title: "404 — Signal Lost",
-  description: "The requested sector does not exist in the tactical grid. Return to base.",
+  title: "404 — Page not found",
+  description: "This page is not part of the Teyvat Codex. Return to the traveler dossier.",
   robots: {
     index: false,
     follow: false,
@@ -17,45 +16,39 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-deep-space p-4">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 dark:bg-deep-space">
       <div className="pointer-events-none absolute inset-0 bg-starfield opacity-20" />
-      <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
-      <div className="scanline pointer-events-none absolute inset-0" />
+      <div className="pointer-events-none absolute inset-0 codex-grid-bg opacity-10" />
 
-      <div className="glass-panel chamfered relative w-full max-w-lg p-8">
+      <div className="codex-card codex-panel-radius relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          {/* 404 status */}
-          <div className="flex items-baseline gap-2">
-            <span className="font-display text-6xl font-black tracking-[0.08em] text-gradient-gold">
+          <div className="flex items-baseline gap-3">
+            <span className="codex-gradient-text font-display text-6xl font-black tracking-[0.08em]">
               404
             </span>
-            <span className="sys-label text-[10px] text-text-muted">// STATUS</span>
+            <span className="codex-label text-[10px]">Not in the archive</span>
           </div>
 
           <div className="space-y-2">
-            <span className="sys-label-gold text-[10px] tracking-[0.2em]">
-              SIGNAL LOST // UNKNOWN COORDINATES
+            <span className="codex-label-gold text-[10px] tracking-[0.2em]">
+              Lost Wayfarer
             </span>
             <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Coordinates <span className="text-hud-danger">Not Found</span>
+              This page <span className="text-hud-danger">is not here</span>
             </h1>
             <p className="mx-auto max-w-sm text-sm text-text-muted font-body">
-              The requested sector does not exist in the tactical grid. Verify
-              the coordinates or return to base.
+              The trail you followed does not lead anywhere in the codex. Check
+              the address, or head back to the traveler dossier.
             </p>
           </div>
 
           <Link
             href="/"
-            className="btn-glow-sweep tactical-btn inline-flex items-center gap-2 border border-border-glass bg-glass-card px-6 py-2.5 text-xs font-mono tracking-wider text-gold-400 transition-all hover:bg-[rgba(242,201,76,0.12)] hover-scale-sm press-scale focus-ring-gold"
+            className="codex-sheen codex-btn codex-focus inline-flex items-center gap-2 border border-leather-caramel/35 px-6 py-2.5 text-xs font-semibold tracking-wider text-leather-dark transition-all hover:bg-leather-caramel/10 hover-scale-sm press-scale dark:border-border-glass dark:text-gold-400 dark:hover:bg-gold-400/10"
           >
             <Compass className="h-3.5 w-3.5" />
-            RETURN TO BASE
+            Return to the dossier
           </Link>
-
-          <span className="absolute bottom-3 right-3 sys-label text-[8px] text-text-muted/20">
-            [LOST_NODE]
-          </span>
         </div>
       </div>
     </main>

@@ -1,30 +1,32 @@
 "use client";
 
 import { memo } from "react";
-import { RefreshCw, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusDot, type StatusTone } from "@/components/ui/status-dot";
 
 /**
- * ActivityFeed — reusable HUD activity log panel.
+ * ActivityFeed — the Codex Console chronicle of recent content changes.
  *
- * Displays live system events and content audit changes with
- * tactical status dots and mono timestamps.
+ * Renders the /api/dashboard/activity payload (a deploy/update/calibrate/sync
+ * feed) as a dated list of entries with their status diamond.
  */
 
 export interface ActivityItem {
-  id?: string;
+  id: string;
   action: string;
   detail: string;
   time: string;
   type: "deploy" | "update" | "calibrate" | "sync";
+  /** ISO instant the entry happened; the list is already sorted by it. */
+  timestamp: string;
 }
 
 const DOT_TONE: Record<ActivityItem["type"], StatusTone> = {
   deploy: "active",
   update: "gold",
-  calibrate: "stellar",
-  sync: "stellar",
+  calibrate: "jade",
+  sync: "jade",
 };
 
 export const ActivityFeed = memo(function ActivityFeed({
@@ -33,21 +35,18 @@ export const ActivityFeed = memo(function ActivityFeed({
   items: ActivityItem[];
 }) {
   return (
-    <Card variant="glass" hover="none" diamond className="h-full">
+    <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-gold-400" aria-hidden="true" />
-            <CardTitle>Activity Log</CardTitle>
-          </div>
-          <RefreshCw className="h-3.5 w-3.5 text-text-muted/60" aria-hidden="true" />
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+          <CardTitle>Activity Log</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4" aria-label="System activity log">
+        <div className="space-y-4" aria-label="Recent activity">
           {items.length === 0 ? (
-            <p className="py-4 text-center font-mono text-xs text-text-muted">
-              [EMPTY] // No activity logged
+            <p className="py-6 text-center text-xs font-body text-text-muted">
+              Nothing has changed in the codex yet.
             </p>
           ) : (
             items.map((activity, i) => (
@@ -55,16 +54,16 @@ export const ActivityFeed = memo(function ActivityFeed({
                 <StatusDot
                   tone={DOT_TONE[activity.type] || "gold"}
                   label={activity.action}
-                  className="mt-0.5 transition-transform duration-200 group-hover:scale-125"
+                  className="mt-1.5 transition-transform duration-200 group-hover:scale-125"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-mono text-[11px] font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
+                  <p className="truncate font-serif text-sm font-semibold text-text-main transition-colors duration-200 group-hover:text-leather-caramel dark:group-hover:text-gold-400">
                     {activity.action}
                   </p>
-                  <p className="mt-0.5 font-mono text-[9px] text-text-muted truncate">
+                  <p className="mt-0.5 truncate text-xs font-body text-text-muted">
                     {activity.detail}
                   </p>
-                  <p className="sys-label mt-0.5 text-[8px] font-mono tabular-nums">{activity.time}</p>
+                  <p className="codex-label mt-1 text-[9px] tabular-nums">{activity.time}</p>
                 </div>
               </div>
             ))

@@ -4,22 +4,19 @@ import { cn } from "@/lib/utils";
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "glass" | "bordered";
   hover?: "lift" | "sweep" | "glow" | "none";
-  diamond?: boolean;
 }
 
-function Card({ className, variant = "glass", hover = "sweep", diamond = false, children, ...props }: CardProps) {
+function Card({ className, variant = "glass", hover = "sweep", children, ...props }: CardProps) {
   return (
     <div
       className={cn(
         "rounded-3xl relative group",
-        variant === "glass" && "parchment-panel dark:glass-panel",
+        variant === "glass" && "codex-panel",
         variant === "default" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/25 dark:border-border-subtle",
         variant === "bordered" && "bg-parchment-subtle dark:bg-surface-primary border border-leather-caramel/40 dark:border-border-glass",
-        hover === "lift" && "card-lift",
-        hover === "sweep" && "energy-sweep",
-        hover === "glow" && "card-lift",
-        "corner-decor",
-        diamond && "diamond-corner",
+        hover === "lift" && "codex-lift",
+        hover === "sweep" && "codex-sheen",
+        hover === "glow" && "codex-glow-gold",
         className
       )}
       {...props}

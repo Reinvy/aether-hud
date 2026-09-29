@@ -6,14 +6,13 @@ import { cn } from "@/lib/utils";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
-  glow?: "gold" | "stellar" | "none";
-  crosshair?: boolean;
-  /** Renders a HUD diamond spinner and disables the button while true. */
+  glow?: "gold" | "none";
+  /** Renders the elemental diamond spinner and disables the button while true. */
   loading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", glow = "gold", crosshair = false, loading = false, disabled, children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", glow = "gold", loading = false, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -21,9 +20,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         className={cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-all duration-300",
-          "rounded-xl btn-glow-sweep focus-ring-gold",
+          "codex-radius-sm codex-sheen codex-focus",
           "active:scale-[0.97] disabled:active:scale-100",
-          crosshair && "crosshair-ring",
 
           /* Size */
           size === "sm" && "px-4 py-1.5 text-xs min-h-[32px]",
@@ -34,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === "primary" &&
             "bg-leather-caramel dark:bg-gradient-to-r dark:from-gold-600 dark:to-gold-500 text-parchment-base dark:text-deep-space font-semibold hover:opacity-90 shadow-md",
           variant === "secondary" &&
-            "bg-parchment-subtle dark:bg-glass-card border border-leather-caramel/30 dark:border-border-glass text-leather-dark dark:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-[rgba(242,201,76,0.12)]",
+            "bg-parchment-subtle dark:bg-glass-card border border-leather-caramel/30 dark:border-border-glass text-leather-dark dark:text-gold-400 hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10",
           variant === "outline" &&
             "border border-leather-caramel/25 dark:border-border-subtle text-leather-dark dark:text-text-main hover:border-leather-caramel dark:hover:border-border-glass hover:bg-parchment-subtle/50 dark:hover:bg-glass-card",
           variant === "ghost" &&
@@ -43,8 +41,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             "bg-gradient-to-r from-hud-danger to-rose-700 text-white hover:from-rose-600 hover:to-rose-800",
 
           /* Glow */
-          glow === "gold" && variant === "primary" && "glow-leather dark:glow-gold",
-          glow === "stellar" && "glow-stellar",
+          glow === "gold" && "codex-glow-gold",
           glow === "none" && "shadow-none",
 
           /* Loading / disabled */
@@ -57,7 +54,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && (
           <span
-            className="hud-spinner h-3.5 w-3.5 shrink-0"
+            className="elemental-rotate h-3.5 w-3.5 shrink-0"
             aria-hidden="true"
           />
         )}

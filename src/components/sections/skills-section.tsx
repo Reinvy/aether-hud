@@ -3,21 +3,34 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { fadeInView } from "@/lib/motion-variants";
-import { useData } from "@/lib/use-data";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
-import { SkillsArraySkeleton } from "@/components/ui/section-skeleton";
+import { getElementByKey, type ElementAsset } from "@/lib/element-assets";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import type { SectionDto, SkillDto } from "@/lib/dto";
 
-type Skill = {
-  id: string;
-  name: string;
-  level: number; // 0-100
-  category: string;
-  icon: string;
-  order: number;
+interface SkillsSectionProps {
+  skills: SkillDto[];
+  section: SectionDto;
+}
+
+const AUTHORED = { title: "Talents &", highlight: "Constellations" };
+
+/** Elemental vision granted by each talent discipline (unknown → Geo). */
+const ELEMENT_KEY_BY_CATEGORY: Partial<Record<string, string>> = {
+  AI: "electro",
+  Frontend: "anemo",
+  Backend: "hydro",
+  DevOps: "geo",
+  Design: "cryo",
+  Language: "dendro",
 };
+
+function getElementByKeyFromCategory(category: string): ElementAsset {
+  return getElementByKey(ELEMENT_KEY_BY_CATEGORY[category] ?? "geo");
+}
 
 const stagger = {
   initial: { opacity: 0 },
@@ -26,25 +39,35 @@ const stagger = {
   transition: { staggerChildren: 0.05 },
 };
 
-export function SkillsSection() {
-  const { data: skills, loading } = useData<Skill[]>("/api/skills");
-
-  const categoryStats = useMemo(() => {
-    if (!skills || skills.length === 0) {
-      return [];
+/**
+ * SkillsSection — the talent tree, grouped by the vision each discipline
+ * grants. Presentation-only: the talent records are a prop from the server
+ * render, so the section never fetches.
+ */
+export function SkillsSection({ skills, section }: SkillsSectionProps) {
+  const groups = useMemo(() => {
+    const result: { category: string; element: ElementAsset; skills: SkillDto[] }[] = [];
+    for (const skill of skills) {
+      const group = result.find((entry) => entry.category === skill.category);
+      if (group) {
+        group.skills.push(skill);
+      } else {
+        result.push({
+          category: skill.category,
+          element: getElementByKeyFromCategory(skill.category),
+          skills: [skill],
+        });
+      }
     }
-    const map: Record<string, { total: number; count: number }> = {};
-    for (const s of skills) {
-      const cat = s.category === "AI" ? "AI/ML" : s.category;
-      if (!map[cat]) map[cat] = { total: 0, count: 0 };
-      map[cat].total += s.level;
-      map[cat].count += 1;
-    }
-    return Object.entries(map).map(([cat, val]) => ({
-      label: cat,
-      pct: Math.round(val.total / val.count),
-    }));
+    return result;
   }, [skills]);
+
+  const categoryStats = groups.map((group) => ({
+    label: group.category === "AI" ? "AI/ML" : group.category,
+    pct: Math.round(group.skills.reduce((sum, skill) => sum + skill.level, 0) / group.skills.length),
+  }));
+
+  const sectionTitle = (section.title || "").trim();
 
   return (
     <section id="skills" className="relative py-20 sm:py-28">
@@ -52,7 +75,7 @@ export function SkillsSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="TALENTS & CONSTELLATIONS // VISIONS"
+          badge="Talents & Constellations // Visions"
           icon={
             <div className="w-4 h-4 relative">
               <Image
@@ -61,20 +84,21 @@ export function SkillsSection() {
                 width={16}
                 height={16}
                 className="object-contain"
+                unoptimized
               />
             </div>
           }
-          title="Talents &"
-          highlight="Constellations"
-          subtitle="Elemental proficiencies and character talent trees across seven digital domains."
+          title={sectionTitle || AUTHORED.title}
+          highlight={sectionTitle ? undefined : AUTHORED.highlight}
+          subtitle={
+            section.subtitle ||
+            "Elemental proficiencies and character talent trees across seven digital domains."
+          }
         />
 
-        {/* Skills Grid Container */}
-        <motion.div
-          className="mt-12 mx-auto max-w-4xl"
-          {...stagger}
-        >
-          <div className="bg-[#FAF8F5] dark:bg-surface-primary/80 parchment-panel dark:glass-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 dark:border-gold-400/30 shadow-2xl">
+        {/* Talent Tree Container */}
+        <motion.div className="mt-12 mx-auto max-w-4xl" {...stagger}>
+          <div className="codex-panel rounded-3xl p-6 sm:p-8">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
               <div className="w-5 h-5 relative">
                 <Image
@@ -83,55 +107,92 @@ export function SkillsSection() {
                   width={20}
                   height={20}
                   className="object-contain"
+                  unoptimized
                 />
               </div>
-              <span className="font-serif text-xs tracking-widest text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                TALENT TREE // ACTIVE CONSTELLATIONS
+              <span className="font-serif text-xs tracking-widest text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                Talent Tree // Active Constellations
               </span>
-              <span className="ml-auto font-mono text-[10px] text-[#8C6239] dark:text-text-muted font-bold tabular-nums">
-                {loading ? "DISCOVERING TALENTS…" : `${skills?.length ?? 0} TALENTS ACTIVE`}
+              <span className="ml-auto font-body text-[10px] tracking-wider text-leather-muted dark:text-platinum-200 font-bold uppercase tabular-nums">
+                {skills.length} talents attuned
               </span>
             </div>
 
-            {loading && (
-              <SkillsArraySkeleton rows={6} />
-            )}
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {skills?.map((skill) => (
-                <motion.div
-                  key={skill.id}
-                  variants={{
-                    initial: { opacity: 0, y: 16 },
-                    whileInView: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <SkillBar
-                    name={skill.name}
-                    level={skill.level}
-                    icon={skill.icon}
-                    category={skill.category}
+            {skills.length === 0 ? (
+              <div className="rounded-2xl border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/60 px-6 py-10 text-center dark:bg-glass-200">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                  <Image
+                    src={GENSHIN_UI_ICONS.talents}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                    unoptimized
                   />
-                </motion.div>
-              ))}
-            </div>
+                </div>
+                <h3 className="font-serif text-base font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                  No talents attuned yet
+                </h3>
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                  The constellation map is still unwritten — talent records will appear here once
+                  they are inscribed in the console.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {groups.map((group) => (
+                  <div key={group.category} className="space-y-3">
+                    {/* Vision granted by this discipline */}
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className={cn("vision-badge", `vision-${group.element.key}`)}>
+                        <Image
+                          src={group.element.gildedIcon}
+                          alt=""
+                          width={14}
+                          height={14}
+                          className="object-contain"
+                          unoptimized
+                        />
+                        {group.element.name}
+                      </span>
+                      <span className="font-serif text-xs font-bold tracking-widest text-leather-dark dark:text-platinum-50 uppercase">
+                        {group.category}
+                      </span>
+                      <span className="codex-label ml-auto tabular-nums">
+                        {group.skills.length} talents
+                      </span>
+                    </div>
 
-            {!loading && skills?.length === 0 && (
-              <div className="flex justify-center py-8">
-                <span className="font-mono text-xs text-[#8C6239] dark:text-text-muted">NO TALENT DATA AVAILABLE</span>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {group.skills.map((skill) => (
+                        <motion.div
+                          key={skill.id}
+                          variants={{
+                            initial: { opacity: 0, y: 16 },
+                            whileInView: { opacity: 1, y: 0 },
+                          }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <SkillBar
+                            name={skill.name}
+                            level={skill.level}
+                            icon={skill.icon}
+                            category={skill.category}
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </motion.div>
 
-        {/* Radar / Category Summary Overview */}
+        {/* Elemental Resonance // Category Average */}
         {categoryStats.length > 0 && (
-          <motion.div
-            className="mt-10 mx-auto max-w-2xl text-center"
-            {...fadeInView}
-          >
-            <div className="bg-[#FAF8F5] dark:bg-surface-primary/80 parchment-panel-strong dark:glass-panel-strong rounded-3xl p-6 border-2 border-leather-caramel/25 dark:border-gold-400/20 shadow-xl">
+          <motion.div className="mt-10 mx-auto max-w-2xl text-center" {...fadeInView}>
+            <div className="codex-panel-strong rounded-3xl p-6">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <div className="w-4 h-4 relative">
                   <Image
@@ -140,19 +201,23 @@ export function SkillsSection() {
                     width={16}
                     height={16}
                     className="object-contain"
+                    unoptimized
                   />
                 </div>
-                <span className="font-serif text-xs tracking-wider text-[#8C6239] dark:text-gold-400 font-bold uppercase">
-                  ELEMENTAL RESONANCE // CATEGORY AVERAGE
+                <span className="font-serif text-xs tracking-wider text-leather-caramel dark:text-gold-400 font-bold uppercase">
+                  Elemental Resonance // Category Average
                 </span>
               </div>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-4">
                 {categoryStats.map((stat) => (
-                  <div key={stat.label} className="text-center min-w-[84px] p-3 rounded-2xl bg-[#FFFFFF] dark:bg-surface-primary/60 border-2 border-leather-caramel/25 dark:border-gold-400/15 shadow-sm">
-                    <div className="text-2xl font-bold font-serif text-[#2C1E14] dark:text-gold-400 tabular-nums">
+                  <div
+                    key={stat.label}
+                    className="text-center min-w-[84px] p-3 rounded-2xl bg-parchment-base dark:bg-surface-primary border border-leather-caramel/25 dark:border-gold-400/25 shadow-sm"
+                  >
+                    <div className="text-2xl font-bold font-serif text-leather-dark dark:text-platinum-50 tabular-nums">
                       {stat.pct}%
                     </div>
-                    <div className="font-mono text-[9px] text-[#8C6239] dark:text-text-muted mt-1 uppercase font-bold">{stat.label}</div>
+                    <div className="codex-label mt-1 tabular-nums">{stat.label}</div>
                   </div>
                 ))}
               </div>

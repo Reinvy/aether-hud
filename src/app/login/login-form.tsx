@@ -1,25 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Activity, Shield, Eye, EyeOff, KeyRound, AlertCircle, Terminal, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, ArrowLeft, ArrowRight, Eye, EyeOff, KeyRound } from "lucide-react";
+import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
-import { StatusDot } from "@/components/ui/status-dot";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { EASE_CODEX } from "@/lib/motion-variants";
 
-export default function LoginPage() {
+/** Loader-speed spin for the submit diamond (`.elemental-rotate` default is 7s). */
+const SPIN_FAST = { "--codex-spin-duration": "1s" } as CSSProperties;
+
+/**
+ * Codex Console sign-in.
+ *
+ * Two steps: an introduction that explains the gate, then the password form.
+ * The password is handed to `useAuth().login`, which verifies it against
+ * `/api/auth` and throws an `ApiError` (401 rejected, 503 unconfigured) whose
+ * message is rendered inline with `role="alert"`. A resolved login flips the
+ * session flag, and the effect below routes the traveler into the dashboard.
+ *
+ * The panel follows the Teyvat Codex surface language — warm parchment in
+ * light mode, celestial espresso at night — with no terminal chrome.
+ */
+export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState<"init" | "password">("init");
+  const [step, setStep] = useState<"intro" | "password">("intro");
   const router = useRouter();
   const { login, isAuthenticated } = useAuth();
 
-  // If already authenticated, redirect
   useEffect(() => {
     if (isAuthenticated) {
       router.replace("/dashboard");
@@ -30,281 +46,211 @@ export default function LoginPage() {
     return null;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!password.trim()) return;
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!password.trim() || submitting) return;
 
-    setLoading(true);
+    setSubmitting(true);
     setError("");
 
     try {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-
-      const data = await res.json();
-
-      if (data.success && data.token) {
-        login(data.token);
-        router.replace("/dashboard");
-      } else {
-        setError("ACCESS DENIED // Invalid credentials");
-        setPassword("");
-      }
-    } catch {
-      setError("CONNECTION ERROR // Unable to reach authentication node");
+      // The raw value goes to the server — never a trimmed credential.
+      await login(password);
+      router.replace("/dashboard");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "The console could not be reached. Check your connection and try again."
+      );
+      setPassword("");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-deep-space p-4">
-      {/* Background effects */}
-      <div className="pointer-events-none absolute inset-0 bg-starfield" />
-      <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-20" />
-      <div className="pointer-events-none absolute inset-0 scanline" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-gold" />
-      <div className="pointer-events-none absolute inset-0 bg-ambient-violet" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 sm:p-6 dark:bg-deep-space">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70 dark:opacity-50" />
 
-      {/* Decorative particles */}
-      <div className="pointer-events-none absolute inset-0 opacity-15">
-        <div className="absolute top-1/4 left-1/3 h-64 w-64 rounded-full border border-border-glass/30 blur-3xl bg-gold-500/5" />
-        <div className="absolute bottom-1/3 right-1/3 h-96 w-96 rounded-full border border-border-glass/20 blur-3xl bg-stellar-400/5" />
-      </div>
-
-      {/* Main Login Panel */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE_CODEX }}
         className="relative w-full max-w-md"
       >
-        {/* Decorative corner brackets */}
-        <div className="pointer-events-none absolute -left-2 -top-2 text-gold-400/40 font-mono text-[10px]">[SYS_AUTH//01]</div>
-        <div className="pointer-events-none absolute -right-2 -bottom-2 text-gold-400/40 font-mono text-[10px]">[NODE_SECURE]</div>
-
-        <div className="glass-panel chamfered overflow-hidden">
-          {/* Terminal header */}
-          <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-3">
-            <div className="flex gap-1.5">
-              <StatusDot tone="danger" label="Terminal closed" className="h-2.5 w-2.5" />
-              <StatusDot tone="warning" label="Terminal minimized" className="h-2.5 w-2.5" />
-              <StatusDot tone="active" label="Terminal open" className="h-2.5 w-2.5" />
-            </div>
-            <div className="ml-3 flex items-center gap-1 sys-label text-[10px]">
-              <Shield className="h-3 w-3 text-gold-400" />
-              <span className="text-gold-400">AETHER</span>
-              <span className="text-text-muted/30">/</span>
-              <span className="text-text-muted/50">auth_node</span>
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <StatusDot tone="active" pulse label="Encrypted" className="h-1.5 w-1.5" />
-              <span className="sys-label-active text-[8px]">ENCRYPTED</span>
+        <div className="codex-panel codex-panel-radius overflow-hidden">
+          {/* Gilded crest + console wordmark */}
+          <div className="flex items-center gap-3 border-b border-leather-caramel/20 px-6 py-4 dark:border-border-subtle">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-leather-caramel/50 bg-surface-primary p-2 shadow-md">
+              <Image
+                src={GENSHIN_UI_ICONS.archive}
+                alt=""
+                width={22}
+                height={22}
+                className="object-contain brightness-0 invert"
+                unoptimized
+              />
+            </span>
+            <div className="min-w-0">
+              <span className="codex-label-gold block">Teyvat Codex</span>
+              <p className="font-display text-sm font-bold tracking-[0.12em] text-text-main">
+                Codex Console
+              </p>
             </div>
           </div>
 
-          {/* Body */}
-          <div className="p-8 sm:p-10">
+          <div className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
-              {step === "init" ? (
-                <motion.div
-                  key="init"
+              {step === "intro" ? (
+                <motion.section
+                  key="intro"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: EASE_CODEX }}
                   className="text-center"
                 >
-                  {/* Logo/Icon */}
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, duration: 0.4 }}
-                    className="mx-auto flex h-20 w-20 items-center justify-center chamfered border-2 border-gold-400/30 bg-deep-space"
-                  >
-                    <Activity className="h-10 w-10 text-gold-400" />
-                  </motion.div>
+                  <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-leather-caramel/30 bg-leather-caramel/10 dark:border-border-glass dark:bg-glass-200">
+                    <KeyRound className="h-9 w-9 text-leather-caramel dark:text-gold-400" />
+                  </span>
 
-                  <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-6 font-display text-2xl font-bold tracking-[0.08em] text-text-main"
-                  >
-                    AETHER // <span className="text-gradient-gold">DASH</span>
-                  </motion.h1>
+                  <h1 className="mt-6 font-display text-2xl font-bold tracking-[0.08em] text-text-main">
+                    Sign in to the <span className="codex-gradient-text">console</span>
+                  </h1>
+                  <p className="mx-auto mt-3 max-w-xs text-sm font-body text-text-muted">
+                    The archive is sealed. Present your key to manage the dossier.
+                  </p>
 
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="mt-3 font-mono text-xs text-text-muted"
+                  <button
+                    type="button"
+                    onClick={() => setStep("password")}
+                    className="codex-btn-primary codex-focus mt-8 inline-flex w-full items-center justify-center gap-2 px-6 py-3 text-sm font-bold tracking-wide"
                   >
-                    Restricted Access // Authentication Required
-                  </motion.p>
+                    Enter the console
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="mt-8"
-                  >
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="md"
-                      onClick={() => setStep("password")}
-                      className="border-gold-400/50 px-8 py-3 font-mono text-xs tracking-widest text-gold-400 hover:bg-[rgba(242,201,76,0.08)] hover:border-gold-400/50 hover-scale-sm"
-                    >
-                      <Shield className="h-4 w-4" />
-                      INITIALIZE ACCESS
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </motion.div>
-
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="mt-8 sys-label text-[9px]"
-                  >
-                    [SYS_NODE] // Unauthorized access is prohibited
-                  </motion.p>
-                </motion.div>
+                  <span className="codex-label mt-6 block">Access is reserved for the archivist</span>
+                </motion.section>
               ) : (
-                <motion.div
+                <motion.section
                   key="password"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: EASE_CODEX }}
                 >
-                  {/* Terminal prompt */}
-                  <div className="mb-6 flex items-center gap-2 chamfered-sm border border-border-subtle bg-deep-space/50 px-4 py-2.5">
-                    <span className="text-gold-400 font-mono text-xs">[AETHER@DASH]</span>
-                    <span className="text-text-muted/30">:~$</span>
-                    <span className="text-stellar-400 font-mono text-xs">authenticate --level=admin</span>
-                    <span className="ml-auto animate-energy-pulse text-gold-400 font-mono text-xs">_</span>
-                  </div>
+                  <h1 className="font-display text-xl font-bold tracking-[0.08em] text-text-main">
+                    Who goes there?
+                  </h1>
+                  <p className="mt-2 text-sm font-body text-text-muted">
+                    Enter the archivist password to open the Codex Console.
+                  </p>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Password field — reusable Input with interactive
-                        eye-toggle suffix (suffixInteractive keeps the
-                        toggle clickable; pr-20 reserves room for it). */}
+                  <form onSubmit={handleSubmit} className="mt-6 space-y-5">
                     <Input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      label="PASSWORD // 8-32 characters"
-                      placeholder="Enter security credentials..."
-                      className="pr-20 font-mono text-sm tracking-widest"
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                        if (error) setError("");
+                      }}
+                      label="Password"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
                       autoFocus
-                      disabled={loading}
+                      disabled={submitting}
                       suffixInteractive
                       suffix={
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label={showPassword ? "Hide password" : "Show password"}
-                          className="flex h-9 w-9 items-center justify-center chamfered-xs text-text-muted transition-all duration-300 hover:text-gold-400 hover-scale-sm press-scale focus-ring-gold"
+                          aria-pressed={showPassword}
+                          className="codex-focus flex h-9 w-9 items-center justify-center codex-radius-xs text-text-muted transition-colors duration-300 hover:text-leather-caramel dark:hover:text-gold-400"
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" aria-hidden="true" />
+                          ) : (
+                            <Eye className="h-4 w-4" aria-hidden="true" />
+                          )}
                         </button>
                       }
                     />
 
-                    {/* Error message */}
-                    <AnimatePresence>
-                      {error && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="flex items-center gap-2 chamfered-sm border border-hud-danger/30 bg-[rgba(255,0,85,0.06)] px-4 py-3"
-                        >
-                          <AlertCircle className="h-4 w-4 shrink-0 text-hud-danger" />
-                          <span className="font-mono text-[11px] text-hud-danger">{error}</span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {error && (
+                      <p
+                        role="alert"
+                        className="flex items-start gap-2 codex-radius-sm border border-hud-danger/30 bg-hud-danger/5 px-4 py-3 text-xs font-medium text-hud-danger"
+                      >
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span>{error}</span>
+                      </p>
+                    )}
 
-                    {/* Buttons */}
                     <div className="flex items-center gap-3">
-                      <Button
+                      <button
                         type="button"
-                        variant="outline"
-                        size="md"
                         onClick={() => {
-                          setStep("init");
+                          setStep("intro");
                           setError("");
                           setPassword("");
                         }}
-                        className="flex-1 px-4 py-3 font-mono text-xs tracking-widest text-text-muted hover:bg-transparent hover:text-gold-400 hover-scale-sm"
-                        disabled={loading}
+                        disabled={submitting}
+                        className="codex-focus inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-leather-caramel/30 px-4 py-3 text-sm font-semibold text-text-muted transition-colors duration-300 hover:border-leather-caramel/60 hover:text-leather-caramel disabled:cursor-not-allowed disabled:opacity-40 dark:border-border-subtle dark:hover:border-border-glass dark:hover:text-gold-400"
                       >
-                        ABORT
-                      </Button>
-                      <Button
+                        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                        Back
+                      </button>
+                      <button
                         type="submit"
-                        variant="outline"
-                        size="md"
-                        loading={loading}
-                        disabled={!password.trim()}
-                        className="flex-1 border-gold-400/50 px-4 py-3 font-mono text-xs tracking-widest text-gold-400 hover:bg-[rgba(242,201,76,0.08)] hover:border-gold-400/50 hover-scale-sm"
+                        disabled={!password.trim() || submitting}
+                        aria-busy={submitting || undefined}
+                        className="codex-btn-primary codex-focus inline-flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-bold tracking-wide disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        {loading ? (
-                          <span className="flex items-center justify-center gap-2">
-                            AUTHENTICATING...
-                          </span>
+                        {submitting ? (
+                          <>
+                            <span className="relative block h-4 w-4 shrink-0" aria-hidden="true">
+                              <span className="absolute inset-0 rotate-45 codex-radius-xs border-2 border-surface-primary/50" />
+                              <span
+                                style={SPIN_FAST}
+                                className="elemental-rotate absolute inset-0 rotate-45 codex-radius-xs border-2 border-transparent border-t-surface-primary"
+                              />
+                            </span>
+                            Opening…
+                          </>
                         ) : (
-                          <span className="flex items-center justify-center gap-2">
-                            <KeyRound className="h-4 w-4" />
-                            UNLOCK
-                          </span>
+                          <>
+                            <KeyRound className="h-4 w-4" aria-hidden="true" />
+                            Unlock
+                          </>
                         )}
-                      </Button>
+                      </button>
                     </div>
                   </form>
 
-                  {/* Access log */}
-                  <div className="mt-6 space-y-1 chamfered-sm border border-border-subtle bg-deep-space/30 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="sys-label text-[8px]">[ACCESS_LOG]</span>
-                      <StatusDot tone="gold" label="Access log live" className="h-1 w-1 opacity-30" glow={false} />
-                    </div>
-                    <p className="font-mono text-[9px] text-text-muted/50">
-                      {new Date().toLocaleString("en-US", {
-                        hour12: false,
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        timeZone: "Asia/Jakarta",
-                      })}{" "}
-                      WIB // SESSION INIT // IP_MASKED
-                    </p>
-                    <p className="font-mono text-[9px] text-text-muted/30">
-                      3 failed attempts will trigger rate limit
-                    </p>
-                  </div>
-                </motion.div>
+                  <p className="codex-label mt-6 block">
+                    The session ends when you close the codex
+                  </p>
+                </motion.section>
               )}
             </AnimatePresence>
           </div>
         </div>
 
-        {/* Bottom link */}
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] text-text-muted/40 transition-colors hover:text-gold-400/60 hover-scale-sm press-scale focus-ring-gold"
+            className="codex-focus inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted transition-colors duration-300 hover:text-leather-caramel dark:hover:text-gold-400"
           >
-            <Terminal className="h-3 w-3" />
-            RETURN TO PORTAL
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            Return to the dossier
           </Link>
         </div>
       </motion.div>
-    </div>
+    </main>
   );
 }

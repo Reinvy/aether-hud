@@ -1,10 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
-  <rect width="800" height="400" fill="#0a0c10"/>
-  <rect x="1" y="1" width="798" height="398" fill="none" stroke="rgba(242,201,76,0.15)" stroke-width="1"/>
-  <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(242,201,76,0.05)" stroke-width="1"/>
-  <line x1="400" y1="0" x2="400" y2="400" stroke="rgba(242,201,76,0.05)" stroke-width="1"/>
-  <circle cx="400" cy="200" r="60" fill="none" stroke="rgba(242,201,76,0.12)" stroke-width="1"/>
-  <circle cx="400" cy="200" r="40" fill="none" stroke="rgba(242,201,76,0.08)" stroke-width="1"/>
-  <text x="400" y="196" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="rgba(242,201,76,0.3)">[AETHER]</text>
-  <text x="400" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(138,148,166,0.3)">PROJECT//DOSSIER</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" role="img" aria-label="Artifact placeholder">
+  <!-- Teyvat Codex artifact placeholder: warm parchment plate with a gilded frame. -->
+  <defs>
+    <linearGradient id="parchment" x1="0" y1="0" x2="800" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FAF8F5"/>
+      <stop offset="0.55" stop-color="#F3EDDF"/>
+      <stop offset="1" stop-color="#EDE5D2"/>
+    </linearGradient>
+    <linearGradient id="gild" x1="0" y1="0" x2="800" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#DFAE2A"/>
+      <stop offset="0.5" stop-color="#B88414"/>
+      <stop offset="1" stop-color="#8C6239"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="400" fill="url(#parchment)"/>
+  <rect x="16" y="16" width="768" height="368" rx="28" fill="none" stroke="#8C6239" stroke-opacity="0.28" stroke-width="1.5"/>
+  <rect x="28" y="28" width="744" height="344" rx="20" fill="none" stroke="url(#gild)" stroke-opacity="0.35" stroke-width="1"/>
+
+  <!-- Faint traveler star watermark -->
+  <g stroke="#8C6239" stroke-opacity="0.14" fill="none" stroke-width="1">
+    <circle cx="400" cy="200" r="86"/>
+    <circle cx="400" cy="200" r="62"/>
+    <path d="M400 118 L462 200 L400 282 L338 200 Z"/>
+    <path d="M318 200 L482 200 M400 118 L400 282"/>
+  </g>
+
+  <!-- Gold diamond seal -->
+  <g transform="translate(400 200)">
+    <rect x="-14" y="-14" width="28" height="28" rx="6" transform="rotate(45)" fill="url(#gild)"/>
+    <rect x="-5" y="-5" width="10" height="10" rx="2" transform="rotate(45)" fill="#FAF8F5"/>
+  </g>
+
+  <text x="400" y="312" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="6" fill="#8C6239" fill-opacity="0.75">ARTIFACT AWAITS</text>
 </svg>

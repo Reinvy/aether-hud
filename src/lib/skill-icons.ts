@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 /**
- * AETHER-HUD skill-icon registry — single source of truth for the
+ * Teyvat Codex skill-icon registry — single source of truth for the
  * registered skill icons.
  *
  * Landing `SkillBar` and dashboard `SkillCard` resolve through this module.

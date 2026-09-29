@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
-  User,
+  AlertCircle,
   Save,
-  RefreshCw,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -17,23 +17,13 @@ import { BioCard } from "@/components/features/profile/bio-card";
 import { useData } from "@/lib/use-data";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
-
-
-interface ApiConfig {
-  id: string;
-  name: string;
-  tagline: string;
-  bio: string;
-  email: string;
-  location: string;
-  avatar: string;
-  status: string;
-  sysVersion: string;
-}
+import { ApiError, apiRequest } from "@/lib/api-client";
+import type { ConfigDto } from "@/lib/dto";
 
 export default function DashboardProfile() {
-  const { data: config, loading, refetch } = useData<ApiConfig>("/api/config");
+  const { data: config, loading, error: loadError, refetch } = useData<ConfigDto>("/api/config");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
   const [form, setForm] = useState({
@@ -70,15 +60,14 @@ export default function DashboardProfile() {
 
   async function handleSave() {
     setSaving(true);
+    setSaveError(null);
     try {
-      await fetch("/api/config", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      await apiRequest<ConfigDto>("/api/config", { method: "PUT", body: form });
       refetch();
     } catch (e) {
-      console.error("Failed to save profile", e);
+      setSaveError(
+        e instanceof ApiError ? e.message : "The traveler dossier could not be saved"
+      );
     } finally {
       setSaving(false);
     }
@@ -89,31 +78,45 @@ export default function DashboardProfile() {
   }
 
   return (
-    <div className="dashboard-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+    <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
         icon={User}
-        label="DASHBOARD // PROFILE CONTROL"
+        eyebrow="TRAVELER DOSSIER"
         title="Manage Profile"
         titleHighlight="Profile"
         actions={
           <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            <Save className="h-4 w-4" />
-            DEPLOY CHANGES
+            <Save className="h-4 w-4" aria-hidden="true" />
+            Save changes
           </Button>
         }
       />
 
+      {/* Fetch and save failures are reported to the operator instead of
+          leaving an empty (or silently stale) dossier on screen. */}
+      {(loadError || saveError) && (
+        <div
+          role="alert"
+          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
+          <p className="font-body text-xs text-hud-danger">
+            {saveError ?? loadError}
+          </p>
+        </div>
+      )}
+
       {/* Profile panels — widget-level error boundary keeps a failing
           panel from blanking the whole view. */}
-      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="PROFILE CONFIG" />}>
+      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="TRAVELER DOSSIER" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Personal Info — reusable identity fields card */}
         <motion.div {...fadeInUp}>
           <PersonalInfoCard form={form} onFieldChange={updateField} />
         </motion.div>
 
-        {/* Bio — reusable markdown editor card */}
+        {/* Bio — reusable summary editor card */}
         <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
           <BioCard value={form.bio} onChange={(value) => updateField("bio", value)} />
         </motion.div>
@@ -134,21 +137,20 @@ export default function DashboardProfile() {
       </div>
       </ErrorBoundary>
 
-      {/* Deploy Button */}
+      {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="glass-panel chamfered-sm inline-flex items-center gap-4 px-8 py-4">
-          <RefreshCw className="h-5 w-5 text-gold-400" />
+        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-mono text-xs font-medium tracking-wider text-text-main">
-              Profile Ready for Deployment
+            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+              Traveler dossier ready to save
             </p>
-            <p className="font-mono text-[9px] text-text-muted">
-              Changes are applied immediately after deploy
+            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+              Changes are applied to the codex as soon as they are saved
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
-            <RefreshCw className="h-4 w-4" />
-            DEPLOY
+            Save
           </Button>
         </div>
       </motion.div>

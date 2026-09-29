@@ -1,5 +1,5 @@
 /**
- * AETHER-HUD Shared Motion Variants
+ * Teyvat Codex Shared Motion Variants
  *
  * Single source of truth for the animation variants used across the app.
  * Previously duplicated in 12+ files — extracting guarantees every
@@ -12,14 +12,14 @@
  * `viewport` keys. Consumers spread these onto `<motion.*>` elements.
  */
 
-/** The AETHER-HUD easing curve — all transitions must use this. */
-const EASE_HUD = [0.16, 1, 0.3, 1] as [number, number, number, number];
+/** The Teyvat Codex easing curve — all transitions must use this. */
+export const EASE_CODEX = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 /** Standard fade-in-up for animate-based enter (dashboard pages). */
 export const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: EASE_HUD },
+  transition: { duration: 0.4, ease: EASE_CODEX },
 } as const;
 
 /** Fade-in-up variant for whileInView-based enter (landing sections). */
@@ -27,7 +27,7 @@ export const fadeInView = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-100px" },
-  transition: { duration: 0.5, ease: EASE_HUD },
+  transition: { duration: 0.5, ease: EASE_CODEX },
 } as const;
 
 /** Parent container that staggers children (used with fadeInUpItem). */
@@ -45,7 +45,7 @@ export const fadeInUpItem = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: EASE_HUD },
+    transition: { duration: 0.4, ease: EASE_CODEX },
   },
 } as const;
 

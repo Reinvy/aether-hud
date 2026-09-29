@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 
 /**
  * Login segment error boundary — catches uncaught render errors in the
- * /login route tree so a failed auth module never blanks the whole gate.
- * Mirrors the dashboard segment boundary (dashboard/error.tsx) with
- * auth-specific copy.
+ * /login route tree so a failed sign-in module never blanks the gate.
+ * Mirrors the dashboard segment boundary (dashboard/error.tsx).
  */
 
 export default function LoginError({
@@ -18,50 +17,36 @@ export default function LoginError({
   reset: () => void;
 }) {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-deep-space p-4">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-20" />
-      <div className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
-      <div className="scanline pointer-events-none absolute inset-0" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 dark:bg-deep-space">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70 dark:opacity-50" />
 
-      <div className="glass-panel chamfered relative w-full max-w-lg p-8">
+      <div className="codex-panel codex-panel-radius relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          {/* Error icon */}
-          <div className="flex h-14 w-14 items-center justify-center chamfered border border-hud-danger/30 bg-hud-danger/5">
-            <AlertTriangle className="h-6 w-6 text-hud-danger" />
+          <div className="flex h-14 w-14 items-center justify-center codex-radius-sm border border-hud-danger/30 bg-hud-danger/5">
+            <AlertTriangle className="h-6 w-6 text-hud-danger" aria-hidden="true" />
           </div>
 
           <div className="space-y-2">
-            <span className="sys-label-gold text-[10px] tracking-[0.2em]">
-              AUTH GATE // SESSION FAULT
-            </span>
+            <span className="codex-label-gold block">Codex Console</span>
             <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              Secure Channel <span className="text-hud-danger">Interrupted</span>
+              Sign-in is <span className="text-hud-danger">unavailable</span>
             </h1>
-            <p className="mx-auto max-w-sm text-sm text-text-muted font-body">
-              The authentication module failed to initialize. Credentials are
-              not transmitted — reinitialize the gate to continue.
+            <p className="mx-auto max-w-sm text-sm font-body text-text-muted">
+              The sign-in form failed to load. Your password was never sent — try
+              again to reopen the console.
             </p>
           </div>
 
           {error.digest && (
-            <span className="font-mono text-[9px] tracking-wider text-text-muted/40">
-              [ERR_DIGEST // {error.digest}]
+            <span className="text-[10px] tracking-wider text-text-muted/60 dark:text-platinum-200/70 tabular-nums">
+              Reference {error.digest}
             </span>
           )}
 
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={reset}
-            className="font-mono tracking-wider"
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            REINITIALIZE GATE
+          <Button variant="secondary" size="md" onClick={reset}>
+            <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+            Try again
           </Button>
-
-          <span className="absolute bottom-3 right-3 sys-label text-[8px] text-text-muted/20">
-            [AUTH_ERR_NODE]
-          </span>
         </div>
       </div>
     </main>

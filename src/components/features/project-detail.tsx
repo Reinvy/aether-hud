@@ -1,0 +1,128 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft, ExternalLink, GitBranch } from "lucide-react";
+import type { ProjectDto } from "@/lib/dto";
+
+interface ProjectDetailProps {
+  project: ProjectDto;
+}
+
+/**
+ * ProjectDetail — the full-page domain dossier for a single artifact.
+ *
+ * Presentation-only and server-safe (no hooks, no client bundle): the route
+ * resolves the project through the repository and hands it down, so the
+ * dossier ships complete in the first byte and stays crawlable.
+ */
+export function ProjectDetail({ project }: ProjectDetailProps) {
+  const stats = [
+    { label: "Category", value: project.category },
+    { label: "Year", value: project.year },
+    { label: "Complexity", value: project.complexity },
+    { label: "Performance", value: project.performance },
+  ];
+
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-parchment-base py-16 dark:bg-deep-space sm:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25 dark:opacity-40" />
+      <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
+
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/#projects"
+          className="codex-focus inline-flex items-center gap-2 rounded-full border border-leather-caramel/35 bg-parchment-subtle px-4 py-2 text-xs font-semibold tracking-wider text-leather-dark transition-all hover:border-leather-caramel hover:text-leather-caramel"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          Back to domains
+        </Link>
+
+        <article className="codex-panel mt-6 overflow-hidden rounded-3xl">
+          <div className="relative h-56 w-full overflow-hidden border-b border-leather-caramel/25 bg-parchment-subtle sm:h-72">
+            <Image
+              src={project.image}
+              alt={`Artifact of the domain ${project.title}`}
+              fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+
+          <div className="p-6 sm:p-10">
+            <header className="max-w-3xl">
+              <span className="codex-label-gold">Domain Dossier</span>
+              <h1 className="mt-2 font-serif text-3xl font-bold uppercase tracking-[0.04em] text-leather-dark sm:text-4xl">
+                {project.title}
+              </h1>
+              <p className="mt-4 font-body text-sm leading-relaxed text-leather-muted sm:text-base">
+                {project.description}
+              </p>
+            </header>
+
+            <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border border-leather-caramel/25 bg-parchment-subtle px-4 py-3 dark:border-gold-400/20 dark:bg-glass-200"
+                >
+                  <dt className="codex-label">{stat.label}</dt>
+                  <dd className="mt-1 font-serif text-sm font-bold text-leather-dark">
+                    {stat.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <section className="mt-8" aria-labelledby="domain-tags-heading">
+              <h2 id="domain-tags-heading" className="codex-label">
+                Forged With
+              </h2>
+              {project.tags.length > 0 ? (
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <li key={tag} className="codex-badge">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 font-body text-sm text-leather-muted">
+                  No artifact lore recorded for this domain yet.
+                </p>
+              )}
+            </section>
+
+            {(project.liveUrl || project.githubUrl) && (
+              <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-leather-caramel/20 pt-6">
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Enter the ${project.title} domain`}
+                    className="codex-btn-primary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                    Enter Domain
+                  </a>
+                )}
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`View the ${project.title} source`}
+                    className="codex-btn-secondary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                  >
+                    <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
+                    Forge Lore
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </article>
+      </div>
+    </main>
+  );
+}
