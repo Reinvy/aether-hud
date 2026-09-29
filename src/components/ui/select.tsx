@@ -27,7 +27,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="codex-label mb-2 block text-text-muted">
+          <label htmlFor={id} className="codex-label mb-2 block text-leather-dark font-bold">
             {label}
           </label>
         )}
@@ -36,24 +36,24 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={id}
             ref={ref}
             className={cn(
-              "codex-input w-full appearance-none px-4 py-2.5 pr-10 text-sm font-body",
+              "codex-input codex-btn w-full appearance-none px-4 py-2.5 pr-10 text-sm font-body",
               "cursor-pointer transition-all duration-300",
-              error && "border-hud-danger",
+              error && "border-crimson-600/30",
               className
             )}
             {...props}
           >
             {options.map((opt) => (
-              <option key={opt.value} value={opt.value} className="bg-surface-primary text-text-main">
+              <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
           </select>
           {/* Gold-tinted chevron indicator */}
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold-400/60" />
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold-ink" />
         </div>
         {error && (
-          <p role="alert" className="mt-1.5 text-xs text-hud-danger">
+          <p role="alert" className="mt-1.5 text-[11px] text-crimson-600">
             {error}
           </p>
         )}

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface SiteIdentityValues {
   siteName: string;
   siteDescription: string;
-  sysVersion: string;
+  edition: string;
 }
 
 interface SiteIdentityCardProps {
@@ -33,7 +33,7 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-gold-400" aria-hidden="true" />
+            <Globe className="h-4 w-4 text-gold-ink" aria-hidden="true" />
             <CardTitle>Codex Identity</CardTitle>
           </div>
         </CardHeader>
@@ -52,14 +52,14 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
             placeholder="Interactive Traveler Dossier — portfolio, domains, talents and commissions"
             className="resize-none"
           />
-          <p className="mt-1 codex-label text-[9px] text-text-muted">
+          <p className="mt-1 codex-label text-[9px] text-leather-muted">
             Appears in search results and link previews
           </p>
           <Input
             label="Codex version"
-            value={values.sysVersion}
-            onChange={(e) => onChange("sysVersion", e.target.value)}
-            placeholder="v2.4.1"
+            value={values.edition}
+            onChange={(e) => onChange("edition", e.target.value)}
+            placeholder="Teyvat Codex Edition"
           />
         </CardContent>
       </Card>

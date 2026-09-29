@@ -39,18 +39,18 @@ export function SectionHeading({
       )}
       {...fadeInView}
     >
-      <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-leather-caramel/35 bg-leather-caramel/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-leather-dark shadow-sm dark:border-gold-400/30 dark:bg-gold-400/10 dark:text-gold-300">
+      <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-leather-caramel/35 bg-leather-caramel/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-leather-dark shadow-sm">
         {icon}
         <span>{badge}</span>
       </div>
 
-      <h2 className="font-serif text-3xl font-bold uppercase tracking-[0.04em] text-leather-dark drop-shadow-sm sm:text-4xl lg:text-5xl dark:text-platinum-50 text-balance">
+      <h2 className="font-serif text-3xl font-bold uppercase tracking-[0.04em] text-leather-dark drop-shadow-sm sm:text-4xl lg:text-5xl text-balance">
         {title}{" "}
         {highlight && <span className="codex-gradient-text font-bold">{highlight}</span>}
       </h2>
 
       {subtitle && (
-        <p className="mx-auto mt-3 max-w-xl font-body text-sm font-medium leading-relaxed text-leather-dark sm:text-base dark:text-platinum-200 text-pretty">
+        <p className="mx-auto mt-3 max-w-xl font-body text-sm font-medium leading-relaxed text-leather-dark sm:text-base text-pretty">
           {subtitle}
         </p>
       )}

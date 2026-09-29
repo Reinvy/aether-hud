@@ -1,17 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { LIVE_CACHE_HEADERS } from "@/lib/api-helpers";
+import { requireSession } from "@/lib/api-helpers";
+import { hasDatabase } from "@/lib/portfolio-repo";
+import type { ActivityItem } from "@/lib/dto";
 
 export const dynamic = "force-dynamic";
-
-export type ActivityItem = {
-  id: string;
-  action: string;
-  detail: string;
-  time: string;
-  type: "deploy" | "update" | "calibrate" | "sync";
-  timestamp: string;
-};
 
 function formatRelativeTime(date: Date): string {
   const diffMs = Date.now() - date.getTime();
@@ -27,131 +20,124 @@ function formatRelativeTime(date: Date): string {
   return date.toLocaleDateString("en-GB", { month: "short", day: "numeric" });
 }
 
-export async function GET() {
+/**
+ * GET /api/dashboard/activity — the console activity stream.
+ *
+ * Operator data: it names the archive's records and their edit times, so the
+ * read is session-gated and `no-store` (it used to be public AND CDN-cached).
+ * Without a database there is nothing to report, so the stream is empty rather
+ * than invented — the fallback entries previously claimed work (encryption,
+ * telemetry ingestion) that no code performs.
+ */
+export async function GET(req: NextRequest) {
+  const denied = requireSession(req);
+  if (denied) {
+    denied.headers.set("Cache-Control", "no-store");
+    return denied;
+  }
+
   try {
-    const activities: ActivityItem[] = [];
-
-    try {
-      const [recentProjects, recentSkills, recentExperiences, recentTelemetry, config] = await Promise.all([
-        prisma.project.findMany({
-          orderBy: { updatedAt: "desc" },
-          take: 3,
-          select: { id: true, title: true, updatedAt: true, createdAt: true, complexity: true },
-        }),
-        prisma.skill.findMany({
-          orderBy: { updatedAt: "desc" },
-          take: 3,
-          select: { id: true, name: true, level: true, updatedAt: true },
-        }),
-        prisma.experience.findMany({
-          orderBy: { updatedAt: "desc" },
-          take: 2,
-          select: { id: true, role: true, company: true, updatedAt: true },
-        }),
-        prisma.telemetryEvent.findMany({
-          orderBy: { recordedAt: "desc" },
-          take: 3,
-          select: { id: true, name: true, value: true, rating: true, recordedAt: true },
-        }),
-        prisma.portfolioConfig.findUnique({
-          where: { id: "main" },
-          select: { siteName: true, sysVersion: true, updatedAt: true, status: true },
-        }),
-      ]);
-
-      if (config) {
-        activities.push({
-          id: `cfg-${config.updatedAt.getTime()}`,
-          action: "System configured",
-          detail: `${config.siteName} ${config.sysVersion} // ${config.status}`,
-          time: formatRelativeTime(config.updatedAt),
-          type: "deploy",
-          timestamp: config.updatedAt.toISOString(),
-        });
-      }
-
-      for (const p of recentProjects) {
-        activities.push({
-          id: `proj-${p.id}`,
-          action: p.createdAt.getTime() === p.updatedAt.getTime() ? "Dossier initialized" : "Project updated",
-          detail: `${p.title} // ${p.complexity}`,
-          time: formatRelativeTime(p.updatedAt),
-          type: "update",
-          timestamp: p.updatedAt.toISOString(),
-        });
-      }
-
-      for (const s of recentSkills) {
-        activities.push({
-          id: `skill-${s.id}`,
-          action: "Proficiency calibrated",
-          detail: `${s.name} set to ${s.level}%`,
-          time: formatRelativeTime(s.updatedAt),
-          type: "calibrate",
-          timestamp: s.updatedAt.toISOString(),
-        });
-      }
-
-      for (const e of recentExperiences) {
-        activities.push({
-          id: `exp-${e.id}`,
-          action: "Mission log updated",
-          detail: `${e.role} @ ${e.company}`,
-          time: formatRelativeTime(e.updatedAt),
-          type: "update",
-          timestamp: e.updatedAt.toISOString(),
-        });
-      }
-
-      for (const t of recentTelemetry) {
-        activities.push({
-          id: `telem-${t.id}`,
-          action: "Telemetry beacon ingested",
-          detail: `${t.name}: ${Math.round(t.value)}ms (${t.rating.toUpperCase()})`,
-          time: formatRelativeTime(t.recordedAt),
-          type: "sync",
-          timestamp: t.recordedAt.toISOString(),
-        });
-      }
-
-      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    } catch (dbErr) {
-      console.warn("[ACTIVITY_DB_FALLBACK]", dbErr instanceof Error ? dbErr.message : dbErr);
-    }
-
-    // If database is empty or down, supply realistic system fallback events
-    if (activities.length === 0) {
-      activities.push(
-        {
-          id: "fallback-1",
-          action: "System online",
-          detail: "Teyvat Codex Core v2.4.1 operational",
-          time: "just now",
-          type: "deploy",
-          timestamp: new Date().toISOString(),
-        },
-        {
-          id: "fallback-2",
-          action: "Telemetry node active",
-          detail: "Web Vitals beacon sink ready",
-          time: "10m ago",
-          type: "sync",
-          timestamp: new Date(Date.now() - 600000).toISOString(),
-        },
-        {
-          id: "fallback-3",
-          action: "Security protocols active",
-          detail: "AES-256 transmission encryption enabled",
-          time: "1h ago",
-          type: "calibrate",
-          timestamp: new Date(Date.now() - 3600000).toISOString(),
-        }
+    if (!hasDatabase()) {
+      return NextResponse.json(
+        { activities: [] },
+        { headers: { "Cache-Control": "no-store" } }
       );
     }
 
-    return NextResponse.json({ activities: activities.slice(0, 8) }, { headers: LIVE_CACHE_HEADERS });
-  } catch (err) {
-    console.error("[ACTIVITY_GET]", err instanceof Error ? err.message : err);
+    const activities: ActivityItem[] = [];
+
+    const [recentProjects, recentSkills, recentExperiences, recentTelemetry, config] = await Promise.all([
+      prisma.project.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: 3,
+        select: { id: true, title: true, updatedAt: true, createdAt: true, complexity: true },
+      }),
+      prisma.skill.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: 3,
+        select: { id: true, name: true, level: true, updatedAt: true },
+      }),
+      prisma.experience.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: 2,
+        select: { id: true, role: true, company: true, updatedAt: true },
+      }),
+      prisma.telemetryEvent.findMany({
+        orderBy: { recordedAt: "desc" },
+        take: 3,
+        select: { id: true, name: true, value: true, rating: true, recordedAt: true },
+      }),
+      prisma.portfolioConfig.findUnique({
+        where: { id: "main" },
+        select: { siteName: true, edition: true, updatedAt: true, status: true },
+      }),
+    ]);
+
+    if (config) {
+      activities.push({
+        id: `cfg-${config.updatedAt.getTime()}`,
+        action: "Codex settings saved",
+        detail: `${config.siteName} · ${config.edition} · ${config.status}`,
+        time: formatRelativeTime(config.updatedAt),
+        type: "deploy",
+        timestamp: config.updatedAt.toISOString(),
+      });
+    }
+
+    for (const p of recentProjects) {
+      activities.push({
+        id: `proj-${p.id}`,
+        action:
+          p.createdAt.getTime() === p.updatedAt.getTime()
+            ? "Domain published"
+            : "Domain updated",
+        detail: `${p.title} · grade ${p.complexity}`,
+        time: formatRelativeTime(p.updatedAt),
+        type: "update",
+        timestamp: p.updatedAt.toISOString(),
+      });
+    }
+
+    for (const s of recentSkills) {
+      activities.push({
+        id: `skill-${s.id}`,
+        action: "Talent calibrated",
+        detail: `${s.name} set to ${s.level}%`,
+        time: formatRelativeTime(s.updatedAt),
+        type: "calibrate",
+        timestamp: s.updatedAt.toISOString(),
+      });
+    }
+
+    for (const e of recentExperiences) {
+      activities.push({
+        id: `exp-${e.id}`,
+        action: "Quest log updated",
+        detail: `${e.role} — ${e.company}`,
+        time: formatRelativeTime(e.updatedAt),
+        type: "update",
+        timestamp: e.updatedAt.toISOString(),
+      });
+    }
+
+    for (const t of recentTelemetry) {
+      activities.push({
+        id: `telem-${t.id}`,
+        action: "Telemetry beacon received",
+        detail: `${t.name} ${Math.round(t.value)}ms (${t.rating.toUpperCase()})`,
+        time: formatRelativeTime(t.recordedAt),
+        type: "sync",
+        timestamp: t.recordedAt.toISOString(),
+      });
+    }
+
+    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return NextResponse.json(
+      { activities: activities.slice(0, 8) },
+      { headers: { "Cache-Control": "no-store" } }
+    );
+  } catch (e) {
+    console.error("[ACTIVITY_GET]", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: "Failed to fetch activity stream" }, { status: 500 });
   }
 }

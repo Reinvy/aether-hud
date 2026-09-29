@@ -14,7 +14,7 @@ import { StatusDot } from "@/components/ui/status-dot";
 /**
  * ProjectArchiveRow — reusable project dossier row for archive lists.
  *
- * Extracted from the dashboard projects view so the same glass dossier row
+ * Extracted from the dashboard projects view so the same parchment dossier row
  * (selection checkbox + icon box + truncated title/description + category
  * badge + status dot + move/edit/delete actions) can be reused anywhere a
  * project archive is rendered. The parent owns data fetching, filtering,
@@ -52,6 +52,8 @@ interface ProjectArchiveRowProps<T extends ProjectArchiveRowData> {
   onMove?: (id: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** A reorder write for this row is in flight — its move controls are disabled. */
+  moving?: boolean;
 }
 
 function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
@@ -65,6 +67,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
 }: ProjectArchiveRowProps<T>) {
   return (
     <motion.div
@@ -73,7 +76,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep">
+      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card">
         <div className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
           {selectable && (
             <input
@@ -86,16 +89,16 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
           )}
 
           <IconBox>
-            <span className="font-mono text-[10px] text-gold-400">
+            <span className="font-mono text-[10px] text-gold-ink">
               {project.complexity.slice(-1)}
             </span>
           </IconBox>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main group-hover:text-gold-400 transition-colors duration-200">
+            <p className="truncate font-mono text-xs font-medium tracking-wider text-leather-dark group-hover:text-gold-ink transition-colors duration-200">
               {project.title}
             </p>
-            <p className="mt-0.5 truncate font-mono text-[9px] text-text-muted">
+            <p className="mt-0.5 truncate font-mono text-[9px] text-leather-muted">
               {project.description.slice(0, 80)}...
             </p>
           </div>
@@ -117,7 +120,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                 <IconButton
                   label={`Move ${project.title} up`}
                   onClick={() => onMove(project.id, -1)}
-                  disabled={!canMoveUp}
+                  disabled={!canMoveUp || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
@@ -125,7 +128,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                 <IconButton
                   label={`Move ${project.title} down`}
                   onClick={() => onMove(project.id, 1)}
-                  disabled={!canMoveDown}
+                  disabled={!canMoveDown || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />
@@ -138,8 +141,8 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
               onDelete={() => onDelete(project)}
               leading={
                 project.liveUrl ? (
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`}>
-                    <Button variant="ghost" size="sm" glow="none" className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-glass-200 hover-scale-sm">
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`} className="codex-focus codex-btn">
+                    <Button variant="ghost" size="sm" glow="none" className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-leather-caramel/10 hover-scale-sm">
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Button>
                   </a>

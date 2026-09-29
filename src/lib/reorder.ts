@@ -1,28 +1,29 @@
 /**
- * swapOrder — the two row updates that move a list entry one slot.
+ * planReorder — the row updates that move a list entry one slot.
  *
- * Reordering deliberately avoids a drag-and-drop dependency: two adjacent rows
- * exchange their `order` values and the caller PUTs both. Positions are derived
- * from the sorted index (not from the stored values) so the move still lands
- * correctly when several rows share an `order`, and an entry already at either
- * end yields no updates at all.
+ * Reordering deliberately avoids a drag-and-drop dependency: the caller PUTs
+ * the returned rows and the server persists them. `order` values in the
+ * database are not guaranteed to be dense (deleting row 3 of 10 leaves a gap,
+ * and legacy rows all share 0), so the list is first normalised to `0..n-1` in
+ * its current display order and only the rows whose stored value actually
+ * changes are returned. That keeps a move to two writes, and makes a no-op
+ * (already first, already last, unknown id) return `null` instead of a write.
  */
-export function swapOrder<T extends { id: string; order: number }>(
+export function planReorder<T extends { id: string; order: number }>(
   items: T[],
   id: string,
-  direction: -1 | 1
-): { id: string; order: number }[] {
+  direction: "up" | "down"
+): { id: string; order: number }[] | null {
   const sorted = [...items].sort((a, b) => a.order - b.order);
   const index = sorted.findIndex((item) => item.id === id);
-  const target = index + direction;
-  if (index < 0 || target < 0 || target >= sorted.length) return [];
+  const target = direction === "up" ? index - 1 : index + 1;
+  if (index < 0 || target < 0 || target >= sorted.length) return null;
 
-  const base = sorted[0]?.order ?? 0;
-  const moving = sorted[index];
-  const displaced = sorted[target];
-
-  return [
-    { id: moving.id, order: base + target },
-    { id: displaced.id, order: base + index },
-  ];
+  const updates: { id: string; order: number }[] = [];
+  for (let position = 0; position < sorted.length; position++) {
+    const item = sorted[position];
+    const nextOrder = position === index ? target : position === target ? index : position;
+    if (item.order !== nextOrder) updates.push({ id: item.id, order: nextOrder });
+  }
+  return updates;
 }

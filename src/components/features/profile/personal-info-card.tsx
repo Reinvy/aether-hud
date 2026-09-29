@@ -9,7 +9,7 @@ interface ProfileFormState {
   tagline: string;
   email: string;
   location: string;
-  sysVersion: string;
+  edition: string;
   bio: string;
   status: string;
   avatar: string;
@@ -33,7 +33,7 @@ export function PersonalInfoCard({ form, onFieldChange }: PersonalInfoCardProps)
     <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <UserRound className="h-4 w-4 text-gold-400" aria-hidden="true" />
+          <UserRound className="h-4 w-4 text-gold-ink" aria-hidden="true" />
           <CardTitle>Personal Info</CardTitle>
         </div>
       </CardHeader>
@@ -66,9 +66,9 @@ export function PersonalInfoCard({ form, onFieldChange }: PersonalInfoCardProps)
           />
           <Input
             label="Codex version"
-            value={form.sysVersion}
-            onChange={(e) => onFieldChange("sysVersion", e.target.value)}
-            placeholder="v2.4.1"
+            value={form.edition}
+            onChange={(e) => onFieldChange("edition", e.target.value)}
+            placeholder="Teyvat Codex Edition"
           />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">

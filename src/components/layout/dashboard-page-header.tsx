@@ -36,10 +36,10 @@ export function DashboardPageHeader({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="mb-1 flex items-center gap-2">
-            <Icon className="h-4 w-4 shrink-0 text-gold-400" />
+            <Icon className="h-4 w-4 shrink-0 text-gold-ink" />
             <span className="codex-label-gold">{eyebrow}</span>
           </div>
-          <h1 className="font-display text-xl font-bold tracking-[0.08em] text-text-main sm:text-2xl">
+          <h1 className="font-display text-xl font-bold tracking-[0.08em] text-leather-dark sm:text-2xl">
             {/* The highlight must be a substring of the title; when a caller
                 passes something else the two are joined instead of being
                 concatenated without a separator. */}

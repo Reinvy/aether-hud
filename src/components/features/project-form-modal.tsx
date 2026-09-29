@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormModal } from "@/components/ui/form-modal";
+import { PROJECT_CATEGORIES } from "@/lib/constants";
+import { resolveRarity } from "@/lib/project-meta";
 
 /**
  * ProjectFormModal — create/edit modal for the dashboard domain archive.
@@ -91,17 +93,20 @@ export function ProjectFormModal({
   const [form, setForm] = useState<FormData>(() => toForm(project));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) project.
   useEffect(() => {
     if (open) {
       setForm(toForm(project));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, project]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
@@ -135,9 +140,12 @@ export function ProjectFormModal({
 
       onSaved();
     } catch (e) {
-      setError(
-        e instanceof ApiError ? e.message : "Failed to save the domain"
-      );
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError("Failed to save the domain");
+      }
     } finally {
       setSaving(false);
     }
@@ -149,8 +157,8 @@ export function ProjectFormModal({
       onClose={onClose}
       title={project ? "Edit domain" : "New domain"}
       size="lg"
-      saveLabel="Save"
-      error={error}
+      saveLabel="Save domain"
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -158,6 +166,8 @@ export function ProjectFormModal({
         label="Title"
         placeholder="Enter the domain title…"
         value={form.title}
+        required
+        error={fieldErrors.title}
         onChange={(e) => updateField("title", e.target.value)}
       />
       <Textarea
@@ -168,22 +178,38 @@ export function ProjectFormModal({
         rows={3}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex items-end gap-3">
+          <Select
+            label="Complexity"
+            value={form.complexity}
+            onChange={(e) => updateField("complexity", e.target.value)}
+            options={[
+              { value: "CLASS-S", label: "Class S — Apex" },
+              { value: "CLASS-A", label: "Class A — High" },
+              { value: "CLASS-B", label: "Class B — Standard" },
+              { value: "CLASS-C", label: "Class C — Basic" },
+            ]}
+          />
+          <span
+            aria-label={`Rarity ${resolveRarity(form.complexity)} of 5`}
+            className="codex-label-gold pb-3 text-sm tracking-widest"
+          >
+            {"★".repeat(resolveRarity(form.complexity))}
+          </span>
+        </div>
         <Select
-          label="Complexity"
-          value={form.complexity}
-          onChange={(e) => updateField("complexity", e.target.value)}
-          options={[
-            { value: "CLASS-S", label: "Class S — Apex" },
-            { value: "CLASS-A", label: "Class A — High" },
-            { value: "CLASS-B", label: "Class B — Standard" },
-            { value: "CLASS-C", label: "Class C — Basic" },
-          ]}
-        />
-        <Input
           label="Category"
-          placeholder="AI Platform"
           value={form.category}
+          required
+          error={fieldErrors.category}
           onChange={(e) => updateField("category", e.target.value)}
+          options={[
+            { value: "", label: "Select a discipline…" },
+            ...PROJECT_CATEGORIES.map((category) => ({
+              value: category,
+              label: category,
+            })),
+          ]}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

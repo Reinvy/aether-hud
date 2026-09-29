@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
+import { fail, failNoDb, ok, requireSession, revalidateContent } from "@/lib/api-helpers";
 import { hasDatabase } from "@/lib/portfolio-repo";
 import { portfolioData } from "@/data/portfolio";
 import { SECTION_FALLBACKS } from "@/data/sections";
@@ -9,7 +9,7 @@ import { APP_DESCRIPTION, APP_NAME, PORTFOLIO_CONFIG } from "@/lib/constants";
 export const dynamic = "force-dynamic";
 
 /**
- * Restore the MySQL/PostgreSQL tables to the authored dataset.
+ * Restore the PostgreSQL tables to the authored dataset.
  *
  * All seven steps run in ONE `prisma.$transaction` so a failure mid-way can
  * never leave the codex with, say, sections re-seeded but projects deleted.
@@ -28,10 +28,9 @@ export async function POST(req: NextRequest) {
       location: PORTFOLIO_CONFIG.location,
       avatar: portfolioData.avatar,
       status: PORTFOLIO_CONFIG.status,
-      sysVersion: PORTFOLIO_CONFIG.sysVersion,
+      edition: PORTFOLIO_CONFIG.edition,
       siteName: APP_NAME,
       siteDescription: APP_DESCRIPTION,
-      themePreset: "teyvat-codex",
       animationsEnabled: true,
     };
 
@@ -87,8 +86,10 @@ export async function POST(req: NextRequest) {
       ),
     ]);
 
+    revalidateContent();
     return ok({ success: true, message: "Portfolio data successfully reset and re-seeded" });
-  } catch (error) {
-    return fail(error instanceof Error ? error.message : "Reset failed", "CONFIG_RESET");
+  } catch (e) {
+    console.error("[CONFIG_RESET]", e instanceof Error ? e.message : e);
+    return fail("The codex data could not be reset", "CONFIG_RESET");
   }
 }

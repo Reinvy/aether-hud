@@ -63,6 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await apiRequest<{ success: boolean }>("/api/auth", {
       method: "POST",
       body: { password },
+      // A rejected password must render inline, not reload the page away.
+      redirectOn401: false,
     });
     setIsAuthenticated(true);
   }, []);
@@ -70,6 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     try {
       await apiRequest<{ success: boolean }>("/api/auth", { method: "DELETE" });
+    } catch {
+      // The cookie is cleared server-side or the request never landed; either
+      // way the operator is leaving, so local state wins over the transport.
     } finally {
       setIsAuthenticated(false);
       router.replace("/login");

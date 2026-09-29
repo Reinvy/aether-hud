@@ -33,7 +33,7 @@ export function RowActions({
         variant="ghost"
         size="sm"
         glow="none"
-        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-leather-caramel/10 hover-scale-sm dark:hover:bg-gold-400/10"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-leather-caramel/10 hover-scale-sm"
         onClick={onEdit}
         aria-label={editLabel}
         title={editLabel}
@@ -44,7 +44,7 @@ export function RowActions({
         variant="ghost"
         size="sm"
         glow="none"
-        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 text-hud-danger hover:bg-hud-danger/10 hover:text-hud-danger hover-scale-sm"
+        className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 text-crimson-600 hover:bg-crimson-600/8 hover:text-crimson-600 hover-scale-sm"
         onClick={onDelete}
         aria-label={deleteLabel}
         title={deleteLabel}

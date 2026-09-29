@@ -84,9 +84,9 @@ export function ListToolbar({
       </div>
 
       <div className="flex flex-wrap items-center gap-3 lg:pb-2">
-        <p className="text-xs tabular-nums text-text-muted" aria-live="polite">
+        <span className="codex-badge tabular-nums" aria-live="polite">
           {filteredCount} of {total} shown
-        </p>
+        </span>
         {selectionCount > 0 && bulkActions}
       </div>
     </div>

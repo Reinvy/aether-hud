@@ -3,7 +3,7 @@ import { Cinzel, Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/goo
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
-import { ThemeProvider } from "@/components/theme-provider";
+import { MotionProvider } from "@/components/motion-provider";
 import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
@@ -68,7 +68,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `${APP_NAME} — Interactive Traveler Dossier`,
-    description: APP_DESCRIPTION,
+    description:
+      "Forged domains, attuned talents and recorded quests — the working dossier of a full-stack developer and AI engineer, illuminated in parchment and imperial gold.",
     type: "website",
     locale: "en_US",
     siteName: APP_NAME,
@@ -77,7 +78,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${APP_NAME} — Interactive Traveler Dossier`,
-    description: APP_DESCRIPTION,
+    description:
+      "One illuminated codex: an artifact archive, a talent tree and an expedition log, all rendered from the same records the console maintains.",
     creator: "@reinvy",
     site: "@reinvy",
   },
@@ -102,7 +104,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: APP_NAME,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
   other: {
     "msapplication-TileColor": "#FAF8F5",
@@ -113,22 +115,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
-    { media: "(prefers-color-scheme: dark)", color: "#1A120C" },
-  ],
-  colorScheme: "light dark",
+  themeColor: "#FAF8F5",
+  colorScheme: "light",
 };
-
-/**
- * Resolves the stored theme before first paint.
- *
- * ThemeProvider applies `data-theme` in an effect, which runs after the first
- * paint — an OS-dark visitor in light mode would see one frame of the espresso
- * palette. This blocking script mirrors the provider's logic (same
- * `aether_theme` key, same `dark` class) so the first paint already matches.
- */
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("aether_theme");var n=t==="celestial-night";var r=document.documentElement;r.dataset.theme=n?"celestial-night":"teyvat-codex";r.classList.toggle("dark",n);}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -183,12 +172,8 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
-      suppressHydrationWarning
     >
       <head>
-        {/* Theme resolution must precede the first paint. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
@@ -206,10 +191,10 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="application-name" content={APP_NAME} />
       </head>
-      <body className="min-h-full bg-parchment-base text-leather-dark dark:bg-deep-space dark:text-platinum-50 font-body transition-colors duration-300">
-        <ThemeProvider>
+      <body className="min-h-full bg-parchment-base text-leather-dark font-body">
+        <MotionProvider>
           <AuthProvider>{children}</AuthProvider>
-        </ThemeProvider>
+        </MotionProvider>
         {/* Performance observability — renders nothing, beacons Core Web Vitals */}
         <WebVitalsReporter />
       </body>

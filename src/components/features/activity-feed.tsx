@@ -38,14 +38,14 @@ export const ActivityFeed = memo(function ActivityFeed({
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-leather-caramel dark:text-gold-400" aria-hidden="true" />
+          <TrendingUp className="h-4 w-4 text-leather-caramel" aria-hidden="true" />
           <CardTitle>Activity Log</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4" aria-label="Recent activity">
           {items.length === 0 ? (
-            <p className="py-6 text-center text-xs font-body text-text-muted">
+            <p className="py-6 text-center text-xs font-body text-leather-muted">
               Nothing has changed in the codex yet.
             </p>
           ) : (
@@ -57,10 +57,10 @@ export const ActivityFeed = memo(function ActivityFeed({
                   className="mt-1.5 transition-transform duration-200 group-hover:scale-125"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-serif text-sm font-semibold text-text-main transition-colors duration-200 group-hover:text-leather-caramel dark:group-hover:text-gold-400">
+                  <p className="truncate font-serif text-sm font-semibold text-leather-dark transition-colors duration-200 group-hover:text-leather-caramel">
                     {activity.action}
                   </p>
-                  <p className="mt-0.5 truncate text-xs font-body text-text-muted">
+                  <p className="mt-0.5 truncate text-xs font-body text-leather-muted">
                     {activity.detail}
                   </p>
                   <p className="codex-label mt-1 text-[9px] tabular-nums">{activity.time}</p>

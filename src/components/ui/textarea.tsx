@@ -13,7 +13,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={id}
-            className="codex-label mb-2 block text-leather-dark dark:text-platinum-200 font-bold tracking-wider"
+            className="codex-label mb-2 block text-leather-dark font-bold"
           >
             {label}
           </label>
@@ -22,16 +22,16 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           ref={ref}
           className={cn(
-            "codex-input rounded-xl w-full resize-y px-4 py-2.5 text-sm font-body font-medium",
-            "text-leather-dark dark:text-platinum-50 placeholder:text-leather-muted/60 dark:placeholder:text-text-muted/60",
+            "codex-input w-full resize-y px-4 py-2.5 text-sm font-body font-medium",
+            "text-leather-dark",
             "min-h-[80px]",
-            error && "border-hud-danger",
+            error && "border-crimson-600/30",
             className
           )}
           {...props}
         />
         {error && (
-          <p role="alert" className="mt-1.5 text-xs text-hud-danger">
+          <p role="alert" className="mt-1.5 text-[11px] text-crimson-600">
             {error}
           </p>
         )}

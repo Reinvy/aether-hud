@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * StatusDot — reusable status indicator.
  *
- * Replaces ad-hoc `h-2 w-2 rounded-full bg-hud-*` dots scattered across the
+ * Replaces ad-hoc `h-2 w-2 rounded-full` dots scattered across the
  * header, sidebar, login, contact, dashboard headers and activity feed with
  * a single design-system-consistent indicator (rotate-45), matching
  * the Teyvat Codex "indicators" micro-detail language.
@@ -28,20 +28,20 @@ interface StatusDotProps {
 }
 
 const TONE_STYLES: Record<StatusTone, string> = {
-  active: "bg-hud-active",
-  warning: "bg-hud-warning",
-  danger: "bg-hud-danger",
+  active: "bg-jade-ink",
+  warning: "bg-amber-ink",
+  danger: "bg-crimson-600",
   gold: "bg-gold-400",
-  jade: "bg-jade-400",
-  muted: "bg-text-muted/40",
+  jade: "bg-jade-500",
+  muted: "bg-leather-muted/40",
 };
 
 const GLOW_STYLES: Record<StatusTone, string> = {
-  active: "shadow-[0_0_6px_rgba(0,230,118,0.6)]",
-  warning: "shadow-[0_0_6px_rgba(255,160,0,0.6)]",
-  danger: "shadow-[0_0_6px_rgba(255,23,68,0.6)]",
+  active: "shadow-[0_0_6px_rgba(10,110,58,0.45)]",
+  warning: "shadow-[0_0_6px_rgba(138,90,0,0.45)]",
+  danger: "shadow-[0_0_6px_rgba(179,38,30,0.45)]",
   gold: "shadow-[0_0_6px_rgba(242,201,76,0.6)]",
-  jade: "shadow-[0_0_6px_rgba(56,239,125,0.6)]",
+  jade: "shadow-[0_0_6px_rgba(25,196,106,0.45)]",
   muted: "",
 };
 

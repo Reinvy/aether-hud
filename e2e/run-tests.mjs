@@ -41,7 +41,6 @@ const ALL_ROUTES = [
 const API_ROUTES = [
   "/api/auth",
   "/api/config",
-  "/api/dashboard/stats",
   "/api/experiences",
   "/api/portfolio",
   "/api/projects",
@@ -52,6 +51,9 @@ const API_ROUTES = [
   "/api/telemetry/summary",
   "/api/testimonials",
 ];
+// Operator-only reads: they refuse an unauthenticated caller, so a liveness
+// HEAD would see 401 rather than the 200/405 this list asserts.
+const SESSION_GUARDED_ROUTES = ["/api/dashboard/stats", "/api/dashboard/activity"];
 
 // SEO files must be live AND reference the ACTUAL production domain.
 // aether-hud.vercel.app is taken by another project — if robots/sitemap
@@ -196,6 +198,21 @@ async function main() {
       try {
         const resp = await fetchUrl(`${targetUrl}${route}`);
         assert(resp.status === 404, `${route} returns 404 (got ${resp.status})`);
+      } catch (e) {
+        assert(false, `${route} is reachable: ${e.message}`);
+      }
+    }
+
+    // Operator-only reads must refuse an anonymous caller. A 200 here means the
+    // console's private working data (record names, edit times, counts) is
+    // readable by anyone who can reach the route.
+    for (const route of SESSION_GUARDED_ROUTES) {
+      try {
+        const resp = await fetchUrl(`${targetUrl}${route}`, "GET");
+        assert(
+          resp.status === 401 || resp.status === 503,
+          `${route} is refused without a session (got ${resp.status})`
+        );
       } catch (e) {
         assert(false, `${route} is reachable: ${e.message}`);
       }

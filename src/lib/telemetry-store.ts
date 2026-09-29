@@ -67,17 +67,27 @@ export async function persistTelemetry(entry: TelemetrySample): Promise<void> {
       },
     });
 
-    // Bounded retention: keep only the newest MAX_DB_SAMPLES_PER_METRIC
-    // rows for this metric (cheap on the (name, recordedAt) index).
-    const keep = await prisma.telemetryEvent.findMany({
-      where: { name: entry.name },
-      orderBy: { recordedAt: "desc" },
-      take: MAX_DB_SAMPLES_PER_METRIC,
-      select: { id: true },
-    });
-    await prisma.telemetryEvent.deleteMany({
-      where: { name: entry.name, id: { notIn: keep.map((r) => r.id) } },
-    });
+    // Bounded retention: only pay for a prune once the metric is actually over
+    // the cap. The count is cheap on the (name, recordedAt) index; running the
+    // keep-list query on every beacon was the expensive part.
+    const count = await prisma.telemetryEvent.count({ where: { name: entry.name } });
+    if (count > MAX_DB_SAMPLES_PER_METRIC) {
+      const keep = await prisma.telemetryEvent.findMany({
+        where: { name: entry.name },
+        orderBy: { recordedAt: "desc" },
+        take: MAX_DB_SAMPLES_PER_METRIC,
+        select: { id: true },
+      });
+      const doomed = await prisma.telemetryEvent.findMany({
+        where: { name: entry.name, id: { notIn: keep.map((row) => row.id) } },
+        select: { id: true },
+      });
+      if (doomed.length > 0) {
+        await prisma.$transaction(
+          doomed.map((row) => prisma.telemetryEvent.delete({ where: { id: row.id } }))
+        );
+      }
+    }
   } catch (err) {
     // DB unreachable — the in-memory layer still has the sample.
     console.error("[TELEMETRY]", "durable persist failed (memory fallback):", err instanceof Error ? err.message : err);
@@ -134,10 +144,15 @@ export async function durableTelemetrySummary(): Promise<{
   metrics: Record<string, MetricSummary>;
 }> {
   try {
-    const rows = await prisma.telemetryEvent.findMany({
-      orderBy: { recordedAt: "desc" },
-      take: 5000,
-    });
+    const [total, rows] = await Promise.all([
+      // The real row count, not the page size: `take: 5000` caps how many
+      // samples the metric math reads, not how many the sink holds.
+      prisma.telemetryEvent.count(),
+      prisma.telemetryEvent.findMany({
+        orderBy: { recordedAt: "desc" },
+        take: 5000,
+      }),
+    ]);
     const byMetric = new Map<string, TelemetrySample[]>();
     for (const row of rows) {
       const bucket = byMetric.get(row.name) ?? [];
@@ -157,7 +172,7 @@ export async function durableTelemetrySummary(): Promise<{
       // findMany desc → newest first; summarize expects ascending order
       metrics[name] = summarizeSamples(samples.reverse());
     }
-    return { ok: true, source: "database", startedAt, totalRecorded: rows.length, metrics };
+    return { ok: true, source: "database", startedAt, totalRecorded: total, metrics };
   } catch (err) {
     console.error("[TELEMETRY]", "durable summary failed (memory fallback):", err instanceof Error ? err.message : err);
     return telemetrySummary();

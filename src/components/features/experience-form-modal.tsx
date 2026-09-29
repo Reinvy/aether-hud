@@ -53,8 +53,8 @@ function toForm(exp: ExperienceFormRecord | null): FormData {
     company: exp.company,
     role: exp.role,
     description: exp.description,
-    startDate: exp.startDate ? exp.startDate.slice(0, 10) : "",
-    endDate: exp.endDate ? exp.endDate.slice(0, 10) : "",
+    startDate: exp.startDate ?? "",
+    endDate: exp.endDate ?? "",
     type: exp.type,
   };
 }
@@ -77,17 +77,20 @@ export function ExperienceFormModal({
   const [form, setForm] = useState<FormData>(() => toForm(experience));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) record.
   useEffect(() => {
     if (open) {
       setForm(toForm(experience));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, experience]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
@@ -98,8 +101,8 @@ export function ExperienceFormModal({
       company: form.company,
       role: form.role,
       description: form.description,
-      startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
-      endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+      startDate: form.startDate,
+      endDate: form.endDate || null,
       type: form.type,
     };
 
@@ -115,7 +118,12 @@ export function ExperienceFormModal({
 
       onSaved();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Failed to save the quest");
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError("Failed to save the quest");
+      }
     } finally {
       setSaving(false);
     }
@@ -127,8 +135,8 @@ export function ExperienceFormModal({
       onClose={onClose}
       title={experience ? "Edit quest" : "New quest"}
       size="lg"
-      saveLabel="Save"
-      error={error}
+      saveLabel="Save quest"
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -136,12 +144,16 @@ export function ExperienceFormModal({
         label="Company"
         placeholder="Enter company name…"
         value={form.company}
+        required
+        error={fieldErrors.company}
         onChange={(e) => updateField("company", e.target.value)}
       />
       <Input
         label="Role"
         placeholder="e.g., Senior Full-Stack Developer"
         value={form.role}
+        required
+        error={fieldErrors.role}
         onChange={(e) => updateField("role", e.target.value)}
       />
       <Textarea
@@ -154,14 +166,17 @@ export function ExperienceFormModal({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Start date"
-          type="date"
+          type="month"
           value={form.startDate}
+          required
+          error={fieldErrors.startDate}
           onChange={(e) => updateField("startDate", e.target.value)}
         />
         <Input
           label="End date"
-          type="date"
+          type="month"
           value={form.endDate}
+          error={fieldErrors.endDate}
           onChange={(e) => updateField("endDate", e.target.value)}
           placeholder="Leave empty for present"
         />

@@ -1,11 +1,16 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface WidgetErrorProps {
-  /** What failed, e.g. "Statistics". */
+  /** What failed, in sentence case, e.g. "Codex stats". */
   label?: string;
+  /** Optional specific failure copy; a generic line is used when omitted. */
+  message?: string;
+  /** Renders a retry control when provided. */
+  onRetry?: () => void;
   className?: string;
 }
 
@@ -16,21 +21,29 @@ interface WidgetErrorProps {
  * widgets (stat grids, list cards, feeds) so one failure renders a small
  * card instead of blanking the whole view.
  */
-export function WidgetError({ label = "This widget", className }: WidgetErrorProps) {
+export function WidgetError({
+  label = "This section",
+  message = "Could not be loaded. The rest of the page still works.",
+  onRetry,
+  className,
+}: WidgetErrorProps) {
   return (
     <div
       className={cn(
-        "codex-card codex-panel-radius relative flex min-h-32 flex-col items-center justify-center gap-2.5 p-6 text-center",
+        "codex-card codex-radius-card relative flex min-h-32 flex-col items-center justify-center gap-2.5 p-6 text-center",
         className
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center codex-radius-sm border border-hud-danger/30 bg-hud-danger/5">
-        <AlertTriangle className="h-4 w-4 text-hud-danger" />
+      <div className="flex h-10 w-10 items-center justify-center codex-radius-card border border-crimson-600/30 bg-crimson-600/8">
+        <AlertTriangle className="h-4 w-4 text-crimson-600" />
       </div>
-      <span className="codex-label-gold text-[9px] tracking-[0.2em]">{label}</span>
-      <p className="text-xs text-text-muted">
-        Could not be loaded. The rest of the page still works.
-      </p>
+      <span className="codex-label-gold">{label}</span>
+      <p className="text-xs text-leather-muted">{message}</p>
+      {onRetry && (
+        <Button variant="secondary" size="sm" onClick={onRetry}>
+          Try again
+        </Button>
+      )}
     </div>
   );
 }

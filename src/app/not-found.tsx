@@ -16,11 +16,11 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 dark:bg-deep-space">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4">
       <div className="pointer-events-none absolute inset-0 bg-starfield opacity-20" />
       <div className="pointer-events-none absolute inset-0 codex-grid-bg opacity-10" />
 
-      <div className="codex-card codex-panel-radius relative w-full max-w-lg p-8">
+      <div className="codex-card codex-panel-radius codex-rise relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex items-baseline gap-3">
             <span className="codex-gradient-text font-display text-6xl font-black tracking-[0.08em]">
@@ -33,10 +33,10 @@ export default function NotFound() {
             <span className="codex-label-gold text-[10px] tracking-[0.2em]">
               Lost Wayfarer
             </span>
-            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-text-main">
-              This page <span className="text-hud-danger">is not here</span>
+            <h1 className="font-display text-2xl font-bold tracking-[0.08em] text-leather-dark">
+              This page <span className="text-crimson-600">is not here</span>
             </h1>
-            <p className="mx-auto max-w-sm text-sm text-text-muted font-body">
+            <p className="mx-auto max-w-sm text-sm text-leather-muted font-body">
               The trail you followed does not lead anywhere in the codex. Check
               the address, or head back to the traveler dossier.
             </p>
@@ -44,9 +44,9 @@ export default function NotFound() {
 
           <Link
             href="/"
-            className="codex-sheen codex-btn codex-focus inline-flex items-center gap-2 border border-leather-caramel/35 px-6 py-2.5 text-xs font-semibold tracking-wider text-leather-dark transition-all hover:bg-leather-caramel/10 hover-scale-sm press-scale dark:border-border-glass dark:text-gold-400 dark:hover:bg-gold-400/10"
+            className="codex-btn-secondary codex-sheen codex-focus px-6 py-2.5 text-xs tracking-wider"
           >
-            <Compass className="h-3.5 w-3.5" />
+            <Compass className="h-3.5 w-3.5" aria-hidden="true" />
             Return to the dossier
           </Link>
         </div>

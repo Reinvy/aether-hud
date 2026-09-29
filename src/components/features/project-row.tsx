@@ -22,9 +22,9 @@ export const ProjectRow = memo(function ProjectRow({ project }: ProjectRowProps)
   const tags = project.tags.slice(0, 2).join(", ");
 
   return (
-    <div className="group relative flex items-center justify-between codex-radius-xs border border-border-subtle px-3 py-3 transition-all duration-300 hover:border-border-glass hover:bg-leather-caramel/10 hover-scale-sm press-scale dark:hover:bg-glass-200 sm:px-4">
+    <div className="group relative flex items-center justify-between codex-radius-card border border-border-subtle px-3 py-3 transition-all duration-300 hover:border-leather-caramel/60 hover:bg-leather-caramel/10 hover-scale-sm press-scale sm:px-4">
       {/* Diamond hover indicator */}
-      <span className="pointer-events-none absolute -left-px top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border border-gold-400/40 bg-parchment-elevated opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgba(242,201,76,0.5)] dark:bg-deep-space" />
+      <span className="pointer-events-none absolute -left-px top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border border-gold-400/40 bg-parchment-elevated opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgba(242,201,76,0.5)]" />
       <div className="flex min-w-0 items-center gap-3">
         <IconBox>
           <span className="font-display text-[10px] font-bold">
@@ -32,10 +32,10 @@ export const ProjectRow = memo(function ProjectRow({ project }: ProjectRowProps)
           </span>
         </IconBox>
         <div className="min-w-0">
-          <p className="truncate font-display text-xs font-semibold tracking-[0.08em] text-text-main transition-colors duration-200 group-hover:text-leather-caramel dark:text-platinum-50 dark:group-hover:text-gold-400">
+          <p className="truncate font-display text-xs font-semibold tracking-[0.08em] text-leather-dark transition-colors duration-200 group-hover:text-leather-caramel">
             {project.title}
           </p>
-          <p className="truncate font-mono text-[10px] tracking-wide text-text-muted dark:text-platinum-200">
+          <p className="truncate font-mono text-[10px] tracking-wide text-leather-muted">
             {project.category}
             {tags ? ` · ${tags}` : ""}
           </p>
@@ -53,7 +53,7 @@ export const ProjectRow = memo(function ProjectRow({ project }: ProjectRowProps)
             aria-label={`Visit ${project.title}`}
             className="hover-scale-sm press-scale codex-focus block p-2"
           >
-            <ExternalLink className="h-3.5 w-3.5 text-text-muted transition-colors hover:text-leather-caramel dark:text-platinum-200 dark:hover:text-gold-400" />
+            <ExternalLink className="h-3.5 w-3.5 text-leather-muted transition-colors hover:text-leather-caramel" />
           </a>
         )}
       </div>

@@ -1,13 +1,14 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type InfoRowTone = "default" | "jade" | "gold" | "danger";
+type InfoRowTone = "default" | "jade" | "gold" | "danger" | "muted";
 
 const TONE_CLASS: Record<InfoRowTone, string> = {
-  default: "text-text-main",
-  jade: "text-jade-400",
-  gold: "text-gold-400",
-  danger: "text-hud-danger",
+  default: "text-gold-ink",
+  jade: "text-jade-ink",
+  gold: "text-gold-ink",
+  danger: "text-crimson-600",
+  muted: "text-leather-muted",
 };
 
 interface InfoRowProps extends HTMLAttributes<HTMLDivElement> {
@@ -41,14 +42,14 @@ function InfoRow({
   return (
     <div
       className={cn(
-        "codex-radius-sm flex items-center justify-between gap-3 border border-leather-caramel/20 bg-parchment-subtle/60 px-4 py-3 transition-colors duration-300 hover:border-leather-caramel/40 hover:bg-leather-caramel/10 dark:border-border-subtle dark:bg-deep-space/40 dark:hover:border-border-glass dark:hover:bg-[rgba(242,201,76,0.04)]",
+        "codex-radius-card flex items-center justify-between gap-3 border border-leather-caramel/20 bg-parchment-subtle/60 px-4 py-3 transition-colors duration-300 hover:border-leather-caramel/40 hover:bg-leather-caramel/10",
         className
       )}
       {...props}
     >
       <div className="flex min-w-0 items-center gap-2.5">
-        {icon && <span className={cn("shrink-0", tone === "default" ? "text-gold-400/60" : TONE_CLASS[tone])}>{icon}</span>}
-        <span className="min-w-0 truncate font-mono text-xs text-text-muted">{label}</span>
+        {icon && <span className={cn("shrink-0", TONE_CLASS[tone])}>{icon}</span>}
+        <span className="min-w-0 truncate font-mono text-xs text-leather-muted">{label}</span>
       </div>
       {children ?? <span className={cn("shrink-0 font-mono text-xs", TONE_CLASS[tone])}>{value}</span>}
     </div>

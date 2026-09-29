@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
-  AlertCircle,
   Save,
   User,
 } from "lucide-react";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -31,7 +31,7 @@ export default function DashboardProfile() {
     tagline: "",
     email: "",
     location: "",
-    sysVersion: "",
+    edition: "",
     bio: "",
     status: "",
     avatar: "",
@@ -45,7 +45,7 @@ export default function DashboardProfile() {
         tagline: config.tagline || "",
         email: config.email || "",
         location: config.location || "",
-        sysVersion: config.sysVersion || "",
+        edition: config.edition || "",
         bio: config.bio || "",
         status: config.status || "ONLINE",
         avatar: config.avatar || "",
@@ -73,8 +73,26 @@ export default function DashboardProfile() {
     }
   }
 
-  if (loading) {
+  // Skeleton only on first paint — a refetch after a save keeps the current
+  // dossier on screen instead of flashing the placeholder.
+  if (loading && config === null) {
     return <DashboardFormSkeleton />;
+  }
+
+  // A failed load renders the widget error with its own retry instead of a
+  // misleading empty dossier form.
+  if (loadError !== null) {
+    return (
+      <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+        <DashboardPageHeader
+          icon={User}
+          eyebrow="TRAVELER DOSSIER"
+          title="Manage Profile"
+          titleHighlight="Profile"
+        />
+        <WidgetError label="Traveler dossier" message={loadError} onRetry={refetch} />
+      </div>
+    );
   }
 
   return (
@@ -85,31 +103,14 @@ export default function DashboardProfile() {
         eyebrow="TRAVELER DOSSIER"
         title="Manage Profile"
         titleHighlight="Profile"
-        actions={
-          <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            <Save className="h-4 w-4" aria-hidden="true" />
-            Save changes
-          </Button>
-        }
       />
 
-      {/* Fetch and save failures are reported to the operator instead of
-          leaving an empty (or silently stale) dossier on screen. */}
-      {(loadError || saveError) && (
-        <div
-          role="alert"
-          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
-        >
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
-          <p className="font-body text-xs text-hud-danger">
-            {saveError ?? loadError}
-          </p>
-        </div>
-      )}
+      {/* Mutation failures use the single shared action banner. */}
+      {saveError !== null && <ActionError message={saveError} className="mb-6" />}
 
       {/* Profile panels — widget-level error boundary keeps a failing
           panel from blanking the whole view. */}
-      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="TRAVELER DOSSIER" />}>
+      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="Traveler dossier" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Personal Info — reusable identity fields card */}
         <motion.div {...fadeInUp}>
@@ -129,7 +130,7 @@ export default function DashboardProfile() {
               tagline: form.tagline,
               location: form.location,
               email: form.email,
-              sysVersion: form.sysVersion,
+              edition: form.edition,
               status: form.status,
             }}
           />
@@ -139,18 +140,18 @@ export default function DashboardProfile() {
 
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
+        <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+            <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Traveler dossier ready to save
             </p>
-            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+            <p className="font-body text-[11px] text-leather-muted">
               Changes are applied to the codex as soon as they are saved
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
-            Save
+            Save changes
           </Button>
         </div>
       </motion.div>

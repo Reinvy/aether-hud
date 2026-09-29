@@ -14,7 +14,7 @@ export const APP_DESCRIPTION =
   "Interactive Traveler Dossier — portfolio, domains, talents and commissions";
 
 // NOTE: aether-hud.vercel.app is TAKEN by another project. The real production
-// domain is aether-hud-lyart.vercel.app (see .cron/VERCEL_DOMAIN.env).
+// domain is aether-hud-lyart.vercel.app.
 export const APP_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
 
@@ -25,8 +25,55 @@ export const PORTFOLIO_CONFIG = {
   email: "hello@aether-hud.dev",
   location: "Jakarta, Indonesia",
   status: "ONLINE",
-  sysVersion: "v2.4.1",
+  edition: "Teyvat Codex Edition",
 };
+
+/**
+ * The one-line professional mission rendered in the hero dossier. Kept here so
+ * the copy lives next to the identity it describes instead of inside a section.
+ */
+export const MISSION_LINE =
+  "I design, build and operate production web platforms — full-stack TypeScript, applied AI, and the infrastructure that keeps them dependable.";
+
+/**
+ * Section keys the landing page can render. Each key maps to a rendered
+ * section in `src/app/home-content.tsx`, so the console may only enable,
+ * reorder, retitle or delete these — never invent a new one.
+ */
+export const SECTION_KEYS = [
+  "hero",
+  "projects",
+  "skills",
+  "experience",
+  "testimonials",
+  "contact",
+] as const;
+
+/** Disciplines a domain can be classified under (mirrors the authored archive). */
+export const PROJECT_CATEGORIES = [
+  "AI Platform",
+  "AI Tooling",
+  "Data Platform",
+  "Developer Tools",
+  "No-Code Platform",
+  "Infrastructure",
+  "Security",
+  "Education",
+  "Portfolio",
+] as const;
+
+/** Talent disciplines. */
+export const SKILL_CATEGORIES = [
+  "Frontend",
+  "Backend",
+  "Language",
+  "AI",
+  "DevOps",
+  "Design",
+] as const;
+
+/** Employment record kinds. */
+export const EXPERIENCE_TYPES = ["work", "education", "freelance"] as const;
 
 /**
  * Flat wire project shape, re-exported for every module that speaks the

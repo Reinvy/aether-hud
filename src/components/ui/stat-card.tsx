@@ -31,7 +31,7 @@ export const StatCard = memo(function StatCard({ label, value, icon: Icon, tone 
             <p
               className={cn(
                 "mt-2 font-display text-2xl sm:text-3xl font-bold tracking-wider tabular-nums",
-                tone === "gold" ? "text-gold-400" : "text-jade-400"
+                tone === "gold" ? "text-gold-ink" : "text-jade-ink"
               )}
             >
               {value}
@@ -40,9 +40,7 @@ export const StatCard = memo(function StatCard({ label, value, icon: Icon, tone 
           <Icon
             className={cn(
               "h-6 w-6 sm:h-8 sm:w-8 shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3",
-              tone === "gold"
-                ? "text-gold-400/30 group-hover:text-gold-400/60"
-                : "text-jade-400/30 group-hover:text-jade-400/60"
+              tone === "gold" ? "text-gold-ink" : "text-jade-ink"
             )}
           />
         </div>

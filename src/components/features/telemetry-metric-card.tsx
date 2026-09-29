@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "@/components/ui/info-row";
+import type { TelemetryMetricSummary } from "@/lib/dto";
 
 /**
  * TelemetryMetricCard — one Web Vitals metric from the Astral Observatory.
@@ -11,20 +12,6 @@ import { InfoRow } from "@/components/ui/info-row";
  * Kept as its own module so the metric → label/unit/rating mapping stays
  * colocated.
  */
-
-export interface TelemetryMetricSummary {
-  count: number;
-  min: number | null;
-  max: number | null;
-  avg: number | null;
-  p95: number | null;
-  last: {
-    value: number;
-    rating: string;
-    path: string;
-    recordedAt: string;
-  } | null;
-}
 
 /** Human label per Web Vitals metric name (falls back to the raw name). */
 const METRIC_LABELS: Record<string, string> = {
@@ -98,7 +85,7 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <span className="codex-label-gold text-[9px]">{name}</span>
-            <h3 className="mt-1 truncate font-display text-xs font-bold tracking-[0.08em] text-text-main">
+            <h3 className="mt-1 truncate font-display text-xs font-bold tracking-[0.08em] text-leather-dark">
               {label}
             </h3>
           </div>
@@ -125,15 +112,15 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
         <div className="mt-auto space-y-1.5 border-t border-border-subtle pt-3">
           {summary.last ? (
             <>
-              <p className="font-mono text-[10px] text-text-muted truncate tabular-nums">
+              <p className="font-mono text-[10px] text-leather-muted truncate tabular-nums">
                 {summary.last.path}
               </p>
-              <p className="text-[10px] font-body text-text-muted">
+              <p className="text-[10px] font-body text-leather-muted">
                 {formatDate(summary.last.recordedAt)} · {formatTime(summary.last.recordedAt)}
               </p>
             </>
           ) : (
-            <p className="text-[10px] font-body text-text-muted">No sample yet</p>
+            <p className="text-[10px] font-body text-leather-muted">No sample yet</p>
           )}
         </div>
       </CardContent>

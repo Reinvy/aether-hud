@@ -7,8 +7,9 @@ import {
   Boxes,
   Briefcase,
   Cpu,
-  TrendingUp,
+  Database,
 } from "lucide-react";
+import { ActionError } from "@/components/ui/action-error";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
 import { ProjectArchivePanel } from "@/components/features/overview/project-archive-panel";
@@ -36,10 +37,10 @@ const ActivityFeed = dynamic(
         <CardContent className="space-y-4 p-5">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="mt-1 h-2 w-2 rotate-45 bg-leather-caramel/20 codex-shimmer dark:bg-glass-300" />
+              <div className="mt-1 h-2 w-2 rotate-45 bg-leather-caramel/20 codex-shimmer" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3 w-3/4 rounded-full bg-leather-caramel/15 codex-shimmer dark:bg-glass-200" />
-                <div className="h-2 w-1/2 rounded-full bg-leather-caramel/15 codex-shimmer dark:bg-glass-200" />
+                <div className="h-3 w-3/4 rounded-full bg-leather-caramel/15 codex-shimmer" />
+                <div className="h-2 w-1/2 rounded-full bg-leather-caramel/15 codex-shimmer" />
               </div>
             </div>
           ))}
@@ -74,7 +75,13 @@ export default function DashboardOverview() {
     refetch: refetchActivity,
   } = useData<ActivityResponse>("/api/dashboard/activity");
 
-  if (statsLoading || projectsLoading || activityLoading) {
+  // Skeleton on first paint only — a refetch after a sync keeps the current
+  // cards, feed and archive on screen instead of flashing the placeholder.
+  if (
+    (statsLoading && stats === null) ||
+    (projectsLoading && projects === null) ||
+    (activityLoading && activityData === null)
+  ) {
     return <DashboardPageSkeleton />;
   }
 
@@ -98,15 +105,16 @@ export default function DashboardOverview() {
       color: "gold" as const,
     },
     {
-      label: "Uptime",
-      value: stats?.uptime ?? "99.9%",
-      icon: TrendingUp,
-      color: "jade" as const,
+      label: "Data source",
+      value: stats?.source === "database" ? "Database" : "Authored archive",
+      icon: Database,
+      color: stats?.source === "database" ? ("jade" as const) : ("gold" as const),
     },
   ];
 
   const projectList = projects ?? [];
   const activities = activityData?.activities ?? [];
+  const loadError = statsError ?? projectsError ?? activityError;
 
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
@@ -118,10 +126,14 @@ export default function DashboardOverview() {
         titleHighlight="Overview"
       />
 
+      {/* A failed read is surfaced as an action banner; each widget below
+          keeps its own retry so one dead feed never hides the others. */}
+      {loadError !== null && <ActionError message={loadError} className="mb-6" />}
+
       {/* Stats Grid — Stagger Animation */}
-      <ErrorBoundary section="stats" fallback={<WidgetError label="CODEX STATS" />}>
+      <ErrorBoundary section="stats" fallback={<WidgetError label="Codex stats" />}>
         {statsError ? (
-          <WidgetError label="CODEX STATS" />
+          <WidgetError label="Codex stats" message={statsError} onRetry={refetchStats} />
         ) : (
           <motion.div
             className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4"
@@ -141,9 +153,14 @@ export default function DashboardOverview() {
       {/* Main Content Area */}
       <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Domains Quick Overview — reusable archive panel */}
-        <ErrorBoundary section="projects" fallback={<WidgetError label="DOMAIN ARCHIVE" className="h-full" />}>
+        <ErrorBoundary section="projects" fallback={<WidgetError label="Domain archive" className="h-full" />}>
           {projectsError ? (
-            <WidgetError label="DOMAIN ARCHIVE" className="h-full lg:col-span-2" />
+            <WidgetError
+              label="Domain archive"
+              message={projectsError}
+              onRetry={refetchProjects}
+              className="h-full lg:col-span-2"
+            />
           ) : (
             <motion.div className="lg:col-span-2" {...fadeInUp}>
               <ProjectArchivePanel projects={projectList} />
@@ -152,9 +169,14 @@ export default function DashboardOverview() {
         </ErrorBoundary>
 
         {/* Activity Feed — lazy-loaded & dynamic */}
-        <ErrorBoundary section="activity" fallback={<WidgetError label="ACTIVITY LOG" className="h-full" />}>
+        <ErrorBoundary section="activity" fallback={<WidgetError label="Activity log" className="h-full" />}>
           {activityError ? (
-            <WidgetError label="ACTIVITY LOG" className="h-full" />
+            <WidgetError
+              label="Activity log"
+              message={activityError}
+              onRetry={refetchActivity}
+              className="h-full"
+            />
           ) : (
             <motion.div {...fadeInUp}>
               <ActivityFeed items={activities} />
@@ -164,7 +186,7 @@ export default function DashboardOverview() {
       </div>
 
       {/* Quick Actions — reusable shortcut panel */}
-      <ErrorBoundary section="quick-actions" fallback={<WidgetError label="QUICK ACTIONS" className="mt-4 sm:mt-6" />}>
+      <ErrorBoundary section="quick-actions" fallback={<WidgetError label="Quick actions" className="mt-4 sm:mt-6" />}>
         <motion.div className="mt-4 sm:mt-6" {...fadeInUp}>
           <QuickActionsPanel
             onSync={async () => {

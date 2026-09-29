@@ -20,7 +20,7 @@ export function Pagination({ page, pageCount, onPageChange, className }: Paginat
   if (pageCount <= 1) return null;
 
   const buttonClass =
-    "inline-flex items-center gap-1.5 codex-radius-sm border border-leather-caramel/25 dark:border-border-subtle px-3 py-2 text-xs font-semibold text-text-muted transition-colors hover:text-leather-dark dark:hover:text-gold-400 disabled:cursor-not-allowed disabled:opacity-40 codex-focus";
+    "inline-flex items-center gap-1.5 codex-btn border border-leather-caramel/25 px-3 py-2 text-xs font-semibold text-leather-muted transition-colors hover:text-leather-dark disabled:cursor-not-allowed disabled:opacity-40 codex-focus";
 
   return (
     <nav
@@ -36,7 +36,7 @@ export function Pagination({ page, pageCount, onPageChange, className }: Paginat
         <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
         Previous
       </button>
-      <span className="text-xs tabular-nums text-text-muted">
+      <span className="text-xs tabular-nums text-leather-muted">
         Page {page} of {pageCount}
       </span>
       <button

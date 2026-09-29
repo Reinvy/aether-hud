@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * IconButton — reusable icon-only button.
  *
- * Deduplicates the codex-radius-sm icon buttons scattered across the shell
+ * Deduplicates the codex-btn radius icon buttons scattered across the shell
  * (sidebar close, header mobile toggle, dashboard hamburger) into one
  * component with the standard micro-interaction set: gold hover, hover
  * scale, press scale, and focus ring.
@@ -33,8 +33,8 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         aria-label={label}
         title={label}
         className={cn(
-          "inline-flex items-center justify-center codex-radius-sm text-text-muted transition-all duration-300",
-          "hover:text-gold-400 hover-scale-sm press-scale codex-focus",
+          "inline-flex items-center justify-center codex-btn text-leather-muted transition-all duration-300",
+          "hover:text-gold-ink hover-scale-sm press-scale codex-focus",
           size === "sm" && "p-1.5",
           size === "md" && "min-h-10 min-w-10 p-0",
           className

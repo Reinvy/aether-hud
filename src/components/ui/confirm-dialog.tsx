@@ -54,6 +54,7 @@ export function ConfirmDialog({
       footer={
         <>
           <Button
+            type="button"
             variant="secondary"
             size="sm"
             onClick={onClose}
@@ -62,6 +63,7 @@ export function ConfirmDialog({
             {cancelLabel}
           </Button>
           <Button
+            type="button"
             variant="danger"
             size="sm"
             onClick={onConfirm}
@@ -74,17 +76,17 @@ export function ConfirmDialog({
     >
       <div className="space-y-4">
         <div className="flex items-start gap-3">
-          <div className="shrink-0 codex-radius-sm border border-hud-danger/30 bg-hud-danger/10 p-2.5">
-            <AlertTriangle className="h-5 w-5 text-hud-danger" />
+          <div className="shrink-0 codex-radius-card border border-crimson-600/30 bg-crimson-600/8 p-2.5">
+            <AlertTriangle aria-hidden="true" className="h-5 w-5 text-crimson-600" />
           </div>
           <div className="min-w-0 space-y-1.5">
             <span className="codex-label-active text-[9px]">Please confirm</span>
-            <div className="text-xs leading-relaxed text-text-muted">{message}</div>
+            <div className="text-xs leading-relaxed text-leather-muted">{message}</div>
           </div>
         </div>
         <div className="flex items-center gap-2 border-t border-border-subtle pt-3">
           <StatusDot tone="danger" />
-          <span className="text-[10px] tracking-wider text-text-muted/70 dark:text-platinum-200/80">
+          <span className="codex-label text-[10px]">
             This action cannot be undone.
           </span>
         </div>

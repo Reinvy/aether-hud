@@ -37,7 +37,7 @@ export const ContactConfigCard = memo(function ContactConfigCard({
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Mail className="h-4 w-4 text-gold-400" />
+          <Mail className="h-4 w-4 text-gold-ink" />
           <CardTitle>Contact Config</CardTitle>
         </div>
       </CardHeader>
@@ -61,17 +61,17 @@ export const ContactConfigCard = memo(function ContactConfigCard({
             /* .codex-input is unlayered CSS so it beats Tailwind utility
                classes in v4's cascade layers — inline style is the only way
                to tint a disabled input's value text. */
-            style={{ color: "var(--color-jade-400)" }}
+            style={{ color: "var(--color-jade-ink)" }}
           />
           <Input
             label="Sys version"
-            value={config?.sysVersion ?? "v2.4.1"}
+            value={config?.edition ?? "Teyvat Codex Edition"}
             disabled
-            style={{ color: "var(--color-text-muted)" }}
+            style={{ color: "var(--color-leather-muted)" }}
           />
         </div>
         {error && (
-          <p role="alert" className="text-xs text-hud-danger">
+          <p role="alert" className="text-xs text-crimson-600">
             {error}
           </p>
         )}

@@ -22,6 +22,8 @@ interface TestimonialCardProps {
   /** False at the ends of the archive — the reorder controls disable there. */
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** True while this row's move request is in flight — disables its controls. */
+  moving?: boolean;
   onEdit?: (testimonial: TestimonialDto) => void;
   onDelete?: (testimonial: TestimonialDto) => void;
 }
@@ -44,6 +46,7 @@ export const TestimonialCard = memo(function TestimonialCard({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
   onEdit,
   onDelete,
 }: TestimonialCardProps) {
@@ -59,7 +62,8 @@ export const TestimonialCard = memo(function TestimonialCard({
         variant="glass"
         hover="sweep"
         className={cn(
-          selected && "ring-2 ring-leather-caramel/40 dark:ring-gold-400/50"
+          "codex-card codex-radius-card",
+          selected && "ring-2 ring-leather-caramel/40"
         )}
       >
         <CardContent className="p-5">
@@ -70,10 +74,10 @@ export const TestimonialCard = memo(function TestimonialCard({
                 checked={selected}
                 onChange={() => onSelect(t.id)}
                 aria-label={`Select ${t.name}`}
-                className="mt-3 h-4 w-4 shrink-0 cursor-pointer accent-leather-caramel codex-focus dark:accent-gold-400"
+                className="mt-3 h-4 w-4 shrink-0 cursor-pointer accent-leather-caramel codex-focus"
               />
             )}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center codex-radius-sm overflow-hidden border border-border-glass bg-deep-space/50">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden border border-leather-caramel/40 bg-leather-caramel/10">
               {t.avatar ? (
                 // Raw img (not next/image): avatar URLs come from the
                 // Prisma DB and may be arbitrary remote hosts, which
@@ -87,21 +91,21 @@ export const TestimonialCard = memo(function TestimonialCard({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Quote className="h-5 w-5 text-gold-400/60" />
+                <Quote className="h-5 w-5 text-gold-ink" />
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-mono text-xs font-medium tracking-wider text-text-main">
+              <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
                 {t.name}
               </p>
-              <p className="mt-0.5 font-mono text-[9px] text-text-muted">
+              <p className="mt-0.5 font-mono text-[9px] text-leather-muted">
                 {t.role}
               </p>
             </div>
           </div>
 
-          <div className="mt-3 codex-radius-sm border border-border-subtle bg-deep-space/30 p-3">
-            <p className="font-mono text-[11px] leading-relaxed text-text-muted italic line-clamp-3">
+          <div className="mt-3 codex-card codex-radius-card p-3">
+            <p className="font-mono text-[11px] leading-relaxed text-leather-muted italic line-clamp-3">
               &ldquo;{t.content}&rdquo;
             </p>
           </div>
@@ -115,7 +119,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                     <IconButton
                       label={`Move ${t.name} up`}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
-                      disabled={!canMoveUp}
+                      disabled={moving || !canMoveUp}
                       onClick={() => onMove(t, -1)}
                     >
                       <ChevronUp className="h-3.5 w-3.5" />
@@ -123,7 +127,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                     <IconButton
                       label={`Move ${t.name} down`}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
-                      disabled={!canMoveDown}
+                      disabled={moving || !canMoveDown}
                       onClick={() => onMove(t, 1)}
                     >
                       <ChevronDown className="h-3.5 w-3.5" />

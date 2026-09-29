@@ -10,6 +10,7 @@
  */
 
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 import { SESSION_COOKIE, isAuthConfigured, verifySessionToken } from "@/lib/session";
 
 /** 200/201 JSON success response, optionally with extra headers. */
@@ -34,6 +35,33 @@ export function fail(
 ) {
   console.error(`[${tag}]`, message);
   return NextResponse.json({ error: message }, { status });
+}
+
+/**
+ * 400 for a rejected write body. `fields` carries one message per offending
+ * input so the console can mark the exact control the operator has to fix.
+ */
+export function failValidation(
+  message: string,
+  fields: Record<string, string> | undefined,
+  tag: string
+) {
+  console.warn(`[${tag}]`, message, fields ?? "");
+  return NextResponse.json(fields ? { error: message, fields } : { error: message }, {
+    status: 400,
+  });
+}
+
+/**
+ * Purge the cached content routes after a write.
+ *
+ * `/` is statically generated with `revalidate = 300` and `/projects/[id]` is
+ * rendered on demand, so without this the console's own edit stays invisible
+ * for up to five minutes and the dossier link 404s until then.
+ */
+export function revalidateContent(): void {
+  revalidatePath("/");
+  revalidatePath("/projects/[id]", "page");
 }
 
 /** Cache-Control header preset for CDN-friendly GET list endpoints. */

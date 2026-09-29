@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, GitBranch } from "lucide-react";
+import { elementForCategory, formatGrade } from "@/lib/project-meta";
 import type { ProjectDto } from "@/lib/dto";
 
 interface ProjectDetailProps {
@@ -15,37 +16,59 @@ interface ProjectDetailProps {
  * dossier ships complete in the first byte and stays crawlable.
  */
 export function ProjectDetail({ project }: ProjectDetailProps) {
+  const element = elementForCategory(project.category);
   const stats = [
     { label: "Category", value: project.category },
     { label: "Year", value: project.year },
-    { label: "Complexity", value: project.complexity },
+    { label: "Artifact grade", value: formatGrade(project.complexity) },
     { label: "Performance", value: project.performance },
   ];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-parchment-base py-16 dark:bg-deep-space sm:py-24">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25 dark:opacity-40" />
+    <main className="relative min-h-screen overflow-hidden bg-parchment-base py-16 sm:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-25" />
       <div className="pointer-events-none absolute inset-0 bg-ambient-gold opacity-30" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/#projects"
-          className="codex-focus inline-flex items-center gap-2 rounded-full border border-leather-caramel/35 bg-parchment-subtle px-4 py-2 text-xs font-semibold tracking-wider text-leather-dark transition-all hover:border-leather-caramel hover:text-leather-caramel"
+          className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back to domains
         </Link>
 
-        <article className="codex-panel mt-6 overflow-hidden rounded-3xl">
+        <article className="codex-panel codex-panel-radius codex-rise mt-6 overflow-hidden">
           <div className="relative h-56 w-full overflow-hidden border-b border-leather-caramel/25 bg-parchment-subtle sm:h-72">
-            <Image
-              src={project.image}
-              alt={`Artifact of the domain ${project.title}`}
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
-              unoptimized
-            />
+            {project.image && project.image !== "/placeholder.svg" ? (
+              <Image
+                src={project.image}
+                alt={`Artifact of the domain ${project.title}`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="object-cover"
+                unoptimized
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <span className="codex-icon-plate h-11 w-11">
+                    <Image
+                      src={element.whiteIcon}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="codex-icon-on-plate h-6 w-6 object-contain"
+                      unoptimized
+                    />
+                  </span>
+                  <span className="font-display text-5xl text-leather-caramel/40">
+                    {project.title.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="codex-label">{project.category}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-6 sm:p-10">
@@ -63,7 +86,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-leather-caramel/25 bg-parchment-subtle px-4 py-3 dark:border-gold-400/20 dark:bg-glass-200"
+                  className="codex-card codex-radius-card codex-lift px-4 py-3"
                 >
                   <dt className="codex-label">{stat.label}</dt>
                   <dd className="mt-1 font-serif text-sm font-bold text-leather-dark">
@@ -100,7 +123,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Enter the ${project.title} domain`}
-                    className="codex-btn-primary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                    className="codex-btn-primary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     Enter Domain
@@ -112,7 +135,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`View the ${project.title} source`}
-                    className="codex-btn-secondary codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
+                    className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
                     <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                     Forge Lore

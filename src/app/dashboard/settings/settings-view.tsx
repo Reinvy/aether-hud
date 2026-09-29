@@ -4,17 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { AlertCircle, Save, Settings2 } from "lucide-react";
+import { Save, Settings2 } from "lucide-react";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
-import { useTheme } from "@/components/theme-provider";
+import { useMotionPrefs } from "@/components/motion-provider";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/ui/skeleton";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { SiteIdentityCard } from "@/components/features/settings/site-identity-card";
-import { ThemeAppearanceCard } from "@/components/features/settings/theme-appearance-card";
+import { AppearanceCard } from "@/components/features/settings/appearance-card";
 import { SystemInfoCard } from "@/components/features/settings/system-info-card";
 import { DangerZoneCard } from "@/components/features/settings/danger-zone-card";
 import { ApiError, apiRequest } from "@/lib/api-client";
@@ -27,7 +28,7 @@ const ConfirmDialog = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep-space/80 backdrop-blur-sm">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Opening confirmation" size="md" />
       </div>
     ),
@@ -36,7 +37,7 @@ const ConfirmDialog = dynamic(
 
 export default function DashboardSettings() {
   const { data: config, loading, error: loadError, refetch } = useData<ConfigDto>("/api/config");
-  const { setThemePreset, setAnimationsEnabled } = useTheme();
+  const { setAnimationsEnabled, syncConfig } = useMotionPrefs();
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
@@ -47,9 +48,8 @@ export default function DashboardSettings() {
   const [form, setForm] = useState({
     siteName: "",
     siteDescription: "",
-    themePreset: "teyvat-codex",
     animationsEnabled: true,
-    sysVersion: "",
+    edition: "",
   });
 
   useEffect(() => {
@@ -57,9 +57,8 @@ export default function DashboardSettings() {
       setForm({
         siteName: config.siteName || "Teyvat Codex",
         siteDescription: config.siteDescription || "",
-        themePreset: config.themePreset || "teyvat-codex",
         animationsEnabled: config.animationsEnabled !== false,
-        sysVersion: config.sysVersion || "v2.4.1",
+        edition: config.edition || "Teyvat Codex Edition",
       });
       setInitialized(true);
     }
@@ -74,8 +73,8 @@ export default function DashboardSettings() {
     setSaveError(null);
     try {
       await apiRequest<ConfigDto>("/api/config", { method: "PUT", body: form });
-      setThemePreset(form.themePreset);
       setAnimationsEnabled(form.animationsEnabled);
+      syncConfig();
       refetch();
     } catch (e) {
       setSaveError(
@@ -95,8 +94,8 @@ export default function DashboardSettings() {
       });
       setConfirmResetOpen(false);
       setSaveError(null);
-      setThemePreset("teyvat-codex");
       setAnimationsEnabled(true);
+      syncConfig();
       setInitialized(false);
       refetch();
     } catch (e) {
@@ -108,10 +107,28 @@ export default function DashboardSettings() {
     } finally {
       setResetting(false);
     }
-  }, [refetch, setThemePreset, setAnimationsEnabled]);
+  }, [refetch, setAnimationsEnabled, syncConfig]);
 
-  if (loading) {
+  // Skeleton only on first paint — a refetch after a save or reset keeps the
+  // current settings on screen instead of flashing the placeholder.
+  if (loading && config === null) {
     return <DashboardFormSkeleton />;
+  }
+
+  // A failed load renders the widget error with its own retry instead of an
+  // empty (and silently overwritable) settings form.
+  if (loadError !== null) {
+    return (
+      <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+        <DashboardPageHeader
+          icon={Settings2}
+          eyebrow="REALM SETTINGS"
+          title="Codex Settings"
+          titleHighlight="Settings"
+        />
+        <WidgetError label="Realm settings" message={loadError} onRetry={refetch} />
+      </div>
+    );
   }
 
   return (
@@ -130,38 +147,30 @@ export default function DashboardSettings() {
         }
       />
 
-      {/* Fetch and save failures are reported to the operator instead of
-          leaving a silently stale settings form on screen. */}
-      {(loadError || saveError) && (
-        <div
-          role="alert"
-          className="mb-6 flex items-start gap-3 codex-radius-sm border border-hud-danger/40 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10"
-        >
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-hud-danger" aria-hidden="true" />
-          <p className="font-body text-xs text-hud-danger">
-            {saveError ?? loadError}
-          </p>
-        </div>
-      )}
+      {/* Mutation failures use the single shared action banner. */}
+      {saveError !== null && <ActionError message={saveError} className="mb-6" />}
 
       {/* Settings panels — widget-level error boundary keeps a failing
           panel from blanking the whole view. Each panel is a reusable
           sub-component; the view is the thin orchestrator (state + save). */}
-      <ErrorBoundary section="settings-panels" fallback={<WidgetError label="REALM SETTINGS" />}>
+      <ErrorBoundary section="settings-panels" fallback={<WidgetError label="Realm settings" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         <SiteIdentityCard
           values={{
             siteName: form.siteName,
             siteDescription: form.siteDescription,
-            sysVersion: form.sysVersion,
+            edition: form.edition,
           }}
           onChange={(field, value) => updateField(field, value)}
         />
 
-        <ThemeAppearanceCard
-          themePreset={form.themePreset}
+        <AppearanceCard
           animationsEnabled={form.animationsEnabled}
-          onChange={(field, value) => updateField(field, value)}
+          onAnimationsChange={(enabled) => {
+            // Apply at once so the operator sees the effect, then persist on save.
+            updateField("animationsEnabled", enabled);
+            setAnimationsEnabled(enabled);
+          }}
           delay={0.1}
         />
 
@@ -180,18 +189,18 @@ export default function DashboardSettings() {
 
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
-        <div className="codex-card codex-radius-sm inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-400" aria-hidden="true" />
+        <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
+          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
           <div className="text-left">
-            <p className="font-display text-xs font-semibold tracking-wider text-text-main dark:text-platinum-50">
+            <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Settings ready to save
             </p>
-            <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+            <p className="font-body text-[11px] text-leather-muted">
               Theme and identity changes apply as soon as they are saved
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
-            Save
+            Save settings
           </Button>
         </div>
       </motion.div>
@@ -206,14 +215,7 @@ export default function DashboardSettings() {
             <>
               This replaces every custom record with the authored seed: domains, talents,
               quests, allies, codex pages and settings.
-              <br />
-              This action cannot be undone.
-              {resetError && (
-                <p role="alert" className="mt-3 flex items-start gap-2 text-hud-danger">
-                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  {resetError}
-                </p>
-              )}
+              {resetError !== null && <ActionError message={resetError} className="mt-3" />}
             </>
           }
           confirmLabel="Reset and re-seed"

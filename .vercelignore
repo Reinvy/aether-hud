@@ -5,6 +5,7 @@ browsers/
 .cache/
 e2e/
 test-results/
+references/
 dev.db
 test.db
 *.tsbuildinfo

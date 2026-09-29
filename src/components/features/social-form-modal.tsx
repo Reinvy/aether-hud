@@ -14,8 +14,8 @@ import type { SocialDto } from "@/lib/dto";
  * Lazy-loaded as its own chunk via next/dynamic — it only renders when the
  * operator opens the modal. Writes go through the shared api-client so a
  * rejected save surfaces the server's message inside the modal instead of
- * failing silently. Display order is owned by the link list's reorder
- * controls, so new links append with `nextOrder`.
+ * failing silently. Display order is assigned by the server on create, so the
+ * form never sends an `order`.
  */
 
 type FormData = {
@@ -44,8 +44,6 @@ interface SocialFormModalProps {
   onClose: () => void;
   /** Social link being edited, or null for a new link. */
   social: SocialDto | null;
-  /** Order value a new link appends with — the last position in the list. */
-  nextOrder: number;
   /** Called after a successful save so the parent can refetch + close. */
   onSaved: () => void;
 }
@@ -54,23 +52,25 @@ export function SocialFormModal({
   open,
   onClose,
   social,
-  nextOrder,
   onSaved,
 }: SocialFormModalProps) {
   const [form, setForm] = useState<FormData>(() => toForm(social));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) social.
   useEffect(() => {
     if (open) {
       setForm(toForm(social));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, social]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
@@ -91,13 +91,18 @@ export function SocialFormModal({
       } else {
         await apiRequest("/api/socials", {
           method: "POST",
-          body: { ...body, order: nextOrder },
+          body,
         });
       }
 
       onSaved();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Failed to save social link");
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError("Failed to save social link");
+      }
     } finally {
       setSaving(false);
     }
@@ -109,7 +114,7 @@ export function SocialFormModal({
       onClose={onClose}
       title={social ? "Edit social link" : "New social link"}
       saveLabel="Save link"
-      error={error}
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -118,11 +123,15 @@ export function SocialFormModal({
           label="Platform"
           placeholder="e.g. GitHub"
           value={form.platform}
+          required
+          error={fieldErrors.platform}
           onChange={(e) => updateField("platform", e.target.value)}
         />
         <Select
           label="Icon"
           value={form.icon}
+          required
+          error={fieldErrors.icon}
           onChange={(e) => updateField("icon", e.target.value)}
           options={[
             { value: "Globe", label: "Globe — website / LinkedIn" },
@@ -151,6 +160,8 @@ export function SocialFormModal({
         label="URL"
         placeholder="https://github.com/username"
         value={form.url}
+        required
+        error={fieldErrors.url}
         onChange={(e) => updateField("url", e.target.value)}
       />
     </FormModal>

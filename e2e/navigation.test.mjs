@@ -45,7 +45,6 @@ const DASHBOARD_PAGES = [
 const API_ROUTES = [
   "/api/auth",
   "/api/config",
-  "/api/dashboard/stats",
   "/api/experiences",
   "/api/portfolio",
   "/api/projects",
@@ -56,6 +55,9 @@ const API_ROUTES = [
   "/api/telemetry/summary",
   "/api/testimonials",
 ];
+// Operator data: these read the private archive, so an unauthenticated GET must
+// be refused (401 with a configured secret, 503 without one — never 200).
+const SESSION_GUARDED_ROUTES = ["/api/dashboard/stats", "/api/dashboard/activity"];
 const SEO_FILES = ["/robots.txt", "/sitemap.xml"];
 // Static assets that power PWA install (manifest), favicon (brand icon) and
 // the project-card/avatar placeholder — must all be served by production.
@@ -207,6 +209,27 @@ async function main() {
     }
   }
 
+  // ===== TEST 3b: Operator Data Guard =====
+  // The console's stats and activity streams name the private archive's records
+  // and their edit times. They were public AND CDN-cached; a 200 here means the
+  // operator's own working data is readable by anyone who can reach the route.
+  log("TEST 3b: Operator Data Guard (stats & activity require a session)");
+  for (const route of SESSION_GUARDED_ROUTES) {
+    try {
+      const resp = await fetchRetry(`${targetUrl}${route}`, { method: "GET", timeout: 10000 });
+      assert(
+        resp.status === 401 || resp.status === 503,
+        `GET ${route} is refused without a session (got ${resp.status})`
+      );
+      assert(
+        (resp.headers.get("cache-control") || "").includes("no-store"),
+        `GET ${route} is never CDN-cached (got "${resp.headers.get("cache-control")}")`
+      );
+    } catch (e) {
+      assert(false, `GET ${route} is checkable: ${e.message}`);
+    }
+  }
+
   // ===== TEST 4: Auth Boundary =====
   // The dashboard is the private area — /api/auth must REJECT invalid
   // credentials. A 200 here would mean the gate is open (fail-closed guard).
@@ -355,7 +378,6 @@ async function main() {
   const API_SHAPES = [
     // [path, expectedType, requiredKeys]
     ["/api/config", "object", ["name", "tagline", "email"]],
-    ["/api/dashboard/stats", "object", ["projectCount", "skillCount", "source"]],
     ["/api/experiences", "array", ["id", "company", "role"]],
     ["/api/portfolio", "object", ["name", "projects", "skills", "socials"]],
     ["/api/projects", "array", ["id", "title"]],
@@ -584,18 +606,18 @@ async function main() {
     }
   }
 
-  // The public form endpoint stays reachable — the summon portal must work for
-  // anonymous visitors.
+  // The summon desk has no server side: the public dossier composes a mailto:
+  // hand-off instead, so the homepage must expose the address as a link. A
+  // fabricated "delivered" receipt from a stateless endpoint was worse than no
+  // endpoint at all.
   try {
-    const resp = await fetchRetry(`${targetUrl}/api/contact`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Probe", email: "probe@example.com", message: "hello" }),
-      timeout: 10000,
-    });
-    assert(resp.status !== 401 && resp.status !== 403, `POST /api/contact stays public (got ${resp.status})`);
+    const { body } = await getText("/");
+    assert(
+      /href="mailto:[^"]+@[^"]+"/.test(body),
+      "Homepage exposes a mailto: dispatch link"
+    );
   } catch (e) {
-    assert(false, `POST /api/contact is checkable: ${e.message}`);
+    assert(false, `Homepage mailto hand-off is checkable: ${e.message}`);
   }
 
   // ===== Summary =====

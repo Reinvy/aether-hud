@@ -16,8 +16,7 @@ interface DangerZoneCardProps {
 /**
  * DangerZoneCard — irreversible-action panel for the settings page.
  *
- * Renders as warm parchment in the light realm and only borrows the deep
- * surface in Celestial Night; the destructive accent stays hud-danger in both.
+ * Renders as a warm parchment panel; the destructive accent is crimson.
  */
 export function DangerZoneCard({ delay = 0, onReset, resetting = false }: DangerZoneCardProps) {
   return (
@@ -25,18 +24,18 @@ export function DangerZoneCard({ delay = 0, onReset, resetting = false }: Danger
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-hud-danger" aria-hidden="true" />
-            <CardTitle className="text-hud-danger">Danger Zone</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-crimson-600" aria-hidden="true" />
+            <CardTitle className="text-crimson-600">Danger Zone</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="font-body text-xs leading-relaxed text-text-muted dark:text-platinum-200">
+          <p className="font-body text-xs leading-relaxed text-leather-muted">
             These actions are irreversible. Proceed with caution.
           </p>
-          <div className="flex items-center justify-between gap-3 codex-radius-sm border border-hud-danger/30 bg-hud-danger/5 px-4 py-3 dark:bg-hud-danger/10">
+          <div className="flex items-center justify-between gap-3 codex-radius-card border border-crimson-600/30 bg-crimson-600/8 px-4 py-3">
             <div className="min-w-0">
-              <p className="font-body text-xs font-medium text-text-main dark:text-platinum-50">Reset all data</p>
-              <p className="font-body text-[11px] text-text-muted dark:text-platinum-200">
+              <p className="font-body text-xs font-medium text-leather-dark">Reset all data</p>
+              <p className="font-body text-[11px] text-leather-muted">
                 Restore the authored seed data
               </p>
             </div>
@@ -47,7 +46,7 @@ export function DangerZoneCard({ delay = 0, onReset, resetting = false }: Danger
               onClick={onReset}
               disabled={resetting || !onReset}
               loading={resetting}
-              className="shrink-0 border-hud-danger/30 text-hud-danger hover:bg-hud-danger/10"
+              className="shrink-0 border-crimson-600/30 text-crimson-600 hover:bg-crimson-600/8"
             >
               {!resetting && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
               Reset

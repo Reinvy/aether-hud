@@ -39,6 +39,8 @@ interface SkillCardProps {
   onMove?: (id: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** A reorder write for this card is in flight — its move controls are disabled. */
+  moving?: boolean;
 }
 
 /**
@@ -61,6 +63,7 @@ export const SkillCard = memo(function SkillCard({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
 }: SkillCardProps) {
   const Icon = skillIcons[skill.icon] || Cpu;
 
@@ -70,7 +73,7 @@ export const SkillCard = memo(function SkillCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep" className="skillbar-hover">
+      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card skillbar-hover">
         <CardContent className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -84,10 +87,10 @@ export const SkillCard = memo(function SkillCard({
                 />
               )}
               <IconBox size="md">
-                <Icon className="h-5 w-5 text-gold-400/60 transition-colors duration-300 group-hover:text-gold-400" />
+                <Icon className="h-5 w-5 text-gold-ink" />
               </IconBox>
               <div className="min-w-0">
-                <p className="truncate font-mono text-xs font-medium tracking-wider text-text-main">
+                <p className="truncate font-mono text-xs font-medium tracking-wider text-leather-dark">
                   {skill.name}
                 </p>
                 <Badge variant="default" size="sm" className="mt-1">
@@ -95,7 +98,7 @@ export const SkillCard = memo(function SkillCard({
                 </Badge>
               </div>
             </div>
-            <span className="font-display text-xl font-bold tabular-nums text-gold-400">
+            <span className="font-display text-xl font-bold tabular-nums text-gold-ink">
               {skill.level}%
             </span>
           </div>
@@ -110,7 +113,7 @@ export const SkillCard = memo(function SkillCard({
                 <IconButton
                   label={`Move ${skill.name} up`}
                   onClick={() => onMove(skill.id, -1)}
-                  disabled={!canMoveUp}
+                  disabled={!canMoveUp || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
@@ -118,7 +121,7 @@ export const SkillCard = memo(function SkillCard({
                 <IconButton
                   label={`Move ${skill.name} down`}
                   onClick={() => onMove(skill.id, 1)}
-                  disabled={!canMoveDown}
+                  disabled={!canMoveDown || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />

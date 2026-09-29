@@ -7,6 +7,7 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronRight,
+  Copy,
   Terminal,
   Users,
   User,
@@ -17,7 +18,9 @@ import {
   MessageCircle,
   Mail,
   Link2,
-  MonitorPlay,
+  Tv,
+  Gamepad2,
+  Radio,
   Palette,
   Heart,
   Coffee,
@@ -29,7 +32,6 @@ import {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 } from "lucide-react";
 import { fadeInView } from "@/lib/motion-variants";
 import { Button } from "@/components/ui/button";
@@ -46,7 +48,9 @@ const socialIcons: Record<string, React.ElementType> = {
   MessageCircle,
   Mail,
   Link2,
-  MonitorPlay,
+  Tv,
+  Gamepad2,
+  Radio,
   Palette,
   Heart,
   Coffee,
@@ -59,12 +63,34 @@ const socialIcons: Record<string, React.ElementType> = {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 };
 
-interface ContactResponse {
-  error?: string;
-  transmissionId?: string;
+interface DispatchForm {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const EMPTY_DISPATCH: DispatchForm = { name: "", email: "", subject: "", message: "" };
+
+/**
+ * Compose the hand-off link. The summon desk has no server side: the visitor's
+ * own mail client carries the message, which is why the form validates the same
+ * things the retired endpoint did (name, address, topic, body) before opening it.
+ */
+function buildMailto(address: string, form: DispatchForm): string {
+  const subject = `Commission inquiry — ${form.name.trim()}`;
+  const body = [
+    `Name: ${form.name.trim()}`,
+    `Email: ${form.email.trim()}`,
+    `Subject: ${form.subject.trim()}`,
+    "",
+    form.message.trim(),
+  ].join("\n");
+  return `mailto:${address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 export function ContactSection({
@@ -76,65 +102,73 @@ export function ContactSection({
   socials: SocialDto[];
   section: SectionDto;
 }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<DispatchForm>(EMPTY_DISPATCH);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [transmissionId, setTransmissionId] = useState<string>("");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  // The roster is long (29 channels); the panel leads with the first eight and
+  // lets the visitor expand the rest instead of scrolling a wall of links.
+  const [showAllSocials, setShowAllSocials] = useState(false);
 
   const directEmail = config.email || "hello@aether-hud.dev";
   const isAvailable = config.status.toUpperCase() === "ONLINE";
+  const mailtoHref = buildMailto(directEmail, formData);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSending(true);
+    if (sending) return;
     setError(null);
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data: ContactResponse = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError(data.error ?? "The dispatch scroll could not be delivered. Try again.");
-        return;
-      }
-
-      setTransmissionId(data.transmissionId ?? `TX-${Date.now().toString(36).toUpperCase()}`);
-      setSent(true);
-    } catch {
-      setError("The dispatch portal is unreachable. Try again in a moment.");
-    } finally {
-      setSending(false);
+    if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      setError("Please fill in your name, email, topic and message.");
+      return;
     }
+    if (!EMAIL_PATTERN.test(formData.email.trim())) {
+      setError("That email address does not look right.");
+      return;
+    }
+
+    setSending(true);
+    setCopyState("idle");
+    // Hand the composed message to the visitor's mail client.
+    window.location.href = mailtoHref;
+    setSent(true);
+    setSending(false);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(directEmail);
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+  };
+
+  const resetDispatch = () => {
+    setSent(false);
+    setCopyState("idle");
+    setFormData(EMPTY_DISPATCH);
   };
 
   return (
     <section id="contact" className="relative py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15 dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-15" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="Dispatch Portal"
           icon={
-            <div className="w-4 h-4 relative">
+            <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.mail}
                 alt="Mail Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
               />
-            </div>
+            </span>
           }
           title={section.title || "Summon"}
           highlight={section.title ? undefined : "Architect"}
@@ -148,24 +182,24 @@ export function ContactSection({
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Contact Form — takes 3 cols */}
             <motion.div className="lg:col-span-3" {...fadeInView}>
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 shadow-2xl h-full">
+              <div className="codex-card codex-radius-card p-6 sm:p-8 h-full">
                 {/* Form header */}
                 <div className="flex flex-wrap items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Dispatch"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  </span>
+                  <span className="codex-label-active">
                     Encrypted Dispatch Scroll
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-jade-500/10 border border-jade-500/30">
                     <StatusDot tone="active" pulse label="Dispatch portal online" />
-                    <span className="font-mono text-[9px] text-jade-600 dark:text-jade-300 font-bold uppercase">
+                    <span className="font-mono text-[9px] text-jade-ink font-bold uppercase">
                       Open
                     </span>
                   </span>
@@ -178,28 +212,48 @@ export function ContactSection({
                     className="flex flex-col items-center justify-center py-12 text-center"
                     aria-live="polite"
                   >
-                    <CheckCircle className="h-12 w-12 text-jade-500 mb-4" aria-hidden="true" />
+                    <CheckCircle className="h-12 w-12 text-jade-ink mb-4" aria-hidden="true" />
                     <p className="font-serif text-lg font-bold tracking-wider text-leather-dark uppercase">
-                      Dispatch Delivered
+                      Dispatch composed
                     </p>
-                    <p className="mt-2 text-sm text-leather-caramel dark:text-text-muted font-mono font-medium">
-                      Summoning scroll received. Seal ID:
+                    <p className="mt-2 max-w-sm text-sm text-leather-muted font-body">
+                      Your mail client has opened with the summoning scroll. If it did not, send the
+                      message straight to the address below.
                     </p>
-                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-caramel font-bold tabular-nums">
-                      {transmissionId}
+                    <span className="mt-3 inline-block codex-btn border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-dark font-bold">
+                      {directEmail}
                     </span>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        setSent(false);
-                        setFormData({ name: "", email: "", subject: "", message: "" });
-                      }}
-                      className="mt-6 font-serif uppercase tracking-widest"
-                    >
-                      Send Another Dispatch
-                    </Button>
+                    <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleCopy}
+                        className="font-serif uppercase tracking-widest"
+                      >
+                        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                        {copyState === "copied"
+                          ? "Address copied"
+                          : copyState === "failed"
+                            ? "Copy failed — select it"
+                            : "Copy address"}
+                      </Button>
+                      <a
+                        href={mailtoHref}
+                        className="codex-btn-primary codex-sheen codex-focus px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase"
+                      >
+                        Open mail app
+                      </a>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetDispatch}
+                        className="font-serif uppercase tracking-widest"
+                      >
+                        Send another dispatch
+                      </Button>
+                    </div>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -267,7 +321,7 @@ export function ContactSection({
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="flex items-center gap-2 rounded-xl border border-hud-danger/40 bg-hud-danger/10 px-4 py-3 text-hud-danger"
+                          className="flex items-center gap-2 codex-radius-card border border-crimson-600/30 bg-crimson-600/8 px-4 py-3 text-crimson-600"
                           role="alert"
                           aria-live="polite"
                         >
@@ -280,7 +334,7 @@ export function ContactSection({
                     <button
                       type="submit"
                       disabled={sending || sent}
-                      className="w-full codex-btn-primary py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
+                      className="w-full codex-btn-primary codex-focus py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
                       <div className="w-4 h-4 relative">
                         <Image
@@ -288,7 +342,7 @@ export function ContactSection({
                           alt="Wish Icon"
                           width={16}
                           height={16}
-                          className="object-contain brightness-0"
+                          className="codex-icon-ink object-contain"
                         />
                       </div>
                       <span>{sending ? "Dispatching Scroll…" : "Dispatch Summoning Scroll"}</span>
@@ -301,47 +355,56 @@ export function ContactSection({
             {/* Contact Info / Social Runes — takes 2 cols */}
             <motion.div className="lg:col-span-2 space-y-4" {...fadeInView}>
               {/* Social Channels */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.community}
                       alt="Community"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  </span>
+                  <span className="codex-label-active">
                     Guild Channels
                   </span>
                 </div>
 
                 {socials.length > 0 ? (
-                  <div
-                    className="space-y-2 max-h-72 overflow-y-auto pr-1"
-                    aria-label="Social communication channels"
-                  >
-                    {socials.map((social) => {
-                      const Icon = socialIcons[social.icon] || Terminal;
-                      return (
-                        <a
-                          key={social.id}
-                          href={social.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`Connect on ${social.platform}`}
-                          className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
-                        >
-                          <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
-                          <span className="flex-1 font-bold">{social.platform}</span>
-                          <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
-                        </a>
-                      );
-                    })}
+                  <div className="space-y-2" aria-label="Social communication channels">
+                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                      {(showAllSocials ? socials : socials.slice(0, 8)).map((social) => {
+                        const Icon = socialIcons[social.icon] || Terminal;
+                        return (
+                          <a
+                            key={social.id}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Connect on ${social.platform}`}
+                            className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm press-scale hover-scale-sm codex-focus"
+                          >
+                            <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                            <span className="flex-1 font-bold">{social.platform}</span>
+                            <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
+                          </a>
+                        );
+                      })}
+                    </div>
+                    {socials.length > 8 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllSocials((open) => !open)}
+                        aria-expanded={showAllSocials}
+                        className="codex-btn-secondary codex-sheen codex-focus w-full px-4 py-2 text-[11px] tracking-wider uppercase"
+                      >
+                        {showAllSocials ? "Show fewer channels" : `Show all ${socials.length} channels`}
+                      </button>
+                    )}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-leather-caramel/30 dark:border-border-subtle px-4 py-8 text-center">
+                  <div className="flex flex-col items-center gap-2 codex-radius-card border border-dashed border-leather-caramel/30 px-4 py-8 text-center">
                     <Users className="h-6 w-6 text-leather-caramel/70" aria-hidden="true" />
                     <p className="font-serif text-sm font-bold text-leather-dark">
                       No guild channels inscribed yet
@@ -355,35 +418,35 @@ export function ContactSection({
               </div>
 
               {/* Direct Letter */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Mail"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
-                  <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
+                  </span>
+                  <span className="codex-label-active">
                     Direct Letter
                   </span>
                 </div>
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
+                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm codex-focus"
                 >
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Direct Mail"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
+                  </span>
                   <span className="font-mono text-[11px] truncate font-bold">
                     {directEmail}
                   </span>
@@ -392,10 +455,10 @@ export function ContactSection({
               </div>
 
               {/* Availability */}
-              <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
+              <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2">
                   <StatusDot tone={isAvailable ? "active" : "warning"} pulse={isAvailable} />
-                  <span className="font-mono text-[10px] font-bold text-jade-600 dark:text-jade-300 uppercase">
+                  <span className="font-mono text-[10px] font-bold text-jade-ink uppercase">
                     {isAvailable ? "Available for commissions" : config.status}
                   </span>
                 </div>

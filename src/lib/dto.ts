@@ -87,11 +87,20 @@ export interface ConfigDto {
   location: string;
   avatar: string;
   status: string;
-  sysVersion: string;
+  edition: string;
   siteName: string;
   siteDescription: string;
-  themePreset: string;
   animationsEnabled: boolean;
+}
+
+/** One entry of the console activity stream (`GET /api/dashboard/activity`). */
+export interface ActivityItem {
+  id: string;
+  action: string;
+  detail: string;
+  time: string;
+  type: "deploy" | "update" | "calibrate" | "sync";
+  timestamp: string;
 }
 
 export interface StatsDto {
@@ -100,8 +109,34 @@ export interface StatsDto {
   experienceCount: number;
   testimonialCount: number;
   avgSkillLevel: number;
-  uptime: string;
   source: "database" | "data-file-fallback";
+}
+
+/**
+ * One aggregated Web Vitals metric as returned by `/api/telemetry/summary`.
+ * `last` is the newest sample's origin (page + time), never the raw stream.
+ */
+export interface TelemetryMetricSummary {
+  count: number;
+  min: number | null;
+  max: number | null;
+  avg: number | null;
+  p95: number | null;
+  last: {
+    value: number;
+    rating: string;
+    path: string;
+    recordedAt: string;
+  } | null;
+}
+
+/** Aggregated Web Vitals payload from `/api/telemetry/summary`. */
+export interface TelemetrySummary {
+  ok: boolean;
+  source: "database" | "memory";
+  startedAt: string;
+  totalRecorded: number;
+  metrics: Record<string, TelemetryMetricSummary>;
 }
 
 /* ─── Static dataset shapes (src/data/portfolio.ts) ─────────────────────── */
@@ -182,6 +217,103 @@ export function fallbackProjectToDto(p: PortfolioProject, order: number): Projec
     liveUrl: p.links.live ?? null,
     githubUrl: p.links.github ?? null,
     order,
+  };
+}
+
+/** Prisma `Skill` row → flat wire skill (drops the row's timestamps). */
+export function skillToDto(row: {
+  id: string;
+  name: string;
+  level: number;
+  category: string;
+  icon: string;
+  order: number;
+}): SkillDto {
+  return {
+    id: row.id,
+    name: row.name,
+    level: row.level,
+    category: row.category,
+    icon: row.icon,
+    order: row.order,
+  };
+}
+
+/** Prisma `Experience` row → flat wire experience. */
+export function experienceToDto(row: {
+  id: string;
+  company: string;
+  role: string;
+  description: string;
+  startDate: string;
+  endDate: string | null;
+  type: string;
+  order: number;
+}): ExperienceDto {
+  return {
+    id: row.id,
+    company: row.company,
+    role: row.role,
+    description: row.description,
+    startDate: row.startDate,
+    endDate: row.endDate,
+    type: row.type,
+    order: row.order,
+  };
+}
+
+/** Prisma `Testimonial` row → flat wire testimonial. */
+export function testimonialToDto(row: {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  avatar: string;
+  order: number;
+}): TestimonialDto {
+  return {
+    id: row.id,
+    name: row.name,
+    role: row.role,
+    content: row.content,
+    avatar: row.avatar,
+    order: row.order,
+  };
+}
+
+/** Prisma `SocialLink` row → flat wire social link. */
+export function socialToDto(row: {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  order: number;
+}): SocialDto {
+  return {
+    id: row.id,
+    platform: row.platform,
+    url: row.url,
+    icon: row.icon,
+    order: row.order,
+  };
+}
+
+/** Prisma `Section` row → flat wire section. */
+export function sectionToDto(row: {
+  id: string;
+  key: string;
+  title: string;
+  subtitle: string | null;
+  enabled: boolean;
+  order: number;
+}): SectionDto {
+  return {
+    id: row.id,
+    key: row.key,
+    title: row.title,
+    subtitle: row.subtitle,
+    enabled: row.enabled,
+    order: row.order,
   };
 }
 

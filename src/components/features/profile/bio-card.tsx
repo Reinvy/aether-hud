@@ -20,7 +20,7 @@ export function BioCard({ value, onChange }: BioCardProps) {
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <ScrollText className="h-4 w-4 text-gold-400" aria-hidden="true" />
+          <ScrollText className="h-4 w-4 text-gold-ink" aria-hidden="true" />
           <CardTitle>Biography</CardTitle>
         </div>
       </CardHeader>
@@ -33,7 +33,7 @@ export function BioCard({ value, onChange }: BioCardProps) {
           placeholder="A short chronicle of the traveler…"
           className="resize-none"
         />
-        <p className="mt-2 codex-label text-[9px] text-text-muted">
+        <p className="mt-2 codex-label text-[9px] text-leather-muted">
           Markdown supported. Shown in the hero dossier.
         </p>
       </CardContent>

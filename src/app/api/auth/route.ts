@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash, timingSafeEqual } from "node:crypto";
 import {
   SESSION_COOKIE,
   SESSION_TTL_MS,
@@ -19,6 +20,17 @@ const COOKIE_OPTIONS = {
   maxAge: SESSION_TTL_MS / 1000,
 } as const;
 
+/**
+ * Constant-time password comparison. Both sides are hashed to a fixed 32 bytes
+ * first, so the comparison leaks neither the length nor a byte-by-byte prefix
+ * of the secret, and `timingSafeEqual` can never throw on a length mismatch.
+ */
+function passwordMatches(provided: string, expected: string): boolean {
+  const providedDigest = createHash("sha256").update(provided).digest();
+  const expectedDigest = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(providedDigest, expectedDigest);
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Fail closed — no hardcoded fallback. If the secret is not configured,
@@ -29,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const { password } = await req.json();
 
-    if (!password || password !== process.env.DASHBOARD_SECRET) {
+    if (typeof password !== "string" || !passwordMatches(password, process.env.DASHBOARD_SECRET ?? "")) {
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 }
@@ -47,13 +59,26 @@ export async function POST(req: NextRequest) {
 
 /** Session probe used by the dashboard shell on mount. */
 export async function GET(req: NextRequest) {
-  return NextResponse.json({
-    authenticated: verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value),
-  });
+  try {
+    return NextResponse.json({
+      authenticated: verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value),
+    });
+  } catch (e) {
+    console.error("[AUTH_GET]", e instanceof Error ? e.message : e);
+    return NextResponse.json(
+      { authenticated: false, error: "Session check failed" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE() {
-  const response = NextResponse.json({ success: true });
-  response.cookies.set(SESSION_COOKIE, "", { ...COOKIE_OPTIONS, maxAge: 0 });
-  return response;
+  try {
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(SESSION_COOKIE, "", { ...COOKIE_OPTIONS, maxAge: 0 });
+    return response;
+  } catch (e) {
+    console.error("[AUTH_DELETE]", e instanceof Error ? e.message : e);
+    return NextResponse.json({ success: false, error: "Sign-out failed" }, { status: 500 });
+  }
 }

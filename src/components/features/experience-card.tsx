@@ -22,9 +22,9 @@ export interface ExperienceCardData {
 }
 
 const typeColors: Record<ExperienceType, string> = {
-  work: "border-gold-400/40 text-gold-400",
-  education: "border-jade-400/40 text-jade-400",
-  freelance: "border-jade-400/40 text-jade-400",
+  work: "border-gold-400/40 text-gold-ink",
+  education: "border-jade-400/40 text-jade-ink",
+  freelance: "border-jade-400/40 text-jade-ink",
 };
 
 const typeIcons: Record<ExperienceType, React.ElementType> = {
@@ -65,17 +65,17 @@ export const ExperienceCard = memo(function ExperienceCard({ experience: exp, in
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep">
+      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card">
         <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
           <IconBox>
-            <TypeIcon className="h-4 w-4 text-gold-400/60" />
+            <TypeIcon className="h-4 w-4 text-gold-ink" />
           </IconBox>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-serif text-sm font-semibold tracking-wide text-text-main group-hover:text-leather-caramel dark:group-hover:text-gold-400 transition-colors duration-200">
+            <p className="truncate font-serif text-sm font-semibold tracking-wide text-leather-dark group-hover:text-leather-caramel transition-colors duration-200">
               {exp.role}
             </p>
-            <p className="mt-0.5 truncate font-body text-xs text-text-muted">
+            <p className="mt-0.5 truncate font-body text-xs text-leather-muted">
               {exp.company}
             </p>
           </div>
@@ -91,7 +91,7 @@ export const ExperienceCard = memo(function ExperienceCard({ experience: exp, in
           </div>
 
           <div className="hidden w-40 items-center gap-2 md:flex">
-            <span className="font-body text-xs text-text-muted tabular-nums">
+            <span className="font-body text-xs text-leather-muted tabular-nums">
               {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : "Present"}
             </span>
           </div>

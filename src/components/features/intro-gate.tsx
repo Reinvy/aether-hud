@@ -19,15 +19,18 @@ const TITLE_ID = "intro-gate-title";
  * or on the backdrop. The dossier behind it is always rendered, so crawlers
  * and screen readers never lose the page to the gate.
  */
-export function IntroGate() {
+export function IntroGate({ onDismiss }: { onDismiss?: () => void }) {
   const [open, setOpen] = useState(false);
   const enterButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!sessionStorage.getItem(GATE_STORAGE_KEY)) {
-      setOpen(true);
+    if (sessionStorage.getItem(GATE_STORAGE_KEY)) {
+      // Already greeted this session — the dossier is revealed immediately.
+      onDismiss?.();
+      return;
     }
-  }, []);
+    setOpen(true);
+  }, [onDismiss]);
 
   useEffect(() => {
     if (open) {
@@ -38,7 +41,8 @@ export function IntroGate() {
   const handleProceed = useCallback(() => {
     sessionStorage.setItem(GATE_STORAGE_KEY, "true");
     setOpen(false);
-  }, []);
+    onDismiss?.();
+  }, [onDismiss]);
 
   return (
     <AnimatePresence>
@@ -61,7 +65,7 @@ export function IntroGate() {
           className="fixed inset-0 z-50 flex flex-col items-center justify-center select-none bg-gradient-to-b from-parchment-base via-parchment-base to-parchment-subtle px-4 text-leather-dark"
         >
           {/* Subtle Outer Frame Inset */}
-          <div className="absolute inset-4 sm:inset-8 border border-leather-caramel/15 pointer-events-none rounded-2xl" />
+          <div className="absolute inset-4 sm:inset-8 border border-leather-caramel/15 pointer-events-none codex-panel-radius" />
 
           {/* Central Content */}
           <div className="relative z-10 flex flex-col items-center text-center max-w-lg space-y-10 sm:space-y-12">
@@ -75,14 +79,14 @@ export function IntroGate() {
               {TEYVAT_ELEMENTS.map((elem) => (
                 <div
                   key={elem.key}
-                  className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-transform hover:scale-110"
+                  className="codex-icon-plate h-9 w-9 sm:h-11 sm:w-11 transition-transform hover:scale-110"
                 >
                   <Image
-                    src={elem.gildedIcon}
+                    src={elem.whiteIcon}
                     alt={elem.name}
                     width={40}
                     height={40}
-                    className="object-contain filter sepia-[0.3] contrast-[1.1] opacity-90 hover:opacity-100 transition-opacity"
+                    className="codex-icon-on-plate h-5 w-5 sm:h-6 sm:w-6 object-contain transition-opacity hover:opacity-100"
                     unoptimized
                   />
                 </div>

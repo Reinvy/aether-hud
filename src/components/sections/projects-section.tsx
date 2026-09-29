@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/features/section-heading";
@@ -55,13 +55,13 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
         <SectionHeading
           badge="Artifact Archive // Domains of Forgery"
           icon={
-            <div className="w-4 h-4 relative">
+            <div className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.domain}
                 alt="Domain Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
                 unoptimized
               />
             </div>
@@ -78,22 +78,22 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
         {categories.length > 1 && (
           <div
             className="mt-8 flex flex-wrap items-center justify-center gap-2"
-            role="tablist"
-            aria-label="Domain categories"
+            role="group"
+            aria-label="Filter domains by discipline"
           >
             {categories.map((category) => {
               const isActive = selectedCategory === category;
               return (
                 <button
                   key={category}
-                  role="tab"
-                  aria-selected={isActive}
+                  type="button"
+                  aria-pressed={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "px-4 py-1.5 rounded-full font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
+                    "press-scale px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2 codex-focus",
                     isActive
-                      ? "bg-leather-caramel dark:bg-gold-400 text-parchment-base dark:text-deep-space border-leather-caramel dark:border-gold-400 shadow-md scale-105"
-                      : "bg-parchment-base/80 dark:bg-surface-primary/80 text-leather-dark dark:text-platinum-50 border-leather-caramel/35 dark:border-gold-400/35 hover:border-leather-caramel dark:hover:border-gold-400",
+                      ? "bg-leather-caramel text-parchment-base border-leather-caramel shadow-md scale-105"
+                      : "bg-parchment-base/80 text-leather-dark border-leather-caramel/35 hover:border-leather-caramel",
                   )}
                 >
                   {category === "ALL" ? "All domains" : category}
@@ -105,27 +105,38 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
 
         {/* Projects Grid */}
         <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" {...stagger}>
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {filteredProjects.length === 0 && (
             <div className="col-span-full">
-              <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+              <div className="codex-card codex-radius-card codex-lift mx-auto max-w-md px-8 py-10 text-center">
+                <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.archive}
                     alt=""
                     width={28}
                     height={28}
-                    className="object-contain"
+                    className="codex-icon-on-plate h-6 w-6 object-contain"
                     unoptimized
                   />
                 </div>
-                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark dark:text-platinum-50">
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                   {archiveIsEmpty ? "The archive awaits its first artifact" : "No artifacts in this domain"}
                 </h3>
-                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted dark:text-platinum-200">
+                <p className="mt-2 font-body text-sm leading-relaxed text-leather-muted">
                   {archiveIsEmpty
                     ? "Commissioned builds will be catalogued here as soon as they are forged."
                     : "Choose another realm from the filter above, or return to all domains."}
