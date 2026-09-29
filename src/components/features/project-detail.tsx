@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, GitBranch } from "lucide-react";
+import { elementForCategory, formatGrade } from "@/lib/project-meta";
 import type { ProjectDto } from "@/lib/dto";
 
 interface ProjectDetailProps {
@@ -15,10 +16,11 @@ interface ProjectDetailProps {
  * dossier ships complete in the first byte and stays crawlable.
  */
 export function ProjectDetail({ project }: ProjectDetailProps) {
+  const element = elementForCategory(project.category);
   const stats = [
     { label: "Category", value: project.category },
     { label: "Year", value: project.year },
-    { label: "Complexity", value: project.complexity },
+    { label: "Artifact grade", value: formatGrade(project.complexity) },
     { label: "Performance", value: project.performance },
   ];
 
@@ -36,16 +38,37 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           Back to domains
         </Link>
 
-        <article className="codex-panel codex-panel-radius mt-6 overflow-hidden">
+        <article className="codex-panel codex-panel-radius codex-rise mt-6 overflow-hidden">
           <div className="relative h-56 w-full overflow-hidden border-b border-leather-caramel/25 bg-parchment-subtle sm:h-72">
-            <Image
-              src={project.image}
-              alt={`Artifact of the domain ${project.title}`}
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
-              unoptimized
-            />
+            {project.image && project.image !== "/placeholder.svg" ? (
+              <Image
+                src={project.image}
+                alt={`Artifact of the domain ${project.title}`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="object-cover"
+                unoptimized
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <span className="codex-icon-plate h-11 w-11">
+                    <Image
+                      src={element.whiteIcon}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="codex-icon-on-plate h-6 w-6 object-contain"
+                      unoptimized
+                    />
+                  </span>
+                  <span className="font-display text-5xl text-leather-caramel/40">
+                    {project.title.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="codex-label">{project.category}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-6 sm:p-10">
@@ -63,7 +86,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="codex-card codex-radius-card px-4 py-3"
+                  className="codex-card codex-radius-card codex-lift px-4 py-3"
                 >
                   <dt className="codex-label">{stat.label}</dt>
                   <dd className="mt-1 font-serif text-sm font-bold text-leather-dark">

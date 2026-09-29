@@ -11,8 +11,10 @@ import {
   Globe,
   GitBranch,
   MessageCircle,
-  MonitorPlay,
   Palette,
+  Tv,
+  Gamepad2,
+  Radio,
   Heart,
   Coffee,
   Video,
@@ -24,7 +26,6 @@ import {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,7 +52,9 @@ const iconMap: Record<string, React.ElementType> = {
   MessageCircle,
   Mail,
   Link2,
-  MonitorPlay,
+  Tv,
+  Gamepad2,
+  Radio,
   Palette,
   Heart,
   Coffee,
@@ -64,7 +67,6 @@ const iconMap: Record<string, React.ElementType> = {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 };
 
 interface SocialLinksCardProps {

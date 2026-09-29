@@ -68,7 +68,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `${APP_NAME} — Interactive Traveler Dossier`,
-    description: APP_DESCRIPTION,
+    description:
+      "Forged domains, attuned talents and recorded quests — the working dossier of a full-stack developer and AI engineer, illuminated in parchment and imperial gold.",
     type: "website",
     locale: "en_US",
     siteName: APP_NAME,
@@ -77,7 +78,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${APP_NAME} — Interactive Traveler Dossier`,
-    description: APP_DESCRIPTION,
+    description:
+      "One illuminated codex: an artifact archive, a talent tree and an expedition log, all rendered from the same records the console maintains.",
     creator: "@reinvy",
     site: "@reinvy",
   },

@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 import { PUBLIC_NAV } from "@/lib/navigation";
+import { EASE_CODEX } from "@/lib/motion-variants";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { useActiveSection } from "@/lib/use-active-section";
 import { useMotionPrefs } from "@/components/motion-provider";
@@ -95,14 +97,14 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             onClick={() => setAnimationsEnabled(!animationsEnabled)}
             aria-pressed={animationsEnabled}
             aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
-            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus"
+            className="press-scale flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus"
           >
             <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
           </button>
 
           <Link
             href="/login"
-            className="hidden codex-radius-sm border border-leather-caramel/35 px-3.5 py-2 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark transition-colors hover:bg-leather-caramel/10 codex-focus sm:block"
+            className="codex-sheen hidden codex-radius-sm border border-leather-caramel/35 px-3.5 py-2 text-xs font-semibold tracking-[0.12em] uppercase text-leather-dark transition-colors hover:bg-leather-caramel/10 codex-focus sm:block"
           >
             Codex Console
           </Link>
@@ -113,19 +115,24 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             aria-expanded={menuOpen}
             aria-controls="codex-mobile-menu"
             aria-label={menuOpen ? "Close section menu" : "Open section menu"}
-            className="flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:hidden"
+            className="press-scale flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:hidden"
           >
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
-      {menuOpen && (
-        <nav
-          id="codex-mobile-menu"
-          aria-label="Codex sections"
-          className="border-t border-leather-caramel/20 px-4 pb-3 pt-2 sm:px-6 lg:hidden"
-        >
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            id="codex-mobile-menu"
+            aria-label="Codex sections"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: EASE_CODEX }}
+            className="overflow-hidden border-t border-leather-caramel/20 px-4 pb-3 pt-2 sm:px-6 lg:hidden"
+          >
           <ul className="grid gap-1">
             {PUBLIC_NAV.map((item) => (
               <li key={item.sectionId}>
@@ -149,8 +156,9 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
               </Link>
             </li>
           </ul>
-        </nav>
-      )}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

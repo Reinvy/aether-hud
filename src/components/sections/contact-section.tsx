@@ -18,7 +18,9 @@ import {
   MessageCircle,
   Mail,
   Link2,
-  MonitorPlay,
+  Tv,
+  Gamepad2,
+  Radio,
   Palette,
   Heart,
   Coffee,
@@ -30,7 +32,6 @@ import {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 } from "lucide-react";
 import { fadeInView } from "@/lib/motion-variants";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,9 @@ const socialIcons: Record<string, React.ElementType> = {
   MessageCircle,
   Mail,
   Link2,
-  MonitorPlay,
+  Tv,
+  Gamepad2,
+  Radio,
   Palette,
   Heart,
   Coffee,
@@ -60,7 +63,6 @@ const socialIcons: Record<string, React.ElementType> = {
   BookOpen,
   GitFork,
   MessageSquare,
-  Rss,
 };
 
 interface DispatchForm {
@@ -105,6 +107,9 @@ export function ContactSection({
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  // The roster is long (29 channels); the panel leads with the first eight and
+  // lets the visitor expand the rest instead of scrolling a wall of links.
+  const [showAllSocials, setShowAllSocials] = useState(false);
 
   const directEmail = config.email || "hello@aether-hud.dev";
   const isAvailable = config.status.toUpperCase() === "ONLINE";
@@ -367,27 +372,36 @@ export function ContactSection({
                 </div>
 
                 {socials.length > 0 ? (
-                  <div
-                    className="space-y-2 max-h-72 overflow-y-auto pr-1"
-                    aria-label="Social communication channels"
-                  >
-                    {socials.map((social) => {
-                      const Icon = socialIcons[social.icon] || Terminal;
-                      return (
-                        <a
-                          key={social.id}
-                          href={social.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`Connect on ${social.platform}`}
-                          className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
-                        >
-                          <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
-                          <span className="flex-1 font-bold">{social.platform}</span>
-                          <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
-                        </a>
-                      );
-                    })}
+                  <div className="space-y-2" aria-label="Social communication channels">
+                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                      {(showAllSocials ? socials : socials.slice(0, 8)).map((social) => {
+                        const Icon = socialIcons[social.icon] || Terminal;
+                        return (
+                          <a
+                            key={social.id}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Connect on ${social.platform}`}
+                            className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm press-scale hover-scale-sm codex-focus"
+                          >
+                            <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                            <span className="flex-1 font-bold">{social.platform}</span>
+                            <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
+                          </a>
+                        );
+                      })}
+                    </div>
+                    {socials.length > 8 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllSocials((open) => !open)}
+                        aria-expanded={showAllSocials}
+                        className="codex-btn-secondary codex-sheen codex-focus w-full px-4 py-2 text-[11px] tracking-wider uppercase"
+                      >
+                        {showAllSocials ? "Show fewer channels" : `Show all ${socials.length} channels`}
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2 codex-radius-card border border-dashed border-leather-caramel/30 px-4 py-8 text-center">

@@ -4,29 +4,13 @@ import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { TEYVAT_ELEMENTS } from "@/lib/element-assets";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { elementForCategory, resolveRarity } from "@/lib/project-meta";
 import { EASE_CODEX } from "@/lib/motion-variants";
 import type { ProjectDto } from "@/lib/dto";
 
 interface ProjectCardProps {
   project: ProjectDto;
-}
-
-/** Map a domain category onto the element medallion shown over the art. */
-function getElementForCategory(category: string) {
-  const normalized = category.toLowerCase();
-  if (normalized.includes("ai") || normalized.includes("neural")) return TEYVAT_ELEMENTS[0]; // Pyro
-  if (normalized.includes("data") || normalized.includes("full")) return TEYVAT_ELEMENTS[1]; // Hydro
-  if (normalized.includes("core") || normalized.includes("lang")) return TEYVAT_ELEMENTS[2]; // Anemo
-  if (normalized.includes("realtime") || normalized.includes("event") || normalized.includes("stream")) {
-    return TEYVAT_ELEMENTS[3]; // Electro
-  }
-  if (normalized.includes("agent") || normalized.includes("logic")) return TEYVAT_ELEMENTS[4]; // Dendro
-  if (normalized.includes("sec") || normalized.includes("crypto") || normalized.includes("auth")) {
-    return TEYVAT_ELEMENTS[5]; // Cryo
-  }
-  return TEYVAT_ELEMENTS[6]; // Geo
 }
 
 const cardMotion = {
@@ -44,8 +28,8 @@ const cardMotion = {
  * independent above it.
  */
 export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardProps) {
-  const element = getElementForCategory(project.category);
-  const is5Star = project.complexity.includes("S") || project.complexity.includes("A");
+  const element = elementForCategory(project.category);
+  const rarity = resolveRarity(project.complexity);
   const dossierHref = `/projects/${project.id}`;
 
   return (
@@ -63,7 +47,24 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
               unoptimized
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle" />
+            <div className="absolute inset-0 bg-gradient-to-br from-parchment-elevated via-parchment-base to-parchment-subtle">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <span className="codex-icon-plate h-11 w-11">
+                  <Image
+                    src={element.whiteIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="codex-icon-on-plate h-6 w-6 object-contain"
+                    unoptimized
+                  />
+                </span>
+                <span className="font-display text-5xl text-leather-caramel/40">
+                  {project.title.charAt(0).toUpperCase()}
+                </span>
+                <span className="codex-label">{project.category}</span>
+              </div>
+            </div>
           )}
 
           {/* Ambient Elemental Glow on Card Media */}
@@ -75,7 +76,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
           {/* Top-Right: Artifact Rarity Stars */}
           <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-parchment-base/95 border border-leather-caramel/40 px-3.5 py-1 rounded-full shadow-md">
             <span className="text-gold-ink text-xs tracking-tight drop-shadow-[0_0_4px_rgba(201,154,78,0.8)]">
-              {is5Star ? "★★★★★" : "★★★★☆"}
+              {"★".repeat(rarity)}
             </span>
             <span className="font-serif text-[9px] text-leather-dark font-bold uppercase">
               Artifact

@@ -98,7 +98,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
 
         {/* Talent Tree Container */}
         <motion.div className="mt-12 mx-auto max-w-4xl" {...stagger}>
-          <div className="codex-card codex-radius-card p-6 sm:p-8">
+          <div className="codex-card codex-radius-card codex-lift p-6 sm:p-8">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20">
               <div className="codex-icon-plate h-7 w-7 shrink-0">
                 <Image
@@ -119,7 +119,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
             </div>
 
             {skills.length === 0 ? (
-              <div className="codex-radius-card border border-leather-caramel/25 bg-parchment-subtle/60 px-6 py-10 text-center">
+              <div className="codex-card codex-radius-card codex-lift border border-leather-caramel/25 bg-parchment-subtle/60 px-6 py-10 text-center">
                 <div className="codex-icon-plate mx-auto mb-3 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.talents}
@@ -145,7 +145,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                     {/* Vision granted by this discipline */}
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={cn("vision-badge", `vision-${group.element.key}`)}>
-                        <span className="codex-icon-plate h-5 w-5 shrink-0">
+                        <span className="hover-scale-sm codex-icon-plate h-5 w-5 shrink-0">
                           <Image
                             src={group.element.whiteIcon}
                             alt=""
@@ -194,7 +194,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
         {/* Elemental Resonance // Category Average */}
         {categoryStats.length > 0 && (
           <motion.div className="mt-10 mx-auto max-w-2xl text-center" {...fadeInView}>
-            <div className="codex-card codex-radius-card p-6">
+            <div className="codex-card codex-radius-card codex-lift p-6">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <div className="codex-icon-plate h-7 w-7 shrink-0">
                   <Image
@@ -214,7 +214,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                 {categoryStats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="text-center min-w-[84px] p-3 codex-radius-card bg-parchment-base border border-leather-caramel/25 shadow-sm"
+                    className="codex-lift text-center min-w-[84px] p-3 codex-radius-card bg-parchment-base border border-leather-caramel/25 shadow-sm"
                   >
                     <div className="text-2xl font-bold font-serif text-leather-dark tabular-nums">
                       {stat.pct}%

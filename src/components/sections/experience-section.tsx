@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { SectionHeading } from "@/components/features/section-heading";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
@@ -28,11 +29,45 @@ const stagger = {
 };
 
 /**
+ * formatDuration — renders an expedition length from two `YYYY-MM` strings as
+ * `1 YR 6 MO`. An empty `endDate` is ongoing and measured to the current month.
+ */
+function formatDuration(startDate: string, endDate: string | null | undefined): string {
+  const [startYear, startMonth] = startDate.split("-").map(Number);
+  if (!startYear || !startMonth) return "";
+
+  const [endYear, endMonth] = endDate
+    ? endDate.split("-").map(Number)
+    : (() => {
+        const now = new Date();
+        return [now.getFullYear(), now.getMonth() + 1];
+      })();
+
+  if (!endYear || !endMonth) return "";
+
+  const months = Math.max(0, (endYear - startYear) * 12 + (endMonth - startMonth));
+  const years = Math.floor(months / 12);
+  const remainder = months % 12;
+
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years} YR`);
+  if (remainder > 0 || years === 0) parts.push(`${remainder} MO`);
+  return parts.join(" ");
+}
+
+/**
  * ExperienceSection — the expedition chronicle, one sealed commission per
  * role. Presentation-only: the log is a prop from the server render.
  */
 export function ExperienceSection({ experiences, section }: ExperienceSectionProps) {
   const sectionTitle = (section.title || "").trim();
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start end", "end start"],
+  });
+  const railFill = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section id="experience" className="relative py-20 sm:py-28">
@@ -63,22 +98,40 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
         />
 
         {/* Timeline */}
-        <motion.div className="relative mt-14" {...stagger}>
+        <motion.div ref={timelineRef} className="relative mt-14" {...stagger}>
           {/* Vertical guild line */}
           {experiences.length > 0 && (
-            <div className="absolute left-[20px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-leather-caramel/50 via-leather-caramel/25 to-transparent" />
+            <>
+              <div className="absolute left-[20px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-leather-caramel/50 via-leather-caramel/25 to-transparent" />
+              {!prefersReducedMotion && (
+                <motion.div
+                  aria-hidden
+                  className="absolute left-[20px] top-0 bottom-0 w-0.5 origin-top bg-gradient-to-b from-gold-400 to-gold-600"
+                  style={{ scaleY: railFill }}
+                />
+              )}
+            </>
           )}
 
           {experiences.map((experience, index) => (
             <motion.div
               key={experience.id}
               className="relative pl-14 pb-10 last:pb-0 group"
-              variants={{
-                initial: { opacity: 0, x: -24 },
-                whileInView: { opacity: 1, x: 0 },
-              }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
+              {/* Gold glow that fades in behind the node */}
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute left-0 top-1 h-10 w-10 rounded-full"
+                initial={{ boxShadow: "0 0 0 0 rgba(242,201,76,0)" }}
+                whileInView={{ boxShadow: "0 0 18px 4px rgba(242,201,76,0.45)" }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              />
+
               {/* Timeline node with Quest Icon */}
               <div className="codex-icon-plate absolute left-0 top-1 h-10 w-10 shrink-0 transition-all duration-300 group-hover:scale-110">
                 <Image
@@ -95,7 +148,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
               <div className="absolute left-[20px] top-11 bottom-0 w-0.5 bg-leather-caramel/20 group-last:hidden" />
 
               {/* Commission card */}
-              <div className="codex-card codex-radius-card p-6 sm:p-7">
+              <div className="codex-card codex-radius-card codex-lift p-6 sm:p-7">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -103,35 +156,12 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
                         {COMMISSION_LABEL[experience.type] ?? "Commission"}
                       </span>
 
-                      {/* Primogem & Mora reward tally */}
-                      <div className="flex items-center gap-1.5 bg-jade-400/10 border border-jade-400/30 px-2.5 py-0.5 rounded-full">
-                        <span className="codex-icon-plate h-7 w-7 shrink-0">
-                          <Image
-                            src={GENSHIN_UI_ICONS.primogem}
-                            alt=""
-                            width={16}
-                            height={16}
-                            className="codex-icon-on-plate h-4 w-4 object-contain"
-                            unoptimized
-                          />
+                      {/* Computed expedition length */}
+                      <span className="flex items-center gap-1.5 rounded-full bg-parchment-subtle px-2.5 py-0.5 border border-leather-caramel/25 shadow-sm">
+                        <span className="font-serif text-[10px] tracking-wider text-gold-ink font-bold tabular-nums uppercase">
+                          {formatDuration(experience.startDate, experience.endDate)}
                         </span>
-                        <span className="font-serif text-[10px] text-jade-ink font-bold">
-                          Primogems +60
-                        </span>
-                        <span className="codex-icon-plate ml-1.5 h-7 w-7 shrink-0">
-                          <Image
-                            src={GENSHIN_UI_ICONS.mora}
-                            alt=""
-                            width={16}
-                            height={16}
-                            className="codex-icon-on-plate h-4 w-4 object-contain"
-                            unoptimized
-                          />
-                        </span>
-                        <span className="font-serif text-[10px] text-gold-ink font-bold">
-                          Mora +25K
-                        </span>
-                      </div>
+                      </span>
                     </div>
                     <h3 className="font-serif text-lg sm:text-xl font-bold tracking-wide text-leather-dark uppercase group-hover:text-leather-caramel transition-colors">
                       {experience.role}
@@ -184,7 +214,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
           ))}
 
           {experiences.length === 0 && (
-            <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
+            <div className="codex-card codex-radius-card codex-lift mx-auto max-w-md px-8 py-10 text-center">
               <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                 <Image
                   src={GENSHIN_UI_ICONS.quests}

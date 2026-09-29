@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/features/section-heading";
@@ -90,7 +90,7 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
                   aria-pressed={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
+                    "press-scale px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",
                     isActive
                       ? "bg-leather-caramel text-parchment-base border-leather-caramel shadow-md scale-105"
                       : "bg-parchment-base/80 text-leather-dark border-leather-caramel/35 hover:border-leather-caramel",
@@ -105,13 +105,24 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
 
         {/* Projects Grid */}
         <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" {...stagger}>
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {filteredProjects.length === 0 && (
             <div className="col-span-full">
-              <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
+              <div className="codex-card codex-radius-card codex-lift mx-auto max-w-md px-8 py-10 text-center">
                 <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.archive}

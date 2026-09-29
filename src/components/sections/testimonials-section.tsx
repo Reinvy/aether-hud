@@ -105,24 +105,16 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
 
                 {/* Author Info */}
                 <div className="mt-6 pt-4 border-t border-leather-caramel/20 flex items-center gap-3.5">
-                  {testimonial.avatar && testimonial.avatar !== "/placeholder.svg" ? (
-                    <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-leather-caramel/40 shrink-0 shadow-sm">
-                      <Image
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                        fill
-                        sizes="48px"
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-leather-caramel/40 bg-leather-caramel/15 shrink-0 shadow-sm">
-                      <span className="font-serif text-base font-bold text-leather-dark">
-                        {testimonial.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+                  <div className="codex-icon-plate hover-scale-sm h-12 w-12 shrink-0">
+                    <span className="font-display text-base text-parchment-base">
+                      {testimonial.name
+                        .split(/\s+/)
+                        .map((word) => word.charAt(0))
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()}
+                    </span>
+                  </div>
 
                   <div className="min-w-0 flex-1">
                     <p className="font-serif text-sm sm:text-base font-bold tracking-wide text-leather-dark uppercase truncate">

@@ -10,6 +10,7 @@
     "lint": "eslint",
     "test:e2e": "node e2e/run-tests.mjs && node e2e/navigation.test.mjs",
     "test": "node e2e/run-tests.mjs",
+    "db:seed": "node prisma/seed.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

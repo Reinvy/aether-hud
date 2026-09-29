@@ -1,7 +1,5 @@
 import type { MetadataRoute } from "next";
-
-// aether-hud.vercel.app is taken by another project; actual domain is aether-hud-lyart.vercel.app
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aether-hud-lyart.vercel.app";
+import { APP_URL } from "@/lib/constants";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -12,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard/", "/api/", "/login"],
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${APP_URL}/sitemap.xml`,
   };
 }

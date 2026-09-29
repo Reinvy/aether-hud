@@ -1,7 +1,7 @@
 import { memo } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
-import { SegmentBar } from "@/components/ui/segment-bar";
 import { skillIcons } from "@/lib/skill-icons";
 import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { cn } from "@/lib/utils";
@@ -25,12 +25,13 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
   const Icon = skillIcons[icon] || Sparkles;
   const talentLevel = Math.max(1, Math.min(10, Math.round(level / 10)));
   const isCrowned = talentLevel === 10;
+  const activeSegments = Math.round((level / 100) * segments);
 
   return (
-    <div className="group space-y-2.5 p-3.5 codex-card codex-radius-card transition-all">
+    <div className="group space-y-2.5 p-3.5 codex-card codex-radius-card codex-lift transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-leather-caramel/15 border border-leather-caramel/35 flex items-center justify-center p-1.5 shadow-inner">
+          <div className="hover-scale-sm w-8 h-8 rounded-full bg-leather-caramel/15 border border-leather-caramel/35 flex items-center justify-center p-1.5 shadow-inner">
             <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover:scale-110" />
           </div>
           <div>
@@ -71,7 +72,28 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
         </div>
       </div>
       {/* Segment Bar */}
-      <SegmentBar value={level} segments={segments} />
+      <div
+        role="progressbar"
+        aria-valuenow={level}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${level}%`}
+        className="segment-bar"
+      >
+        {Array.from({ length: segments }).map((_, i) => {
+          const isActive = i < activeSegments;
+          return (
+            <motion.div
+              key={i}
+              className={cn("segment", isActive && "active")}
+              initial={isActive ? { opacity: 0.35, scaleY: 0.6 } : false}
+              whileInView={isActive ? { opacity: 1, scaleY: 1 } : undefined}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.04 }}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 });
