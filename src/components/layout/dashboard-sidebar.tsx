@@ -194,7 +194,7 @@ export function DashboardSidebar() {
         </button>
 
         {!collapsed && (
-          <p className="codex-label px-4 pt-3 text-[9px]">Edition {version}</p>
+          <p className="codex-label px-4 pt-3 text-[9px]">{version}</p>
         )}
 
         <button
