@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * StatusDot — reusable status indicator.
  *
- * Replaces ad-hoc `h-2 w-2 rounded-full bg-hud-*` dots scattered across the
+ * Replaces ad-hoc `h-2 w-2 rounded-full` dots scattered across the
  * header, sidebar, login, contact, dashboard headers and activity feed with
  * a single design-system-consistent indicator (rotate-45), matching
  * the Teyvat Codex "indicators" micro-detail language.

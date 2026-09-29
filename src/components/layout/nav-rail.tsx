@@ -43,12 +43,13 @@ export function NavRail() {
       aria-label="Codex section rail"
       /*
        * The rail is a wide-screen enhancement: sections are centred in a
-       * `max-w-7xl` column, and below ~1400px the outer gutter is narrower than
-       * the rail, which would let it overlap card content. From 1400px up it
-       * floats in the empty margin. The header carries the navigation at every
-       * width where the rail is hidden.
+       * `max-w-7xl` column, but the hero dossier spans `max-w-[1480px]`, so the
+       * rail only has gutter to live in once the viewport passes ~1700px
+       * (measured: it overlapped the hero card by 52px at 1440 and 24px at
+       * 1536, and clears it from 1700px up). Below that the header and the
+       * mobile dock carry the navigation and the rail stays hidden.
        */
-      className="fixed left-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-3 min-[1400px]:flex xl:left-5"
+      className="fixed left-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-3 min-[1700px]:flex xl:left-5"
     >
       <a
         href="/#hero"

@@ -78,7 +78,7 @@ export function DashboardSidebar() {
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector<HTMLElement>("a, button")?.focus();
+    panelRef.current?.querySelector<HTMLElement>("nav a, a, button")?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();

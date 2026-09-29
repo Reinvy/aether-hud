@@ -166,7 +166,11 @@ export default function DashboardSettings() {
 
         <AppearanceCard
           animationsEnabled={form.animationsEnabled}
-          onAnimationsChange={(enabled) => updateField("animationsEnabled", enabled)}
+          onAnimationsChange={(enabled) => {
+            // Apply at once so the operator sees the effect, then persist on save.
+            updateField("animationsEnabled", enabled);
+            setAnimationsEnabled(enabled);
+          }}
           delay={0.1}
         />
 
