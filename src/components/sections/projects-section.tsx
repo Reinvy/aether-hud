@@ -55,13 +55,13 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
         <SectionHeading
           badge="Artifact Archive // Domains of Forgery"
           icon={
-            <div className="w-4 h-4 relative">
+            <div className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.domain}
                 alt="Domain Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
                 unoptimized
               />
             </div>
@@ -112,13 +112,13 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
           {filteredProjects.length === 0 && (
             <div className="col-span-full">
               <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.archive}
                     alt=""
                     width={28}
                     height={28}
-                    className="object-contain"
+                    className="codex-icon-on-plate h-6 w-6 object-contain"
                     unoptimized
                   />
                 </div>

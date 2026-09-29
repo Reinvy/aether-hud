@@ -35,23 +35,22 @@ export function MobileNavDock() {
               aria-label={item.label}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "relative flex min-h-[38px] min-w-[38px] flex-col items-center justify-center rounded-full p-1.5 transition-all duration-200",
+                "relative flex min-h-[38px] min-w-[38px] flex-col items-center justify-center rounded-full transition-all duration-200",
                 isActive
                   ? "scale-105 bg-leather-caramel shadow-sm dark:bg-gold-400"
                   : "hover:bg-leather-caramel/10 dark:hover:bg-gold-400/10"
               )}
             >
-              <Image
-                src={GENSHIN_UI_ICONS[item.icon]}
-                alt=""
-                width={20}
-                height={20}
-                className={cn(
-                  "h-5 w-5 object-contain transition-transform",
-                  isActive ? "brightness-0 invert" : "opacity-90"
-                )}
-                unoptimized
-              />
+              <span className="codex-icon-plate h-7 w-7">
+                <Image
+                  src={GENSHIN_UI_ICONS[item.icon]}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="codex-icon-on-plate h-4 w-4 object-contain transition-transform"
+                  unoptimized
+                />
+              </span>
             </a>
           );
         })}
@@ -71,16 +70,18 @@ export function MobileNavDock() {
         <Link
           href="/login"
           aria-label="Codex Console"
-          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 transition-transform hover:scale-105 dark:bg-gold-400/10"
+          className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 transition-transform hover:scale-105 dark:bg-gold-400/10"
         >
-          <Image
-            src={GENSHIN_UI_ICONS.archive}
-            alt=""
-            width={16}
-            height={16}
-            className="h-4 w-4 object-contain"
-            unoptimized
-          />
+          <span className="codex-icon-plate h-7 w-7">
+            <Image
+              src={GENSHIN_UI_ICONS.archive}
+              alt=""
+              width={16}
+              height={16}
+              className="codex-icon-on-plate h-4 w-4 object-contain"
+              unoptimized
+            />
+          </span>
         </Link>
       </div>
     </nav>

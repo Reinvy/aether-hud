@@ -52,13 +52,13 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
             )}
           >
             {isCrowned && (
-              <div className="w-3.5 h-3.5 relative">
+              <div className="codex-icon-plate h-7 w-7 shrink-0">
                 <Image
                   src={GENSHIN_UI_ICONS.crown}
                   alt="Crown of Insight"
-                  width={14}
-                  height={14}
-                  className="object-contain"
+                  width={16}
+                  height={16}
+                  className="codex-icon-on-plate h-4 w-4 object-contain"
                   unoptimized
                 />
               </div>

@@ -126,15 +126,15 @@ export function ContactSection({
         <SectionHeading
           badge="Dispatch Portal"
           icon={
-            <div className="w-4 h-4 relative">
+            <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.mail}
                 alt="Mail Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
               />
-            </div>
+            </span>
           }
           title={section.title || "Summon"}
           highlight={section.title ? undefined : "Architect"}
@@ -151,15 +151,15 @@ export function ContactSection({
               <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-6 sm:p-8 border-2 border-leather-caramel/30 shadow-2xl h-full">
                 {/* Form header */}
                 <div className="flex flex-wrap items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Dispatch"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
+                  </span>
                   <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
                     Encrypted Dispatch Scroll
                   </span>
@@ -288,7 +288,7 @@ export function ContactSection({
                           alt="Wish Icon"
                           width={16}
                           height={16}
-                          className="object-contain brightness-0"
+                          className="codex-icon-ink object-contain"
                         />
                       </div>
                       <span>{sending ? "Dispatching Scroll…" : "Dispatch Summoning Scroll"}</span>
@@ -303,15 +303,15 @@ export function ContactSection({
               {/* Social Channels */}
               <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.community}
                       alt="Community"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
+                  </span>
                   <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
                     Guild Channels
                   </span>
@@ -357,15 +357,15 @@ export function ContactSection({
               {/* Direct Letter */}
               <div className="bg-parchment-base dark:bg-surface-primary/80 codex-panel rounded-3xl p-5 border-2 border-leather-caramel/30 shadow-xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Mail"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
+                  </span>
                   <span className="font-serif text-xs tracking-widest text-leather-caramel font-bold uppercase">
                     Direct Letter
                   </span>
@@ -375,15 +375,15 @@ export function ContactSection({
                   aria-label={`Send direct email to ${directEmail}`}
                   className="group/channel flex items-center gap-3 rounded-2xl border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated dark:bg-deep-space/40 dark:hover:bg-glass-200 px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm"
                 >
-                  <div className="w-4 h-4 relative">
+                  <span className="codex-icon-plate h-7 w-7 shrink-0">
                     <Image
                       src={GENSHIN_UI_ICONS.mail}
                       alt="Direct Mail"
                       width={16}
                       height={16}
-                      className="object-contain"
+                      className="codex-icon-on-plate h-4 w-4 object-contain"
                     />
-                  </div>
+                  </span>
                   <span className="font-mono text-[11px] truncate font-bold">
                     {directEmail}
                   </span>

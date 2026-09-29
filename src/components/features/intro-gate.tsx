@@ -75,14 +75,14 @@ export function IntroGate() {
               {TEYVAT_ELEMENTS.map((elem) => (
                 <div
                   key={elem.key}
-                  className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-transform hover:scale-110"
+                  className="codex-icon-plate h-9 w-9 sm:h-11 sm:w-11 transition-transform hover:scale-110"
                 >
                   <Image
-                    src={elem.gildedIcon}
+                    src={elem.whiteIcon}
                     alt={elem.name}
                     width={40}
                     height={40}
-                    className="object-contain filter sepia-[0.3] contrast-[1.1] opacity-90 hover:opacity-100 transition-opacity"
+                    className="codex-icon-on-plate h-5 w-5 sm:h-6 sm:w-6 object-contain transition-opacity hover:opacity-100"
                     unoptimized
                   />
                 </div>

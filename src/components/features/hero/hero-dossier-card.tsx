@@ -106,7 +106,7 @@ function ElementRuneButton({
         alt={element.name}
         width={22}
         height={22}
-        className="object-contain"
+        className="codex-icon-on-plate object-contain"
         unoptimized
       />
     </button>
@@ -153,7 +153,7 @@ export function HeroDossierCard({ name, tagline, bio, avatar }: HeroDossierCardP
                   alt="Teyvat Archive"
                   width={22}
                   height={22}
-                  className="object-contain brightness-0 invert"
+                  className="codex-icon-on-plate object-contain"
                   unoptimized
                 />
               </div>

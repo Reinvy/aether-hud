@@ -49,14 +49,16 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
           className="flex min-w-0 items-center gap-3 codex-radius-sm codex-focus"
           aria-label={`${siteName} — back to the traveler dossier`}
         >
-          <Image
-            src={GENSHIN_UI_ICONS.characterAether}
-            alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 object-contain"
-            unoptimized
-          />
+          <span className="codex-icon-plate h-11 w-11 shrink-0">
+            <Image
+              src={GENSHIN_UI_ICONS.characterAether}
+              alt=""
+              width={32}
+              height={32}
+              className="codex-icon-on-plate h-6 w-6 object-contain"
+              unoptimized
+            />
+          </span>
           <span className="min-w-0">
             <span className="block truncate font-display text-sm font-bold tracking-[0.12em] text-leather-dark dark:text-text-main">
               {siteName}

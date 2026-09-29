@@ -5,7 +5,7 @@ export const GENSHIN_UI_ICONS = {
   characterLumine: "/ui-icons/Icon_Character_Lumine.png",
   inventory: "/ui-icons/Icon_Inventory.png",
   artifacts: "/ui-icons/Icon_Artifacts.png",
-  talents: "/ui-icons/Icon_Talents.png",
+  talents: "/ui-icons/Icon_Gathering_of_Stars.png",
   quests: "/ui-icons/Icon_Quests.png",
   handbook: "/ui-icons/Icon_Adventurer_Handbook.png",
   friends: "/ui-icons/Icon_Friends.png",

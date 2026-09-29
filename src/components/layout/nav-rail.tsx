@@ -53,14 +53,14 @@ export function NavRail() {
       <a
         href="/#hero"
         aria-label="Back to the traveler dossier"
-        className="group relative flex h-11 w-11 items-center justify-center rounded-full border-2 border-leather-caramel/50 dark:border-gold-400/50 bg-parchment-base p-1.5 shadow-xl transition-transform hover:scale-110 dark:bg-surface-primary codex-focus"
+        className="group relative flex h-11 w-11 items-center justify-center codex-icon-plate p-1.5 shadow-xl transition-transform hover:scale-110 codex-focus"
       >
         <Image
           src={GENSHIN_UI_ICONS.characterAether}
           alt=""
           width={28}
           height={28}
-          className="object-contain transition-transform group-hover:rotate-12"
+          className="codex-icon-on-plate h-7 w-7 object-contain transition-transform group-hover:rotate-12"
           unoptimized
         />
         <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
@@ -81,23 +81,22 @@ export function NavRail() {
               aria-label={item.label}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "group relative flex h-10 w-10 items-center justify-center rounded-2xl p-2 transition-all duration-300 codex-focus",
+                "group relative flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-300 codex-focus",
                 isActive
                   ? "scale-105 bg-leather-caramel shadow-md dark:bg-gold-400"
                   : "bg-leather-caramel/5 hover:bg-leather-caramel/15 dark:bg-surface-primary/60 dark:hover:bg-gold-400/15"
               )}
             >
-              <Image
-                src={GENSHIN_UI_ICONS[item.icon]}
-                alt=""
-                width={22}
-                height={22}
-                className={cn(
-                  "object-contain transition-transform group-hover:scale-110",
-                  isActive ? "brightness-0 invert" : "opacity-85 group-hover:opacity-100"
-                )}
-                unoptimized
-              />
+              <span className="codex-icon-plate h-9 w-9">
+                <Image
+                  src={GENSHIN_UI_ICONS[item.icon]}
+                  alt=""
+                  width={22}
+                  height={22}
+                  className="codex-icon-on-plate h-5 w-5 object-contain transition-transform group-hover:scale-110"
+                  unoptimized
+                />
+              </span>
               <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
                 {item.label}
               </span>
@@ -123,16 +122,18 @@ export function NavRail() {
         <Link
           href="/login"
           aria-label="Codex Console"
-          className="group relative flex h-10 w-10 items-center justify-center rounded-2xl bg-leather-caramel/10 p-2 transition-all duration-300 hover:scale-105 dark:bg-gold-400/10 codex-focus"
+          className="group relative flex h-10 w-10 items-center justify-center rounded-2xl bg-leather-caramel/10 transition-all duration-300 hover:scale-105 dark:bg-gold-400/10 codex-focus"
         >
-          <Image
-            src={GENSHIN_UI_ICONS.archive}
-            alt=""
-            width={16}
-            height={16}
-            className="object-contain"
-            unoptimized
-          />
+          <span className="codex-icon-plate h-9 w-9">
+            <Image
+              src={GENSHIN_UI_ICONS.archive}
+              alt=""
+              width={20}
+              height={20}
+              className="codex-icon-on-plate h-5 w-5 object-contain"
+              unoptimized
+            />
+          </span>
           <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-xl border border-leather-caramel/30 bg-leather-dark px-3 py-1.5 text-[10px] font-semibold text-parchment-base opacity-0 shadow-2xl transition-all duration-200 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 dark:border-gold-400/30 dark:bg-surface-primary">
             Codex Console
           </span>

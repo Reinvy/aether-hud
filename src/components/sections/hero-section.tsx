@@ -40,14 +40,14 @@ export function HeroSection({ config }: HeroSectionProps) {
               Traveler status: {config.status}
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm dark:bg-surface-primary/90 dark:border-gold-400/30">
-            <span className="w-3.5 h-3.5 relative">
+          <div className="hidden sm:flex items-center gap-2 px-4 py-1 rounded-full bg-parchment-base/95 border border-leather-caramel/35 shadow-sm dark:bg-surface-primary/90 dark:border-gold-400/30">
+            <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.handbook}
                 alt="Adventurer Handbook"
-                width={14}
-                height={14}
-                className="object-contain"
+                width={16}
+                height={16}
+                className="codex-icon-on-plate h-4 w-4 object-contain"
                 unoptimized
               />
             </span>

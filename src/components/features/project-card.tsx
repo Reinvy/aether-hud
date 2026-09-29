@@ -84,19 +84,19 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
 
           {/* Top-Left: Official Elemental Vision Medallion */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-parchment-base/95 backdrop-blur-md px-3 py-1 rounded-full border border-leather-caramel/40 shadow-md dark:bg-deep-space/70 dark:border-gold-400/40">
-            <div className="w-5 h-5 relative">
+            <span className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
-                src={element.gildedIcon}
+                src={element.whiteIcon}
                 alt={element.name}
-                width={20}
-                height={20}
-                className="object-contain transition-transform group-hover:scale-110"
+                width={16}
+                height={16}
+                className="codex-icon-on-plate h-4 w-4 object-contain transition-transform group-hover:scale-110"
                 unoptimized
               />
-            </div>
+            </span>
             <span
               className="font-serif text-[10px] font-bold uppercase tracking-wider"
-              style={{ color: element.color }}
+              style={{ color: element.inkColor }}
             >
               {element.name}
             </span>
@@ -161,7 +161,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                     alt=""
                     width={14}
                     height={14}
-                    className="object-contain brightness-0"
+                    className="codex-icon-ink object-contain"
                     unoptimized
                   />
                 </span>
@@ -176,13 +176,13 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 aria-label={`View code for ${project.title}`}
                 className="codex-btn-secondary codex-focus relative z-10 px-3.5 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
-                <span className="w-3.5 h-3.5 relative">
+                <span className="codex-icon-plate h-7 w-7 shrink-0">
                   <Image
                     src={GENSHIN_UI_ICONS.trainingGuide}
                     alt=""
-                    width={14}
-                    height={14}
-                    className="object-contain"
+                    width={16}
+                    height={16}
+                    className="codex-icon-on-plate h-4 w-4 object-contain"
                     unoptimized
                   />
                 </span>

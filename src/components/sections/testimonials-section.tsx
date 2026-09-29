@@ -36,13 +36,13 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
         <SectionHeading
           badge="Companion Letters // Serenitea Pot Trust"
           icon={
-            <div className="w-4 h-4 relative">
+            <div className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.friends}
                 alt="Friends Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
                 unoptimized
               />
             </div>
@@ -70,24 +70,24 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                 {/* Letter Seal & Serenitea Trust Badge */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
-                    <div className="w-6 h-6 relative opacity-70">
+                    <div className="codex-icon-plate h-7 w-7 shrink-0">
                       <Image
                         src={GENSHIN_UI_ICONS.mail}
                         alt="Letter"
                         width={24}
                         height={24}
-                        className="object-contain"
+                        className="codex-icon-on-plate h-4 w-4 object-contain"
                         unoptimized
                       />
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/25 dark:border-gold-400/25">
-                      <div className="w-3.5 h-3.5 relative">
+                      <div className="codex-icon-plate h-7 w-7 shrink-0">
                         <Image
                           src={GENSHIN_UI_ICONS.sereniteaPot}
                           alt=""
-                          width={14}
-                          height={14}
-                          className="object-contain"
+                          width={16}
+                          height={16}
+                          className="codex-icon-on-plate h-4 w-4 object-contain"
                           unoptimized
                         />
                       </div>
@@ -135,13 +135,13 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
 
                   {/* Verified Seal */}
                   <div className="flex items-center gap-1.5 shrink-0 px-3 py-1 rounded-full bg-leather-caramel/10 dark:bg-gold-400/10 border border-leather-caramel/30 dark:border-gold-400/30">
-                    <div className="w-3 h-3 relative">
+                    <div className="codex-icon-plate h-6 w-6 shrink-0">
                       <Image
                         src={GENSHIN_UI_ICONS.achievements}
                         alt=""
-                        width={12}
-                        height={12}
-                        className="object-contain"
+                        width={14}
+                        height={14}
+                        className="codex-icon-on-plate h-3.5 w-3.5 object-contain"
                         unoptimized
                       />
                     </div>
@@ -157,13 +157,13 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
           {testimonials.length === 0 && (
             <div className="col-span-full">
               <div className="codex-panel mx-auto max-w-md rounded-3xl px-8 py-10 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.mail}
                     alt=""
                     width={28}
                     height={28}
-                    className="object-contain"
+                    className="codex-icon-on-plate h-6 w-6 object-contain"
                     unoptimized
                   />
                 </div>

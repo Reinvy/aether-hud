@@ -77,13 +77,13 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
         <SectionHeading
           badge="Talents & Constellations // Visions"
           icon={
-            <div className="w-4 h-4 relative">
+            <div className="codex-icon-plate h-7 w-7 shrink-0">
               <Image
                 src={GENSHIN_UI_ICONS.talents}
                 alt="Talents Icon"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="codex-icon-on-plate h-4 w-4 object-contain"
                 unoptimized
               />
             </div>
@@ -100,13 +100,13 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
         <motion.div className="mt-12 mx-auto max-w-4xl" {...stagger}>
           <div className="codex-panel rounded-3xl p-6 sm:p-8">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20 dark:border-gold-400/20">
-              <div className="w-5 h-5 relative">
+              <div className="codex-icon-plate h-7 w-7 shrink-0">
                 <Image
                   src={GENSHIN_UI_ICONS.talents}
                   alt="Talents Tree"
                   width={20}
                   height={20}
-                  className="object-contain"
+                  className="codex-icon-on-plate h-4 w-4 object-contain"
                   unoptimized
                 />
               </div>
@@ -120,13 +120,13 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
 
             {skills.length === 0 ? (
               <div className="rounded-2xl border border-leather-caramel/25 dark:border-gold-400/25 bg-parchment-subtle/60 px-6 py-10 text-center dark:bg-glass-200">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-leather-caramel/35 dark:border-gold-400/35 bg-leather-caramel/10 dark:bg-gold-400/10">
+                <div className="codex-icon-plate mx-auto mb-3 h-11 w-11">
                   <Image
                     src={GENSHIN_UI_ICONS.talents}
                     alt=""
                     width={24}
                     height={24}
-                    className="object-contain"
+                    className="codex-icon-on-plate h-6 w-6 object-contain"
                     unoptimized
                   />
                 </div>
@@ -145,14 +145,16 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                     {/* Vision granted by this discipline */}
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={cn("vision-badge", `vision-${group.element.key}`)}>
-                        <Image
-                          src={group.element.gildedIcon}
-                          alt=""
-                          width={14}
-                          height={14}
-                          className="object-contain"
-                          unoptimized
-                        />
+                        <span className="codex-icon-plate h-5 w-5 shrink-0">
+                          <Image
+                            src={group.element.whiteIcon}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="codex-icon-on-plate h-3 w-3 object-contain"
+                            unoptimized
+                          />
+                        </span>
                         {group.element.name}
                       </span>
                       <span className="font-serif text-xs font-bold tracking-widest text-leather-dark dark:text-platinum-50 uppercase">
@@ -194,13 +196,13 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
           <motion.div className="mt-10 mx-auto max-w-2xl text-center" {...fadeInView}>
             <div className="codex-panel-strong rounded-3xl p-6">
               <div className="flex items-center justify-center gap-2 mb-3">
-                <div className="w-4 h-4 relative">
+                <div className="codex-icon-plate h-7 w-7 shrink-0">
                   <Image
                     src={GENSHIN_UI_ICONS.achievements}
                     alt="Elemental Resonance"
                     width={16}
                     height={16}
-                    className="object-contain"
+                    className="codex-icon-on-plate h-4 w-4 object-contain"
                     unoptimized
                   />
                 </div>

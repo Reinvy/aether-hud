@@ -33,14 +33,16 @@ export function SiteFooter({
       <div className="mx-auto max-w-7xl px-4 pt-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="flex flex-col items-center gap-6 lg:flex-row lg:justify-between">
           <div className="flex items-center gap-3">
-            <Image
-              src={GENSHIN_UI_ICONS.archive}
-              alt=""
-              width={20}
-              height={20}
-              className="h-5 w-5 object-contain"
-              unoptimized
-            />
+            <span className="codex-icon-plate h-7 w-7 shrink-0">
+              <Image
+                src={GENSHIN_UI_ICONS.archive}
+                alt=""
+                width={20}
+                height={20}
+                className="codex-icon-on-plate h-4 w-4 object-contain"
+                unoptimized
+              />
+            </span>
             <span className="font-display text-xs font-bold uppercase tracking-[0.2em] text-leather-dark dark:text-platinum-50">
               {siteName}
             </span>
