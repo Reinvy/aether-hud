@@ -19,15 +19,18 @@ const TITLE_ID = "intro-gate-title";
  * or on the backdrop. The dossier behind it is always rendered, so crawlers
  * and screen readers never lose the page to the gate.
  */
-export function IntroGate() {
+export function IntroGate({ onDismiss }: { onDismiss?: () => void }) {
   const [open, setOpen] = useState(false);
   const enterButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!sessionStorage.getItem(GATE_STORAGE_KEY)) {
-      setOpen(true);
+    if (sessionStorage.getItem(GATE_STORAGE_KEY)) {
+      // Already greeted this session — the dossier is revealed immediately.
+      onDismiss?.();
+      return;
     }
-  }, []);
+    setOpen(true);
+  }, [onDismiss]);
 
   useEffect(() => {
     if (open) {
@@ -38,7 +41,8 @@ export function IntroGate() {
   const handleProceed = useCallback(() => {
     sessionStorage.setItem(GATE_STORAGE_KEY, "true");
     setOpen(false);
-  }, []);
+    onDismiss?.();
+  }, [onDismiss]);
 
   return (
     <AnimatePresence>

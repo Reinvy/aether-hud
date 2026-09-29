@@ -3,19 +3,17 @@
 import { Gauge, Database, MemoryStick, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useData } from "@/lib/use-data";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
 import { WidgetError } from "@/components/ui/widget-error";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
-import {
-  TelemetryMetricCard,
-  type TelemetryMetricSummary,
-} from "@/components/features/telemetry-metric-card";
+import { DashboardListSkeleton } from "@/components/ui/skeleton";
+import { TelemetryMetricCard } from "@/components/features/telemetry-metric-card";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { staggerContainer, fadeInUpItem } from "@/lib/motion-variants";
 import { cn } from "@/lib/utils";
+import type { TelemetrySummary } from "@/lib/dto";
 
 /**
  * TelemetryView — the Astral Observatory: real-user Web Vitals for the realm.
@@ -24,17 +22,9 @@ import { cn } from "@/lib/utils";
  * /api/telemetry/summary — the durable PostgreSQL table with the per-instance
  * memory ring as fallback. Each metric renders as a reusable
  * TelemetryMetricCard (count/min/avg/p95/max + latest sample origin).
- * Loading shows the shimmer skeleton; a failed read renders the inline error
- * with its own retry instead of blanking the page.
+ * The shared list skeleton covers the first paint; a failed read renders one
+ * WidgetError with its own retry instead of blanking the page.
  */
-
-interface TelemetrySummary {
-  ok: boolean;
-  source: "database" | "memory";
-  startedAt: string;
-  totalRecorded: number;
-  metrics: Record<string, TelemetryMetricSummary>;
-}
 
 const METRIC_ORDER = ["LCP", "INP", "CLS", "FCP", "TTFB"];
 
@@ -60,29 +50,6 @@ function SourceBadge({ source }: { source: "database" | "memory" }) {
       )}
       {isDb ? "Kept in the database" : "Held in memory for this session"}
     </span>
-  );
-}
-
-function TelemetrySkeleton() {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Card key={i} variant="glass" hover="none" className="h-full">
-          <CardContent className="space-y-4 p-5">
-            <div className="h-3 w-2/3 rounded-full bg-leather-caramel/15 codex-shimmer" />
-            <div className="h-8 w-1/2 codex-radius-card bg-leather-caramel/15 codex-shimmer" />
-            <div className="grid grid-cols-2 gap-2">
-              {Array.from({ length: 6 }).map((_, j) => (
-                <div
-                  key={j}
-                  className="h-8 codex-radius-card bg-leather-caramel/10 codex-shimmer"
-                />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
   );
 }
 
@@ -113,20 +80,12 @@ export function TelemetryView() {
         }
       />
 
-      {error ? (
-        <ErrorBoundary section="telemetry" fallback={<WidgetError label="TELEMETRY" />}>
-          <div className="codex-panel codex-panel-radius flex flex-col items-center gap-4 p-8">
-            <WidgetError label="TELEMETRY" />
-            <Button variant="secondary" size="sm" onClick={refetch}>
-              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
-              Try again
-            </Button>
-          </div>
-        </ErrorBoundary>
-      ) : loading || !data ? (
-        <TelemetrySkeleton />
+      {error !== null ? (
+        <WidgetError label="Telemetry" message={error} onRetry={refetch} />
+      ) : data === null ? (
+        <DashboardListSkeleton rows={3} />
       ) : (
-        <ErrorBoundary section="telemetry" fallback={<WidgetError label="TELEMETRY" />}>
+        <ErrorBoundary section="telemetry" fallback={<WidgetError label="Telemetry" />}>
           <motion.div className="space-y-6" variants={staggerContainer} initial="initial" animate="animate">
             {/* Source + collection window */}
             <motion.div variants={fadeInUpItem} className="flex flex-wrap items-center justify-between gap-3">

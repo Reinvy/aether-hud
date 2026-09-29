@@ -22,6 +22,8 @@ interface SectionRowProps {
   /** False at the ends of the registry — the reorder controls disable there. */
   canMoveUp: boolean;
   canMoveDown: boolean;
+  /** True while this row's move request is in flight — disables its controls. */
+  moving?: boolean;
   onToggle: (section: SectionDto) => void;
   onEdit: (section: SectionDto) => void;
   onDelete: (section: SectionDto) => void;
@@ -43,6 +45,7 @@ export const SectionRow = memo(function SectionRow({
   onMove,
   canMoveUp,
   canMoveDown,
+  moving = false,
   onToggle,
   onEdit,
   onDelete,
@@ -78,7 +81,7 @@ export const SectionRow = memo(function SectionRow({
           </span>
           <IconButton
             label={`Move ${section.title} up`}
-            disabled={!canMoveUp}
+            disabled={moving || !canMoveUp}
             className="disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => onMove(section, -1)}
           >
@@ -86,7 +89,7 @@ export const SectionRow = memo(function SectionRow({
           </IconButton>
           <IconButton
             label={`Move ${section.title} down`}
-            disabled={!canMoveDown}
+            disabled={moving || !canMoveDown}
             className="disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => onMove(section, 1)}
           >

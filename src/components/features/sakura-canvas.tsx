@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useMotionPrefs } from "@/components/motion-provider";
 
 interface Petal {
   x: number;
@@ -24,12 +25,37 @@ interface Stardust {
   pulseOffset: number;
 }
 
-export function SakuraCanvas() {
+interface SakuraCanvasProps {
+  /** True while the intro gate owns the screen — the drift layer holds still. */
+  paused?: boolean;
+}
+
+/**
+ * SakuraCanvas — the ambient petal-and-stardust drift behind the dossier.
+ *
+ * A raw `requestAnimationFrame` loop, so it honours the motion preference by
+ * stopping rather than by CSS: it does not run at all while the intro gate is
+ * open, while the tab is hidden, or when the operator turns motion off in the
+ * console. Phones get a thinner field (fewer particles) instead of the same
+ * count on a smaller screen.
+ */
+export function SakuraCanvas({ paused = false }: SakuraCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { animationsEnabled } = useMotionPrefs();
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
+    const onVisibilityChange = () => setHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, []);
+
+  const suspended = paused || hidden || !animationsEnabled;
+
+  useEffect(() => {
+    if (suspended) return;
     // Check prefers-reduced-motion
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
@@ -49,8 +75,10 @@ export function SakuraCanvas() {
     };
     window.addEventListener("resize", handleResize);
 
+    const compact = window.innerWidth < 640;
+
     // Initialize Sakura Petals
-    const PETAL_COUNT = 24;
+    const PETAL_COUNT = compact ? 12 : 24;
     const petals: Petal[] = Array.from({ length: PETAL_COUNT }, () => ({
       x: Math.random() * width,
       y: Math.random() * height - height,
@@ -65,7 +93,7 @@ export function SakuraCanvas() {
     }));
 
     // Initialize Celestial Stardust
-    const STARDUST_COUNT = 32;
+    const STARDUST_COUNT = compact ? 16 : 32;
     const stardust: Stardust[] = Array.from({ length: STARDUST_COUNT }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -129,7 +157,7 @@ export function SakuraCanvas() {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animId);
     };
-  }, []);
+  }, [suspended]);
 
   return (
     <canvas

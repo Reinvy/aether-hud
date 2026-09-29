@@ -6,9 +6,10 @@ import { motion } from "framer-motion";
 import { Cpu, Plus, Trash2 } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -71,7 +72,12 @@ const SKILL_SORT_OPTIONS = [
 ];
 
 export default function DashboardSkills() {
-  const { data: skills, loading, refetch } = useData<SkillCardData[]>("/api/skills");
+  const {
+    data: skills,
+    loading,
+    error,
+    refetch,
+  } = useData<SkillCardData[]>("/api/skills");
   const rows = useMemo(() => skills ?? [], [skills]);
 
   const list = useListControls<SkillCardData>({
@@ -102,8 +108,8 @@ export default function DashboardSkills() {
   const [editingSkill, setEditingSkill] = useState<SkillFormRecord | null>(null);
   const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkSaving, setBulkSaving] = useState(false);
@@ -120,12 +126,10 @@ export default function DashboardSkills() {
   }, []);
 
   const requestDelete = useCallback((skill: SkillCardData) => {
-    setDeleteError(null);
     setDeleteIds([skill.id]);
   }, []);
 
   const requestBulkDelete = useCallback(() => {
-    setDeleteError(null);
     setDeleteIds([...list.selected]);
   }, [list.selected]);
 
@@ -143,11 +147,12 @@ export default function DashboardSkills() {
   const handleSelect = useCallback((id: string) => selectRef.current(id), []);
 
   const handleMove = useCallback(
-    async (id: string, direction: -1 | 1) => {
+    async (id: string, direction: "up" | "down") => {
       setActionError(null);
-      const updates = swapOrder(ordered, id, direction);
-      if (updates.length === 0) return;
+      const updates = planReorder(ordered, id, direction);
+      if (!updates) return;
 
+      setMovingId(id);
       try {
         await Promise.all(
           updates.map((row) =>
@@ -157,11 +162,14 @@ export default function DashboardSkills() {
             })
           )
         );
-        refetch();
+        await refetch();
       } catch (e) {
         setActionError(
           e instanceof ApiError ? e.message : "Failed to reorder the talents"
         );
+        await refetch();
+      } finally {
+        setMovingId(null);
       }
     },
     [ordered, refetch]
@@ -170,43 +178,33 @@ export default function DashboardSkills() {
   const moveRef = useRef(handleMove);
   moveRef.current = handleMove;
   const dispatchMove = useCallback((id: string, direction: -1 | 1) => {
-    void moveRef.current(id, direction);
+    void moveRef.current(id, direction === -1 ? "up" : "down");
   }, []);
 
   const runDelete = useCallback(async () => {
     if (!deleteIds) return;
     const ids = deleteIds;
     setDeleting(true);
-    setDeleteError(null);
 
     const results = await Promise.allSettled(
       ids.map((id) => apiRequest<unknown>(`/api/skills/${id}`, { method: "DELETE" }))
     );
-    let removed = 0;
-    let failureMessage: string | null = null;
-    for (const result of results) {
-      if (result.status === "fulfilled") removed += 1;
-      else if (failureMessage === null) {
-        failureMessage =
-          result.reason instanceof ApiError
-            ? result.reason.message
-            : "Failed to remove the selected talents";
-      }
+    const failure = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected"
+    );
+    if (failure) {
+      setActionError(
+        failure.reason instanceof ApiError
+          ? failure.reason.message
+          : `${results.filter((r) => r.status === "rejected").length} of ${ids.length} talents could not be removed`
+      );
     }
 
-    if (failureMessage === null) {
-      if (ids.length > 1) list.clearSelection();
-      else if (list.selected.has(ids[0])) list.toggleSelected(ids[0]);
-      setDeleteIds(null);
-      refetch();
-    } else {
-      // Part of the selection may have been removed — refresh so the list
-      // matches the server, but keep the dialog open with the server message.
-      if (removed > 0) refetch();
-      setDeleteError(failureMessage);
-    }
+    list.clearSelection();
+    setDeleteIds(null);
     setDeleting(false);
-  }, [deleteIds, refetch, list.clearSelection, list.selected, list.toggleSelected]);
+    await refetch();
+  }, [deleteIds, list, refetch]);
 
   const applyCategory = useCallback(async () => {
     const ids = [...list.selected];
@@ -238,7 +236,7 @@ export default function DashboardSkills() {
     }
   }, [bulkCategory, refetch, list.clearSelection, list.selected]);
 
-  if (loading) {
+  if (loading && skills === null) {
     return <DashboardListSkeleton rows={6} />;
   }
 
@@ -288,20 +286,15 @@ export default function DashboardSkills() {
           />
         </motion.div>
 
-        {actionError && (
-          <p
-            role="alert"
-            className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-xs text-crimson-600"
-          >
-            {actionError}
-          </p>
-        )}
+        {actionError && <ActionError message={actionError} className="mb-4" />}
 
-        {list.filteredCount === 0 ? (
+        {error !== null ? (
+          <WidgetError label="Talent tree" message={error} onRetry={refetch} />
+        ) : list.filteredCount === 0 ? (
           <motion.div {...fadeInUp}>
             <EmptyState
               icon={<Cpu className="h-5 w-5" />}
-              title={list.query ? "No matching talents" : "No talents yet"}
+              title={list.query ? "No talents matches this search" : "No talents yet"}
               message={
                 list.query
                   ? `Nothing in the tree matches “${list.query}”.`
@@ -318,7 +311,11 @@ export default function DashboardSkills() {
             />
           </motion.div>
         ) : (
-          <motion.div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" {...fadeInUp}>
+          <motion.div
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            aria-label="Talent registry"
+            {...fadeInUp}
+          >
             {list.pageItems.map((skill, i) => {
               const position = ordered.findIndex((row) => row.id === skill.id);
               return (
@@ -334,6 +331,7 @@ export default function DashboardSkills() {
                   canMoveDown={reorderable && position >= 0 && position < ordered.length - 1}
                   onEdit={openEdit}
                   onDelete={requestDelete}
+                  moving={movingId === skill.id}
                 />
               );
             })}
@@ -399,14 +397,7 @@ export default function DashboardSkills() {
               ) : (
                 <>
                   {deleteIds.length} selected talents will be removed.
-                  <br />
                 </>
-              )}
-              This proficiency and its level data leave the tree permanently.
-              {deleteError && (
-                <p role="alert" className="mt-2 text-crimson-600">
-                  {deleteError}
-                </p>
               )}
             </>
           }

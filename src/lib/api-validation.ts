@@ -249,17 +249,29 @@ function assemble<T extends object, K extends keyof T>(
 }
 
 /* ─── Entity parsers ────────────────────────────────────────────────────── */
+/*
+ * Each parser declares its required-on-create keys once, from a single `as
+ * const` list, so the compile-time shape and the runtime presence check can
+ * never drift apart. The keys are exactly the NOT NULL columns without a
+ * database default — everything else keeps its schema default.
+ */
 
-export function parseProject(
-  input: unknown,
-  mode: "create"
-): ParseResult<RequiredOnCreate<ProjectWrite, "title" | "category">>;
+const PROJECT_REQUIRED = ["title", "description", "tags", "category", "year"] as const;
+const SKILL_REQUIRED = ["name", "level", "category"] as const;
+const EXPERIENCE_REQUIRED = ["company", "role", "description", "startDate"] as const;
+const TESTIMONIAL_REQUIRED = ["name", "role", "content"] as const;
+const SOCIAL_REQUIRED = ["platform", "url"] as const;
+
+type ProjectCreate = RequiredOnCreate<ProjectWrite, (typeof PROJECT_REQUIRED)[number]>;
+type SkillCreate = RequiredOnCreate<SkillWrite, (typeof SKILL_REQUIRED)[number]>;
+type ExperienceCreate = RequiredOnCreate<ExperienceWrite, (typeof EXPERIENCE_REQUIRED)[number]>;
+type TestimonialCreate = RequiredOnCreate<TestimonialWrite, (typeof TESTIMONIAL_REQUIRED)[number]>;
+type SocialCreate = RequiredOnCreate<SocialWrite, (typeof SOCIAL_REQUIRED)[number]>;
+
+export function parseProject(input: unknown, mode: "create"): ParseResult<ProjectCreate>;
 export function parseProject(input: unknown, mode: "update"): ParseResult<ProjectWrite>;
-export function parseProject(
-  input: unknown,
-  mode: WriteMode
-): ParseResult<RequiredOnCreate<ProjectWrite, "title" | "category">> {
-  return assemble<ProjectWrite, "title" | "category">(
+export function parseProject(input: unknown, mode: WriteMode): ParseResult<ProjectCreate> {
+  return assemble<ProjectWrite, (typeof PROJECT_REQUIRED)[number]>(
     input,
     {
       title: (v) => asText(v, 120),
@@ -274,21 +286,15 @@ export function parseProject(
       githubUrl: asNullableUrl,
       order: (v) => asInt(v, 0, 100_000),
     },
-    ["title", "category"],
+    PROJECT_REQUIRED,
     mode
   );
 }
 
-export function parseSkill(
-  input: unknown,
-  mode: "create"
-): ParseResult<RequiredOnCreate<SkillWrite, "name" | "category">>;
+export function parseSkill(input: unknown, mode: "create"): ParseResult<SkillCreate>;
 export function parseSkill(input: unknown, mode: "update"): ParseResult<SkillWrite>;
-export function parseSkill(
-  input: unknown,
-  mode: WriteMode
-): ParseResult<RequiredOnCreate<SkillWrite, "name" | "category">> {
-  return assemble<SkillWrite, "name" | "category">(
+export function parseSkill(input: unknown, mode: WriteMode): ParseResult<SkillCreate> {
+  return assemble<SkillWrite, (typeof SKILL_REQUIRED)[number]>(
     input,
     {
       name: (v) => asText(v, 80),
@@ -297,21 +303,15 @@ export function parseSkill(
       icon: (v) => asText(v, 60),
       order: (v) => asInt(v, 0, 100_000),
     },
-    ["name", "category"],
+    SKILL_REQUIRED,
     mode
   );
 }
 
-export function parseExperience(
-  input: unknown,
-  mode: "create"
-): ParseResult<RequiredOnCreate<ExperienceWrite, "company" | "role" | "startDate">>;
+export function parseExperience(input: unknown, mode: "create"): ParseResult<ExperienceCreate>;
 export function parseExperience(input: unknown, mode: "update"): ParseResult<ExperienceWrite>;
-export function parseExperience(
-  input: unknown,
-  mode: WriteMode
-): ParseResult<RequiredOnCreate<ExperienceWrite, "company" | "role" | "startDate">> {
-  return assemble<ExperienceWrite, "company" | "role" | "startDate">(
+export function parseExperience(input: unknown, mode: WriteMode): ParseResult<ExperienceCreate> {
+  return assemble<ExperienceWrite, (typeof EXPERIENCE_REQUIRED)[number]>(
     input,
     {
       company: (v) => asText(v, 120),
@@ -322,21 +322,15 @@ export function parseExperience(
       type: (v) => asEnum(v, EXPERIENCE_TYPES),
       order: (v) => asInt(v, 0, 100_000),
     },
-    ["company", "role", "startDate"],
+    EXPERIENCE_REQUIRED,
     mode
   );
 }
 
-export function parseTestimonial(
-  input: unknown,
-  mode: "create"
-): ParseResult<RequiredOnCreate<TestimonialWrite, "name" | "content">>;
+export function parseTestimonial(input: unknown, mode: "create"): ParseResult<TestimonialCreate>;
 export function parseTestimonial(input: unknown, mode: "update"): ParseResult<TestimonialWrite>;
-export function parseTestimonial(
-  input: unknown,
-  mode: WriteMode
-): ParseResult<RequiredOnCreate<TestimonialWrite, "name" | "content">> {
-  return assemble<TestimonialWrite, "name" | "content">(
+export function parseTestimonial(input: unknown, mode: WriteMode): ParseResult<TestimonialCreate> {
+  return assemble<TestimonialWrite, (typeof TESTIMONIAL_REQUIRED)[number]>(
     input,
     {
       name: (v) => asText(v, 120),
@@ -345,21 +339,15 @@ export function parseTestimonial(
       avatar: (v) => asOptionalText(v, 2048),
       order: (v) => asInt(v, 0, 100_000),
     },
-    ["name", "content"],
+    TESTIMONIAL_REQUIRED,
     mode
   );
 }
 
-export function parseSocialLink(
-  input: unknown,
-  mode: "create"
-): ParseResult<RequiredOnCreate<SocialWrite, "platform" | "url" | "icon">>;
+export function parseSocialLink(input: unknown, mode: "create"): ParseResult<SocialCreate>;
 export function parseSocialLink(input: unknown, mode: "update"): ParseResult<SocialWrite>;
-export function parseSocialLink(
-  input: unknown,
-  mode: WriteMode
-): ParseResult<RequiredOnCreate<SocialWrite, "platform" | "url" | "icon">> {
-  return assemble<SocialWrite, "platform" | "url" | "icon">(
+export function parseSocialLink(input: unknown, mode: WriteMode): ParseResult<SocialCreate> {
+  return assemble<SocialWrite, (typeof SOCIAL_REQUIRED)[number]>(
     input,
     {
       platform: (v) => asText(v, 60),
@@ -367,7 +355,7 @@ export function parseSocialLink(
       icon: (v) => asText(v, 60),
       order: (v) => asInt(v, 0, 100_000),
     },
-    ["platform", "url", "icon"],
+    SOCIAL_REQUIRED,
     mode
   );
 }

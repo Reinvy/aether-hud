@@ -81,6 +81,8 @@ interface SocialLinksCardProps {
    *  disable on those two rows. */
   firstId: string | null;
   lastId: string | null;
+  /** Id of the link whose move request is in flight — its controls disable. */
+  movingId?: string | null;
   onAdd: () => void;
   onEdit: (social: SocialDto) => void;
   onDelete: (social: SocialDto) => void;
@@ -95,6 +97,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
   onMove,
   firstId,
   lastId,
+  movingId = null,
   onAdd,
   onEdit,
   onDelete,
@@ -121,7 +124,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
             message={emptyMessage}
           />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2" role="region" aria-label="Social registry">
             {socials.map((s, i) => {
               const Icon = iconMap[s.icon] || Link2;
               const selected = selectedIds.has(s.id);
@@ -164,7 +167,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                     <span className="codex-label text-[8px]">#{s.order}</span>
                     <IconButton
                       label={`Move ${s.platform} up`}
-                      disabled={s.id === firstId}
+                      disabled={s.id === firstId || s.id === movingId}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
                       onClick={() => onMove(s, -1)}
                     >
@@ -172,7 +175,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                     </IconButton>
                     <IconButton
                       label={`Move ${s.platform} down`}
-                      disabled={s.id === lastId}
+                      disabled={s.id === lastId || s.id === movingId}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
                       onClick={() => onMove(s, 1)}
                     >

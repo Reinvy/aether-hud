@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { fail, failNoDb, ok, requireSession } from "@/lib/api-helpers";
+import { fail, failNoDb, ok, requireSession, revalidateContent } from "@/lib/api-helpers";
 import { hasDatabase } from "@/lib/portfolio-repo";
 
 export const dynamic = "force-dynamic";
@@ -13,8 +13,14 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params;
   try {
     await prisma.section.delete({ where: { id } });
+    revalidateContent();
     return ok({ success: true });
-  } catch {
-    return fail("Section not found", "SECTIONS_DELETE", 404);
+  } catch (e) {
+    // P2025 is Prisma's "record to delete does not exist" — a 404, not a 500.
+    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2025") {
+      return fail("Not found", "SECTIONS_DELETE", 404);
+    }
+    console.error("[CODEX_API:DELETE_SECTIONS]", e instanceof Error ? e.message : e);
+    return fail("Failed to delete section", "CODEX_API:DELETE_SECTIONS");
   }
 }

@@ -7,6 +7,7 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronRight,
+  Copy,
   Terminal,
   Users,
   User,
@@ -62,9 +63,32 @@ const socialIcons: Record<string, React.ElementType> = {
   Rss,
 };
 
-interface ContactResponse {
-  error?: string;
-  transmissionId?: string;
+interface DispatchForm {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const EMPTY_DISPATCH: DispatchForm = { name: "", email: "", subject: "", message: "" };
+
+/**
+ * Compose the hand-off link. The summon desk has no server side: the visitor's
+ * own mail client carries the message, which is why the form validates the same
+ * things the retired endpoint did (name, address, topic, body) before opening it.
+ */
+function buildMailto(address: string, form: DispatchForm): string {
+  const subject = `Commission inquiry — ${form.name.trim()}`;
+  const body = [
+    `Name: ${form.name.trim()}`,
+    `Email: ${form.email.trim()}`,
+    `Subject: ${form.subject.trim()}`,
+    "",
+    form.message.trim(),
+  ].join("\n");
+  return `mailto:${address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 export function ContactSection({
@@ -76,46 +100,51 @@ export function ContactSection({
   socials: SocialDto[];
   section: SectionDto;
 }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<DispatchForm>(EMPTY_DISPATCH);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [transmissionId, setTransmissionId] = useState<string>("");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 
   const directEmail = config.email || "hello@aether-hud.dev";
   const isAvailable = config.status.toUpperCase() === "ONLINE";
+  const mailtoHref = buildMailto(directEmail, formData);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSending(true);
+    if (sending) return;
     setError(null);
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data: ContactResponse = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError(data.error ?? "The dispatch scroll could not be delivered. Try again.");
-        return;
-      }
-
-      setTransmissionId(data.transmissionId ?? `TX-${Date.now().toString(36).toUpperCase()}`);
-      setSent(true);
-    } catch {
-      setError("The dispatch portal is unreachable. Try again in a moment.");
-    } finally {
-      setSending(false);
+    if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      setError("Please fill in your name, email, topic and message.");
+      return;
     }
+    if (!EMAIL_PATTERN.test(formData.email.trim())) {
+      setError("That email address does not look right.");
+      return;
+    }
+
+    setSending(true);
+    setCopyState("idle");
+    // Hand the composed message to the visitor's mail client.
+    window.location.href = mailtoHref;
+    setSent(true);
+    setSending(false);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(directEmail);
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+  };
+
+  const resetDispatch = () => {
+    setSent(false);
+    setCopyState("idle");
+    setFormData(EMPTY_DISPATCH);
   };
 
   return (
@@ -180,26 +209,46 @@ export function ContactSection({
                   >
                     <CheckCircle className="h-12 w-12 text-jade-ink mb-4" aria-hidden="true" />
                     <p className="font-serif text-lg font-bold tracking-wider text-leather-dark uppercase">
-                      Dispatch Delivered
+                      Dispatch composed
                     </p>
-                    <p className="mt-2 text-sm text-leather-caramel font-mono font-medium">
-                      Summoning scroll received. Seal ID:
+                    <p className="mt-2 max-w-sm text-sm text-leather-muted font-body">
+                      Your mail client has opened with the summoning scroll. If it did not, send the
+                      message straight to the address below.
                     </p>
-                    <span className="mt-2 inline-block rounded-full border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-caramel font-bold tabular-nums">
-                      {transmissionId}
+                    <span className="mt-3 inline-block codex-btn border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-dark font-bold">
+                      {directEmail}
                     </span>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        setSent(false);
-                        setFormData({ name: "", email: "", subject: "", message: "" });
-                      }}
-                      className="mt-6 font-serif uppercase tracking-widest"
-                    >
-                      Send Another Dispatch
-                    </Button>
+                    <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleCopy}
+                        className="font-serif uppercase tracking-widest"
+                      >
+                        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                        {copyState === "copied"
+                          ? "Address copied"
+                          : copyState === "failed"
+                            ? "Copy failed — select it"
+                            : "Copy address"}
+                      </Button>
+                      <a
+                        href={mailtoHref}
+                        className="codex-btn-primary codex-sheen codex-focus px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase"
+                      >
+                        Open mail app
+                      </a>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetDispatch}
+                        className="font-serif uppercase tracking-widest"
+                      >
+                        Send another dispatch
+                      </Button>
+                    </div>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">

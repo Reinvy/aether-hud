@@ -78,16 +78,16 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
         {categories.length > 1 && (
           <div
             className="mt-8 flex flex-wrap items-center justify-center gap-2"
-            role="tablist"
-            aria-label="Domain categories"
+            role="group"
+            aria-label="Filter domains by discipline"
           >
             {categories.map((category) => {
               const isActive = selectedCategory === category;
               return (
                 <button
                   key={category}
-                  role="tab"
-                  aria-selected={isActive}
+                  type="button"
+                  aria-pressed={isActive}
                   onClick={() => setSelectedCategory(category)}
                   className={cn(
                     "px-4 py-1.5 codex-btn font-serif text-xs font-bold tracking-wider uppercase transition-all duration-200 border-2",

@@ -6,7 +6,7 @@
  */
 
 import { spawn, execSync } from "child_process";
-import { readFileSync, existsSync } from "fs";
+import { existsSync } from "fs";
 
 const DEFAULT_PORT = 3005;
 
@@ -19,13 +19,6 @@ export function isLiveMode() {
 }
 
 export function resolveProductionUrl() {
-  try {
-    if (existsSync(".cron/VERCEL_DOMAIN.env")) {
-      const env = readFileSync(".cron/VERCEL_DOMAIN.env", "utf-8");
-      const match = env.match(/^PRODUCTION_URL="([^"]+)"/m);
-      if (match) return match[1];
-    }
-  } catch {}
   return "https://aether-hud-lyart.vercel.app";
 }
 
@@ -120,6 +113,10 @@ export async function startTestServer() {
         ...process.env,
         PORT: String(port),
         NEXT_PUBLIC_SITE_URL: targetUrl,
+        // The write-guard tests must exercise a CONFIGURED server (401 on a
+        // missing cookie). Without a secret every mutating route answers 503
+        // instead, which would hide a real auth regression.
+        DASHBOARD_SECRET: process.env.DASHBOARD_SECRET || "codex-e2e-secret",
       },
     }
   );

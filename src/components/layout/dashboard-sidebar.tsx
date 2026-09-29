@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -59,6 +59,36 @@ export function DashboardSidebar() {
 
   const siteName = config?.siteName || APP_NAME;
   const version = config?.edition || PORTFOLIO_CONFIG.edition;
+
+  // The mobile drawer is a modal surface: Escape closes it, the background stops
+  // scrolling behind it, focus moves to the first entry on open and returns to
+  // whatever opened it (the console's hamburger) on close. Without this a
+  // keyboard user tabbed through the page underneath an "open" drawer.
+  const panelRef = useRef<HTMLElement | null>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      restoreFocusRef.current?.focus();
+      restoreFocusRef.current = null;
+      return;
+    }
+
+    restoreFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.querySelector<HTMLElement>("a, button")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen, close]);
 
   // Restore the operator's rail preference once, on mount.
   useEffect(() => {
@@ -152,7 +182,7 @@ export function DashboardSidebar() {
 
         <button
           type="button"
-          onClick={logout}
+          onClick={() => void logout()}
           title={collapsed ? "Log out" : undefined}
           className={cn(
             "flex w-full items-center gap-3 codex-radius-sm px-4 py-3 text-xs font-semibold tracking-wider text-leather-muted transition-all duration-200 hover:bg-crimson-600/8 hover:text-crimson-600 hover-scale-sm press-scale codex-focus",
@@ -213,11 +243,14 @@ export function DashboardSidebar() {
               aria-hidden="true"
             />
             <motion.aside
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Codex navigation"
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              aria-label="Mobile console sidebar"
               className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-leather-caramel/25 bg-parchment-base/95 backdrop-blur-xl lg:hidden"
             >
               {sidebarContent}

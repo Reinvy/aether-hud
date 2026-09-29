@@ -52,6 +52,8 @@ interface ProjectArchiveRowProps<T extends ProjectArchiveRowData> {
   onMove?: (id: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** A reorder write for this row is in flight — its move controls are disabled. */
+  moving?: boolean;
 }
 
 function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
@@ -65,6 +67,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
 }: ProjectArchiveRowProps<T>) {
   return (
     <motion.div
@@ -117,7 +120,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                 <IconButton
                   label={`Move ${project.title} up`}
                   onClick={() => onMove(project.id, -1)}
-                  disabled={!canMoveUp}
+                  disabled={!canMoveUp || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
@@ -125,7 +128,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                 <IconButton
                   label={`Move ${project.title} down`}
                   onClick={() => onMove(project.id, 1)}
-                  disabled={!canMoveDown}
+                  disabled={!canMoveDown || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />

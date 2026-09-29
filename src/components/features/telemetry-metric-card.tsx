@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "@/components/ui/info-row";
+import type { TelemetryMetricSummary } from "@/lib/dto";
 
 /**
  * TelemetryMetricCard — one Web Vitals metric from the Astral Observatory.
@@ -11,20 +12,6 @@ import { InfoRow } from "@/components/ui/info-row";
  * Kept as its own module so the metric → label/unit/rating mapping stays
  * colocated.
  */
-
-export interface TelemetryMetricSummary {
-  count: number;
-  min: number | null;
-  max: number | null;
-  avg: number | null;
-  p95: number | null;
-  last: {
-    value: number;
-    rating: string;
-    path: string;
-    recordedAt: string;
-  } | null;
-}
 
 /** Human label per Web Vitals metric name (falls back to the raw name). */
 const METRIC_LABELS: Record<string, string> = {

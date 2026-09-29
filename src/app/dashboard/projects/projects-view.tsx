@@ -6,14 +6,14 @@ import { motion } from "framer-motion";
 import { Boxes, Plus, Trash2 } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { ListTableHeader } from "@/components/ui/list-table-header";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Pagination } from "@/components/ui/pagination";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -75,7 +75,12 @@ const PROJECT_SORT_OPTIONS = [
 ];
 
 export default function DashboardProjects() {
-  const { data: projects, loading, refetch } = useData<ProjectFormRecord[]>("/api/projects");
+  const {
+    data: projects,
+    loading,
+    error,
+    refetch,
+  } = useData<ProjectFormRecord[]>("/api/projects");
   const rows = useMemo(() => projects ?? [], [projects]);
 
   const list = useListControls<ProjectFormRecord>({
@@ -97,8 +102,8 @@ export default function DashboardProjects() {
   const [editingProject, setEditingProject] = useState<ProjectFormRecord | null>(null);
   const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
 
   const openNew = useCallback(() => {
     setEditingProject(null);
@@ -111,12 +116,10 @@ export default function DashboardProjects() {
   }, []);
 
   const requestDelete = useCallback((project: ProjectFormRecord) => {
-    setDeleteError(null);
     setDeleteIds([project.id]);
   }, []);
 
   const requestBulkDelete = useCallback(() => {
-    setDeleteError(null);
     setDeleteIds([...list.selected]);
   }, [list.selected]);
 
@@ -128,28 +131,31 @@ export default function DashboardProjects() {
   const handleSelect = useCallback((id: string) => selectRef.current(id), []);
 
   const handleMove = useCallback(
-    async (id: string, direction: -1 | 1) => {
+    async (id: string, direction: "up" | "down") => {
       setActionError(null);
-      const updates = swapOrder(ordered, id, direction);
-      if (updates.length === 0) return;
+      const updates = planReorder(ordered, id, direction);
+      if (!updates) return;
 
-      const tagsById = new Map(ordered.map((project) => [project.id, project.tags]));
+      setMovingId(id);
       try {
         await Promise.all(
           updates.map((row) =>
             apiRequest<unknown>("/api/projects", {
               method: "PUT",
-              // The projects PUT always rewrites `tags`, so each row's tag list
-              // travels with the order swap instead of being blanked.
-              body: { id: row.id, order: row.order, tags: tagsById.get(row.id) ?? [] },
+              // Reorder only sends the new order — the server leaves every
+              // unspecified field (including `tags`) untouched.
+              body: { id: row.id, order: row.order },
             })
           )
         );
-        refetch();
+        await refetch();
       } catch (e) {
         setActionError(
           e instanceof ApiError ? e.message : "Failed to reorder the archive"
         );
+        await refetch();
+      } finally {
+        setMovingId(null);
       }
     },
     [ordered, refetch]
@@ -158,45 +164,35 @@ export default function DashboardProjects() {
   const moveRef = useRef(handleMove);
   moveRef.current = handleMove;
   const dispatchMove = useCallback((id: string, direction: -1 | 1) => {
-    void moveRef.current(id, direction);
+    void moveRef.current(id, direction === -1 ? "up" : "down");
   }, []);
 
   const runDelete = useCallback(async () => {
     if (!deleteIds) return;
     const ids = deleteIds;
     setDeleting(true);
-    setDeleteError(null);
 
     const results = await Promise.allSettled(
       ids.map((id) => apiRequest<unknown>(`/api/projects/${id}`, { method: "DELETE" }))
     );
-    let removed = 0;
-    let failureMessage: string | null = null;
-    for (const result of results) {
-      if (result.status === "fulfilled") removed += 1;
-      else if (failureMessage === null) {
-        failureMessage =
-          result.reason instanceof ApiError
-            ? result.reason.message
-            : "Failed to remove the selected domains";
-      }
+    const failure = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected"
+    );
+    if (failure) {
+      setActionError(
+        failure.reason instanceof ApiError
+          ? failure.reason.message
+          : `${results.filter((r) => r.status === "rejected").length} of ${ids.length} domains could not be removed`
+      );
     }
 
-    if (failureMessage === null) {
-      if (ids.length > 1) list.clearSelection();
-      else if (list.selected.has(ids[0])) list.toggleSelected(ids[0]);
-      setDeleteIds(null);
-      refetch();
-    } else {
-      // Part of the selection may have been removed — refresh so the list
-      // matches the server, but keep the dialog open with the server message.
-      if (removed > 0) refetch();
-      setDeleteError(failureMessage);
-    }
+    list.clearSelection();
+    setDeleteIds(null);
     setDeleting(false);
-  }, [deleteIds, refetch, list.clearSelection, list.selected, list.toggleSelected]);
+    await refetch();
+  }, [deleteIds, list, refetch]);
 
-  if (loading) {
+  if (loading && projects === null) {
     return <DashboardListSkeleton rows={5} />;
   }
 
@@ -242,29 +238,26 @@ export default function DashboardProjects() {
           />
         </motion.div>
 
-        {actionError && (
-          <p
-            role="alert"
-            className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-xs text-crimson-600"
-          >
-            {actionError}
-          </p>
-        )}
+        {actionError && <ActionError message={actionError} className="mb-4" />}
 
-        <motion.div className="space-y-3" {...fadeInUp}>
-          <ListTableHeader
-            columns={[
-              { label: "Domain", className: "flex-1" },
-              { label: "Category", className: "hidden w-24 sm:block" },
-              { label: "Status", className: "hidden w-20 md:block" },
-              { label: "Actions", className: "w-28", align: "right" },
-            ]}
-          />
+        {error !== null ? (
+          <WidgetError label="Domain archive" message={error} onRetry={refetch} />
+        ) : (
+          <motion.div className="space-y-3" aria-label="Domain registry" {...fadeInUp}>
+            <div
+              aria-hidden="true"
+              className="flex items-center gap-4 border-b border-border-subtle px-4 py-2"
+            >
+              <span className="codex-label flex-1">Domain</span>
+              <span className="codex-label hidden w-24 sm:block">Category</span>
+              <span className="codex-label hidden w-20 md:block">Status</span>
+              <span className="codex-label w-28 text-right">Actions</span>
+            </div>
 
           {list.filteredCount === 0 ? (
             <EmptyState
               icon={<Boxes className="h-5 w-5" />}
-              title={list.query ? "No matching domains" : "No domains yet"}
+              title={list.query ? "No domains matches this search" : "No domains yet"}
               message={
                 list.query
                   ? `Nothing in the archive matches “${list.query}”.`
@@ -295,11 +288,13 @@ export default function DashboardProjects() {
                   canMoveDown={reorderable && position >= 0 && position < ordered.length - 1}
                   onEdit={openEdit}
                   onDelete={requestDelete}
+                  moving={movingId === project.id}
                 />
               );
             })
           )}
-        </motion.div>
+          </motion.div>
+        )}
 
         <Pagination
           page={list.page}
@@ -335,16 +330,7 @@ export default function DashboardProjects() {
               ) : (
                 <>
                   {deleteIds.length} selected domains will be removed.
-                  <br />
                 </>
-              )}
-              {deleteIds.length === 1
-                ? "This domain leaves the archive permanently."
-                : "They leave the archive permanently."}
-              {deleteError && (
-                <p role="alert" className="mt-2 text-crimson-600">
-                  {deleteError}
-                </p>
               )}
             </>
           }

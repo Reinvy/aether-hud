@@ -5,7 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, ArrowLeft, ArrowRight, Eye, EyeOff, KeyRound } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  KeyRound,
+} from "lucide-react";
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
@@ -35,7 +43,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [step, setStep] = useState<"intro" | "password">("intro");
   const router = useRouter();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -44,7 +52,36 @@ export default function LoginForm() {
   }, [isAuthenticated, router]);
 
   if (isAuthenticated) {
-    return null;
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-parchment-base p-4 sm:p-6">
+        <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" />
+
+        <div className="codex-card codex-radius-card codex-rise relative w-full max-w-md p-8 text-center">
+          <CheckCircle className="mx-auto h-10 w-10 text-jade-ink" aria-hidden="true" />
+          <h1 className="mt-4 font-display text-xl font-bold tracking-[0.08em] text-leather-dark">
+            Session active
+          </h1>
+          <p className="mt-2 font-body text-sm text-leather-muted">
+            This browser already holds a console session. Enter the codex, or end the session and
+            return here.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link href="/dashboard" className="codex-btn-primary codex-sheen codex-focus px-6 py-3 text-sm tracking-wide">
+              Enter the console
+            </Link>
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              glow="none"
+              onClick={() => void logout()}
+            >
+              End session
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {

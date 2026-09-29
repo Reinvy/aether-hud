@@ -10,11 +10,14 @@
 
 export class ApiError extends Error {
   readonly status: number;
+  /** Per-field messages from a rejected write body (`400 { error, fields }`). */
+  readonly fields: Record<string, string>;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, fields: Record<string, string> = {}) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.fields = fields;
   }
 }
 
@@ -23,43 +26,76 @@ const JSON_HEADERS = {
   "Content-Type": "application/json",
 } as const;
 
-/** Server `{ error }` payload when present, else a status-derived message. */
-async function errorMessage(res: Response): Promise<string> {
+interface ErrorBody {
+  message: string;
+  fields: Record<string, string>;
+}
+
+/** Server `{ error, fields }` payload when present, else a status-derived message. */
+async function errorBody(res: Response): Promise<ErrorBody> {
   try {
     const body: unknown = await res.json();
     if (typeof body === "object" && body !== null && "error" in body) {
-      const { error } = body as { error?: unknown };
-      if (typeof error === "string" && error.length > 0) return error;
+      const { error, fields } = body as { error?: unknown; fields?: unknown };
+      const message =
+        typeof error === "string" && error.length > 0
+          ? error
+          : `Request failed (HTTP ${res.status})`;
+      return {
+        message,
+        fields: typeof fields === "object" && fields !== null
+          ? (fields as Record<string, string>)
+          : {},
+      };
     }
   } catch {
     // Non-JSON error bodies (proxy pages, timeouts) fall through.
   }
-  return `Request failed (HTTP ${res.status})`;
+  return { message: `Request failed (HTTP ${res.status})`, fields: {} };
 }
 
-async function unwrap<T>(res: Response): Promise<T> {
+async function unwrap<T>(res: Response, redirectOn401: boolean): Promise<T> {
   if (res.status === 401) {
-    const message = await errorMessage(res);
-    if (typeof window !== "undefined") window.location.assign("/login");
+    const { message } = await errorBody(res);
+    if (redirectOn401 && typeof window !== "undefined") window.location.assign("/login");
     throw new ApiError(message, 401);
   }
-  if (!res.ok) throw new ApiError(await errorMessage(res), res.status);
+  if (!res.ok) {
+    const { message, fields } = await errorBody(res);
+    throw new ApiError(message, res.status, fields);
+  }
   return (await res.json()) as T;
 }
 
-export async function apiGet<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
-  return unwrap<T>(res);
+/**
+ * Authenticated GET. `redirectOn401` defaults to true: a lost session bounces
+ * the operator to the sign-in screen. The login request itself passes `false`
+ * so a wrong password renders inline instead of reloading the page away.
+ */
+export async function apiGet<T>(
+  url: string,
+  options?: { redirectOn401?: boolean }
+): Promise<T> {
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  return unwrap<T>(res, options?.redirectOn401 ?? true);
 }
 
 export async function apiRequest<T>(
   url: string,
-  init: { method: "POST" | "PUT" | "DELETE"; body?: unknown }
+  init: {
+    method: "POST" | "PUT" | "DELETE";
+    body?: unknown;
+    redirectOn401?: boolean;
+  }
 ): Promise<T> {
   const res = await fetch(url, {
     method: init.method,
     headers: JSON_HEADERS,
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
+    cache: "no-store",
   });
-  return unwrap<T>(res);
+  return unwrap<T>(res, init.redirectOn401 ?? true);
 }

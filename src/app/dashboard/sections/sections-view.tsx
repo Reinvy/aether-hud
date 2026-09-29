@@ -4,8 +4,9 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { Blocks, Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+import { Blocks, Eye, EyeOff, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionError } from "@/components/ui/action-error";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -17,7 +18,7 @@ import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ApiError, apiRequest } from "@/lib/api-client";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { SectionRow } from "@/components/features/section-row";
 import type { SectionDto } from "@/lib/dto";
@@ -73,7 +74,7 @@ interface DeleteRequest {
  * bulk actions and the create/edit/delete modals.
  */
 export default function DashboardSections() {
-  const { data: sections, loading, refetch } = useData<SectionDto[]>("/api/sections");
+  const { data: sections, loading, error: loadError, refetch } = useData<SectionDto[]>("/api/sections");
   const list = useMemo(() => sections ?? [], [sections]);
 
   const controls = useListControls<SectionDto>({
@@ -109,8 +110,8 @@ export default function DashboardSections() {
   const [editingSection, setEditingSection] = useState<SectionDto | null>(null);
   const [deleteRequest, setDeleteRequest] = useState<DeleteRequest | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   // useListControls hands back fresh callbacks each render; route the
   // selection handler through a ref so the memoized rows keep their
@@ -127,11 +128,6 @@ export default function DashboardSections() {
   const firstId = orderedIds[0] ?? null;
   const lastId = orderedIds[orderedIds.length - 1] ?? null;
 
-  const openNew = useCallback(() => {
-    setEditingSection(null);
-    setFormOpen(true);
-  }, []);
-
   const openEdit = useCallback((section: SectionDto) => {
     setEditingSection(section);
     setFormOpen(true);
@@ -144,36 +140,44 @@ export default function DashboardSections() {
 
   const handleToggle = useCallback(
     async (section: SectionDto) => {
-      setError(null);
+      setActionError(null);
       try {
         await apiRequest("/api/sections", {
           method: "PUT",
           body: { id: section.id, enabled: !section.enabled },
         });
-        refetch();
+        await refetch();
       } catch (e) {
-        setError(e instanceof ApiError ? e.message : "Failed to update the page");
+        setActionError(e instanceof ApiError ? e.message : "Failed to update the page");
       }
     },
     [refetch]
   );
 
-  // `swapOrder` returns both rows of the exchange (or nothing at an end);
-  // the two updates are written together, then the list is refetched once.
+  // `planReorder` returns only the rows whose stored order changes (or null
+  // at either end); the updates are written together, then the list is
+  // refetched once. `movingId` disables the row's controls while in flight.
   const handleMove = useCallback(
     async (section: SectionDto, direction: -1 | 1) => {
-      const updates = swapOrder(list, section.id, direction);
-      if (updates.length === 0) return;
-      setError(null);
+      setActionError(null);
+      const updates = planReorder(list, section.id, direction === -1 ? "up" : "down");
+      if (!updates) return;
+      setMovingId(section.id);
       try {
         await Promise.all(
           updates.map((update) =>
-            apiRequest("/api/sections", { method: "PUT", body: update })
+            apiRequest<unknown>("/api/sections", {
+              method: "PUT",
+              body: { id: update.id, order: update.order },
+            })
           )
         );
-        refetch();
+        await refetch();
       } catch (e) {
-        setError(e instanceof ApiError ? e.message : "Failed to reorder the page");
+        setActionError(e instanceof ApiError ? e.message : "Failed to reorder the page");
+        await refetch();
+      } finally {
+        setMovingId(null);
       }
     },
     [list, refetch]
@@ -185,7 +189,7 @@ export default function DashboardSections() {
     async (enabled: boolean) => {
       const ids = [...selected];
       if (ids.length === 0) return;
-      setError(null);
+      setActionError(null);
       try {
         await Promise.all(
           ids.map((id) =>
@@ -193,9 +197,9 @@ export default function DashboardSections() {
           )
         );
         clearSelection();
-        refetch();
+        await refetch();
       } catch (e) {
-        setError(
+        setActionError(
           e instanceof ApiError
             ? e.message
             : `Failed to ${enabled ? "enable" : "disable"} the selected pages`
@@ -206,39 +210,45 @@ export default function DashboardSections() {
   );
 
   const requestDelete = useCallback((section: SectionDto) => {
-    setDeleteError(null);
     setDeleteRequest({ ids: [section.id], label: section.title });
   }, []);
 
   const requestBulkDelete = useCallback(() => {
-    setDeleteError(null);
     setDeleteRequest({
       ids: [...selected],
       label: `${selected.size} selected pages`,
     });
   }, [selected]);
 
+  // One delete implementation — allSettled so a partial failure still counts
+  // and still closes the dialog / refetches.
   const handleDelete = useCallback(async () => {
     if (!deleteRequest) return;
+    const ids = deleteRequest.ids;
     setDeleting(true);
-    setDeleteError(null);
+    setActionError(null);
     try {
-      await Promise.all(
-        deleteRequest.ids.map((id) =>
-          apiRequest(`/api/sections/${id}`, { method: "DELETE" })
-        )
+      const results = await Promise.allSettled(
+        ids.map((id) => apiRequest(`/api/sections/${id}`, { method: "DELETE" }))
       );
+      const failed = results.filter((r) => r.status === "rejected");
+      if (failed.length > 0) {
+        const firstApiError = failed.find((r) => r.reason instanceof ApiError)?.reason;
+        setActionError(
+          firstApiError instanceof ApiError
+            ? firstApiError.message
+            : `${failed.length} of ${ids.length} routes could not be removed`
+        );
+      }
+    } finally {
       setDeleteRequest(null);
       clearSelection();
-      refetch();
-    } catch (e) {
-      setDeleteError(e instanceof ApiError ? e.message : "Failed to remove the page");
-    } finally {
+      await refetch();
       setDeleting(false);
     }
   }, [deleteRequest, clearSelection, refetch]);
 
-  if (loading) {
+  if (loading && sections === null) {
     return <DashboardListSkeleton rows={5} />;
   }
 
@@ -251,12 +261,6 @@ export default function DashboardSections() {
         eyebrow="PAGE CONTROL"
         title="Manage codex pages"
         titleHighlight="codex pages"
-        actions={
-          <Button variant="primary" size="sm" onClick={openNew}>
-            <Plus className="h-4 w-4" />
-            New page
-          </Button>
-        }
       />
 
       <ListToolbar
@@ -289,17 +293,10 @@ export default function DashboardSections() {
         }
       />
 
-      {error && (
-        <p
-          role="alert"
-          className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-sm text-crimson-600"
-        >
-          {error}
-        </p>
-      )}
+      {actionError && <ActionError message={actionError} className="mb-4" />}
 
       {/* Info banner + sections table — widget-level error boundary */}
-      <ErrorBoundary section="sections-table" fallback={<WidgetError label="SECTION CONTROL" />}>
+      <ErrorBoundary section="sections-table" fallback={<WidgetError label="Section control" />}>
         <motion.div className="mb-6" {...fadeInUp}>
           <div className="codex-card codex-radius-card p-4">
             <p className="text-sm leading-relaxed text-leather-muted">
@@ -310,23 +307,17 @@ export default function DashboardSections() {
           </div>
         </motion.div>
 
-        {pageItems.length === 0 ? (
+        {loadError !== null ? (
+          <WidgetError label="Section control" message={loadError} onRetry={refetch} />
+        ) : pageItems.length === 0 ? (
           <motion.div {...fadeInUp}>
             <EmptyState
               icon={<Blocks className="h-5 w-5" />}
               title={emptyRegistry ? "No pages yet" : "No matches"}
               message={
                 emptyRegistry
-                  ? "Add a page to publish a section on the landing screen."
+                  ? "No pages are registered yet."
                   : "No pages match this search."
-              }
-              action={
-                emptyRegistry ? (
-                  <Button variant="primary" size="sm" onClick={openNew}>
-                    <Plus className="h-4 w-4" />
-                    New page
-                  </Button>
-                ) : undefined
               }
             />
           </motion.div>
@@ -334,7 +325,7 @@ export default function DashboardSections() {
           <motion.div {...fadeInUp}>
             <Card variant="glass" hover="none">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full" aria-label="Codex sections">
                   <thead>
                     <tr className="border-b border-border-subtle">
                       <th className="px-4 py-3 text-left">
@@ -372,6 +363,7 @@ export default function DashboardSections() {
                         onMove={handleMove}
                         canMoveUp={section.id !== firstId}
                         canMoveDown={section.id !== lastId}
+                        moving={movingId === section.id}
                         onToggle={handleToggle}
                         onEdit={openEdit}
                         onDelete={requestDelete}
@@ -407,12 +399,7 @@ export default function DashboardSections() {
           message={
             <>
               Remove <span className="text-gold-ink">{deleteRequest.label}</span> from the
-              landing registry? This cannot be undone.
-              {deleteError && (
-                <span role="alert" className="mt-2 block text-crimson-600">
-                  {deleteError}
-                </span>
-              )}
+              landing registry?
             </>
           }
           onConfirm={handleDelete}

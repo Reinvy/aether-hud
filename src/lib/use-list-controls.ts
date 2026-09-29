@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 
 interface ListControlsConfig<T> {
   items: T[];
@@ -56,6 +56,22 @@ export function useListControls<T>(config: ListControlsConfig<T>): ListControlsR
   // through a ref so they never re-trigger the memo.
   const configRef = useRef(config);
   configRef.current = config;
+
+  // Selection follows the list: a deleted row (or one filtered out by a
+  // refetch) must not stay selected, or a bulk action would target an id that
+  // no longer exists. Returning the previous Set when nothing changed keeps the
+  // effect from re-rendering on every parent render.
+  useEffect(() => {
+    setSelectedState((previous) => {
+      if (previous.size === 0) return previous;
+      const present = new Set(config.items.map((item) => config.getId(item)));
+      const next = new Set<string>();
+      for (const id of previous) {
+        if (present.has(id)) next.add(id);
+      }
+      return next.size === previous.size ? previous : next;
+    });
+  }, [config]);
 
   const filtered = useMemo(() => {
     const { items, searchFields, sorters } = configRef.current;

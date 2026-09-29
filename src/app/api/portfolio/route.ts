@@ -33,7 +33,7 @@ function filterProjects(projects: ProjectDto[], f: ProjectFilter): ProjectDto[] 
   }
 
   if (f.tags && f.tags.length > 0) {
-    data = data.filter((p) => p.tags!.some((t) => p.tags.some((tag) => tag.toLowerCase() === t)));
+    data = data.filter((p) => p.tags.some((tag) => f.tags!.includes(tag.toLowerCase())));
   }
 
   if (f.complexity) {
@@ -84,7 +84,11 @@ export async function GET(request: Request) {
     const year = searchParams.get("year")?.trim();
     const sort = searchParams.get("sort")?.toLowerCase().trim();
     const limitParam = searchParams.get("limit");
-    const limit = limitParam ? parseInt(limitParam, 10) : undefined;
+    const requestedLimit = limitParam === null ? NaN : Number.parseInt(limitParam, 10);
+    // A public endpoint: clamp instead of trusting the caller's page size.
+    const limit = Number.isNaN(requestedLimit)
+      ? undefined
+      : Math.min(100, Math.max(1, requestedLimit));
 
     const [config, projects, skills, socials] = await Promise.all([
       getConfig(),
@@ -158,7 +162,7 @@ export async function GET(request: Request) {
               complexity,
               year,
               sort,
-              limit: limit && !Number.isNaN(limit) ? limit : undefined,
+              limit,
             }),
           },
           { headers: CACHE_HEADERS }
@@ -197,7 +201,7 @@ export async function GET(request: Request) {
             complexity,
             year,
             sort,
-            limit: limit && !Number.isNaN(limit) ? limit : undefined,
+            limit,
           }),
         },
         { headers: CACHE_HEADERS }
@@ -206,9 +210,7 @@ export async function GET(request: Request) {
 
     return ok(data, { headers: CACHE_HEADERS });
   } catch (e) {
-    return fail(
-      e instanceof Error ? e.message : "Failed to fetch portfolio data",
-      "PORTFOLIO_GET"
-    );
+    console.error("[PORTFOLIO_GET]", e instanceof Error ? e.message : e);
+    return fail("Failed to fetch portfolio data", "PORTFOLIO_GET");
   }
 }

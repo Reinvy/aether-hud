@@ -5,6 +5,7 @@ import { ApiError, apiRequest } from "@/lib/api-client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
+import { SKILL_CATEGORIES } from "@/lib/constants";
 
 /**
  * SkillFormModal — create/edit module modal for the dashboard talent matrix.
@@ -86,26 +87,37 @@ export function SkillFormModal({
   const [form, setForm] = useState<FormData>(() => toForm(skill));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) skill.
   useEffect(() => {
     if (open) {
       setForm(toForm(skill));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, skill]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
+    const level = Number(form.level);
+    if (!Number.isInteger(level) || level < 1 || level > 100) {
+      setFieldErrors({
+        level: "Level must be a whole number between 1 and 100.",
+      });
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
     const body = {
       name: form.name,
-      level: parseInt(form.level, 10) || 0,
+      level,
       category: form.category,
       icon: form.icon,
     };
@@ -122,9 +134,12 @@ export function SkillFormModal({
 
       onSaved();
     } catch (e) {
-      setError(
-        e instanceof ApiError ? e.message : "Failed to save the talent"
-      );
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError("Failed to save the talent");
+      }
     } finally {
       setSaving(false);
     }
@@ -135,8 +150,8 @@ export function SkillFormModal({
       open={open}
       onClose={onClose}
       title={skill ? "Edit talent" : "New talent"}
-      saveLabel="Save"
-      error={error}
+      saveLabel="Save talent"
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -144,20 +159,32 @@ export function SkillFormModal({
         label="Name"
         placeholder="e.g., React Native"
         value={form.name}
+        required
+        error={fieldErrors.name}
         onChange={(e) => updateField("name", e.target.value)}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Input
+        <Select
           label="Category"
-          placeholder="Frontend"
           value={form.category}
+          required
+          error={fieldErrors.category}
           onChange={(e) => updateField("category", e.target.value)}
+          options={[
+            { value: "", label: "Select a discipline…" },
+            ...SKILL_CATEGORIES.map((category) => ({
+              value: category,
+              label: category,
+            })),
+          ]}
         />
         <Input
-          label="Level (0-100)"
+          label="Level (1-100)"
           type="number"
-          min={0}
+          min={1}
           max={100}
+          required
+          error={fieldErrors.level}
           placeholder="85"
           value={form.level}
           onChange={(e) => updateField("level", e.target.value)}

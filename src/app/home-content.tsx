@@ -1,11 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useCallback, useState } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { NavRail } from "@/components/layout/nav-rail";
 import { MobileNavDock } from "@/components/layout/mobile-nav-dock";
 import { SakuraCanvas } from "@/components/features/sakura-canvas";
+import { ScrollThread } from "@/components/features/scroll-thread";
 import { IntroGate } from "@/components/features/intro-gate";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import type {
@@ -53,10 +55,18 @@ interface HomeContentProps {
 }
 
 /** Ordered section renderers, keyed by the codex page `key` column. */
-function renderSection(section: SectionDto, props: HomeContentProps) {
+function renderSection(section: SectionDto, props: HomeContentProps, revealed: boolean) {
   switch (section.key) {
     case "hero":
-      return <HeroSection config={props.config} />;
+      return (
+        <HeroSection
+          config={props.config}
+          revealed={revealed}
+          projects={props.projects}
+          skills={props.skills}
+          experiences={props.experiences}
+        />
+      );
     case "projects":
       return <ProjectsSection projects={props.projects} section={section} />;
     case "skills":
@@ -86,6 +96,12 @@ export function HomeContent(props: HomeContentProps) {
     .filter((section) => section.enabled)
     .sort((a, b) => a.order - b.order);
 
+  // The hero must not play its entrance behind the intro gate and then play it
+  // again when the gate closes. `revealed` flips once — either when the visitor
+  // enters, or immediately when this session has already met the gate.
+  const [revealed, setRevealed] = useState(false);
+  const handleGateDismiss = useCallback(() => setRevealed(true), []);
+
   return (
     <>
       <a
@@ -95,9 +111,11 @@ export function HomeContent(props: HomeContentProps) {
         Skip to main content
       </a>
 
-      <IntroGate />
+      <IntroGate onDismiss={handleGateDismiss} />
 
-      <SakuraCanvas />
+      <ScrollThread />
+
+      <SakuraCanvas paused={!revealed} />
 
       <SiteHeader siteName={props.config.siteName} />
 
@@ -108,7 +126,7 @@ export function HomeContent(props: HomeContentProps) {
       <main id="main-content" tabIndex={-1} className="outline-none relative z-20">
         {ordered.map((section) => (
           <ErrorBoundary key={section.id} section={section.key}>
-            {renderSection(section, props)}
+            {renderSection(section, props, revealed)}
           </ErrorBoundary>
         ))}
       </main>

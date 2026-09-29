@@ -14,8 +14,8 @@ import type { TestimonialDto } from "@/lib/dto";
  * Lazy-loaded as its own chunk via next/dynamic — it only renders when the
  * operator opens the modal. Writes go through the shared api-client so a
  * rejected save surfaces the server's message inside the modal instead of
- * failing silently. Display order is owned by the archive's reorder
- * controls, so new entries append with `nextOrder`.
+ * failing silently. Display order is assigned by the server on create, so the
+ * form never sends an `order`.
  */
 
 type FormData = {
@@ -47,8 +47,6 @@ interface TestimonialFormModalProps {
   onClose: () => void;
   /** Testimonial being edited, or null for a new one. */
   testimonial: TestimonialDto | null;
-  /** Order value a new entry appends with — the last position in the archive. */
-  nextOrder: number;
   /** Called after a successful save so the parent can refetch + close. */
   onSaved: () => void;
 }
@@ -57,23 +55,25 @@ export function TestimonialFormModal({
   open,
   onClose,
   testimonial,
-  nextOrder,
   onSaved,
 }: TestimonialFormModalProps) {
   const [form, setForm] = useState<FormData>(() => toForm(testimonial));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) record.
   useEffect(() => {
     if (open) {
       setForm(toForm(testimonial));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, testimonial]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
@@ -95,13 +95,18 @@ export function TestimonialFormModal({
       } else {
         await apiRequest("/api/testimonials", {
           method: "POST",
-          body: { ...body, order: nextOrder },
+          body,
         });
       }
 
       onSaved();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Failed to save testimonial");
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError("Failed to save testimonial");
+      }
     } finally {
       setSaving(false);
     }
@@ -113,7 +118,7 @@ export function TestimonialFormModal({
       onClose={onClose}
       title={testimonial ? "Edit testimonial" : "New testimonial"}
       saveLabel="Save testimonial"
-      error={error}
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -122,6 +127,8 @@ export function TestimonialFormModal({
           label="Name"
           placeholder="Client or colleague name"
           value={form.name}
+          required
+          error={fieldErrors.name}
           onChange={(e) => updateField("name", e.target.value)}
         />
         <Input
@@ -135,6 +142,8 @@ export function TestimonialFormModal({
         label="Testimonial"
         placeholder="What did they say about your work?"
         value={form.content}
+        required
+        error={fieldErrors.content}
         onChange={(e) => updateField("content", e.target.value)}
         rows={4}
       />

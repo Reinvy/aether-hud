@@ -3,8 +3,13 @@ import { portfolioData } from "@/data/portfolio";
 import { SECTION_FALLBACKS } from "@/data/sections";
 import { APP_DESCRIPTION, APP_NAME, PORTFOLIO_CONFIG } from "@/lib/constants";
 import {
+  experienceToDto,
   fallbackProjectToDto,
   projectToDto,
+  sectionToDto,
+  skillToDto,
+  socialToDto,
+  testimonialToDto,
   type ConfigDto,
   type ExperienceDto,
   type ProjectDto,
@@ -22,12 +27,20 @@ import {
  * codex runs on the authored dataset in `src/data/portfolio.ts` and every
  * accessor returns it without ever opening a connection. When the URL exists
  * but PostgreSQL is unreachable, the query throws, is logged with a tagged
- * warning and the same fallback is served — public pages and the dashboard stay
+ * warning and the same fallback is served — public pages and the console stay
  * online either way, and `StatsDto.source` reports which engine answered.
  *
- * API route handlers and server components both read through here so the
- * fallback policy lives in exactly one place.
+ * Two read modes:
+ *  - `"public"` (default) — the landing page, the JSON API and the sitemap.
+ *    An EMPTY table means "nothing has been published yet", so the authored
+ *    archive is served.
+ *  - `"console"` — the dashboard. An empty table means the operator emptied it,
+ *    and the console must show exactly that. Serving the authored archive there
+ *    resurrected every deleted row in the UI, and the next delete then 404ed
+ *    because the row the operator clicked no longer existed.
  */
+
+export type ReadMode = "public" | "console";
 
 export function hasDatabase(): boolean {
   return Boolean(process.env.DATABASE_URL);
@@ -66,15 +79,25 @@ function fallbackConfig(): ConfigDto {
   };
 }
 
-export async function getSections(): Promise<SectionDto[]> {
-  if (!hasDatabase()) return SECTION_FALLBACKS;
+/**
+ * A list read either returns the database rows, the authored archive (public
+ * mode only) or the empty list the console asked to see. `rows.length === 0`
+ * is the only branch the two modes disagree on.
+ */
+function resolveList<T>(rows: T[], fallback: T[], mode: ReadMode): T[] {
+  if (rows.length > 0) return rows;
+  return mode === "console" ? [] : fallback;
+}
+
+export async function getSections(mode: ReadMode = "public"): Promise<SectionDto[]> {
+  const fallback = SECTION_FALLBACKS;
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.section.findMany({ orderBy: { order: "asc" } });
-    if (rows.length === 0) return SECTION_FALLBACKS;
-    return rows;
+    return resolveList(rows.map(sectionToDto), fallback, mode);
   } catch (e) {
     warn("SECTIONS", e);
-    return SECTION_FALLBACKS;
+    return mode === "console" ? [] : fallback;
   }
 }
 
@@ -82,21 +105,36 @@ export async function getConfig(): Promise<ConfigDto> {
   if (!hasDatabase()) return fallbackConfig();
   try {
     const row = await prisma.portfolioConfig.findUnique({ where: { id: "main" } });
-    return row ?? fallbackConfig();
+    if (!row) return fallbackConfig();
+    return {
+      id: row.id,
+      name: row.name,
+      tagline: row.tagline,
+      bio: row.bio,
+      email: row.email,
+      location: row.location,
+      avatar: row.avatar,
+      status: row.status,
+      edition: row.edition,
+      siteName: row.siteName,
+      siteDescription: row.siteDescription,
+      animationsEnabled: row.animationsEnabled,
+    };
   } catch (e) {
     warn("CONFIG", e);
     return fallbackConfig();
   }
 }
 
-export async function getProjects(): Promise<ProjectDto[]> {
-  if (!hasDatabase()) return fallbackProjects();
+export async function getProjects(mode: ReadMode = "public"): Promise<ProjectDto[]> {
+  const fallback = fallbackProjects();
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.project.findMany({ orderBy: { order: "asc" } });
-    return rows.length > 0 ? rows.map(projectToDto) : fallbackProjects();
+    return resolveList(rows.map(projectToDto), fallback, mode);
   } catch (e) {
     warn("PROJECTS", e);
-    return fallbackProjects();
+    return mode === "console" ? [] : fallback;
   }
 }
 
@@ -115,56 +153,65 @@ export async function getProject(id: string): Promise<ProjectDto | null> {
   }
 }
 
-export async function getSkills(): Promise<SkillDto[]> {
-  if (!hasDatabase()) return fallbackSkills();
+export async function getSkills(mode: ReadMode = "public"): Promise<SkillDto[]> {
+  const fallback = fallbackSkills();
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.skill.findMany({ orderBy: { order: "asc" } });
-    return rows.length > 0 ? rows : fallbackSkills();
+    return resolveList(rows.map(skillToDto), fallback, mode);
   } catch (e) {
     warn("SKILLS", e);
-    return fallbackSkills();
+    return mode === "console" ? [] : fallback;
   }
 }
 
-export async function getSocials(): Promise<SocialDto[]> {
-  if (!hasDatabase()) return fallbackSocials();
+export async function getSocials(mode: ReadMode = "public"): Promise<SocialDto[]> {
+  const fallback = fallbackSocials();
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.socialLink.findMany({ orderBy: { order: "asc" } });
-    return rows.length > 0 ? rows : fallbackSocials();
+    return resolveList(rows.map(socialToDto), fallback, mode);
   } catch (e) {
     warn("SOCIALS", e);
-    return fallbackSocials();
+    return mode === "console" ? [] : fallback;
   }
 }
 
-export async function getExperiences(): Promise<ExperienceDto[]> {
-  if (!hasDatabase()) return portfolioData.experiences;
+export async function getExperiences(mode: ReadMode = "public"): Promise<ExperienceDto[]> {
+  const fallback = portfolioData.experiences;
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.experience.findMany({ orderBy: { order: "asc" } });
-    return rows.length > 0 ? rows : portfolioData.experiences;
+    return resolveList(rows.map(experienceToDto), fallback, mode);
   } catch (e) {
     warn("EXPERIENCES", e);
-    return portfolioData.experiences;
+    return mode === "console" ? [] : fallback;
   }
 }
 
-export async function getTestimonials(): Promise<TestimonialDto[]> {
-  if (!hasDatabase()) return portfolioData.testimonials;
+export async function getTestimonials(mode: ReadMode = "public"): Promise<TestimonialDto[]> {
+  const fallback = portfolioData.testimonials;
+  if (!hasDatabase()) return fallback;
   try {
     const rows = await prisma.testimonial.findMany({ orderBy: { order: "asc" } });
-    return rows.length > 0 ? rows : portfolioData.testimonials;
+    return resolveList(rows.map(testimonialToDto), fallback, mode);
   } catch (e) {
     warn("TESTIMONIALS", e);
-    return portfolioData.testimonials;
+    return mode === "console" ? [] : fallback;
   }
 }
 
+/**
+ * Console statistics. The counts are read from the SAME mode the console is
+ * showing, so a "0 domains" list and a "12 domains" stat card can never appear
+ * on the same screen.
+ */
 export async function getStats(): Promise<StatsDto> {
   const [projects, skills, experiences, testimonials] = await Promise.all([
-    getProjects(),
-    getSkills(),
-    getExperiences(),
-    getTestimonials(),
+    getProjects("console"),
+    getSkills("console"),
+    getExperiences("console"),
+    getTestimonials("console"),
   ]);
   const levels = skills.map((s) => s.level);
   let source: StatsDto["source"] = "data-file-fallback";
@@ -185,7 +232,6 @@ export async function getStats(): Promise<StatsDto> {
       levels.length > 0
         ? Math.round(levels.reduce((sum, level) => sum + level, 0) / levels.length)
         : 0,
-    uptime: "99.9%",
     source,
   };
 }

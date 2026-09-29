@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import { Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionError } from "@/components/ui/action-error";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { CodexLoader } from "@/components/ui/codex-loader";
@@ -15,7 +16,7 @@ import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ApiError, apiRequest } from "@/lib/api-client";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { SocialLinksCard } from "@/components/features/contact/social-links-card";
 import { ContactConfigCard } from "@/components/features/contact/contact-config-card";
@@ -31,7 +32,7 @@ const SocialFormModal = dynamic(
     })),
   {
     loading: () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="codex-scrim fixed inset-0 z-50 flex items-center justify-center">
         <CodexLoader label="Loading link form" size="lg" />
       </div>
     ),
@@ -74,8 +75,18 @@ interface DeleteRequest {
  * so this view only owns fetching, handlers and layout.
  */
 export default function DashboardContact() {
-  const { data: socials, loading: socialsLoading, refetch: refetchSocials } = useData<SocialDto[]>("/api/socials");
-  const { data: config, loading: configLoading, refetch: refetchConfig } = useData<ConfigDto>("/api/config");
+  const {
+    data: socials,
+    loading: socialsLoading,
+    error: socialsLoadError,
+    refetch: refetchSocials,
+  } = useData<SocialDto[]>("/api/socials");
+  const {
+    data: config,
+    loading: configLoading,
+    error: configLoadError,
+    refetch: refetchConfig,
+  } = useData<ConfigDto>("/api/config");
   const list = useMemo(() => socials ?? [], [socials]);
 
   const controls = useListControls<SocialDto>({
@@ -114,8 +125,8 @@ export default function DashboardContact() {
   // Delete confirmation state
   const [deleteRequest, setDeleteRequest] = useState<DeleteRequest | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   // Config state
   const [editEmail, setEditEmail] = useState("");
@@ -145,13 +156,6 @@ export default function DashboardContact() {
   const firstId = orderedIds[0] ?? null;
   const lastId = orderedIds[orderedIds.length - 1] ?? null;
 
-  // A new link appends after the last position rather than colliding with
-  // the existing order values at zero.
-  const nextOrder = useMemo(
-    () => list.reduce((max, s) => Math.max(max, s.order), -1) + 1,
-    [list]
-  );
-
   const openNewSocial = useCallback(() => {
     setEditingSocial(null);
     setFormOpen(true);
@@ -167,56 +171,70 @@ export default function DashboardContact() {
     setEditingSocial(null);
   }, []);
 
-  // `swapOrder` returns both rows of the exchange (or nothing at an end);
-  // the two updates are written together, then the list is refetched once.
+  // `planReorder` returns only the rows whose stored order changes (or null
+  // at either end); the updates are written together, then the list is
+  // refetched once. `movingId` disables the row's controls while in flight.
   const handleMove = useCallback(
     async (social: SocialDto, direction: -1 | 1) => {
-      const updates = swapOrder(list, social.id, direction);
-      if (updates.length === 0) return;
-      setError(null);
+      setSocialError(null);
+      const updates = planReorder(list, social.id, direction === -1 ? "up" : "down");
+      if (!updates) return;
+      setMovingId(social.id);
       try {
         await Promise.all(
           updates.map((update) =>
-            apiRequest("/api/socials", { method: "PUT", body: update })
+            apiRequest<unknown>("/api/socials", {
+              method: "PUT",
+              body: { id: update.id, order: update.order },
+            })
           )
         );
-        refetchSocials();
+        await refetchSocials();
       } catch (e) {
-        setError(e instanceof ApiError ? e.message : "Failed to reorder social link");
+        setSocialError(e instanceof ApiError ? e.message : "Failed to reorder social link");
+        await refetchSocials();
+      } finally {
+        setMovingId(null);
       }
     },
     [list, refetchSocials]
   );
 
   const requestDeleteSocial = useCallback((s: SocialDto) => {
-    setDeleteError(null);
     setDeleteRequest({ ids: [s.id], label: s.platform });
   }, []);
 
   const requestBulkDelete = useCallback(() => {
-    setDeleteError(null);
     setDeleteRequest({
       ids: [...selected],
       label: `${selected.size} selected links`,
     });
   }, [selected]);
 
+  // One delete implementation — allSettled so a partial failure still counts
+  // and still closes the dialog / refetches.
   const handleDeleteSocial = useCallback(async () => {
     if (!deleteRequest) return;
+    const ids = deleteRequest.ids;
     setDeleting(true);
-    setDeleteError(null);
+    setSocialError(null);
     try {
-      await Promise.all(
-        deleteRequest.ids.map((id) =>
-          apiRequest(`/api/socials/${id}`, { method: "DELETE" })
-        )
+      const results = await Promise.allSettled(
+        ids.map((id) => apiRequest(`/api/socials/${id}`, { method: "DELETE" }))
       );
+      const failed = results.filter((r) => r.status === "rejected");
+      if (failed.length > 0) {
+        const firstApiError = failed.find((r) => r.reason instanceof ApiError)?.reason;
+        setSocialError(
+          firstApiError instanceof ApiError
+            ? firstApiError.message
+            : `${failed.length} of ${ids.length} routes could not be removed`
+        );
+      }
+    } finally {
       setDeleteRequest(null);
       clearSelection();
-      refetchSocials();
-    } catch (e) {
-      setDeleteError(e instanceof ApiError ? e.message : "Failed to delete social link");
-    } finally {
+      await refetchSocials();
       setDeleting(false);
     }
   }, [deleteRequest, clearSelection, refetchSocials]);
@@ -226,7 +244,8 @@ export default function DashboardContact() {
     setConfigError(null);
     try {
       await apiRequest("/api/config", { method: "PUT", body: { email: editEmail } });
-      refetchConfig();
+      setEditEmailDirty(false);
+      await refetchConfig();
     } catch (e) {
       setConfigError(e instanceof ApiError ? e.message : "Failed to update contact email");
     } finally {
@@ -239,7 +258,7 @@ export default function DashboardContact() {
     setEditEmailDirty(true);
   }, []);
 
-  if (socialsLoading || configLoading) {
+  if ((socialsLoading && socials === null) || (configLoading && config === null)) {
     return <DashboardListSkeleton rows={4} />;
   }
 
@@ -272,51 +291,61 @@ export default function DashboardContact() {
         }
       />
 
-      {error && (
-        <p
-          role="alert"
-          className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-sm text-crimson-600"
-        >
-          {error}
-        </p>
-      )}
+      {socialError && <ActionError message={socialError} className="mb-4" />}
 
       {/* Social + config panels — widget-level error boundary keeps a
           failing panel from blanking the whole view. */}
-      <ErrorBoundary section="contact-panels" fallback={<WidgetError label="CONTACT CONFIG" />}>
+      <ErrorBoundary section="contact-panels" fallback={<WidgetError label="Contact config" />}>
         <div className="grid gap-8 lg:grid-cols-2">
           {/* === SOCIAL LINKS === */}
           <motion.div {...fadeInUp}>
-            <SocialLinksCard
-              socials={pageItems}
-              selectable
-              selectedIds={selected}
-              onSelect={handleSelect}
-              emptyMessage={
-                filteredCount === 0 && total > 0
-                  ? "No links match this search."
-                  : "Add a link to publish it on your landing page."
-              }
-              onMove={handleMove}
-              firstId={firstId}
-              lastId={lastId}
-              onAdd={openNewSocial}
-              onEdit={openEditSocial}
-              onDelete={requestDeleteSocial}
-            />
+            {socialsLoadError !== null ? (
+              <WidgetError
+                label="Social registry"
+                message={socialsLoadError}
+                onRetry={refetchSocials}
+              />
+            ) : (
+              <SocialLinksCard
+                socials={pageItems}
+                selectable
+                selectedIds={selected}
+                onSelect={handleSelect}
+                emptyMessage={
+                  filteredCount === 0 && total > 0
+                    ? "No links match this search."
+                    : "Add a link to publish it on your landing page."
+                }
+                onMove={handleMove}
+                firstId={firstId}
+                lastId={lastId}
+                movingId={movingId}
+                onAdd={openNewSocial}
+                onEdit={openEditSocial}
+                onDelete={requestDeleteSocial}
+              />
+            )}
             <Pagination page={page} pageCount={pageCount} onPageChange={setPage} />
           </motion.div>
 
           {/* === CONTACT CONFIG === */}
           <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
-            <ContactConfigCard
-              config={config}
-              email={editEmail}
-              onEmailChange={handleEmailChange}
-              onSave={handleSaveConfig}
-              saving={savingConfig}
-              error={configError}
-            />
+            {configLoadError !== null ? (
+              <WidgetError
+                label="Contact config"
+                message={configLoadError}
+                onRetry={refetchConfig}
+              />
+            ) : (
+              <ContactConfigCard
+                config={config}
+                email={editEmail}
+                onEmailChange={handleEmailChange}
+                onSave={handleSaveConfig}
+                saving={savingConfig}
+                error={configError}
+              />
+            )}
           </motion.div>
         </div>
       </ErrorBoundary>
@@ -327,7 +356,6 @@ export default function DashboardContact() {
           open
           onClose={closeSocialForm}
           social={editingSocial}
-          nextOrder={nextOrder}
           onSaved={() => {
             closeSocialForm();
             refetchSocials();
@@ -343,12 +371,7 @@ export default function DashboardContact() {
           message={
             <>
               Remove <span className="text-gold-ink">{deleteRequest.label}</span> from the
-              contact list? This cannot be undone.
-              {deleteError && (
-                <span role="alert" className="mt-2 block text-crimson-600">
-                  {deleteError}
-                </span>
-              )}
+              contact list?
             </>
           }
           onConfirm={handleDeleteSocial}

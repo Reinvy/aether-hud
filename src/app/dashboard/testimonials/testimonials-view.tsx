@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import { MessageCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionError } from "@/components/ui/action-error";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -15,7 +16,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ApiError, apiRequest } from "@/lib/api-client";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/ui/skeleton";
 import { TestimonialCard } from "@/components/features/testimonials/testimonial-card";
@@ -67,7 +68,7 @@ interface DeleteRequest {
 }
 
 export default function DashboardTestimonials() {
-  const { data: testimonials, loading, refetch } = useData<TestimonialDto[]>("/api/testimonials");
+  const { data: testimonials, loading, error: loadError, refetch } = useData<TestimonialDto[]>("/api/testimonials");
   const list = useMemo(() => testimonials ?? [], [testimonials]);
 
   const controls = useListControls<TestimonialDto>({
@@ -104,8 +105,8 @@ export default function DashboardTestimonials() {
   const [editingTestimonial, setEditingTestimonial] = useState<TestimonialDto | null>(null);
   const [deleteRequest, setDeleteRequest] = useState<DeleteRequest | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   // useListControls hands back fresh callbacks each render; route the
   // selection handler through a ref so the memoized cards keep their
@@ -122,13 +123,6 @@ export default function DashboardTestimonials() {
   const firstId = orderedIds[0] ?? null;
   const lastId = orderedIds[orderedIds.length - 1] ?? null;
 
-  // A new entry appends after the last position rather than colliding with
-  // the existing order values at zero.
-  const nextOrder = useMemo(
-    () => list.reduce((max, t) => Math.max(max, t.order), -1) + 1,
-    [list]
-  );
-
   const openNew = useCallback(() => {
     setEditingTestimonial(null);
     setFormOpen(true);
@@ -144,62 +138,78 @@ export default function DashboardTestimonials() {
     setEditingTestimonial(null);
   }, []);
 
-  // `swapOrder` returns both rows of the exchange (or nothing at an end);
-  // the two updates are written together, then the list is refetched once.
+  // `planReorder` returns only the rows whose stored order changes (or null
+  // at either end); the updates are written together, then the list is
+  // refetched once. `movingId` disables the row's controls while in flight.
   const handleMove = useCallback(
     async (t: TestimonialDto, direction: -1 | 1) => {
-      const updates = swapOrder(list, t.id, direction);
-      if (updates.length === 0) return;
-      setError(null);
+      setActionError(null);
+      const updates = planReorder(list, t.id, direction === -1 ? "up" : "down");
+      if (!updates) return;
+      setMovingId(t.id);
       try {
         await Promise.all(
           updates.map((update) =>
-            apiRequest("/api/testimonials", { method: "PUT", body: update })
+            apiRequest<unknown>("/api/testimonials", {
+              method: "PUT",
+              body: { id: update.id, order: update.order },
+            })
           )
         );
-        refetch();
+        await refetch();
       } catch (e) {
-        setError(e instanceof ApiError ? e.message : "Failed to reorder testimonial");
+        setActionError(e instanceof ApiError ? e.message : "Failed to reorder testimonial");
+        await refetch();
+      } finally {
+        setMovingId(null);
       }
     },
     [list, refetch]
   );
 
   const requestDelete = useCallback((t: TestimonialDto) => {
-    setDeleteError(null);
     setDeleteRequest({ ids: [t.id], label: t.name });
   }, []);
 
   const requestBulkDelete = useCallback(() => {
-    setDeleteError(null);
     setDeleteRequest({
       ids: [...selected],
       label: `${selected.size} selected testimonials`,
     });
   }, [selected]);
 
+  // One delete implementation — allSettled so a partial failure still counts
+  // and still closes the dialog / refetches.
   const handleDelete = useCallback(async () => {
     if (!deleteRequest) return;
+    const ids = deleteRequest.ids;
     setDeleting(true);
-    setDeleteError(null);
+    setActionError(null);
     try {
-      await Promise.all(
-        deleteRequest.ids.map((id) =>
-          apiRequest(`/api/testimonials/${id}`, { method: "DELETE" })
-        )
+      const results = await Promise.allSettled(
+        ids.map((id) => apiRequest(`/api/testimonials/${id}`, { method: "DELETE" }))
       );
+      const failed = results.filter((r) => r.status === "rejected");
+      if (failed.length > 0) {
+        const firstApiError = failed.find(
+          (r) => r.reason instanceof ApiError
+        )?.reason;
+        setActionError(
+          firstApiError instanceof ApiError
+            ? firstApiError.message
+            : `${failed.length} of ${ids.length} routes could not be removed`
+        );
+      }
+    } finally {
       setDeleteRequest(null);
       clearSelection();
-      refetch();
-    } catch (e) {
-      setDeleteError(e instanceof ApiError ? e.message : "Failed to delete testimonial");
-    } finally {
+      await refetch();
       setDeleting(false);
     }
   }, [deleteRequest, clearSelection, refetch]);
 
-  if (loading) {
-    return <DashboardListSkeleton rows={4} />;
+  if (loading && testimonials === null) {
+    return <DashboardListSkeleton rows={5} />;
   }
 
   const emptyArchive = total === 0;
@@ -240,56 +250,59 @@ export default function DashboardTestimonials() {
         }
       />
 
-      {error && (
-        <p
-          role="alert"
-          className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-sm text-crimson-600"
-        >
-          {error}
-        </p>
-      )}
+      {actionError && <ActionError message={actionError} className="mb-4" />}
 
       {/* Testimonials grid — widget-level error boundary keeps a failing
           archive from blanking the whole dashboard view. */}
-      <ErrorBoundary section="testimonials-grid" fallback={<WidgetError label="TESTIMONIAL ARCHIVE" />}>
-        <motion.div className="grid gap-4 sm:grid-cols-2" {...fadeInUp}>
-          {pageItems.length === 0 ? (
-            <EmptyState
-              icon={<MessageCircle className="h-5 w-5" />}
-              title={emptyArchive ? "No testimonials yet" : "No matches"}
-              message={
-                emptyArchive
-                  ? "Add a testimonial to show it on the landing page."
-                  : "No testimonials match this search."
-              }
-              className="sm:col-span-2"
-              action={
-                emptyArchive ? (
-                  <Button variant="primary" size="sm" onClick={openNew}>
-                    <Plus className="h-4 w-4" />
-                    New testimonial
-                  </Button>
-                ) : undefined
-              }
-            />
-          ) : (
-            pageItems.map((t, i) => (
-              <TestimonialCard
-                key={t.id}
-                testimonial={t}
-                index={i}
-                selectable
-                selected={selected.has(t.id)}
-                onSelect={handleSelect}
-                onMove={handleMove}
-                canMoveUp={t.id !== firstId}
-                canMoveDown={t.id !== lastId}
-                onEdit={openEdit}
-                onDelete={requestDelete}
+      <ErrorBoundary section="testimonials-grid" fallback={<WidgetError label="Testimonial archive" />}>
+        {loadError !== null ? (
+          <WidgetError label="Testimonial archive" message={loadError} onRetry={refetch} />
+        ) : (
+          <motion.div
+            className="grid gap-4 sm:grid-cols-2"
+            role="region"
+            aria-label="Testimonial registry"
+            {...fadeInUp}
+          >
+            {pageItems.length === 0 ? (
+              <EmptyState
+                icon={<MessageCircle className="h-5 w-5" />}
+                title={emptyArchive ? "No testimonials yet" : "No matches"}
+                message={
+                  emptyArchive
+                    ? "Add a testimonial to show it on the landing page."
+                    : "No testimonials match this search."
+                }
+                className="sm:col-span-2"
+                action={
+                  emptyArchive ? (
+                    <Button variant="primary" size="sm" onClick={openNew}>
+                      <Plus className="h-4 w-4" />
+                      New testimonial
+                    </Button>
+                  ) : undefined
+                }
               />
-            ))
-          )}
-        </motion.div>
+            ) : (
+              pageItems.map((t, i) => (
+                <TestimonialCard
+                  key={t.id}
+                  testimonial={t}
+                  index={i}
+                  selectable
+                  selected={selected.has(t.id)}
+                  onSelect={handleSelect}
+                  onMove={handleMove}
+                  canMoveUp={t.id !== firstId}
+                  canMoveDown={t.id !== lastId}
+                  moving={movingId === t.id}
+                  onEdit={openEdit}
+                  onDelete={requestDelete}
+                />
+              ))
+            )}
+          </motion.div>
+        )}
       </ErrorBoundary>
 
       <Pagination page={page} pageCount={pageCount} onPageChange={setPage} />
@@ -299,7 +312,6 @@ export default function DashboardTestimonials() {
           open
           onClose={closeForm}
           testimonial={editingTestimonial}
-          nextOrder={nextOrder}
           onSaved={() => {
             closeForm();
             refetch();
@@ -315,12 +327,7 @@ export default function DashboardTestimonials() {
           message={
             <>
               Remove <span className="text-gold-ink">{deleteRequest.label}</span> from the
-              archive? This cannot be undone.
-              {deleteError && (
-                <span role="alert" className="mt-2 block text-crimson-600">
-                  {deleteError}
-                </span>
-              )}
+              archive?
             </>
           }
           onConfirm={handleDelete}

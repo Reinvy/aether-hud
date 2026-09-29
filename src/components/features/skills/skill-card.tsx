@@ -39,6 +39,8 @@ interface SkillCardProps {
   onMove?: (id: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** A reorder write for this card is in flight — its move controls are disabled. */
+  moving?: boolean;
 }
 
 /**
@@ -61,6 +63,7 @@ export const SkillCard = memo(function SkillCard({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
 }: SkillCardProps) {
   const Icon = skillIcons[skill.icon] || Cpu;
 
@@ -110,7 +113,7 @@ export const SkillCard = memo(function SkillCard({
                 <IconButton
                   label={`Move ${skill.name} up`}
                   onClick={() => onMove(skill.id, -1)}
-                  disabled={!canMoveUp}
+                  disabled={!canMoveUp || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
@@ -118,7 +121,7 @@ export const SkillCard = memo(function SkillCard({
                 <IconButton
                   label={`Move ${skill.name} down`}
                   onClick={() => onMove(skill.id, 1)}
-                  disabled={!canMoveDown}
+                  disabled={!canMoveDown || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />

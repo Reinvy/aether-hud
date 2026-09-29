@@ -6,15 +6,15 @@ import { motion } from "framer-motion";
 import { Briefcase, ChevronDown, ChevronUp, Plus } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
-import { swapOrder } from "@/lib/reorder";
+import { planReorder } from "@/lib/reorder";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { IconButton } from "@/components/ui/icon-button";
-import { ListTableHeader } from "@/components/ui/list-table-header";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Pagination } from "@/components/ui/pagination";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -75,8 +75,12 @@ const EXPERIENCE_SORT_OPTIONS = [
 ];
 
 export default function DashboardExperiences() {
-  const { data: experiences, loading, refetch } =
-    useData<ExperienceCardData[]>("/api/experiences");
+  const {
+    data: experiences,
+    loading,
+    error,
+    refetch,
+  } = useData<ExperienceCardData[]>("/api/experiences");
   const rows = useMemo(() => experiences ?? [], [experiences]);
 
   const list = useListControls<ExperienceCardData>({
@@ -98,8 +102,8 @@ export default function DashboardExperiences() {
   const [editingExperience, setEditingExperience] = useState<ExperienceFormRecord | null>(null);
   const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [movingId, setMovingId] = useState<string | null>(null);
 
   const openNew = useCallback(() => {
     setEditingExperience(null);
@@ -112,16 +116,16 @@ export default function DashboardExperiences() {
   }, []);
 
   const requestDelete = useCallback((exp: ExperienceCardData) => {
-    setDeleteError(null);
     setDeleteIds([exp.id]);
   }, []);
 
   const handleMove = useCallback(
-    async (id: string, direction: -1 | 1) => {
+    async (id: string, direction: "up" | "down") => {
       setActionError(null);
-      const updates = swapOrder(ordered, id, direction);
-      if (updates.length === 0) return;
+      const updates = planReorder(ordered, id, direction);
+      if (!updates) return;
 
+      setMovingId(id);
       try {
         await Promise.all(
           updates.map((row) =>
@@ -131,11 +135,14 @@ export default function DashboardExperiences() {
             })
           )
         );
-        refetch();
+        await refetch();
       } catch (e) {
         setActionError(
           e instanceof ApiError ? e.message : "Failed to reorder the quest log"
         );
+        await refetch();
+      } finally {
+        setMovingId(null);
       }
     },
     [ordered, refetch]
@@ -144,43 +151,35 @@ export default function DashboardExperiences() {
   const moveRef = useRef(handleMove);
   moveRef.current = handleMove;
   const dispatchMove = useCallback((id: string, direction: -1 | 1) => {
-    void moveRef.current(id, direction);
+    void moveRef.current(id, direction === -1 ? "up" : "down");
   }, []);
 
   const runDelete = useCallback(async () => {
     if (!deleteIds) return;
     const ids = deleteIds;
     setDeleting(true);
-    setDeleteError(null);
 
     const results = await Promise.allSettled(
       ids.map((id) => apiRequest<unknown>(`/api/experiences/${id}`, { method: "DELETE" }))
     );
-    let removed = 0;
-    let failureMessage: string | null = null;
-    for (const result of results) {
-      if (result.status === "fulfilled") removed += 1;
-      else if (failureMessage === null) {
-        failureMessage =
-          result.reason instanceof ApiError
-            ? result.reason.message
-            : "Failed to remove the selected quests";
-      }
+    const failure = results.find(
+      (result): result is PromiseRejectedResult => result.status === "rejected"
+    );
+    if (failure) {
+      setActionError(
+        failure.reason instanceof ApiError
+          ? failure.reason.message
+          : `${results.filter((r) => r.status === "rejected").length} of ${ids.length} quests could not be removed`
+      );
     }
 
-    if (failureMessage === null) {
-      setDeleteIds(null);
-      refetch();
-    } else {
-      // Part of the selection may have been removed — refresh so the list
-      // matches the server, but keep the dialog open with the server message.
-      if (removed > 0) refetch();
-      setDeleteError(failureMessage);
-    }
+    list.clearSelection();
+    setDeleteIds(null);
     setDeleting(false);
-  }, [deleteIds, refetch]);
+    await refetch();
+  }, [deleteIds, list, refetch]);
 
-  if (loading) {
+  if (loading && experiences === null) {
     return <DashboardListSkeleton rows={4} />;
   }
 
@@ -223,29 +222,26 @@ export default function DashboardExperiences() {
           />
         </motion.div>
 
-        {actionError && (
-          <p
-            role="alert"
-            className="mb-4 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-2.5 text-xs text-crimson-600"
-          >
-            {actionError}
-          </p>
-        )}
+        {actionError && <ActionError message={actionError} className="mb-4" />}
 
-        <motion.div className="space-y-3" {...fadeInUp}>
-          <ListTableHeader
-            columns={[
-              { label: "Role / company", className: "flex-1" },
-              { label: "Type", className: "hidden w-24 sm:block" },
-              { label: "Period", className: "hidden w-40 md:block" },
-              { label: "Actions", className: "w-20", align: "right" },
-            ]}
-          />
+        {error !== null ? (
+          <WidgetError label="Commission log" message={error} onRetry={refetch} />
+        ) : (
+          <motion.div className="space-y-3" aria-label="Quest registry" {...fadeInUp}>
+            <div
+              aria-hidden="true"
+              className="flex items-center gap-4 border-b border-border-subtle px-4 py-2"
+            >
+              <span className="codex-label flex-1">Role / company</span>
+              <span className="codex-label hidden w-24 sm:block">Type</span>
+              <span className="codex-label hidden w-40 md:block">Period</span>
+              <span className="codex-label w-20 text-right">Actions</span>
+            </div>
 
           {list.filteredCount === 0 ? (
             <EmptyState
               icon={<Briefcase className="h-5 w-5" />}
-              title={list.query ? "No matching quests" : "No quests yet"}
+              title={list.query ? "No quests matches this search" : "No quests yet"}
               message={
                 list.query
                   ? `Nothing in the log matches “${list.query}”.`
@@ -273,7 +269,7 @@ export default function DashboardExperiences() {
                       <IconButton
                         label={`Move ${exp.role} up`}
                         onClick={() => dispatchMove(exp.id, -1)}
-                        disabled={position <= 0}
+                        disabled={position <= 0 || movingId === exp.id}
                         className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                       >
                         <ChevronUp className="h-3.5 w-3.5" />
@@ -281,7 +277,11 @@ export default function DashboardExperiences() {
                       <IconButton
                         label={`Move ${exp.role} down`}
                         onClick={() => dispatchMove(exp.id, 1)}
-                        disabled={position < 0 || position >= ordered.length - 1}
+                        disabled={
+                          position < 0 ||
+                          position >= ordered.length - 1 ||
+                          movingId === exp.id
+                        }
                         className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                       >
                         <ChevronDown className="h-3.5 w-3.5" />
@@ -300,7 +300,8 @@ export default function DashboardExperiences() {
               );
             })
           )}
-        </motion.div>
+          </motion.div>
+        )}
 
         <Pagination
           page={list.page}
@@ -330,13 +331,6 @@ export default function DashboardExperiences() {
             <>
               Target: <span className="text-gold-ink">{targets[0]?.role ?? "…"}</span>
               {` at ${targets[0]?.company ?? "…"}`}
-              <br />
-              This quest leaves the commission log permanently.
-              {deleteError && (
-                <p role="alert" className="mt-2 text-crimson-600">
-                  {deleteError}
-                </p>
-              )}
             </>
           }
           confirmLabel="Remove"

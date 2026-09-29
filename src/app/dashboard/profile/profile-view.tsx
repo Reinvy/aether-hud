@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
 import {
-  AlertCircle,
   Save,
   User,
 } from "lucide-react";
+import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -73,8 +73,26 @@ export default function DashboardProfile() {
     }
   }
 
-  if (loading) {
+  // Skeleton only on first paint — a refetch after a save keeps the current
+  // dossier on screen instead of flashing the placeholder.
+  if (loading && config === null) {
     return <DashboardFormSkeleton />;
+  }
+
+  // A failed load renders the widget error with its own retry instead of a
+  // misleading empty dossier form.
+  if (loadError !== null) {
+    return (
+      <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
+        <DashboardPageHeader
+          icon={User}
+          eyebrow="TRAVELER DOSSIER"
+          title="Manage Profile"
+          titleHighlight="Profile"
+        />
+        <WidgetError label="Traveler dossier" message={loadError} onRetry={refetch} />
+      </div>
+    );
   }
 
   return (
@@ -85,31 +103,14 @@ export default function DashboardProfile() {
         eyebrow="TRAVELER DOSSIER"
         title="Manage Profile"
         titleHighlight="Profile"
-        actions={
-          <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            <Save className="h-4 w-4" aria-hidden="true" />
-            Save changes
-          </Button>
-        }
       />
 
-      {/* Fetch and save failures are reported to the operator instead of
-          leaving an empty (or silently stale) dossier on screen. */}
-      {(loadError || saveError) && (
-        <div
-          role="alert"
-          className="mb-6 flex items-start gap-3 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-3"
-        >
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-crimson-600" aria-hidden="true" />
-          <p className="font-body text-xs text-crimson-600">
-            {saveError ?? loadError}
-          </p>
-        </div>
-      )}
+      {/* Mutation failures use the single shared action banner. */}
+      {saveError !== null && <ActionError message={saveError} className="mb-6" />}
 
       {/* Profile panels — widget-level error boundary keeps a failing
           panel from blanking the whole view. */}
-      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="TRAVELER DOSSIER" />}>
+      <ErrorBoundary section="profile-panels" fallback={<WidgetError label="Traveler dossier" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Personal Info — reusable identity fields card */}
         <motion.div {...fadeInUp}>
@@ -150,7 +151,7 @@ export default function DashboardProfile() {
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
-            Save
+            Save changes
           </Button>
         </div>
       </motion.div>

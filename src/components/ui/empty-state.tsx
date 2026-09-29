@@ -34,7 +34,10 @@ export function EmptyState({ message, title, icon, action, className }: EmptySta
 
         {icon && (
           <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center codex-radius-card border border-leather-caramel/30 bg-leather-caramel/10 text-leather-caramel">
-            {icon}
+            {/* The title carries the meaning; the glyph is decorative. */}
+            <span aria-hidden="true" className="contents">
+              {icon}
+            </span>
           </div>
         )}
 

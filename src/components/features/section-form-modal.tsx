@@ -61,25 +61,28 @@ export function SectionFormModal({
   const [form, setForm] = useState<FormData>(() => toForm(section));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Re-sync the form whenever the modal opens with a (different) page.
   useEffect(() => {
     if (open) {
       setForm(toForm(section));
       setError(null);
+      setFieldErrors({});
     }
   }, [open, section]);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   }
 
   async function handleSave() {
     const key = form.key.trim();
     if (!section && !SECTION_KEY.test(key)) {
-      setError(
-        "Key must be 2–32 characters: lowercase letters, digits or dashes, starting with a letter."
-      );
+      setFieldErrors({
+        key: "Key must be 2–32 characters: lowercase letters, digits or dashes, starting with a letter.",
+      });
       return;
     }
 
@@ -103,7 +106,12 @@ export function SectionFormModal({
       }
       onSaved();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : failed);
+      if (e instanceof ApiError) {
+        setError(e.message);
+        setFieldErrors(e.fields);
+      } else {
+        setError(failed);
+      }
     } finally {
       setSaving(false);
     }
@@ -116,8 +124,8 @@ export function SectionFormModal({
       open={open}
       onClose={onClose}
       title={editing ? "Edit codex page" : "New codex page"}
-      saveLabel={editing ? "Save page" : "Create page"}
-      error={error}
+      saveLabel="Save page"
+      error={Object.keys(fieldErrors).length === 0 ? error : null}
       onSave={handleSave}
       saving={saving}
     >
@@ -127,12 +135,16 @@ export function SectionFormModal({
           placeholder="e.g. projects"
           value={form.key}
           disabled={editing}
+          required={!editing}
+          error={fieldErrors.key}
           onChange={(e) => updateField("key", e.target.value)}
         />
         <Input
           label="Title"
           placeholder="e.g. Featured Projects"
           value={form.title}
+          required
+          error={fieldErrors.title}
           onChange={(e) => updateField("title", e.target.value)}
         />
       </div>

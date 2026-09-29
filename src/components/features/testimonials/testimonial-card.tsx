@@ -22,6 +22,8 @@ interface TestimonialCardProps {
   /** False at the ends of the archive — the reorder controls disable there. */
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  /** True while this row's move request is in flight — disables its controls. */
+  moving?: boolean;
   onEdit?: (testimonial: TestimonialDto) => void;
   onDelete?: (testimonial: TestimonialDto) => void;
 }
@@ -44,6 +46,7 @@ export const TestimonialCard = memo(function TestimonialCard({
   onMove,
   canMoveUp = false,
   canMoveDown = false,
+  moving = false,
   onEdit,
   onDelete,
 }: TestimonialCardProps) {
@@ -116,7 +119,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                     <IconButton
                       label={`Move ${t.name} up`}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
-                      disabled={!canMoveUp}
+                      disabled={moving || !canMoveUp}
                       onClick={() => onMove(t, -1)}
                     >
                       <ChevronUp className="h-3.5 w-3.5" />
@@ -124,7 +127,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                     <IconButton
                       label={`Move ${t.name} down`}
                       className="disabled:cursor-not-allowed disabled:opacity-30"
-                      disabled={!canMoveDown}
+                      disabled={moving || !canMoveDown}
                       onClick={() => onMove(t, 1)}
                     >
                       <ChevronDown className="h-3.5 w-3.5" />
