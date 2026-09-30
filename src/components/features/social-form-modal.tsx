@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { FormModal } from "@/components/ui/form-modal";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import type { SocialDto } from "@/lib/dto";
@@ -21,13 +20,11 @@ import type { SocialDto } from "@/lib/dto";
 type FormData = {
   platform: string;
   url: string;
-  icon: string;
 };
 
 const EMPTY_FORM: FormData = {
   platform: "",
   url: "",
-  icon: "Globe",
 };
 
 function toForm(social: SocialDto | null): FormData {
@@ -35,7 +32,6 @@ function toForm(social: SocialDto | null): FormData {
   return {
     platform: social.platform,
     url: social.url,
-    icon: social.icon,
   };
 }
 
@@ -80,7 +76,6 @@ export function SocialFormModal({
       const body = {
         platform: form.platform,
         url: form.url,
-        icon: form.icon,
       };
 
       if (social) {
@@ -118,44 +113,14 @@ export function SocialFormModal({
       onSave={handleSave}
       saving={saving}
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Input
-          label="Platform"
-          placeholder="e.g. GitHub"
-          value={form.platform}
-          required
-          error={fieldErrors.platform}
-          onChange={(e) => updateField("platform", e.target.value)}
-        />
-        <Select
-          label="Icon"
-          value={form.icon}
-          required
-          error={fieldErrors.icon}
-          onChange={(e) => updateField("icon", e.target.value)}
-          options={[
-            { value: "Globe", label: "Globe — website / LinkedIn" },
-            { value: "GitBranch", label: "GitBranch — GitHub" },
-            { value: "GitFork", label: "GitFork — GitLab" },
-            { value: "MessageCircle", label: "MessageCircle — Twitter / Discord / Threads" },
-            { value: "MessageSquare", label: "MessageSquare — Reddit / forum" },
-            { value: "Mail", label: "Mail — direct email" },
-            { value: "Send", label: "Send — Telegram" },
-            { value: "Video", label: "Video — YouTube / Vimeo" },
-            { value: "Camera", label: "Camera — Instagram" },
-            { value: "Music", label: "Music — TikTok" },
-            { value: "Code", label: "Code — Dev.to / Hashnode" },
-            { value: "BookOpen", label: "BookOpen — Medium / Substack" },
-            { value: "MonitorPlay", label: "MonitorPlay — Twitch / Kick" },
-            { value: "Palette", label: "Palette — Dribbble / Behance" },
-            { value: "Heart", label: "Heart — sponsors / Patreon" },
-            { value: "Coffee", label: "Coffee — Ko-fi / Buy Me a Coffee" },
-            { value: "AtSign", label: "AtSign — Bluesky / Mastodon / Farcaster" },
-            { value: "Rss", label: "Rss — RSS feed" },
-            { value: "Link2", label: "Link2 — generic link" },
-          ]}
-        />
-      </div>
+      <Input
+        label="Platform"
+        placeholder="e.g. GitHub"
+        value={form.platform}
+        required
+        error={fieldErrors.platform}
+        onChange={(e) => updateField("platform", e.target.value)}
+      />
       <Input
         label="URL"
         placeholder="https://github.com/username"

@@ -1,5 +1,5 @@
 import { forwardRef, type SelectHTMLAttributes } from "react";
-import { ChevronDown } from "lucide-react";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 
 interface SelectOption {
@@ -49,8 +49,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          {/* Gold-tinted chevron indicator */}
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gold-ink" />
+          {/* Leather-tone chevron indicator */}
+          <CodexGlyph name="down" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-leather-caramel" />
         </div>
         {error && (
           <p role="alert" className="mt-1.5 text-[11px] text-crimson-600">

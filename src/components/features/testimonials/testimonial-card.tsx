@@ -2,8 +2,8 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { IconButton } from "@/components/ui/icon-button";
 import { RowActions } from "@/components/ui/row-actions";
 import { cn } from "@/lib/utils";
@@ -59,10 +59,10 @@ export const TestimonialCard = memo(function TestimonialCard({
       transition={{ delay: index * 0.05 }}
     >
       <Card
-        variant="glass"
+        variant="ledger"
         hover="sweep"
         className={cn(
-          "codex-card codex-radius-card",
+          "codex-radius-card",
           selected && "ring-2 ring-leather-caramel/40"
         )}
       >
@@ -91,21 +91,23 @@ export const TestimonialCard = memo(function TestimonialCard({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Quote className="h-5 w-5 text-gold-ink" />
+                <span aria-hidden="true" className="codex-glyph text-xl leading-none text-gold-ink">
+                  “
+                </span>
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
+              <p className="font-display text-xs font-semibold tracking-[0.08em] text-leather-dark">
                 {t.name}
               </p>
-              <p className="mt-0.5 font-mono text-[9px] text-leather-muted">
+              <p className="mt-0.5 codex-label">
                 {t.role}
               </p>
             </div>
           </div>
 
-          <div className="mt-3 codex-card codex-radius-card p-3">
-            <p className="font-mono text-[11px] leading-relaxed text-leather-muted italic line-clamp-3">
+          <div className="mt-3 codex-radius-card border border-leather-caramel/20 bg-parchment-subtle/60 p-3">
+            <p className="font-body text-[11px] leading-relaxed text-leather-muted italic line-clamp-3">
               &ldquo;{t.content}&rdquo;
             </p>
           </div>
@@ -122,7 +124,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                       disabled={moving || !canMoveUp}
                       onClick={() => onMove(t, -1)}
                     >
-                      <ChevronUp className="h-3.5 w-3.5" />
+                      <CodexGlyph name="up" />
                     </IconButton>
                     <IconButton
                       label={`Move ${t.name} down`}
@@ -130,7 +132,7 @@ export const TestimonialCard = memo(function TestimonialCard({
                       disabled={moving || !canMoveDown}
                       onClick={() => onMove(t, 1)}
                     >
-                      <ChevronDown className="h-3.5 w-3.5" />
+                      <CodexGlyph name="down" />
                     </IconButton>
                   </>
                 )}

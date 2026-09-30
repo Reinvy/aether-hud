@@ -2,14 +2,13 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Cpu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { IconBox } from "@/components/ui/icon-box";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
+import { ElementPlate } from "@/components/ui/element-plate";
 import { IconButton } from "@/components/ui/icon-button";
 import { RowActions } from "@/components/ui/row-actions";
 import { SegmentBar } from "@/components/ui/segment-bar";
-import { skillIcons } from "@/lib/skill-icons";
 
 export interface SkillCardData {
   id: string;
@@ -47,7 +46,7 @@ interface SkillCardProps {
  * SkillCard — reusable proficiency module card for the dashboard skill
  * matrix (and any future skill readout).
  *
- * Composes the Teyvat Codex primitives (IconBox, Badge, SegmentBar,
+ * Composes the Teyvat Codex primitives (ElementPlate, Badge, SegmentBar,
  * RowActions) around the skill record, and carries the same selection +
  * reorder affordances as the project archive rows. Extracted from
  * skills-view so the matrix view stays a thin data orchestrator.
@@ -65,15 +64,13 @@ export const SkillCard = memo(function SkillCard({
   canMoveDown = false,
   moving = false,
 }: SkillCardProps) {
-  const Icon = skillIcons[skill.icon] || Cpu;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card skillbar-hover">
+      <Card variant="ledger" hover="sweep" className="codex-radius-card skillbar-hover">
         <CardContent className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -86,11 +83,10 @@ export const SkillCard = memo(function SkillCard({
                   className="h-4 w-4 shrink-0 cursor-pointer rounded-sm accent-gold-400 codex-focus"
                 />
               )}
-              <IconBox size="md">
-                <Icon className="h-5 w-5 text-gold-ink" />
-              </IconBox>
+              {/* The vision the discipline grants — the skill's medallion. */}
+              <ElementPlate category={skill.category} size="sm" />
               <div className="min-w-0">
-                <p className="truncate font-mono text-xs font-medium tracking-wider text-leather-dark">
+                <p className="truncate font-display text-xs font-semibold tracking-[0.08em] text-leather-dark">
                   {skill.name}
                 </p>
                 <Badge variant="default" size="sm" className="mt-1">
@@ -116,7 +112,7 @@ export const SkillCard = memo(function SkillCard({
                   disabled={!canMoveUp || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  <ChevronUp className="h-3.5 w-3.5" />
+                  <CodexGlyph name="up" />
                 </IconButton>
                 <IconButton
                   label={`Move ${skill.name} down`}
@@ -124,7 +120,7 @@ export const SkillCard = memo(function SkillCard({
                   disabled={!canMoveDown || moving}
                   className="disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  <CodexGlyph name="down" />
                 </IconButton>
               </div>
             )}

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Gauge, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 
 interface QuickActionsPanelProps {
@@ -51,7 +52,10 @@ export function QuickActionsPanel({ onSync, className }: QuickActionsPanelProps)
             disabled={syncing || !onSync}
             aria-busy={syncing}
           >
-            <RefreshCw className={cn("h-3.5 w-3.5", syncing && "elemental-rotate")} aria-hidden="true" />
+            <CodexGlyph
+              name="refresh"
+              className={cn("text-sm", syncing && "elemental-rotate")}
+            />
             {syncing ? "Refreshing…" : "Refresh codex"}
           </Button>
           <Button
@@ -59,7 +63,7 @@ export function QuickActionsPanel({ onSync, className }: QuickActionsPanelProps)
             size="sm"
             onClick={() => router.push("/dashboard/telemetry")}
           >
-            <Gauge className="h-3.5 w-3.5" aria-hidden="true" />
+            <AssetIcon icon="elementalSight" tone="ink" size="sm" />
             Open observatory
           </Button>
         </div>

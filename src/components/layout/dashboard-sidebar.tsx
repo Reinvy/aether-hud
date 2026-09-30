@@ -4,44 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Activity,
-  Boxes,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  Cpu,
-  Gauge,
-  Globe,
-  Layout,
-  LogOut,
-  MessageCircle,
-  Settings,
-  User,
-  X,
-} from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 import { APP_NAME, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { DASHBOARD_NAV_GROUPS, isDashboardNavActive } from "@/lib/navigation";
 import { useSidebar } from "@/lib/sidebar-context";
 import { useAuth } from "@/lib/auth-context";
 import { useData } from "@/lib/use-data";
-import { StatusDot } from "@/components/ui/status-dot";
 import { IconButton } from "@/components/ui/icon-button";
-
-/** Icon registry — every `DASHBOARD_NAV[].icon` must resolve here (e2e TEST 10). */
-const iconMap: Record<string, React.ElementType> = {
-  Activity,
-  Boxes,
-  Cpu,
-  Settings,
-  User,
-  Briefcase,
-  MessageCircle,
-  Layout,
-  Globe,
-  Gauge,
-};
 
 interface SiteConfig {
   siteName: string;
@@ -114,9 +85,7 @@ export function DashboardSidebar() {
   const sidebarContent = (
     <>
       <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-5">
-        <div className="relative shrink-0">
-          <StatusDot tone="active" label="Console online" className="ml-1" />
-        </div>
+        <AssetIcon icon="paimonMenu" size="md" className="shrink-0" />
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <p className="truncate font-display text-sm font-bold tracking-[0.1em] text-leather-dark">
@@ -126,7 +95,7 @@ export function DashboardSidebar() {
           </div>
         )}
         <IconButton size="sm" label="Close dashboard sidebar" onClick={close} className="lg:hidden">
-          <X className="h-4 w-4" aria-hidden="true" />
+          <CodexGlyph name="close" label="Close navigation" />
         </IconButton>
       </div>
 
@@ -138,7 +107,6 @@ export function DashboardSidebar() {
             )}
             <ul className="space-y-1">
               {group.items.map((item) => {
-                const Icon = iconMap[item.icon] || Activity;
                 const isActive = isDashboardNavActive(pathname, item.href);
                 return (
                   <li key={item.href}>
@@ -155,7 +123,11 @@ export function DashboardSidebar() {
                           : "text-leather-muted hover:bg-leather-caramel/10 hover:text-leather-dark border-l-2 border-transparent"
                       )}
                     >
-                      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      <AssetIcon
+                        icon={item.icon}
+                        size="sm"
+                        className={cn("shrink-0", isActive && "codex-glow-gold")}
+                      />
                       {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
                     </Link>
                   </li>
@@ -176,7 +148,7 @@ export function DashboardSidebar() {
             collapsed && "justify-center px-2"
           )}
         >
-          <Globe className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <AssetIcon icon="map" tone="ink" size="sm" className="shrink-0" />
           {!collapsed && <span>Return to the dossier</span>}
         </Link>
 
@@ -189,7 +161,7 @@ export function DashboardSidebar() {
             collapsed && "justify-center px-2"
           )}
         >
-          <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <AssetIcon icon="quitGame" tone="ink" size="sm" className="shrink-0" />
           {!collapsed && <span>Log out</span>}
         </button>
 
@@ -204,9 +176,9 @@ export function DashboardSidebar() {
           className="mt-2 hidden w-full items-center justify-center gap-2 codex-radius-sm px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:flex"
         >
           {collapsed ? (
-            <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+            <CodexGlyph name="next" className="text-sm" />
           ) : (
-            <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            <CodexGlyph name="prev" className="text-sm" />
           )}
           {!collapsed && <span>Collapse</span>}
         </button>

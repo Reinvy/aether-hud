@@ -2,9 +2,8 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { SectionHeading } from "@/components/features/section-heading";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import type { ExperienceDto, SectionDto } from "@/lib/dto";
 
 interface ExperienceSectionProps {
@@ -77,18 +76,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
         {/* Section Header */}
         <SectionHeading
           badge="Adventurer Handbook // Daily Commissions"
-          icon={
-            <div className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.handbook}
-                alt="Adventurer Handbook"
-                width={16}
-                height={16}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-                unoptimized
-              />
-            </div>
-          }
+          icon={<AssetIcon icon="handbook" size="sm" className="shrink-0" />}
           title={sectionTitle || AUTHORED.title}
           highlight={sectionTitle ? undefined : AUTHORED.highlight}
           subtitle={
@@ -133,15 +121,8 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
               />
 
               {/* Timeline node with Quest Icon */}
-              <div className="codex-icon-plate absolute left-0 top-1 h-10 w-10 shrink-0 transition-all duration-300 group-hover:scale-110">
-                <Image
-                  src={GENSHIN_UI_ICONS.quests}
-                  alt="Quest Node"
-                  width={24}
-                  height={24}
-                  className="codex-icon-on-plate h-6 w-6 object-contain"
-                  unoptimized
-                />
+              <div className="absolute left-0 top-1 h-10 w-10 shrink-0 transition-all duration-300 group-hover:scale-110">
+                <AssetIcon icon="quests" size="md" />
               </div>
 
               {/* Node connector line */}
@@ -173,16 +154,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
 
                   {/* Date range */}
                   <div className="flex items-center gap-1.5 shrink-0 bg-parchment-subtle px-3.5 py-1.5 rounded-full border border-leather-caramel/25 shadow-sm">
-                    <span className="codex-icon-plate h-7 w-7 shrink-0">
-                      <Image
-                        src={GENSHIN_UI_ICONS.time}
-                        alt="Time"
-                        width={16}
-                        height={16}
-                        className="codex-icon-on-plate h-4 w-4 object-contain"
-                        unoptimized
-                      />
-                    </span>
+                    <AssetIcon icon="time" size="sm" />
                     <span className="font-body text-xs text-leather-dark tracking-wider tabular-nums font-semibold">
                       {experience.startDate} — {experience.endDate || "Present"}
                     </span>
@@ -195,16 +167,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
 
                 {/* Commission seal */}
                 <div className="mt-4 flex items-center gap-2 pt-3 border-t border-leather-caramel/20">
-                  <span className="codex-icon-plate h-7 w-7 shrink-0">
-                    <Image
-                      src={GENSHIN_UI_ICONS.achievements}
-                      alt=""
-                      width={16}
-                      height={16}
-                      className="codex-icon-on-plate h-4 w-4 object-contain"
-                      unoptimized
-                    />
-                  </span>
+                  <AssetIcon icon="achievements" size="sm" />
                   <span className="font-serif text-[11px] tracking-wider text-leather-muted uppercase font-bold">
                     Commission {String(index + 1).padStart(2, "0")} · sealed by the guild
                   </span>
@@ -215,16 +178,7 @@ export function ExperienceSection({ experiences, section }: ExperienceSectionPro
 
           {experiences.length === 0 && (
             <div className="codex-card codex-radius-card codex-lift mx-auto max-w-md px-8 py-10 text-center">
-              <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
-                <Image
-                  src={GENSHIN_UI_ICONS.quests}
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="codex-icon-on-plate h-6 w-6 object-contain"
-                  unoptimized
-                />
-              </div>
+              <AssetIcon icon="quests" size="lg" className="mx-auto mb-4" />
               <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                 No commissions recorded
               </h3>

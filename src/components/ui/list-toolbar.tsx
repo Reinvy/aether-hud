@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Select, type SelectOption } from "@/components/ui/select";
 
 interface ListToolbarProps {
@@ -59,7 +59,7 @@ export function ListToolbar({
           value={query}
           placeholder={searchPlaceholder}
           onChange={(event) => onQueryChange(event.target.value)}
-          prefix={<Search className="h-4 w-4" aria-hidden="true" />}
+          prefix={<AssetIcon icon="survey" tone="ink" size="sm" />}
         />
       </div>
 

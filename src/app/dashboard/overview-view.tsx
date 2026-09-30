@@ -2,13 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import {
-  Activity,
-  Boxes,
-  Briefcase,
-  Cpu,
-  Database,
-} from "lucide-react";
 import { ActionError } from "@/components/ui/action-error";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
@@ -21,6 +14,7 @@ import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 import { fadeInUp, fadeInUpItem, staggerContainer } from "@/lib/motion-variants";
 import type { ActivityItem } from "@/components/features/activity-feed";
+import type { GenshinIconKey } from "@/lib/ui-icons";
 import type { ProjectDto, StatsDto } from "@/lib/dto";
 
 // Lazy-load the ActivityFeed widget — it is below-the-fold on the overview
@@ -85,30 +79,35 @@ export default function DashboardOverview() {
     return <DashboardPageSkeleton />;
   }
 
-  const statCards = [
+  const statCards: {
+    label: string;
+    value: string;
+    icon: GenshinIconKey;
+    tone: "gold" | "jade";
+  }[] = [
     {
       label: "Active domains",
       value: String(stats?.projectCount ?? 0).padStart(2, "0"),
-      icon: Boxes,
-      color: "gold" as const,
+      icon: "domain",
+      tone: "gold",
     },
     {
       label: "Talents mastered",
       value: String(stats?.skillCount ?? 0).padStart(2, "0"),
-      icon: Cpu,
-      color: "jade" as const,
+      icon: "talents",
+      tone: "jade",
     },
     {
       label: "Quests logged",
       value: String(stats?.experienceCount ?? 0).padStart(2, "0"),
-      icon: Briefcase,
-      color: "gold" as const,
+      icon: "quests",
+      tone: "gold",
     },
     {
-      label: "Data source",
-      value: stats?.source === "database" ? "Database" : "Authored archive",
-      icon: Database,
-      color: stats?.source === "database" ? ("jade" as const) : ("gold" as const),
+      label: "Allies bound",
+      value: String(stats?.testimonialCount ?? 0).padStart(2, "0"),
+      icon: "friends",
+      tone: "jade",
     },
   ];
 
@@ -120,7 +119,7 @@ export default function DashboardOverview() {
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
-        icon={Activity}
+        icon="paimonMenu"
         eyebrow="ADVENTURER HANDBOOK"
         title="Codex Overview"
         titleHighlight="Overview"
@@ -136,14 +135,14 @@ export default function DashboardOverview() {
           <WidgetError label="Codex stats" message={statsError} onRetry={refetchStats} />
         ) : (
           <motion.div
-            className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4"
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
           >
             {statCards.map((stat) => (
               <motion.div key={stat.label} variants={fadeInUpItem}>
-                <StatCard label={stat.label} value={stat.value} icon={stat.icon} tone={stat.color} />
+                <StatCard label={stat.label} value={stat.value} icon={stat.icon} tone={stat.tone} />
               </motion.div>
             ))}
           </motion.div>

@@ -2,33 +2,10 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import {
-  ChevronDown,
-  ChevronUp,
-  Link2,
-  Plus,
-  Mail,
-  Globe,
-  GitBranch,
-  MessageCircle,
-  Palette,
-  Tv,
-  Gamepad2,
-  Radio,
-  Heart,
-  Coffee,
-  Video,
-  Camera,
-  Send,
-  Code,
-  Music,
-  AtSign,
-  BookOpen,
-  GitFork,
-  MessageSquare,
-} from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { EmptyState } from "@/components/ui/empty-state";
 import { IconBox } from "@/components/ui/icon-box";
 import { IconButton } from "@/components/ui/icon-button";
@@ -39,35 +16,11 @@ import type { SocialDto } from "@/lib/dto";
 /**
  * SocialLinksCard — dashboard widget for managing the contact network links.
  *
- * Owns the icon registry and the per-row presentation (selection, reorder,
- * edit/delete); the parent owns data fetching, pagination, modal state and
- * the delete flow.
+ * The console speaks one channel language: every link row carries the same
+ * community mark, so the row reads as a codex entry rather than a platform
+ * logo wall. The parent owns data fetching, pagination, modal state and the
+ * delete flow.
  */
-
-// Icon registry for social platforms — unknown icon names fall back to Link2.
-// Registered names must stay in sync with the landing contact-section map.
-const iconMap: Record<string, React.ElementType> = {
-  Globe,
-  GitBranch,
-  MessageCircle,
-  Mail,
-  Link2,
-  Tv,
-  Gamepad2,
-  Radio,
-  Palette,
-  Heart,
-  Coffee,
-  Video,
-  Camera,
-  Send,
-  Code,
-  Music,
-  AtSign,
-  BookOpen,
-  GitFork,
-  MessageSquare,
-};
 
 interface SocialLinksCardProps {
   socials: SocialDto[];
@@ -109,11 +62,11 @@ export const SocialLinksCard = memo(function SocialLinksCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-gold-ink" />
+            <AssetIcon icon="community" size="sm" />
             <CardTitle>Social Links</CardTitle>
           </div>
           <Button variant="primary" size="sm" onClick={onAdd}>
-            <Plus className="h-4 w-4" />
+            <CodexGlyph name="add" />
             Add link
           </Button>
         </div>
@@ -121,14 +74,13 @@ export const SocialLinksCard = memo(function SocialLinksCard({
       <CardContent>
         {socials.length === 0 ? (
           <EmptyState
-            icon={<Link2 className="h-5 w-5" />}
+            icon="community"
             title="No links to show"
             message={emptyMessage}
           />
         ) : (
           <div className="space-y-2" role="region" aria-label="Social registry">
             {socials.map((s, i) => {
-              const Icon = iconMap[s.icon] || Link2;
               const selected = selectedIds.has(s.id);
               return (
                 <motion.div
@@ -154,13 +106,13 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                       />
                     )}
                     <IconBox>
-                      <Icon className="h-4 w-4 text-gold-ink" />
+                      <AssetIcon icon="community" tone="ink" size="sm" />
                     </IconBox>
                     <div className="min-w-0">
-                      <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
+                      <p className="font-display text-xs font-semibold tracking-[0.08em] text-leather-dark">
                         {s.platform}
                       </p>
-                      <p className="mt-0.5 max-w-[200px] truncate font-mono text-[9px] text-leather-muted">
+                      <p className="mt-0.5 max-w-[200px] truncate font-body text-[9px] text-leather-muted">
                         {s.url}
                       </p>
                     </div>
@@ -173,7 +125,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                       className="disabled:cursor-not-allowed disabled:opacity-30"
                       onClick={() => onMove(s, -1)}
                     >
-                      <ChevronUp className="h-3.5 w-3.5" />
+                      <CodexGlyph name="up" />
                     </IconButton>
                     <IconButton
                       label={`Move ${s.platform} down`}
@@ -181,7 +133,7 @@ export const SocialLinksCard = memo(function SocialLinksCard({
                       className="disabled:cursor-not-allowed disabled:opacity-30"
                       onClick={() => onMove(s, 1)}
                     >
-                      <ChevronDown className="h-3.5 w-3.5" />
+                      <CodexGlyph name="down" />
                     </IconButton>
                     <RowActions
                       editLabel={`Edit ${s.platform}`}

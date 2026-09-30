@@ -2,11 +2,11 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { IconBox } from "@/components/ui/icon-box";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { IconButton } from "@/components/ui/icon-button";
 import { RowActions } from "@/components/ui/row-actions";
 import { StatusDot } from "@/components/ui/status-dot";
@@ -15,7 +15,7 @@ import { StatusDot } from "@/components/ui/status-dot";
  * ProjectArchiveRow — reusable project dossier row for archive lists.
  *
  * Extracted from the dashboard projects view so the same parchment dossier row
- * (selection checkbox + icon box + truncated title/description + category
+ * (selection checkbox + domain plate + truncated title/description + category
  * badge + status dot + move/edit/delete actions) can be reused anywhere a
  * project archive is rendered. The parent owns data fetching, filtering,
  * ordering, the edit modal and the delete state.
@@ -76,7 +76,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card">
+      <Card variant="ledger" hover="sweep" className="codex-radius-card">
         <div className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
           {selectable && (
             <input
@@ -88,17 +88,13 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
             />
           )}
 
-          <IconBox>
-            <span className="font-mono text-[10px] text-gold-ink">
-              {project.complexity.slice(-1)}
-            </span>
-          </IconBox>
+          <AssetIcon icon="domain" size="sm" />
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-mono text-xs font-medium tracking-wider text-leather-dark group-hover:text-gold-ink transition-colors duration-200">
+            <p className="truncate font-display text-xs font-semibold tracking-[0.08em] text-leather-dark group-hover:text-gold-ink transition-colors duration-200">
               {project.title}
             </p>
-            <p className="mt-0.5 truncate font-mono text-[9px] text-leather-muted">
+            <p className="mt-0.5 truncate font-body text-[9px] text-leather-muted">
               {project.description.slice(0, 80)}...
             </p>
           </div>
@@ -114,6 +110,10 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
             <span className="codex-label-active text-[8px]">DEPLOYED</span>
           </div>
 
+          <span className="codex-label hidden text-[9px] lg:inline">
+            {project.complexity}
+          </span>
+
           <div className="flex shrink-0 items-center justify-end gap-0.5 sm:gap-1">
             {onMove && (
               <div className="flex flex-col">
@@ -123,7 +123,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                   disabled={!canMoveUp || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
-                  <ChevronUp className="h-3.5 w-3.5" />
+                  <CodexGlyph name="up" />
                 </IconButton>
                 <IconButton
                   label={`Move ${project.title} down`}
@@ -131,7 +131,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                   disabled={!canMoveDown || moving}
                   className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                 >
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  <CodexGlyph name="down" />
                 </IconButton>
               </div>
             )}
@@ -143,7 +143,7 @@ function ProjectArchiveRowInner<T extends ProjectArchiveRowData>({
                 project.liveUrl ? (
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`} className="codex-focus codex-btn">
                     <Button variant="ghost" size="sm" glow="none" className="min-h-9 min-w-9 p-0 sm:min-h-0 sm:min-w-0 sm:p-2 hover:bg-leather-caramel/10 hover-scale-sm">
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <CodexGlyph name="open" className="text-sm" />
                     </Button>
                   </a>
                 ) : undefined

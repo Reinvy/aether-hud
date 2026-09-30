@@ -23,9 +23,9 @@
 |**Framework**|Next.js 16 (App Router)|Server & Client Components, Route Handlers, Metadata API, ISR|
 |**Language**|TypeScript 5 (Strict)|Strong typing, strict null checks, explicit return types|
 |**UI Library**|React 19|Server/Client rendering, hooks, context|
-|**Styling**|Tailwind CSS v4|CSS-variable token theme, `@theme inline`, `@custom-variant dark`|
+|**Styling**|Tailwind CSS v4|CSS-variable token theme, `@theme`, parchment-only light palette|
 |**Database & ORM**|PostgreSQL + Prisma v7|`PrismaClient` with the `@prisma/adapter-pg` driver adapter|
-|**Icons**|Lucide React + Genshin UI icons|HUD chrome uses Lucide; lore/nav iconography uses `public/ui-icons`|
+|**Icons**|Teyvat Codex artwork + typographic marks|Artwork from `public/ui-icons` via `src/components/ui/asset-icon.tsx` (`AssetIcon`); marks the pool lacks via `src/components/ui/codex-glyph.tsx` (`CodexGlyph`). No third-party icon library — ever|
 |**Animation**|Framer Motion & CSS|Shared easing `EASE_CODEX` = `cubic-bezier(0.16, 1, 0.3, 1)`|
 |**Testing**|Node.js E2E suite|Route auditing, navigation integrity, API schema and write-guard tests|
 
@@ -48,6 +48,10 @@ aether-hud/
 │   │
 │   ├── components/
 │   │   ├── ui/                       # Business-logic-free primitives
+│   │   │   ├── asset-icon.tsx        # ⚠ The only renderer of public/ui-icons art
+│   │   │   ├── codex-glyph.tsx       # ⚠ Typographic marks (CODEX_GLYPHS)
+│   │   │   ├── element-plate.tsx     # Skill vision medallion (element white art)
+│   │   │   └── …                     # card, modal, badge, list-toolbar, pagination
 │   │   ├── features/                 # Domain blocks (forms, cards, rows, panels)
 │   │   ├── layout/                   # Shell: site header/footer, rail, dock, sidebar
 │   │   └── sections/                 # Landing sections (prop-driven, server-rendered)
@@ -56,6 +60,8 @@ aether-hud/
 │   │   ├── dto.ts                    # ⚠ THE wire contract for every payload
 │   │   ├── portfolio-repo.ts         # ⚠ The only module that reads content (DB-or-fallback)
 │   │   ├── navigation.ts             # ⚠ The only navigation registry
+│   │   ├── ui-icons.ts               # ⚠ The only artwork registry + CODEX_GLYPHS marks
+│   │   ├── element-assets.ts         # Teyvat elements + skill-category → vision
 │   │   ├── session.ts                # HMAC session tokens (node:crypto)
 │   │   ├── api-client.ts             # Typed client for dashboard mutations (ApiError)
 │   │   ├── api-helpers.ts            # ok/fail/failNoDb/requireSession + cache headers
@@ -128,7 +134,7 @@ aether-hud/
 
 ### 4.6 Design system integration
 - Every colour, spacing value, border, radius, glass layer, typography choice and animation comes from the tokens and classes in `src/app/globals.css` (registry: DESIGNS.md §6).
-- `dark:` utilities follow the **app** theme (`data-theme` / `.dark`) via `@custom-variant dark`. Never rely on `prefers-color-scheme`. Always pair `lightClass dark:darkClass`.
+- The palette is parchment-only and light-only: there is no theme switch, no `dark:` variant and no OS-scheme dependency. Never reintroduce a second palette.
 - **Radius policy:** panels `rounded-3xl`, cards and controls `rounded-2xl` / `rounded-xl`, pills and dots `rounded-full`. `rounded-none` is forbidden.
 - Prefer the class registry (`.codex-panel`, `.codex-card`, `.codex-label`, `.codex-input`, `.codex-btn-primary`, …) over re-deriving those styles with utilities.
 

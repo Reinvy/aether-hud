@@ -1,24 +1,15 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  AlertCircle,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  KeyRound,
-} from "lucide-react";
 import { ApiError } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { EASE_CODEX } from "@/lib/motion-variants";
 
 /** Loader-speed spin for the submit diamond (`.elemental-rotate` default is 7s). */
@@ -57,7 +48,7 @@ export default function LoginForm() {
         <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" />
 
         <div className="codex-card codex-radius-card codex-rise relative w-full max-w-md p-8 text-center">
-          <CheckCircle className="mx-auto h-10 w-10 text-jade-ink" aria-hidden="true" />
+          <CodexGlyph name="confirm" className="text-4xl text-jade-ink" />
           <h1 className="mt-4 font-display text-xl font-bold tracking-[0.08em] text-leather-dark">
             Session active
           </h1>
@@ -120,16 +111,7 @@ export default function LoginForm() {
         <div className="codex-panel codex-panel-radius overflow-hidden">
           {/* Gilded crest + console wordmark */}
           <div className="flex items-center gap-3 border-b border-leather-caramel/20 px-6 py-4">
-            <span className="codex-icon-plate h-11 w-11 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.archive}
-                alt=""
-                width={22}
-                height={22}
-                className="codex-icon-on-plate h-6 w-6 object-contain"
-                unoptimized
-              />
-            </span>
+            <AssetIcon icon="archive" size="lg" className="shrink-0" />
             <div className="min-w-0">
               <span className="codex-label-gold block">Teyvat Codex</span>
               <p className="font-display text-sm font-bold tracking-[0.12em] text-leather-dark">
@@ -151,7 +133,7 @@ export default function LoginForm() {
                   className="text-center"
                 >
                   <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-leather-caramel/30 bg-leather-caramel/10">
-                    <KeyRound className="h-9 w-9 text-leather-caramel" />
+                    <AssetIcon icon="lobby" size="lg" />
                   </span>
 
                   <h1 className="mt-6 font-display text-2xl font-bold tracking-[0.08em] text-leather-dark">
@@ -167,7 +149,7 @@ export default function LoginForm() {
                     className="codex-btn-primary codex-focus mt-8 inline-flex w-full items-center justify-center gap-2 px-6 py-3 text-sm font-bold tracking-wide"
                   >
                     Enter the console
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <CodexGlyph name="next" />
                   </button>
 
                   <span className="codex-label mt-6 block">Access is reserved for the archivist</span>
@@ -209,13 +191,9 @@ export default function LoginForm() {
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label={showPassword ? "Hide password" : "Show password"}
                           aria-pressed={showPassword}
-                          className="codex-focus flex h-9 w-9 items-center justify-center codex-radius-xs text-leather-muted transition-colors duration-300 hover:text-leather-caramel"
+                          className="codex-focus flex h-9 items-center justify-center codex-radius-xs px-2 text-leather-muted transition-colors duration-300 hover:text-leather-caramel"
                         >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" aria-hidden="true" />
-                          ) : (
-                            <Eye className="h-4 w-4" aria-hidden="true" />
-                          )}
+                          <span className="codex-label">{showPassword ? "Hide" : "Show"}</span>
                         </button>
                       }
                     />
@@ -225,7 +203,7 @@ export default function LoginForm() {
                         role="alert"
                         className="flex items-start gap-2 codex-radius-sm border border-crimson-600/30 bg-crimson-600/8 px-4 py-3 text-xs font-medium text-crimson-600"
                       >
-                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                        <AssetIcon icon="warning" size="sm" className="shrink-0" />
                         <span>{error}</span>
                       </p>
                     )}
@@ -243,7 +221,7 @@ export default function LoginForm() {
                         disabled={submitting}
                         className="flex-1"
                       >
-                        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                        <CodexGlyph name="prev" />
                         Back
                       </Button>
                       <button
@@ -265,7 +243,7 @@ export default function LoginForm() {
                           </>
                         ) : (
                           <>
-                            <KeyRound className="h-4 w-4" aria-hidden="true" />
+                            <AssetIcon icon="intertwinedFate" size="sm" />
                             Unlock
                           </>
                         )}
@@ -288,7 +266,7 @@ export default function LoginForm() {
             href="/"
             className="codex-focus inline-flex items-center gap-1.5 text-xs font-semibold text-leather-muted transition-colors duration-300 hover:text-leather-caramel"
           >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            <CodexGlyph name="prev" className="text-sm" />
             Return to the dossier
           </Link>
         </div>

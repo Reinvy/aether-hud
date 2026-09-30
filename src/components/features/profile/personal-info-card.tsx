@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRound } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
@@ -33,7 +33,7 @@ export function PersonalInfoCard({ form, onFieldChange }: PersonalInfoCardProps)
     <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <UserRound className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+          <AssetIcon icon="character" size="sm" />
           <CardTitle>Personal Info</CardTitle>
         </div>
       </CardHeader>

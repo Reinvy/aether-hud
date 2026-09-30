@@ -12,6 +12,8 @@
  * can read the registry statically.
  */
 
+import type { GenshinIconKey } from "./ui-icons";
+
 export const PUBLIC_NAV = [
   { label: "Traveler", href: "/#hero", sectionId: "hero", icon: "characterAether" },
   { label: "Domains", href: "/#projects", sectionId: "projects", icon: "domain" },
@@ -24,22 +26,22 @@ export const PUBLIC_NAV = [
 interface DashboardNavItem {
   label: string;
   href: string;
-  /** Key of the sidebar iconMap entry (locked by e2e TEST 10). */
-  icon: string;
+  /** Key of the artwork pool in src/lib/ui-icons.ts (locked by e2e TEST 10). */
+  icon: GenshinIconKey;
   group: "codex" | "sanctum";
 }
 
 export const DASHBOARD_NAV = [
-  { label: "Overview", href: "/dashboard", icon: "Activity", group: "codex" },
-  { label: "Domains", href: "/dashboard/projects", icon: "Boxes", group: "codex" },
-  { label: "Talents", href: "/dashboard/skills", icon: "Cpu", group: "codex" },
-  { label: "Quests", href: "/dashboard/experiences", icon: "Briefcase", group: "codex" },
-  { label: "Allies", href: "/dashboard/testimonials", icon: "MessageCircle", group: "codex" },
-  { label: "Summon Desk", href: "/dashboard/contact", icon: "Globe", group: "codex" },
-  { label: "Traveler Profile", href: "/dashboard/profile", icon: "User", group: "sanctum" },
-  { label: "Codex Pages", href: "/dashboard/sections", icon: "Layout", group: "sanctum" },
-  { label: "Observatory", href: "/dashboard/telemetry", icon: "Gauge", group: "sanctum" },
-  { label: "Settings", href: "/dashboard/settings", icon: "Settings", group: "sanctum" },
+  { label: "Overview", href: "/dashboard", icon: "list", group: "codex" },
+  { label: "Domains", href: "/dashboard/projects", icon: "domain", group: "codex" },
+  { label: "Talents", href: "/dashboard/skills", icon: "talents", group: "codex" },
+  { label: "Quests", href: "/dashboard/experiences", icon: "quests", group: "codex" },
+  { label: "Allies", href: "/dashboard/testimonials", icon: "friends", group: "codex" },
+  { label: "Summon Desk", href: "/dashboard/contact", icon: "mail", group: "codex" },
+  { label: "Traveler Profile", href: "/dashboard/profile", icon: "character", group: "sanctum" },
+  { label: "Codex Pages", href: "/dashboard/sections", icon: "deckList", group: "sanctum" },
+  { label: "Observatory", href: "/dashboard/telemetry", icon: "elementalSight", group: "sanctum" },
+  { label: "Settings", href: "/dashboard/settings", icon: "settings", group: "sanctum" },
 ] as const;
 
 /** Console sections, in render order, with their display labels. */

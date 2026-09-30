@@ -1,9 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { SectionHeading } from "@/components/features/section-heading";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import type { SectionDto, TestimonialDto } from "@/lib/dto";
 
 interface TestimonialsSectionProps {
@@ -35,18 +34,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
         {/* Section Header */}
         <SectionHeading
           badge="Companion Letters // Serenitea Pot Trust"
-          icon={
-            <div className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.friends}
-                alt="Friends Icon"
-                width={16}
-                height={16}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-                unoptimized
-              />
-            </div>
-          }
+          icon={<AssetIcon icon="friends" size="sm" className="shrink-0" />}
           title={sectionTitle || AUTHORED.title}
           highlight={sectionTitle ? undefined : AUTHORED.highlight}
           subtitle={
@@ -70,27 +58,9 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
                 {/* Letter Seal & Serenitea Trust Badge */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
-                    <div className="codex-icon-plate h-7 w-7 shrink-0">
-                      <Image
-                        src={GENSHIN_UI_ICONS.mail}
-                        alt="Letter"
-                        width={24}
-                        height={24}
-                        className="codex-icon-on-plate h-4 w-4 object-contain"
-                        unoptimized
-                      />
-                    </div>
+                    <AssetIcon icon="mail" size="sm" />
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-leather-caramel/10 border border-leather-caramel/25">
-                      <div className="codex-icon-plate h-7 w-7 shrink-0">
-                        <Image
-                          src={GENSHIN_UI_ICONS.sereniteaPot}
-                          alt=""
-                          width={16}
-                          height={16}
-                          className="codex-icon-on-plate h-4 w-4 object-contain"
-                          unoptimized
-                        />
-                      </div>
+                      <AssetIcon icon="sereniteaPot" size="sm" />
                       <span className="codex-label-active">
                         Serenitea trust · Lv. 10
                       </span>
@@ -127,16 +97,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
 
                   {/* Verified Seal */}
                   <div className="flex items-center gap-1.5 shrink-0 px-3 py-1 rounded-full bg-leather-caramel/10 border border-leather-caramel/30">
-                    <div className="codex-icon-plate h-6 w-6 shrink-0">
-                      <Image
-                        src={GENSHIN_UI_ICONS.achievements}
-                        alt=""
-                        width={14}
-                        height={14}
-                        className="codex-icon-on-plate h-3.5 w-3.5 object-contain"
-                        unoptimized
-                      />
-                    </div>
+                    <AssetIcon icon="achievements" size="sm" />
                     <span className="codex-label-active">
                       Sealed
                     </span>
@@ -149,16 +110,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
           {testimonials.length === 0 && (
             <div className="col-span-full">
               <div className="codex-card codex-radius-card mx-auto max-w-md px-8 py-10 text-center">
-                <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
-                  <Image
-                    src={GENSHIN_UI_ICONS.mail}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="codex-icon-on-plate h-6 w-6 object-contain"
-                    unoptimized
-                  />
-                </div>
+                <AssetIcon icon="mail" size="lg" className="mx-auto mb-4" />
                 <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                   No companion letters yet
                 </h3>

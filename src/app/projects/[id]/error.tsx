@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -22,9 +23,7 @@ export default function DomainDossierError({
 
       <div className="codex-card codex-panel-radius codex-rise relative w-full max-w-lg p-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex h-14 w-14 items-center justify-center codex-radius-card border border-crimson-600/30 bg-crimson-600/8">
-            <AlertTriangle className="h-6 w-6 text-crimson-600" aria-hidden="true" />
-          </div>
+          <AssetIcon icon="warning" size="md" />
 
           <div className="space-y-2">
             <span className="codex-label-gold block">Domain dossier</span>
@@ -44,7 +43,7 @@ export default function DomainDossierError({
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Button variant="secondary" size="md" glow="none" onClick={reset}>
-              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+              <CodexGlyph name="refresh" className="text-base" />
               Try again
             </Button>
             <Link href="/" className="codex-btn-primary codex-sheen codex-focus px-6 py-2.5 text-xs tracking-wider">

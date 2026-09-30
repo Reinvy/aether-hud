@@ -7,7 +7,8 @@ import { SidebarProvider, useSidebar } from "@/lib/sidebar-context";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { CodexSessionGate } from "@/components/features/codex-session-gate";
 import { IconButton } from "@/components/ui/icon-button";
-import { Menu } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { useAuth } from "@/lib/auth-context";
 import { APP_NAME } from "@/lib/constants";
 
@@ -24,7 +25,7 @@ function DashboardLayoutContent({
 }: {
   children: React.ReactNode;
 }) {
-  const { toggle } = useSidebar();
+  const { toggle, isOpen } = useSidebar();
 
   return (
     <div className="flex min-h-screen bg-parchment-base">
@@ -37,7 +38,7 @@ function DashboardLayoutContent({
             label="Toggle sidebar"
             onClick={toggle}
           >
-            <Menu className="h-5 w-5" />
+            {isOpen ? <CodexGlyph name="close" /> : <AssetIcon icon="paimonMenu" size="sm" />}
           </IconButton>
           <span className="font-display text-xs font-bold tracking-[0.15em] text-leather-dark">
             {APP_NAME}

@@ -1,31 +1,32 @@
 "use client";
 
 import { memo } from "react";
-import type { LucideIcon } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card, CardContent } from "@/components/ui/card";
+import type { GenshinIconKey } from "@/lib/ui-icons";
 import { cn } from "@/lib/utils";
 
 /**
  * StatCard — reusable dashboard stat card.
  *
  * Extracted from the dashboard overview page so every stat tile
- * (ACTIVE PROJECTS, SKILL MODULES, ...) shares the same Teyvat Codex treatment: glass codex panel, codex-label, display
- * value, tone-colored icon with hover scale/rotate/brighten.
+ * (ACTIVE PROJECTS, SKILL MODULES, ...) shares the same Teyvat Codex treatment: ledger card, codex-label, display
+ * value, artwork medallion with hover scale.
  */
 interface StatCardProps {
   label: string;
   value: string;
-  icon: LucideIcon;
-  /** Accent tone for the value + icon. */
+  icon: GenshinIconKey;
+  /** Accent tone for the value + medallion. */
   tone?: "gold" | "jade";
   className?: string;
 }
 
-export const StatCard = memo(function StatCard({ label, value, icon: Icon, tone = "gold", className }: StatCardProps) {
+export const StatCard = memo(function StatCard({ label, value, icon, tone = "gold", className }: StatCardProps) {
   return (
-    <Card variant="glass" hover="lift" className={className}>
+    <Card variant="ledger" hover="lift" className={className}>
       <CardContent className="p-4 sm:p-5">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <span className="codex-label text-[9px]">{label}</span>
             <p
@@ -37,12 +38,9 @@ export const StatCard = memo(function StatCard({ label, value, icon: Icon, tone 
               {value}
             </p>
           </div>
-          <Icon
-            className={cn(
-              "h-6 w-6 sm:h-8 sm:w-8 shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3",
-              tone === "gold" ? "text-gold-ink" : "text-jade-ink"
-            )}
-          />
+          <span className="shrink-0 transition-transform duration-300 group-hover:scale-110">
+            <AssetIcon icon={icon} size="md" />
+          </span>
         </div>
       </CardContent>
     </Card>

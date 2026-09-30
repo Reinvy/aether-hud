@@ -2,68 +2,15 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import {
-  AlertCircle,
-  CheckCircle,
-  ChevronRight,
-  Copy,
-  Terminal,
-  Users,
-  User,
-  AtSign,
-  Hash,
-  Globe,
-  GitBranch,
-  MessageCircle,
-  Mail,
-  Link2,
-  Tv,
-  Gamepad2,
-  Radio,
-  Palette,
-  Heart,
-  Coffee,
-  Video,
-  Camera,
-  Send,
-  Code,
-  Music,
-  BookOpen,
-  GitFork,
-  MessageSquare,
-} from "lucide-react";
 import { fadeInView } from "@/lib/motion-variants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusDot } from "@/components/ui/status-dot";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { SectionHeading } from "@/components/features/section-heading";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import type { ConfigDto, SectionDto, SocialDto } from "@/lib/dto";
-
-const socialIcons: Record<string, React.ElementType> = {
-  Globe,
-  GitBranch,
-  MessageCircle,
-  Mail,
-  Link2,
-  Tv,
-  Gamepad2,
-  Radio,
-  Palette,
-  Heart,
-  Coffee,
-  Video,
-  Camera,
-  Send,
-  Code,
-  Music,
-  AtSign,
-  BookOpen,
-  GitFork,
-  MessageSquare,
-};
 
 interface DispatchForm {
   name: string;
@@ -159,17 +106,7 @@ export function ContactSection({
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="Dispatch Portal"
-          icon={
-            <span className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.mail}
-                alt="Mail Icon"
-                width={16}
-                height={16}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-              />
-            </span>
-          }
+          icon={<AssetIcon icon="mail" size="sm" className="shrink-0" />}
           title={section.title || "Summon"}
           highlight={section.title ? undefined : "Architect"}
           subtitle={
@@ -185,21 +122,13 @@ export function ContactSection({
               <div className="codex-card codex-radius-card p-6 sm:p-8 h-full">
                 {/* Form header */}
                 <div className="flex flex-wrap items-center gap-2.5 pb-4 mb-6 border-b border-leather-caramel/20">
-                  <span className="codex-icon-plate h-7 w-7 shrink-0">
-                    <Image
-                      src={GENSHIN_UI_ICONS.mail}
-                      alt="Dispatch"
-                      width={16}
-                      height={16}
-                      className="codex-icon-on-plate h-4 w-4 object-contain"
-                    />
-                  </span>
+                  <AssetIcon icon="mail" size="sm" />
                   <span className="codex-label-active">
                     Encrypted Dispatch Scroll
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-jade-500/10 border border-jade-500/30">
                     <StatusDot tone="active" pulse label="Dispatch portal online" />
-                    <span className="font-mono text-[9px] text-jade-ink font-bold uppercase">
+                    <span className="codex-label text-jade-ink">
                       Open
                     </span>
                   </span>
@@ -212,7 +141,7 @@ export function ContactSection({
                     className="flex flex-col items-center justify-center py-12 text-center"
                     aria-live="polite"
                   >
-                    <CheckCircle className="h-12 w-12 text-jade-ink mb-4" aria-hidden="true" />
+                    <CodexGlyph name="confirm" className="mb-4 text-4xl text-jade-ink" />
                     <p className="font-serif text-lg font-bold tracking-wider text-leather-dark uppercase">
                       Dispatch composed
                     </p>
@@ -220,7 +149,7 @@ export function ContactSection({
                       Your mail client has opened with the summoning scroll. If it did not, send the
                       message straight to the address below.
                     </p>
-                    <span className="mt-3 inline-block codex-btn border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-mono text-xs text-leather-dark font-bold">
+                    <span className="mt-3 inline-block codex-btn border border-leather-caramel/40 bg-leather-caramel/10 px-4 py-1 font-display text-xs tabular-nums text-leather-dark font-bold">
                       {directEmail}
                     </span>
                     <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
@@ -231,7 +160,6 @@ export function ContactSection({
                         onClick={handleCopy}
                         className="font-serif uppercase tracking-widest"
                       >
-                        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                         {copyState === "copied"
                           ? "Address copied"
                           : copyState === "failed"
@@ -264,7 +192,7 @@ export function ContactSection({
                         autoComplete="name"
                         label="Summoner Name"
                         placeholder="Traveler / Collaborator…"
-                        prefix={<User className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
+                        prefix={<AssetIcon icon="character" tone="ink" size="sm" />}
                         value={formData.name}
                         onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                         required
@@ -279,7 +207,7 @@ export function ContactSection({
                         spellCheck={false}
                         label="Comm Address"
                         placeholder="traveler@teyvat.realm…"
-                        prefix={<AtSign className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
+                        prefix={<AssetIcon icon="mail" tone="ink" size="sm" />}
                         value={formData.email}
                         onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                         required
@@ -292,7 +220,7 @@ export function ContactSection({
                         name="subject"
                         label="Commission Topic"
                         placeholder="Project collaboration or contract inquiry…"
-                        prefix={<Hash className="h-4 w-4 text-leather-caramel/70" aria-hidden="true" />}
+                        prefix={<AssetIcon icon="deckList" tone="ink" size="sm" />}
                         value={formData.subject}
                         onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
                         required
@@ -325,8 +253,8 @@ export function ContactSection({
                           role="alert"
                           aria-live="polite"
                         >
-                          <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                          <span className="font-mono text-xs">{error}</span>
+                          <AssetIcon icon="warning" size="sm" className="shrink-0" />
+                          <span className="font-body text-xs">{error}</span>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -336,15 +264,7 @@ export function ContactSection({
                       disabled={sending || sent}
                       className="w-full codex-btn-primary codex-focus py-4 font-serif text-xs font-bold tracking-[0.2em] uppercase hover:opacity-95 shadow-lg transition-all inline-flex items-center justify-center gap-2.5"
                     >
-                      <div className="w-4 h-4 relative">
-                        <Image
-                          src={GENSHIN_UI_ICONS.wish}
-                          alt="Wish Icon"
-                          width={16}
-                          height={16}
-                          className="codex-icon-ink object-contain"
-                        />
-                      </div>
+                      <AssetIcon icon="wish" tone="ink" size="sm" />
                       <span>{sending ? "Dispatching Scroll…" : "Dispatch Summoning Scroll"}</span>
                     </button>
                   </form>
@@ -357,15 +277,7 @@ export function ContactSection({
               {/* Social Channels */}
               <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="codex-icon-plate h-7 w-7 shrink-0">
-                    <Image
-                      src={GENSHIN_UI_ICONS.community}
-                      alt="Community"
-                      width={16}
-                      height={16}
-                      className="codex-icon-on-plate h-4 w-4 object-contain"
-                    />
-                  </span>
+                  <AssetIcon icon="community" size="sm" />
                   <span className="codex-label-active">
                     Guild Channels
                   </span>
@@ -375,7 +287,6 @@ export function ContactSection({
                   <div className="space-y-2" aria-label="Social communication channels">
                     <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                       {(showAllSocials ? socials : socials.slice(0, 8)).map((social) => {
-                        const Icon = socialIcons[social.icon] || Terminal;
                         return (
                           <a
                             key={social.id}
@@ -383,11 +294,14 @@ export function ContactSection({
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={`Connect on ${social.platform}`}
-                            className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm press-scale hover-scale-sm codex-focus"
+                            className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-body tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm press-scale hover-scale-sm codex-focus"
                           >
-                            <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover/channel:scale-110" aria-hidden="true" />
+                            <AssetIcon icon="community" tone="ink" size="sm" />
                             <span className="flex-1 font-bold">{social.platform}</span>
-                            <ChevronRight className="h-3.5 w-3.5 text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity" />
+                            <CodexGlyph
+                              name="next"
+                              className="text-leather-caramel opacity-0 group-hover/channel:opacity-100 transition-opacity"
+                            />
                           </a>
                         );
                       })}
@@ -405,7 +319,7 @@ export function ContactSection({
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2 codex-radius-card border border-dashed border-leather-caramel/30 px-4 py-8 text-center">
-                    <Users className="h-6 w-6 text-leather-caramel/70" aria-hidden="true" />
+                    <AssetIcon icon="friends" size="sm" />
                     <p className="font-serif text-sm font-bold text-leather-dark">
                       No guild channels inscribed yet
                     </p>
@@ -420,15 +334,7 @@ export function ContactSection({
               {/* Direct Letter */}
               <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="codex-icon-plate h-7 w-7 shrink-0">
-                    <Image
-                      src={GENSHIN_UI_ICONS.mail}
-                      alt="Mail"
-                      width={16}
-                      height={16}
-                      className="codex-icon-on-plate h-4 w-4 object-contain"
-                    />
-                  </span>
+                  <AssetIcon icon="mail" size="sm" />
                   <span className="codex-label-active">
                     Direct Letter
                   </span>
@@ -436,21 +342,13 @@ export function ContactSection({
                 <a
                   href={`mailto:${directEmail}`}
                   aria-label={`Send direct email to ${directEmail}`}
-                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-mono tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm codex-focus"
+                  className="group/channel flex items-center gap-3 codex-radius-card border border-leather-caramel/30 bg-parchment-subtle hover:bg-parchment-elevated px-4 py-2.5 text-xs font-body tracking-wider text-leather-dark transition-all hover:border-leather-caramel shadow-sm codex-focus"
                 >
-                  <span className="codex-icon-plate h-7 w-7 shrink-0">
-                    <Image
-                      src={GENSHIN_UI_ICONS.mail}
-                      alt="Direct Mail"
-                      width={16}
-                      height={16}
-                      className="codex-icon-on-plate h-4 w-4 object-contain"
-                    />
-                  </span>
-                  <span className="font-mono text-[11px] truncate font-bold">
+                  <AssetIcon icon="mail" size="sm" />
+                  <span className="font-display text-[11px] tabular-nums truncate font-bold">
                     {directEmail}
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 ml-auto text-leather-caramel" />
+                  <CodexGlyph name="next" className="ml-auto text-leather-caramel" />
                 </a>
               </div>
 
@@ -458,11 +356,11 @@ export function ContactSection({
               <div className="codex-card codex-radius-card p-5">
                 <div className="flex items-center gap-2">
                   <StatusDot tone={isAvailable ? "active" : "warning"} pulse={isAvailable} />
-                  <span className="font-mono text-[10px] font-bold text-jade-ink uppercase">
+                  <span className="codex-label text-jade-ink">
                     {isAvailable ? "Available for commissions" : config.status}
                   </span>
                 </div>
-                <p className="mt-2 font-mono text-[10px] text-leather-muted tracking-wider font-bold">
+                <p className="codex-label mt-2 tracking-wider">
                   Katheryne&apos;s Dispatch: response within 24h
                 </p>
               </div>

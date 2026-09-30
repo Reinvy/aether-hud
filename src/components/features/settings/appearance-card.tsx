@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Monitor, Palette } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { fadeInUp } from "@/lib/motion-variants";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +32,7 @@ export function AppearanceCard({
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Palette className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+            <AssetIcon icon="previewTone" size="sm" />
             <CardTitle>Appearance</CardTitle>
           </div>
         </CardHeader>
@@ -58,7 +58,7 @@ export function AppearanceCard({
 
           <div className="flex items-center justify-between codex-radius-card border border-border-subtle bg-parchment-subtle/70 px-4 py-3">
             <label htmlFor="animations-toggle" className="flex cursor-pointer items-center gap-3">
-              <Monitor className="h-4 w-4 text-leather-caramel" aria-hidden="true" />
+              <AssetIcon icon="wish" size="sm" />
               <span>
                 <span className="block font-body text-xs font-medium text-leather-dark">
                   Motion effects

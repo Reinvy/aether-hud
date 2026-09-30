@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 
 /**
  * 404 page — the requested page is not in the codex.
@@ -46,7 +46,7 @@ export default function NotFound() {
             href="/"
             className="codex-btn-secondary codex-sheen codex-focus px-6 py-2.5 text-xs tracking-wider"
           >
-            <Compass className="h-3.5 w-3.5" aria-hidden="true" />
+            <AssetIcon icon="back" tone="ink" size="sm" />
             Return to the dossier
           </Link>
         </div>

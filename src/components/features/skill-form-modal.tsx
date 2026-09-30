@@ -22,7 +22,6 @@ export interface SkillFormRecord {
   name: string;
   level: number;
   category: string;
-  icon: string;
   order: number;
 }
 
@@ -30,34 +29,13 @@ type FormData = {
   name: string;
   level: string;
   category: string;
-  icon: string;
 };
 
 const EMPTY_FORM: FormData = {
   name: "",
   level: "85",
   category: "",
-  icon: "Zap",
 };
-
-const ICON_OPTIONS = [
-  { value: "Zap", label: "Zap — Energy & Speed" },
-  { value: "Globe", label: "Globe — Web & Frontend" },
-  { value: "FileCode", label: "FileCode — Languages" },
-  { value: "Palette", label: "Palette — Styling & CSS" },
-  { value: "Server", label: "Server — Backend & APIs" },
-  { value: "Database", label: "Database — Data & SQL" },
-  { value: "Brain", label: "Brain — AI & Machine Learning" },
-  { value: "Bot", label: "Bot — AI Agents & LLMs" },
-  { value: "Terminal", label: "Terminal — Systems & CLI" },
-  { value: "Radio", label: "Radio — Realtime & WebSockets" },
-  { value: "Network", label: "Network — Architecture" },
-  { value: "Container", label: "Container — Docker & K8s" },
-  { value: "Rocket", label: "Rocket — DevOps & Cloud" },
-  { value: "PenTool", label: "PenTool — Design & Figma" },
-  { value: "Code", label: "Code — General Development" },
-  { value: "Cpu", label: "Cpu — Compute Core" },
-];
 
 function toForm(skill: SkillFormRecord | null): FormData {
   if (!skill) return EMPTY_FORM;
@@ -65,7 +43,6 @@ function toForm(skill: SkillFormRecord | null): FormData {
     name: skill.name,
     level: String(skill.level),
     category: skill.category,
-    icon: skill.icon,
   };
 }
 
@@ -119,7 +96,6 @@ export function SkillFormModal({
       name: form.name,
       level,
       category: form.category,
-      icon: form.icon,
     };
 
     try {
@@ -190,12 +166,6 @@ export function SkillFormModal({
           onChange={(e) => updateField("level", e.target.value)}
         />
       </div>
-      <Select
-        label="Icon"
-        value={form.icon}
-        onChange={(e) => updateField("icon", e.target.value)}
-        options={ICON_OPTIONS}
-      />
     </FormModal>
   );
 }

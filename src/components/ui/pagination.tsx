@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 
 interface PaginationProps {
@@ -33,7 +33,7 @@ export function Pagination({ page, pageCount, onPageChange, className }: Paginat
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
-        <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+        <CodexGlyph name="prev" />
         Previous
       </button>
       <span className="text-xs tabular-nums text-leather-muted">
@@ -46,7 +46,7 @@ export function Pagination({ page, pageCount, onPageChange, className }: Paginat
         disabled={page >= pageCount}
       >
         Next
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+        <CodexGlyph name="next" />
       </button>
     </nav>
   );

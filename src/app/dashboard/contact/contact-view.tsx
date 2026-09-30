@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionError } from "@/components/ui/action-error";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { CodexLoader } from "@/components/ui/codex-loader";
@@ -265,7 +265,7 @@ export default function DashboardContact() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={User}
+        icon="mail"
         eyebrow="DISPATCH PORTAL"
         title="Manage social links"
         titleHighlight="social links"
@@ -285,7 +285,7 @@ export default function DashboardContact() {
         selectionCount={selected.size}
         bulkActions={
           <Button variant="danger" size="sm" onClick={requestBulkDelete}>
-            <Trash2 className="h-3.5 w-3.5" />
+            <AssetIcon icon="pinDelete" tone="ink" size="sm" />
             Delete selected
           </Button>
         }

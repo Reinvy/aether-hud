@@ -3,14 +3,15 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Cpu, Plus, Trash2 } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
 import { planReorder } from "@/lib/reorder";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ActionError } from "@/components/ui/action-error";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -245,13 +246,13 @@ export default function DashboardSkills() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={Cpu}
+        icon="talents"
         eyebrow="TALENT TREE // CONSTELLATIONS"
         title="Manage talents"
         titleHighlight="talents"
         actions={
           <Button variant="primary" size="sm" onClick={openNew}>
-            <Plus className="h-4 w-4" />
+            <CodexGlyph name="add" />
             New talent
           </Button>
         }
@@ -275,10 +276,11 @@ export default function DashboardSkills() {
             bulkActions={
               <>
                 <Button variant="secondary" size="sm" onClick={openBulkCategory}>
+                  <CodexGlyph name="confirm" />
                   Set category
                 </Button>
                 <Button variant="danger" size="sm" onClick={requestBulkDelete}>
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <AssetIcon icon="pinDelete" tone="ink" size="sm" />
                   Delete selected
                 </Button>
               </>
@@ -293,7 +295,7 @@ export default function DashboardSkills() {
         ) : list.filteredCount === 0 ? (
           <motion.div {...fadeInUp}>
             <EmptyState
-              icon={<Cpu className="h-5 w-5" />}
+              icon="talents"
               title={list.query ? "No talents matches this search" : "No talents yet"}
               message={
                 list.query
@@ -303,7 +305,7 @@ export default function DashboardSkills() {
               action={
                 !list.query ? (
                   <Button variant="primary" size="sm" onClick={openNew}>
-                    <Plus className="h-4 w-4" />
+                    <CodexGlyph name="add" />
                     New talent
                   </Button>
                 ) : undefined

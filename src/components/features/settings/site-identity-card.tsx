@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Globe } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { fadeInUp } from "@/lib/motion-variants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export function SiteIdentityCard({ values, onChange, delay = 0 }: SiteIdentityCa
       <Card variant="glass" hover="none">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+            <AssetIcon icon="map" size="sm" />
             <CardTitle>Codex Identity</CardTitle>
           </div>
         </CardHeader>

@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useRef, useId, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 import { EASE_CODEX } from "@/lib/motion-variants";
 
@@ -179,7 +179,7 @@ export function Modal({
                 className="codex-btn min-h-9 min-w-9 shrink-0 p-0 text-leather-muted transition-all duration-200 hover:text-gold-ink hover-scale-sm press-scale codex-focus sm:min-h-0 sm:min-w-0 sm:p-1.5"
                 aria-label="Close modal"
               >
-                <X className="h-4 w-4" />
+                <CodexGlyph name="close" className="text-base" />
               </button>
             </div>
 

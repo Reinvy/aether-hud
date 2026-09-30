@@ -3,9 +3,8 @@
 import { useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { Heart } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { TEYVAT_ELEMENTS, getElementByKey, type ElementAsset } from "@/lib/element-assets";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { cn } from "@/lib/utils";
 import { EASE_CODEX } from "@/lib/motion-variants";
 import { MISSION_LINE } from "@/lib/constants";
@@ -219,7 +218,7 @@ export function HeroDossierCard({
     >
       {/* ─── Hanging Saddle Leather Bookmark Ribbon with Heart (ref2.png) ─── */}
       <span className="bookmark-ribbon" aria-hidden="true">
-        <Heart className="h-4 w-4 fill-current" />
+        <AssetIcon icon="wish" tone="plain" size="sm" />
       </span>
 
       {/* ─── Main Two-Column Master Layout (Parchment Canvas + Cognac Panel) ─── */}
@@ -233,14 +232,7 @@ export function HeroDossierCard({
             {/* Top-Left: Deep Espresso Medallion Seal Badge */}
             <div className="relative z-10 flex items-center gap-3">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-900 border-2 border-leather-caramel/60 flex items-center justify-center p-1.5 shadow-md">
-                <Image
-                  src={GENSHIN_UI_ICONS.archive}
-                  alt="Teyvat archive"
-                  width={22}
-                  height={22}
-                  className="codex-icon-on-plate object-contain"
-                  unoptimized
-                />
+                <AssetIcon icon="archive" tone="plain" size="sm" />
               </div>
             </div>
 
@@ -265,7 +257,7 @@ export function HeroDossierCard({
                 Lumine
               </button>
 
-              <span className="text-leather-caramel/60 font-serif text-xs tracking-tighter select-none">
+              <span aria-hidden="true" className="text-leather-caramel font-serif text-xs tracking-tighter select-none">
                 ◄►
               </span>
 

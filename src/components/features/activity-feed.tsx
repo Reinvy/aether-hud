@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { TrendingUp } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusDot, type StatusTone } from "@/components/ui/status-dot";
 
@@ -38,7 +38,7 @@ export const ActivityFeed = memo(function ActivityFeed({
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-leather-caramel" aria-hidden="true" />
+          <AssetIcon icon="archiveTravelLog" size="sm" />
           <CardTitle>Activity Log</CardTitle>
         </div>
       </CardHeader>

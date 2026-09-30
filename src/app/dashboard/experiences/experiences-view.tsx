@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Briefcase, ChevronDown, ChevronUp, Plus } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
 import { planReorder } from "@/lib/reorder";
@@ -11,6 +10,7 @@ import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -190,13 +190,13 @@ export default function DashboardExperiences() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={Briefcase}
+        icon="quests"
         eyebrow="COMMISSION LOG"
         title="Manage quests"
         titleHighlight="quests"
         actions={
           <Button variant="primary" size="sm" onClick={openNew}>
-            <Plus className="h-4 w-4" />
+            <CodexGlyph name="add" />
             New quest
           </Button>
         }
@@ -240,7 +240,7 @@ export default function DashboardExperiences() {
 
           {list.filteredCount === 0 ? (
             <EmptyState
-              icon={<Briefcase className="h-5 w-5" />}
+              icon="quests"
               title={list.query ? "No quests matches this search" : "No quests yet"}
               message={
                 list.query
@@ -250,7 +250,7 @@ export default function DashboardExperiences() {
               action={
                 !list.query ? (
                   <Button variant="primary" size="sm" onClick={openNew}>
-                    <Plus className="h-4 w-4" />
+                    <CodexGlyph name="add" />
                     New quest
                   </Button>
                 ) : undefined
@@ -272,7 +272,7 @@ export default function DashboardExperiences() {
                         disabled={position <= 0 || movingId === exp.id}
                         className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                       >
-                        <ChevronUp className="h-3.5 w-3.5" />
+                        <CodexGlyph name="up" />
                       </IconButton>
                       <IconButton
                         label={`Move ${exp.role} down`}
@@ -284,7 +284,7 @@ export default function DashboardExperiences() {
                         }
                         className="p-0.5 disabled:cursor-not-allowed disabled:opacity-30 sm:p-1"
                       >
-                        <ChevronDown className="h-3.5 w-3.5" />
+                        <CodexGlyph name="down" />
                       </IconButton>
                     </div>
                   )}

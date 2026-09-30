@@ -2,7 +2,7 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "glass";
+  variant?: "default" | "glass" | "ledger";
   hover?: "lift" | "sweep" | "glow" | "none";
 }
 
@@ -12,6 +12,7 @@ function Card({ className, variant = "glass", hover = "sweep", children, ...prop
       className={cn(
         "codex-panel-radius relative group",
         variant === "glass" && "codex-panel",
+        variant === "ledger" && "codex-card",
         variant === "default" && "bg-parchment-subtle border border-leather-caramel/25",
         hover === "lift" && "codex-lift",
         hover === "sweep" && "codex-sheen",

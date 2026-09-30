@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION, APP_URL, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { AuthProvider } from "@/lib/auth-context";
@@ -8,7 +8,8 @@ import { WebVitalsReporter } from "@/components/features/web-vitals";
 
 /**
  * Self-hosted typography — Cormorant Garamond & Cinzel carry the display
- * serif headings, Inter the body copy, JetBrains Mono the technical values.
+ * serif headings, Inter the body copy and every technical value on the codex
+ * scale. One typeface family system: no terminal/monospace residue.
  */
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -28,13 +29,6 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -171,7 +165,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} h-full antialiased`}
     >
       <head>
         {/* JSON-LD Structured Data */}

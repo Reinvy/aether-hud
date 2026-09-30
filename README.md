@@ -9,9 +9,10 @@ from an authored dataset when it is not, so it is never half-empty.
 
 ## Design System
 
-- **Themes:** ☀️ Teyvat Codex (warm parchment, default) · 🌙 Celestial Night (midnight indigo)
+- **Theme:** ☀️ Teyvat Codex — one warm parchment palette, light-only (no theme switch)
 - **Palette:** Parchment `#FAF8F5`, Saddle leather `#8C6239`, Imperial gold `#B88414` / `#F2C94C`, Jade `#38EF7D`, Espresso `#2C1E14`
-- **Typography:** Cinzel (display), Cormorant Garamond (serif), Inter (body), JetBrains Mono (values)
+- **Typography:** Cinzel (display), Cormorant Garamond (serif), Inter (body)
+- **Icons:** Teyvat Codex artwork (`public/ui-icons`) through `AssetIcon`, plus typographic codex marks through `CodexGlyph` — no third-party icon library
 - **Components:** Codex panels and cards, elemental vision badges, bookmark ribbons, diamond spinners, segment bars
 - Full specification: [DESIGNS.md](DESIGNS.md)
 
@@ -21,7 +22,7 @@ from an authored dataset when it is not, so it is never half-empty.
 - **Styling:** Tailwind CSS v4 (CSS-variable token theme)
 - **Animation:** Framer Motion (shared `EASE_CODEX` curve)
 - **Database:** PostgreSQL + Prisma v7 (`@prisma/adapter-pg`)
-- **Icons:** Lucide React + official Genshin UI icons
+- **Icons:** bundled Teyvat Codex artwork + typographic marks (no icon dependency)
 - **Tests:** Node.js E2E suite (`e2e/`)
 - **Deployment:** Vercel
 

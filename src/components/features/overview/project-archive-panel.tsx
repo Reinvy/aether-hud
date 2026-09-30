@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -26,7 +26,7 @@ export function ProjectArchivePanel({ projects }: ProjectArchivePanelProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Boxes className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+            <AssetIcon icon="archive" size="sm" />
             <CardTitle>Domain Archive</CardTitle>
           </div>
           <Badge variant="gold" size="sm">
@@ -37,7 +37,7 @@ export function ProjectArchivePanel({ projects }: ProjectArchivePanelProps) {
       <CardContent>
         {projects.length === 0 ? (
           <EmptyState
-            icon={<Boxes className="h-4 w-4" aria-hidden="true" />}
+            icon="archive"
             title="No domains yet"
             message="Domains added to the codex appear here with their rank, tags and live link."
           />

@@ -121,6 +121,18 @@ function extractNavLinks(html, origin) {
   return [...links];
 }
 
+/**
+ * Parse the artwork pool literal from src/lib/ui-icons.ts into a key → path map.
+ * Read statically so a wrong or missing asset key fails here instead of
+ * rendering an empty plate on a live page.
+ */
+function parseAssetRegistry(source) {
+  const block = source.match(/GENSHIN_UI_ICONS = \{([\s\S]*?)\} as const;/);
+  if (!block) return new Map();
+  const entries = [...block[1].matchAll(/^\s*([A-Za-z0-9_]+):\s*"([^"]+)"/gm)];
+  return new Map(entries.map((m) => [m[1], m[2]]));
+}
+
 async function main() {
   const server = await startTestServer();
   targetUrl = server.url;
@@ -419,58 +431,73 @@ async function main() {
     }
   }
 
-  // ===== TEST 8: Social Icon Registry Sync (landing + dashboard) =====
-  // Every `icon: "X"` in the socials data must be registered in BOTH icon
-  // maps: the landing `socialIcons` (src/components/sections/contact-section.tsx)
-  // and the dashboard `iconMap` (src/components/features/contact/social-links-card.tsx).
-  // A social added with an unregistered icon silently renders the fallback
-  // (Terminal on landing, Link2 in dashboard) — PR #57 added GitHub Sponsors
-  // (Heart) + Ko-fi (Coffee) unregistered; C4 2026-08-12 fixed and locks it here.
-  log("TEST 8: Social Icon Registry Sync (data icons registered in both maps)");
+  // ===== TEST 8: Social Channel Integrity (landing + console) =====
+  // This used to lock two per-platform icon maps (landing `socialIcons` and
+  // console `iconMap`) because a channel whose icon was missing from a map
+  // silently rendered a fallback glyph (PR #57: GitHub Sponsors + Ko-fi
+  // unregistered). Both maps are gone — one channel mark serves every platform
+  // — so the failure mode to guard now is a channel DISAPPEARING from a
+  // surface. Asserted behaviourally: the console list source (/api/socials)
+  // and the public dossier source (/api/portfolio) must expose the same
+  // channels, and the rendered homepage must carry exactly one anchor per
+  // channel. No source map can drift out of sync when there is no map.
+  log("TEST 8: Social Channel Integrity (one row per channel, both surfaces)");
   try {
-    const portfolioSrc = readFileSync("src/data/portfolio.ts", "utf-8");
-    const socialIconsData = [
-      ...portfolioSrc.matchAll(/platform: "[^"]+", url: "[^"]*", icon: "([^"]+)"/g),
-    ].map((m) => m[1]);
+    const { status: consoleStatus, body: consoleBody } = await getText("/api/socials");
+    assert(consoleStatus === 200, `/api/socials answers the console list source (got ${consoleStatus})`);
+    const consoleSocials = JSON.parse(consoleBody);
     assert(
-      socialIconsData.length > 0,
-      `Extracted social icons from data (found ${socialIconsData.length})`
+      Array.isArray(consoleSocials) && consoleSocials.length > 0,
+      `Console social list is non-empty (${Array.isArray(consoleSocials) ? consoleSocials.length : "not an array"})`
     );
 
-    const landingSrc = readFileSync("src/components/sections/contact-section.tsx", "utf-8");
-    const landingMapMatch = landingSrc.match(
-      /const socialIcons: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
-    );
-    assert(landingMapMatch !== null, "Landing socialIcons map is parseable");
-    const landingIcons = new Set(
-      landingMapMatch
-        ? landingMapMatch[1].split(/[\s,]+/).filter(Boolean)
-        : []
+    const { status: publicStatus, body: publicBody } = await getText("/api/portfolio");
+    assert(publicStatus === 200, `/api/portfolio answers the public source (got ${publicStatus})`);
+    const publicSocials = JSON.parse(publicBody).socials;
+    assert(
+      Array.isArray(publicSocials) && publicSocials.length > 0,
+      `Public portfolio payload carries socials (${Array.isArray(publicSocials) ? publicSocials.length : "not an array"})`
     );
 
-    const dashSrc = readFileSync("src/components/features/contact/social-links-card.tsx", "utf-8");
-    const dashMapMatch = dashSrc.match(
-      /const iconMap: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
+    const urls = (list) => new Set(list.map((s) => s.url));
+    const consoleUrls = urls(consoleSocials);
+    const publicUrls = urls(publicSocials);
+    assert(
+      consoleUrls.size === consoleSocials.length && publicUrls.size === publicSocials.length,
+      "Neither social list repeats a channel url"
     );
-    assert(dashMapMatch !== null, "Dashboard iconMap is parseable");
-    const dashIcons = new Set(
-      dashMapMatch
-        ? dashMapMatch[1].split(/[\s,]+/).filter(Boolean)
-        : []
+    assert(
+      consoleUrls.size === publicUrls.size &&
+        [...consoleUrls].every((url) => publicUrls.has(url)),
+      `Console and public surfaces expose the same ${consoleUrls.size} channels`
     );
 
-    for (const icon of new Set(socialIconsData)) {
-      assert(
-        landingIcons.has(icon),
-        `Social icon "${icon}" registered in landing socialIcons map`
-      );
-      assert(
-        dashIcons.has(icon),
-        `Social icon "${icon}" registered in dashboard iconMap`
-      );
-    }
+    const { body: home } = await getText("/");
+    // The landing renders the collapsed channel set on first paint (8 rows)
+    // plus a disclosure control naming the full roster, so the assertion is
+    // data-driven: the rendered set must be exactly the collapsed slice, every
+    // rendered channel link must be a real payload channel, and the page must
+    // disclose the total. A channel cannot vanish without failing here.
+    const payloadUrls = new Set(consoleSocials.map((s) => s.url));
+    const renderedChannels = consoleSocials.filter((social) => {
+      const escaped = social.url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`href="${escaped}"`).test(home);
+    });
+    assert(
+      renderedChannels.length === Math.min(8, consoleSocials.length),
+      `Homepage renders the collapsed channel set (${renderedChannels.length} of ${consoleSocials.length})`
+    );
+    assert(
+      renderedChannels.every((social) => payloadUrls.has(social.url)),
+      "Every rendered channel link is a channel the payload serves"
+    );
+    const disclosure = home.match(/(\d+)\s+channels/i);
+    assert(
+      disclosure !== null && Number(disclosure[1]) === consoleSocials.length,
+      `Homepage discloses the full roster (${disclosure?.[1] ?? "no count"} of ${consoleSocials.length})`
+    );
   } catch (e) {
-    assert(false, `Social icon registry is checkable: ${e.message}`);
+    assert(false, `Social channel integrity is checkable: ${e.message}`);
   }
 
   // ===== TEST 9: PWA Manifest & Icon Integrity (source-level) =====
@@ -525,14 +552,18 @@ async function main() {
   }
 
   // ===== TEST 10: Dashboard Nav Icon Registry Sync (source-level) =====
-  // The sidebar renders DASHBOARD_NAV icons via `iconMap[item.icon] || Activity`
-  // (src/components/layout/dashboard-sidebar.tsx). An icon name added to
-  // DASHBOARD_NAV without being registered in the map silently renders the
-  // Activity fallback — same silent-fallback bug class TEST 8 locks for socials.
-  // This locks: every `icon: "X"` in DASHBOARD_NAV must be a key of the
-  // sidebar iconMap, so the fallback never fires.
-  log("TEST 10: Dashboard Nav Icon Registry Sync (DASHBOARD_NAV icons registered)");
+  // The sidebar renders DASHBOARD_NAV icons straight from the artwork pool
+  // (`AssetIcon` + GENSHIN_UI_ICONS in src/lib/ui-icons.ts). This used to lock
+  // a string-keyed lucide `iconMap` whose fallback (`Activity`) silently
+  // swallowed any unregistered name. There is no fallback and no third-party
+  // icon library any more — a nav icon that is not a pool key, or a pool key
+  // whose file is missing, would render nothing. This locks every
+  // DASHBOARD_NAV icon to a real, on-disk asset.
+  log("TEST 10: Dashboard Nav Icon Registry Sync (DASHBOARD_NAV icons in the pool)");
   try {
+    const registrySrc = readFileSync("src/lib/ui-icons.ts", "utf-8");
+    assert(registrySrc.length > 0, "src/lib/ui-icons.ts is readable");
+
     const navSrc = readFileSync("src/lib/navigation.ts", "utf-8");
     const navBlock = navSrc.match(
       /export const DASHBOARD_NAV = \[([\s\S]*?)\] as const;/
@@ -546,32 +577,61 @@ async function main() {
       `Extracted DASHBOARD_NAV icons (found ${navIcons.length})`
     );
 
-    const sidebarSrc = readFileSync(
-      "src/components/layout/dashboard-sidebar.tsx",
-      "utf-8"
-    );
-    const iconMapMatch = sidebarSrc.match(
-      /const iconMap: Record<string, React\.ElementType> = \{([\s\S]*?)\};/
-    );
-    assert(iconMapMatch !== null, "Sidebar iconMap is parseable");
-    const iconMapKeys = new Set(
-      iconMapMatch
-        ? iconMapMatch[1].split(/[\s,]+/).filter(Boolean)
-        : []
-    );
+    const registry = parseAssetRegistry(registrySrc);
     assert(
-      iconMapMatch !== null && iconMapKeys.size > 0,
-      `Sidebar iconMap has registered icons (found ${iconMapKeys.size})`
+      registry.size > 0,
+      `Parsed the artwork pool (found ${registry.size} keys)`
     );
 
     for (const icon of new Set(navIcons)) {
       assert(
-        iconMapKeys.has(icon),
-        `Dashboard nav icon "${icon}" registered in sidebar iconMap`
+        registry.has(icon),
+        `Dashboard nav icon "${icon}" is a key of GENSHIN_UI_ICONS`
+      );
+      const path = registry.get(icon);
+      assert(
+        typeof path === "string" && existsSync(join("public", path.replace(/^\//, ""))),
+        `Dashboard nav icon "${icon}" resolves to a real asset (${path})`
       );
     }
   } catch (e) {
     assert(false, `Dashboard nav icon registry is checkable: ${e.message}`);
+  }
+
+  // ===== TEST 10b: Artwork Pool Integrity (source-level) =====
+  // Every surface now resolves its artwork through GENSHIN_UI_ICONS, so one
+  // wrong literal breaks a page with an empty plate. Locks: each entry points
+  // under public/ui-icons/, the file exists, paths are unique (a copy-paste
+  // registry row would render the wrong mark silently) and nothing points at
+  // an SVG — next/image refuses SVG unless dangerouslyAllowSVG is enabled.
+  log("TEST 10b: Artwork Pool Integrity (every registry path resolves on disk)");
+  try {
+    const registry = parseAssetRegistry(readFileSync("src/lib/ui-icons.ts", "utf-8"));
+    assert(registry.size > 0, `Artwork pool is parseable (found ${registry.size} keys)`);
+
+    const seen = new Map();
+    for (const [key, path] of registry) {
+      assert(
+        path.startsWith("/ui-icons/"),
+        `Pool entry "${key}" lives under /ui-icons/ (${path})`
+      );
+      assert(
+        !path.toLowerCase().endsWith(".svg"),
+        `Pool entry "${key}" is raster art, not SVG (${path})`
+      );
+      assert(
+        existsSync(join("public", path.replace(/^\//, ""))),
+        `Pool entry "${key}" resolves on disk (${path})`
+      );
+      const duplicate = seen.get(path);
+      assert(
+        duplicate === undefined,
+        `Pool path "${path}" is unique (already used by "${duplicate}")`
+      );
+      seen.set(path, key);
+    }
+  } catch (e) {
+    assert(false, `Artwork pool integrity is checkable: ${e.message}`);
   }
 
   // ===== TEST 11: Write Guard =====

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Mail } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,7 @@ export const ContactConfigCard = memo(function ContactConfigCard({
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Mail className="h-4 w-4 text-gold-ink" />
+          <AssetIcon icon="mail" size="sm" />
           <CardTitle>Contact Config</CardTitle>
         </div>
       </CardHeader>

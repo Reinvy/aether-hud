@@ -83,25 +83,25 @@ Defined in [src/app/globals.css](file:///Users/reincry/Workspace/Personal/aether
 ### 4.1. Surface & Background Tokens
 
 ```css
-/* Teyvat Codex (Default / Warm Light Mode) */
+/* Teyvat Codex — one warm parchment palette, no theme switching */
 --color-parchment-base: #FAF8F5;        /* Base warm ivory canvas */
 --color-parchment-subtle: #F3EDDF;      /* Secondary parchment tone */
 --color-parchment-elevated: #EDE5D2;    /* Elevated surface tone */
 --color-leather-dark: #2C1E14;          /* High-contrast deep espresso text (WCAG AAA) */
---color-leather-caramel: #8C6239;       /* Rich caramel leather border & accent */
 --color-leather-muted: #5E412A;         /* Muted leather metadata text */
+--color-leather-caramel: #8C6239;       /* Rich caramel leather border & accent */
 
-/* Genshin Dark Brown Codex (Dark Mode / [data-theme="celestial-night"]) */
---color-deep-space: #1A120C;            /* Deepest Genshin roasted espresso background */
---color-surface-primary: #241810;       /* Primary dark roasted chocolate container surface */
---color-glass-card: rgba(45, 30, 21, 0.90);      /* Deep Genshin dark leather glass */
+/* Ink values — text-safe on the darkest light surface (#F3EDDF) */
+--color-gold-ink: #6E4F0E;              /* Gold-tone text & values */
+--color-jade-ink: #0A6E3A;              /* Success / active text */
+--color-amber-ink: #8A5A00;             /* Warning text */
+--color-info-ink: #01579B;              /* Informational text */
+--color-crimson-600: #B3261E;           /* Danger text, destroy actions */
+--color-crimson-700: #8C1D18;           /* Danger hover / pressed */
 ```
 
-Both themes are driven by `data-theme` on `<html>` together with a `.dark`
-class. Tailwind's `dark:` variant is remapped to those selectors by
-`@custom-variant dark` in `globals.css`, so `dark:` utilities follow the app
-theme rather than the operating system. A blocking script in the root layout
-resolves the stored theme before first paint.
+Every surface renders light. The `*Ink` values exist because the elemental
+*fills* are decoration only and never carry text — text uses the ink variant.
 
 ### 4.2. Metallic & Accent Color Scales
 
@@ -140,7 +140,6 @@ resolves the stored theme before first paint.
 --font-display: var(--font-cinzel), var(--font-cormorant), Georgia, serif;
 --font-serif: var(--font-cormorant), var(--font-cinzel), Georgia, serif;
 --font-body / --font-sans: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
---font-mono: var(--font-jetbrains), "Share Tech Mono", monospace;
 ```
 
 ---
@@ -155,7 +154,7 @@ resolves the stored theme before first paint.
 | Tactical / Mecha Pattern (FORBIDDEN ❌) | Teyvat Codex Standard (REQUIRED ✅) |
 |---|---|
 | Sharp 45° chamfered polygon cuts | Soft organic fantasy curves (`rounded-3xl`, `rounded-2xl`) with warm leather borders |
-| `rounded-none` / square panels | Radius policy below — panels `rounded-3xl`, cards & controls `rounded-2xl`/`rounded-xl`, pills & dots `rounded-full` |
+| `rounded-none` / square panels | Radius policy below — panels `codex-panel-radius`, cards `codex-radius-card`, controls `codex-radius-sm` / `codex-btn`, pills & dots `rounded-full` |
 | Dark grey / slate cards in light mode | Warm Ivory Parchment cards (`#FFFFFF` / `#FAF8F5`) with warm caramel borders |
 | Faint / ghost-white text on light background | Deep Espresso text (`#2C1E14` / `#1E1208`) with Imperial Amber Gold highlights |
 | Monospace telemetry jargon (`SYS_REF // 0x482A`) | Authentic Teyvat lore (`TEYVAT CODEX`, `ADVENTURER HANDBOOK`, `COMMISSION`) |
@@ -177,9 +176,13 @@ classes on the same element. Prefer them over re-deriving the same styles.
 | `.codex-card` / `.codex-card-strong` | Leather-glass card (lists, modals) |
 | `.codex-label` / `-gold` / `-active` | Uppercase Inter eyebrow labels |
 | `.codex-input` | Recessed field with gold focus ring |
-| `.codex-badge` | Legacy-technology pill |
+| `.codex-badge` | Small tag pill (category, type, counts) |
 | `.codex-btn` / `.codex-btn-primary` / `.codex-btn-secondary` | Canonical button surfaces |
-| `.codex-panel-radius` / `.codex-radius-sm` / `-xs` / `-lg` / `.codex-btn` | Panel / card / control radii |
+| `.codex-panel-radius` / `.codex-radius-card` / `.codex-radius-xs` / `.codex-btn` | Panel / card / control radii |
+| `.codex-icon-plate` / `.codex-icon-ink` | Artwork medallion plate / mono-art ink filter on parchment |
+| `.codex-glyph` | Typographic codex mark (`CODEX_GLYPHS`) |
+| `.codex-scrim` | Modal / drawer scrim |
+| `.codex-rise` | Entrance animation for server-rendered surfaces |
 | `.codex-sheen` | Hover light sweep |
 | `.codex-lift` | Hover lift + shadow |
 | `.codex-glow-gold` | Gold ambient glow |
@@ -195,22 +198,61 @@ classes on the same element. Prefer them over re-deriving the same styles.
 | `.figure-shadow-layer` | Offset character silhouette shadow |
 | `.segment-bar` (+ `.segment`, `.segment.active`, `.segment.jade`) | Segmented progress readout |
 
-### 6.2. Official Genshin UI Icon Registry
+### 6.2. Icon language — artwork pool + typographic marks
 
-All lore and navigation iconography uses the official Genshin Impact UI icons
-registered in [references/UI_ICONS.md](references/UI_ICONS.md) and exported via
-`src/lib/ui-icons.ts` (`GENSHIN_UI_ICONS`, keyed by `GenshinIconKey`). Chrome
-controls (close, chevrons, checkboxes) use Lucide.
+There is exactly one icon language: the official Genshin Impact UI artwork in
+`public/ui-icons/`, registered in `src/lib/ui-icons.ts` (`GENSHIN_UI_ICONS`,
+keyed by `GenshinIconKey`). **No third-party icon library is imported anywhere
+in this repository.**
 
-Navigation icons are declared once in `src/lib/navigation.ts`; the console
-sidebar resolves them through its `iconMap`, and
-`e2e/navigation.test.mjs` fails the build if a registry entry has no icon.
+Three rules cover every case:
+
+1. **Artwork on parchment → a leather plate.** `<AssetIcon icon="…" size tone="plate" />`
+   renders the pool art on `.codex-icon-plate` (sm 28px / md 36px / lg 44px).
+   Plate glyphs are **never filtered** — the pool mixes mono-white and colour
+   art, and both read on leather. This is the default for list rows, page
+   headers, panel titles and stat cards.
+2. **Mono art on parchment → ink.** `tone="ink"` renders the bare glyph with
+   `.codex-icon-ink`. Only for the mono-white silhouettes (`pinDelete`, `map`,
+   `quitGame`, `survey`, `deckList`, `community`, `back`, `elementalSight`).
+   The colour-art keys (`warning`, `performanceMedal`, `paimonMenu`, `domain`)
+   must always use a plate.
+3. **Marks the pool has no honest glyph for → typographic codex marks.**
+   `<CodexGlyph name="…" />` renders `CODEX_GLYPHS` in the display serif:
+   `up ▴`, `down ▾`, `prev ◂`, `next ▸`, `close ✕`, `refresh ↻`, `confirm ✓`,
+   `edit ✎`, `add +`, `open ↗`. Direction, confirmation, dismissal and
+   edit affordances are typographic; an icon library is never the fallback.
+
+Dark fills (`cognac-panel`, `bg-gold-900`, `bg-leather-*`) use `tone="plain"`:
+the unfiltered pool art as-is.
+
+`AssetIcon` and `CodexGlyph` are the only renderers (`src/components/ui/`).
+No other module may import `GENSHIN_UI_ICONS`; `CodexGlyph` text lives in
+`src/lib/ui-icons.ts` beside the pool.
+
+Console navigation icons are declared once in `src/lib/navigation.ts`
+(`DASHBOARD_NAV[].icon` is a `GenshinIconKey`); `e2e/navigation.test.mjs`
+locks every nav icon to a pool key whose file exists on disk, and locks the
+pool itself (unique paths, raster only).
+
+| Console surface | Pool key |
+|---|---|
+| Overview | `list` |
+| Domains | `domain` |
+| Talents | `talents` |
+| Quests | `quests` |
+| Allies | `friends` |
+| Summon Desk | `mail` |
+| Traveler Profile | `character` |
+| Codex Pages | `deckList` |
+| Observatory | `elementalSight` |
+| Settings | `settings` |
 
 | UI Component | Official Genshin UI Icon | Path |
 |---|---|---|
 | **Traveler / Profile** | `Icon Character Aether` | `/ui-icons/Icon_Character_Aether.png` |
 | **Domains / Projects** | `Icon Domain` / `Icon Artifacts` | `/ui-icons/Icon_Domain.png` |
-| **Talents / Skills** | `Icon Talents` | `/ui-icons/Icon_Talents.png` |
+| **Talents / Skills** | `Icon Gathering of Stars` | `/ui-icons/Icon_Gathering_of_Stars.png` |
 | **Crown / Max Mastery** | `Item Crown of Insight` | `/ui-icons/Item_Crown_of_Insight.png` |
 | **Quests / Handbook** | `Icon Adventurer Handbook` / `Icon Quests` | `/ui-icons/Icon_Adventurer_Handbook.png` |
 | **Rewards (Primogem & Mora)**| `Item Primogem` / `Item Mora` | `/ui-icons/Item_Primogem.png` |
@@ -218,6 +260,7 @@ sidebar resolves them through its `iconMap`, and
 | **Dispatch Shrine / Mail** | `Icon Mail` / `Icon Wish` | `/ui-icons/Icon_Mail.png` |
 | **Archive / Codex** | `Icon Archive` | `/ui-icons/Icon_Archive.png` |
 | **Clock / Time** | `Icon Time` | `/ui-icons/Icon_Time.png` |
+| **Skill vision medallions** | `Elements_Flat_White/Element_White_*` | `/elements/Elements_Flat/Elements_Flat_White/` |
 
 
 

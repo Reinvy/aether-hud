@@ -2,10 +2,10 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, Globe, GraduationCap } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { IconBox } from "@/components/ui/icon-box";
+import type { GenshinIconKey } from "@/lib/ui-icons";
 import { RowActions } from "@/components/ui/row-actions";
 
 type ExperienceType = "work" | "education" | "freelance";
@@ -27,10 +27,11 @@ const typeColors: Record<ExperienceType, string> = {
   freelance: "border-jade-400/40 text-jade-ink",
 };
 
-const typeIcons: Record<ExperienceType, React.ElementType> = {
-  work: Briefcase,
-  education: GraduationCap,
-  freelance: Globe,
+/** Quest-log mark per experience type: commission, academy record, commission gift. */
+const typeIcons: Record<ExperienceType, GenshinIconKey> = {
+  work: "quests",
+  education: "handbook",
+  freelance: "wish",
 };
 
 function formatDate(dateStr: string) {
@@ -52,12 +53,12 @@ interface ExperienceCardProps {
  * page.
  *
  * Extracted from experiences-view so the log rows are a self-contained
- * unit: type icon, role/company, type badge, period and row actions all
+ * unit: type glyph, role/company, type badge, period and row actions all
  * render from one ExperienceCardData record. The view just maps the list
  * into cards and owns the edit/delete state.
  */
 export const ExperienceCard = memo(function ExperienceCard({ experience: exp, index = 0, onEdit, onDelete }: ExperienceCardProps) {
-  const TypeIcon = typeIcons[exp.type] || Briefcase;
+  const typeIcon = typeIcons[exp.type] ?? "quests";
 
   return (
     <motion.div
@@ -65,14 +66,12 @@ export const ExperienceCard = memo(function ExperienceCard({ experience: exp, in
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card variant="glass" hover="sweep" className="codex-card codex-radius-card">
+      <Card variant="ledger" hover="sweep" className="codex-radius-card">
         <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
-          <IconBox>
-            <TypeIcon className="h-4 w-4 text-gold-ink" />
-          </IconBox>
+          <AssetIcon icon={typeIcon} size="sm" />
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-serif text-sm font-semibold tracking-wide text-leather-dark group-hover:text-leather-caramel transition-colors duration-200">
+            <p className="truncate font-display text-sm font-semibold tracking-[0.08em] text-leather-dark group-hover:text-leather-caramel transition-colors duration-200">
               {exp.role}
             </p>
             <p className="mt-0.5 truncate font-body text-xs text-leather-muted">
@@ -91,7 +90,7 @@ export const ExperienceCard = memo(function ExperienceCard({ experience: exp, in
           </div>
 
           <div className="hidden w-40 items-center gap-2 md:flex">
-            <span className="font-body text-xs text-leather-muted tabular-nums">
+            <span className="font-body text-xs text-gold-ink tabular-nums">
               {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : "Present"}
             </span>
           </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
-import { AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -53,9 +54,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <div className="relative mx-auto max-w-2xl px-4 text-center">
             <div className="codex-card codex-panel-radius p-8">
               <div className="flex flex-col items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center codex-panel-radius border border-crimson-600/30 bg-crimson-600/8">
-                  <AlertTriangle className="h-6 w-6 text-crimson-600" />
-                </div>
+                <AssetIcon icon="warning" size="md" />
 
                 <div className="space-y-2">
                   <span className="codex-label-gold text-[10px] tracking-[0.2em]">
@@ -82,7 +81,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 )}
 
                 <Button variant="secondary" size="sm" glow="none" onClick={this.handleRetry}>
-                  <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+                  <CodexGlyph name="refresh" className="text-sm" />
                   Try again
                 </Button>
               </div>

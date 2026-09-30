@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { ExternalLink } from "lucide-react";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { IconBox } from "@/components/ui/icon-box";
 import type { ProjectDto } from "@/lib/dto";
 
@@ -35,7 +35,7 @@ export const ProjectRow = memo(function ProjectRow({ project }: ProjectRowProps)
           <p className="truncate font-display text-xs font-semibold tracking-[0.08em] text-leather-dark transition-colors duration-200 group-hover:text-leather-caramel">
             {project.title}
           </p>
-          <p className="truncate font-mono text-[10px] tracking-wide text-leather-muted">
+          <p className="truncate font-body text-[10px] tracking-wide text-leather-muted">
             {project.category}
             {tags ? ` · ${tags}` : ""}
           </p>
@@ -53,7 +53,7 @@ export const ProjectRow = memo(function ProjectRow({ project }: ProjectRowProps)
             aria-label={`Visit ${project.title}`}
             className="hover-scale-sm press-scale codex-focus block p-2"
           >
-            <ExternalLink className="h-3.5 w-3.5 text-leather-muted transition-colors hover:text-leather-caramel" />
+            <CodexGlyph name="open" className="text-sm text-leather-muted transition-colors hover:text-leather-caramel" />
           </a>
         )}
       </div>

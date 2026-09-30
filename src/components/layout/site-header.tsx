@@ -2,14 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 import { PUBLIC_NAV } from "@/lib/navigation";
 import { EASE_CODEX } from "@/lib/motion-variants";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { useActiveSection } from "@/lib/use-active-section";
 import { useMotionPrefs } from "@/components/motion-provider";
 
@@ -51,16 +50,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
           className="flex min-w-0 items-center gap-3 codex-radius-sm codex-focus"
           aria-label={`${siteName} — back to the traveler dossier`}
         >
-          <span className="codex-icon-plate h-11 w-11 shrink-0">
-            <Image
-              src={GENSHIN_UI_ICONS.characterAether}
-              alt=""
-              width={32}
-              height={32}
-              className="codex-icon-on-plate h-6 w-6 object-contain"
-              unoptimized
-            />
-          </span>
+          <AssetIcon icon="characterAether" size="lg" className="shrink-0" />
           <span className="min-w-0">
             <span className="block truncate font-display text-sm font-bold tracking-[0.12em] text-leather-dark">
               {siteName}
@@ -99,7 +89,11 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
             className="press-scale flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus"
           >
-            <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
+            <AssetIcon
+              icon="wish"
+              size="sm"
+              className={cn(animationsEnabled ? "opacity-100" : "opacity-45")}
+            />
           </button>
 
           <Link
@@ -117,7 +111,7 @@ export function SiteHeader({ siteName = APP_NAME }: SiteHeaderProps) {
             aria-label={menuOpen ? "Close section menu" : "Open section menu"}
             className="press-scale flex h-9 w-9 items-center justify-center codex-radius-sm border border-leather-caramel/25 text-leather-muted transition-colors hover:text-leather-dark codex-focus lg:hidden"
           >
-            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {menuOpen ? <CodexGlyph name="close" /> : <AssetIcon icon="paimonMenu" size="sm" />}
           </button>
         </div>
       </div>

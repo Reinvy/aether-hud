@@ -2,11 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/features/section-heading";
 import { ProjectCard } from "@/components/features/project-card";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import type { ProjectDto, SectionDto } from "@/lib/dto";
 
 interface ProjectsSectionProps {
@@ -54,18 +53,7 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
         {/* Section Header */}
         <SectionHeading
           badge="Artifact Archive // Domains of Forgery"
-          icon={
-            <div className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.domain}
-                alt="Domain Icon"
-                width={16}
-                height={16}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-                unoptimized
-              />
-            </div>
-          }
+          icon={<AssetIcon icon="domain" size="sm" className="shrink-0" />}
           title={sectionTitle || "Domains &"}
           highlight={sectionTitle ? undefined : "Artifacts"}
           subtitle={
@@ -123,16 +111,7 @@ export function ProjectsSection({ projects, section }: ProjectsSectionProps) {
           {filteredProjects.length === 0 && (
             <div className="col-span-full">
               <div className="codex-card codex-radius-card codex-lift mx-auto max-w-md px-8 py-10 text-center">
-                <div className="codex-icon-plate mx-auto mb-4 h-11 w-11">
-                  <Image
-                    src={GENSHIN_UI_ICONS.archive}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="codex-icon-on-plate h-6 w-6 object-contain"
-                    unoptimized
-                  />
-                </div>
+                <AssetIcon icon="archive" size="lg" className="mx-auto mb-4" />
                 <h3 className="font-serif text-lg font-bold uppercase tracking-wide text-leather-dark">
                   {archiveIsEmpty ? "The archive awaits its first artifact" : "No artifacts in this domain"}
                 </h3>

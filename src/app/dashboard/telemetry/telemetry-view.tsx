@@ -1,9 +1,10 @@
 "use client";
 
-import { Gauge, Database, MemoryStick, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useData } from "@/lib/use-data";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { StatCard } from "@/components/ui/stat-card";
 import { WidgetError } from "@/components/ui/widget-error";
 import { CodexLoader } from "@/components/ui/codex-loader";
@@ -44,9 +45,9 @@ function SourceBadge({ source }: { source: "database" | "memory" }) {
       )}
     >
       {isDb ? (
-        <Database className="h-3.5 w-3.5" aria-hidden="true" />
+        <AssetIcon icon="memoryCore" tone="ink" size="sm" />
       ) : (
-        <MemoryStick className="h-3.5 w-3.5" aria-hidden="true" />
+        <AssetIcon icon="archive" tone="ink" size="sm" />
       )}
       {isDb ? "Kept in the database" : "Held in memory for this session"}
     </span>
@@ -57,9 +58,9 @@ export function TelemetryView() {
   const { data, loading, error, refetch } = useData<TelemetrySummary>("/api/telemetry/summary");
 
   return (
-    <div className="space-y-6">
+    <div className="codex-grid-bg min-h-full space-y-6 p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={Gauge}
+        icon="elementalSight"
         eyebrow="ASTRAL OBSERVATORY"
         title="Performance Telemetry"
         titleHighlight="Telemetry"
@@ -71,9 +72,9 @@ export function TelemetryView() {
             disabled={loading}
             className="shrink-0"
           >
-            <RefreshCw
-              className={cn("h-3.5 w-3.5", loading && "elemental-rotate")}
-              aria-hidden="true"
+            <CodexGlyph
+              name="refresh"
+              className={cn("text-base", loading && "elemental-rotate")}
             />
             Refresh
           </Button>
@@ -100,19 +101,19 @@ export function TelemetryView() {
               <StatCard
                 label="SAMPLES RECORDED"
                 value={String(data.totalRecorded)}
-                icon={Database}
+                icon="list"
                 tone="gold"
               />
               <StatCard
                 label="METRICS TRACKED"
                 value={String(Object.keys(data.metrics).length)}
-                icon={Gauge}
+                icon="performanceMedal"
                 tone="jade"
               />
               <StatCard
                 label="STORED IN"
                 value={data.source === "database" ? "Database" : "Memory"}
-                icon={MemoryStick}
+                icon="memoryCore"
                 tone={data.source === "database" ? "jade" : "gold"}
               />
             </motion.div>
@@ -134,7 +135,7 @@ export function TelemetryView() {
                 variants={fadeInUpItem}
                 className="codex-panel codex-panel-radius flex flex-col items-center gap-3 p-10 text-center"
               >
-                <Gauge className="h-6 w-6 text-leather-caramel" aria-hidden="true" />
+                <AssetIcon icon="elementalSight" size="md" />
                 <span className="codex-label">No telemetry captured yet</span>
                 <p className="max-w-md text-xs font-body text-leather-muted">
                   Samples arrive from real browsers through the Web Vitals reporter. Open the

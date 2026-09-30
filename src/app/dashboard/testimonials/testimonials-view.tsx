@@ -4,9 +4,10 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { MessageCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionError } from "@/components/ui/action-error";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
@@ -217,13 +218,13 @@ export default function DashboardTestimonials() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={MessageCircle}
+        icon="friends"
         eyebrow="COMPANION LETTERS"
         title="Manage allies"
         titleHighlight="allies"
         actions={
           <Button variant="primary" size="sm" onClick={openNew}>
-            <Plus className="h-4 w-4" />
+            <CodexGlyph name="add" />
             New testimonial
           </Button>
         }
@@ -244,7 +245,7 @@ export default function DashboardTestimonials() {
         selectionCount={selected.size}
         bulkActions={
           <Button variant="danger" size="sm" onClick={requestBulkDelete}>
-            <Trash2 className="h-3.5 w-3.5" />
+            <AssetIcon icon="pinDelete" tone="ink" size="sm" />
             Delete selected
           </Button>
         }
@@ -266,7 +267,7 @@ export default function DashboardTestimonials() {
           >
             {pageItems.length === 0 ? (
               <EmptyState
-                icon={<MessageCircle className="h-5 w-5" />}
+                icon="friends"
                 title={emptyArchive ? "No testimonials yet" : "No matches"}
                 message={
                   emptyArchive
@@ -277,7 +278,7 @@ export default function DashboardTestimonials() {
                 action={
                   emptyArchive ? (
                     <Button variant="primary" size="sm" onClick={openNew}>
-                      <Plus className="h-4 w-4" />
+                      <CodexGlyph name="add" />
                       New testimonial
                     </Button>
                   ) : undefined

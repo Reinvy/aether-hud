@@ -1,28 +1,24 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { Sparkles } from "lucide-react";
-import { skillIcons } from "@/lib/skill-icons";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { ElementPlate } from "@/components/ui/element-plate";
 import { cn } from "@/lib/utils";
 
 interface SkillBarProps {
   name: string;
   /** 0-100 */
   level: number;
-  icon: string;
   category: string;
   segments?: number;
 }
 
 /**
- * SkillBar — one talent row: discipline icon, talent name and its segment bar.
+ * SkillBar — one talent row: vision medallion, talent name and its segment bar.
  *
- * The vision medallion for the row's category is rendered by the section that
- * groups the talents, so this row stays a single self-contained record.
+ * The medallion is the element the row's category grants, so the row reads
+ * the same discipline language the console uses for the talent matrix.
  */
-export const SkillBar = memo(function SkillBar({ name, level, icon, category, segments = 10 }: SkillBarProps) {
-  const Icon = skillIcons[icon] || Sparkles;
+export const SkillBar = memo(function SkillBar({ name, level, category, segments = 10 }: SkillBarProps) {
   const talentLevel = Math.max(1, Math.min(10, Math.round(level / 10)));
   const isCrowned = talentLevel === 10;
   const activeSegments = Math.round((level / 100) * segments);
@@ -31,9 +27,7 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
     <div className="group space-y-2.5 p-3.5 codex-card codex-radius-card codex-lift transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="hover-scale-sm w-8 h-8 rounded-full bg-leather-caramel/15 border border-leather-caramel/35 flex items-center justify-center p-1.5 shadow-inner">
-            <Icon className="h-4 w-4 text-leather-caramel transition-transform group-hover:scale-110" />
-          </div>
+          <ElementPlate category={category} size="sm" />
           <div>
             <span className="font-serif text-xs tracking-wide text-leather-dark font-bold group-hover:text-leather-caramel transition-colors block">
               {name}
@@ -53,16 +47,7 @@ export const SkillBar = memo(function SkillBar({ name, level, icon, category, se
             )}
           >
             {isCrowned && (
-              <div className="codex-icon-plate h-7 w-7 shrink-0">
-                <Image
-                  src={GENSHIN_UI_ICONS.crown}
-                  alt="Crown of Insight"
-                  width={16}
-                  height={16}
-                  className="codex-icon-on-plate h-4 w-4 object-contain"
-                  unoptimized
-                />
-              </div>
+              <AssetIcon icon="crown" tone="plain" size="sm" className="shrink-0" />
             )}
             <span>{isCrowned ? "Crowned Lv. 10" : `Lv. ${talentLevel}`}</span>
           </div>

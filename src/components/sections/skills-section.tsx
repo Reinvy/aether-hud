@@ -2,13 +2,13 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { fadeInView } from "@/lib/motion-variants";
 import { SectionHeading } from "@/components/features/section-heading";
 import { SkillBar } from "@/components/features/skill-bar";
-import { getElementByKey, type ElementAsset } from "@/lib/element-assets";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { ElementPlate } from "@/components/ui/element-plate";
+import { elementForSkillCategory, type ElementAsset } from "@/lib/element-assets";
 import type { SectionDto, SkillDto } from "@/lib/dto";
 
 interface SkillsSectionProps {
@@ -17,20 +17,6 @@ interface SkillsSectionProps {
 }
 
 const AUTHORED = { title: "Talents &", highlight: "Constellations" };
-
-/** Elemental vision granted by each talent discipline (unknown → Geo). */
-const ELEMENT_KEY_BY_CATEGORY: Partial<Record<string, string>> = {
-  AI: "electro",
-  Frontend: "anemo",
-  Backend: "hydro",
-  DevOps: "geo",
-  Design: "cryo",
-  Language: "dendro",
-};
-
-function getElementByKeyFromCategory(category: string): ElementAsset {
-  return getElementByKey(ELEMENT_KEY_BY_CATEGORY[category] ?? "geo");
-}
 
 const stagger = {
   initial: { opacity: 0 },
@@ -54,7 +40,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
       } else {
         result.push({
           category: skill.category,
-          element: getElementByKeyFromCategory(skill.category),
+          element: elementForSkillCategory(skill.category),
           skills: [skill],
         });
       }
@@ -76,18 +62,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="Talents & Constellations // Visions"
-          icon={
-            <div className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.talents}
-                alt="Talents Icon"
-                width={16}
-                height={16}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-                unoptimized
-              />
-            </div>
-          }
+          icon={<AssetIcon icon="talents" size="sm" className="shrink-0" />}
           title={sectionTitle || AUTHORED.title}
           highlight={sectionTitle ? undefined : AUTHORED.highlight}
           subtitle={
@@ -100,16 +75,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
         <motion.div className="mt-12 mx-auto max-w-4xl" {...stagger}>
           <div className="codex-card codex-radius-card codex-lift p-6 sm:p-8">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-leather-caramel/20">
-              <div className="codex-icon-plate h-7 w-7 shrink-0">
-                <Image
-                  src={GENSHIN_UI_ICONS.talents}
-                  alt="Talents Tree"
-                  width={20}
-                  height={20}
-                  className="codex-icon-on-plate h-4 w-4 object-contain"
-                  unoptimized
-                />
-              </div>
+              <AssetIcon icon="talents" size="sm" />
               <span className="codex-label-active">
                 Talent Tree // Active Constellations
               </span>
@@ -120,16 +86,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
 
             {skills.length === 0 ? (
               <div className="codex-card codex-radius-card codex-lift border border-leather-caramel/25 bg-parchment-subtle/60 px-6 py-10 text-center">
-                <div className="codex-icon-plate mx-auto mb-3 h-11 w-11">
-                  <Image
-                    src={GENSHIN_UI_ICONS.talents}
-                    alt=""
-                    width={24}
-                    height={24}
-                    className="codex-icon-on-plate h-6 w-6 object-contain"
-                    unoptimized
-                  />
-                </div>
+                <AssetIcon icon="talents" size="lg" className="mx-auto mb-3" />
                 <h3 className="font-serif text-base font-bold uppercase tracking-wide text-leather-dark">
                   No talents attuned yet
                 </h3>
@@ -145,16 +102,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                     {/* Vision granted by this discipline */}
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={cn("vision-badge", `vision-${group.element.key}`)}>
-                        <span className="hover-scale-sm codex-icon-plate h-5 w-5 shrink-0">
-                          <Image
-                            src={group.element.whiteIcon}
-                            alt=""
-                            width={14}
-                            height={14}
-                            className="codex-icon-on-plate h-3 w-3 object-contain"
-                            unoptimized
-                          />
-                        </span>
+                        <ElementPlate category={group.category} size="sm" />
                         {group.element.name}
                       </span>
                       <span className="codex-label">
@@ -178,7 +126,6 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
                           <SkillBar
                             name={skill.name}
                             level={skill.level}
-                            icon={skill.icon}
                             category={skill.category}
                           />
                         </motion.div>
@@ -196,16 +143,7 @@ export function SkillsSection({ skills, section }: SkillsSectionProps) {
           <motion.div className="mt-10 mx-auto max-w-2xl text-center" {...fadeInView}>
             <div className="codex-card codex-radius-card codex-lift p-6">
               <div className="flex items-center justify-center gap-2 mb-3">
-                <div className="codex-icon-plate h-7 w-7 shrink-0">
-                  <Image
-                    src={GENSHIN_UI_ICONS.achievements}
-                    alt="Elemental Resonance"
-                    width={16}
-                    height={16}
-                    className="codex-icon-on-plate h-4 w-4 object-contain"
-                    unoptimized
-                  />
-                </div>
+                <AssetIcon icon="achievements" size="sm" />
                 <span className="codex-label-active">
                   Elemental Resonance // Category Average
                 </span>

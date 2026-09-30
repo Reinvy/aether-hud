@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, Mail, MapPin, Tag, User } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusDot } from "@/components/ui/status-dot";
 
@@ -31,7 +31,7 @@ export function ProfilePreviewCard({ data }: ProfilePreviewCardProps) {
     <Card variant="glass" hover="none">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+          <AssetIcon icon="map" size="sm" />
           <CardTitle>Profile Preview</CardTitle>
         </div>
       </CardHeader>
@@ -39,7 +39,7 @@ export function ProfilePreviewCard({ data }: ProfilePreviewCardProps) {
         <div className="flex flex-wrap items-center gap-6">
           {/* Avatar frame */}
           <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-leather-caramel/30 bg-parchment-subtle">
-            <User className="h-7 w-7 text-leather-caramel/60" aria-hidden="true" />
+            <AssetIcon icon="character" tone="ink" size="lg" />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="font-display text-lg font-bold tracking-[0.08em] text-leather-dark">
@@ -50,18 +50,18 @@ export function ProfilePreviewCard({ data }: ProfilePreviewCardProps) {
             </p>
             <div className="mt-2 flex flex-wrap gap-4">
               {data.location && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
-                  <MapPin className="h-3 w-3" aria-hidden="true" /> {data.location}
+                <span className="flex items-center gap-1 font-display text-[10px] tabular-nums text-leather-muted">
+                  <AssetIcon icon="map" tone="ink" size="sm" /> {data.location}
                 </span>
               )}
               {data.email && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
-                  <Mail className="h-3 w-3" aria-hidden="true" /> {data.email}
+                <span className="flex items-center gap-1 font-display text-[10px] tabular-nums text-leather-muted">
+                  <AssetIcon icon="mail" tone="ink" size="sm" /> {data.email}
                 </span>
               )}
               {data.edition && (
-                <span className="flex items-center gap-1 font-mono text-[10px] text-leather-muted">
-                  <Tag className="h-3 w-3" aria-hidden="true" /> {data.edition}
+                <span className="flex items-center gap-1 font-display text-[10px] tabular-nums text-leather-muted">
+                  <AssetIcon icon="archive" tone="ink" size="sm" /> {data.edition}
                 </span>
               )}
             </div>

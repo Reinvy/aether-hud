@@ -89,3 +89,17 @@ export function getElementByKey(key: string): ElementAsset {
     TEYVAT_ELEMENTS[0]
   );
 }
+
+/** Skill categories grant a vision; unknown categories read as Geo. */
+const ELEMENT_KEY_BY_CATEGORY: Partial<Record<string, string>> = {
+  AI: "electro",
+  Frontend: "anemo",
+  Backend: "hydro",
+  DevOps: "geo",
+  Design: "cryo",
+  Language: "dendro",
+};
+
+export function elementForSkillCategory(category: string): ElementAsset {
+  return getElementByKey(ELEMENT_KEY_BY_CATEGORY[category] ?? "geo");
+}

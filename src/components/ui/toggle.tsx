@@ -73,7 +73,7 @@ export function Toggle({
   return (
     <label htmlFor={id} className={shell}>
       {control}
-      <span className="ml-3 font-mono text-[10px] tracking-wider text-leather-muted">{label}</span>
+      <span className="codex-label ml-3">{label}</span>
     </label>
   );
 }

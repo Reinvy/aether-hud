@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { Save, Settings2 } from "lucide-react";
 import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { useData } from "@/lib/use-data";
@@ -121,7 +121,7 @@ export default function DashboardSettings() {
     return (
       <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
         <DashboardPageHeader
-          icon={Settings2}
+          icon="settings"
           eyebrow="REALM SETTINGS"
           title="Codex Settings"
           titleHighlight="Settings"
@@ -135,13 +135,13 @@ export default function DashboardSettings() {
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
-        icon={Settings2}
+        icon="settings"
         eyebrow="REALM SETTINGS"
         title="Codex Settings"
         titleHighlight="Settings"
         actions={
           <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-            <Save className="h-4 w-4" aria-hidden="true" />
+            <CodexGlyph name="confirm" />
             Save changes
           </Button>
         }
@@ -190,7 +190,7 @@ export default function DashboardSettings() {
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
         <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
+          <CodexGlyph name="confirm" className="text-lg text-gold-ink" />
           <div className="text-left">
             <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Settings ready to save
@@ -200,6 +200,7 @@ export default function DashboardSettings() {
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
+            <CodexGlyph name="confirm" />
             Save settings
           </Button>
         </div>

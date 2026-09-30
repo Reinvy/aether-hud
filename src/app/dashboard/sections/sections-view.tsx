@@ -4,9 +4,9 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import { Blocks, Eye, EyeOff, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionError } from "@/components/ui/action-error";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -257,7 +257,7 @@ export default function DashboardSections() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={Blocks}
+        icon="deckList"
         eyebrow="PAGE CONTROL"
         title="Manage codex pages"
         titleHighlight="codex pages"
@@ -278,15 +278,13 @@ export default function DashboardSections() {
         bulkActions={
           <>
             <Button variant="secondary" size="sm" onClick={() => applyEnabled(true)}>
-              <Eye className="h-3.5 w-3.5" />
               Enable
             </Button>
             <Button variant="secondary" size="sm" onClick={() => applyEnabled(false)}>
-              <EyeOff className="h-3.5 w-3.5" />
               Disable
             </Button>
             <Button variant="danger" size="sm" onClick={requestBulkDelete}>
-              <Trash2 className="h-3.5 w-3.5" />
+              <AssetIcon icon="pinDelete" tone="ink" size="sm" />
               Delete selected
             </Button>
           </>
@@ -312,7 +310,7 @@ export default function DashboardSections() {
         ) : pageItems.length === 0 ? (
           <motion.div {...fadeInUp}>
             <EmptyState
-              icon={<Blocks className="h-5 w-5" />}
+              icon="deckList"
               title={emptyRegistry ? "No pages yet" : "No matches"}
               message={
                 emptyRegistry

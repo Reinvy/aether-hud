@@ -1,5 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { cn } from "@/lib/utils";
+import type { GenshinIconKey } from "@/lib/ui-icons";
 
 type InfoRowTone = "default" | "jade" | "gold" | "danger" | "muted";
 
@@ -18,8 +20,8 @@ interface InfoRowProps extends HTMLAttributes<HTMLDivElement> {
   value?: ReactNode;
   /** Accent color for the value (and icon). */
   tone?: InfoRowTone;
-  /** Optional leading icon (e.g. a 3.5–4 sized Lucide icon). */
-  icon?: ReactNode;
+  /** Optional leading glyph from the artwork pool. */
+  icon?: GenshinIconKey;
   /** Custom right-side content; overrides `value` when present. */
   children?: ReactNode;
 }
@@ -48,10 +50,18 @@ function InfoRow({
       {...props}
     >
       <div className="flex min-w-0 items-center gap-2.5">
-        {icon && <span className={cn("shrink-0", TONE_CLASS[tone])}>{icon}</span>}
-        <span className="min-w-0 truncate font-mono text-xs text-leather-muted">{label}</span>
+        {icon && (
+          <span className={cn("shrink-0", TONE_CLASS[tone])}>
+            <AssetIcon icon={icon} tone="ink" size="sm" />
+          </span>
+        )}
+        <span className="codex-label min-w-0 truncate">{label}</span>
       </div>
-      {children ?? <span className={cn("shrink-0 font-mono text-xs", TONE_CLASS[tone])}>{value}</span>}
+      {children ?? (
+        <span className={cn("shrink-0 font-display tabular-nums text-xs", TONE_CLASS[tone])}>
+          {value}
+        </span>
+      )}
     </div>
   );
 }

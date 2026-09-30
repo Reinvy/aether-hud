@@ -112,7 +112,7 @@ export function TelemetryMetricCard({ name, summary, className }: TelemetryMetri
         <div className="mt-auto space-y-1.5 border-t border-border-subtle pt-3">
           {summary.last ? (
             <>
-              <p className="font-mono text-[10px] text-leather-muted truncate tabular-nums">
+              <p className="font-display text-[10px] text-leather-muted truncate tabular-nums">
                 {summary.last.path}
               </p>
               <p className="text-[10px] font-body text-leather-muted">

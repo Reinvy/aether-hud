@@ -3,12 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion-variants";
-import {
-  Save,
-  User,
-} from "lucide-react";
 import { ActionError } from "@/components/ui/action-error";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { WidgetError } from "@/components/ui/widget-error";
 import { ProfilePreviewCard } from "@/components/features/profile/profile-preview-card";
@@ -85,7 +82,7 @@ export default function DashboardProfile() {
     return (
       <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
         <DashboardPageHeader
-          icon={User}
+          icon="character"
           eyebrow="TRAVELER DOSSIER"
           title="Manage Profile"
           titleHighlight="Profile"
@@ -99,7 +96,7 @@ export default function DashboardProfile() {
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <DashboardPageHeader
-        icon={User}
+        icon="character"
         eyebrow="TRAVELER DOSSIER"
         title="Manage Profile"
         titleHighlight="Profile"
@@ -141,7 +138,7 @@ export default function DashboardProfile() {
       {/* Save bar */}
       <motion.div className="mt-8 text-center" {...fadeInUp}>
         <div className="codex-card codex-radius-card inline-flex items-center gap-4 px-8 py-4">
-          <Save className="h-5 w-5 text-gold-ink" aria-hidden="true" />
+          <CodexGlyph name="confirm" className="text-lg text-gold-ink" />
           <div className="text-left">
             <p className="font-display text-xs font-semibold tracking-wider text-leather-dark">
               Traveler dossier ready to save
@@ -151,6 +148,7 @@ export default function DashboardProfile() {
             </p>
           </div>
           <Button variant="primary" size="md" onClick={handleSave} loading={saving}>
+            <CodexGlyph name="confirm" />
             Save changes
           </Button>
         </div>

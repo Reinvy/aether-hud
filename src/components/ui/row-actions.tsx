@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { cn } from "@/lib/utils";
 
 /**
@@ -38,7 +39,7 @@ export function RowActions({
         aria-label={editLabel}
         title={editLabel}
       >
-        <Pencil className="h-3.5 w-3.5" />
+        <CodexGlyph name="edit" className="text-sm" />
       </Button>
       <Button
         variant="ghost"
@@ -49,7 +50,7 @@ export function RowActions({
         aria-label={deleteLabel}
         title={deleteLabel}
       >
-        <Trash2 className="h-3.5 w-3.5" />
+        <AssetIcon icon="pinDelete" tone="ink" size="sm" />
       </Button>
     </div>
   );

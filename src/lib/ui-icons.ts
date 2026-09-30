@@ -36,6 +36,40 @@ export const GENSHIN_UI_ICONS = {
   abyssalStar: "/ui-icons/Icon_Abyssal_Star.png",
   trainingGuide: "/ui-icons/Icon_Training_Guide.png",
   warning: "/ui-icons/Icon_Warning.png",
+
+  // Console chrome & ledger marks
+  list: "/ui-icons/Icon_List.png",
+  deckList: "/ui-icons/Icon_Deck_List.png",
+  survey: "/ui-icons/Icon_Survey.png",
+  elementalSight: "/ui-icons/Icon_Elemental_Sight.png",
+  pinDelete: "/ui-icons/Icon_Pin_Delete.png",
+  back: "/ui-icons/Icon_Back.png",
+  quitGame: "/ui-icons/Icon_Quit_Game.png",
+  paimonMenu: "/ui-icons/Icon_Paimon_Menu.png",
+  lobby: "/ui-icons/Icon_Lobby.png",
+  memoryCore: "/ui-icons/UI_Memory_Core.png",
+  performanceMedal: "/ui-icons/Icon_Performance_Medal.png",
+  archiveTravelLog: "/ui-icons/Icon_Archive_Travel_Log.png",
+  previewTone: "/ui-icons/Icon_Preview_Tone.png",
 } as const;
 
 export type GenshinIconKey = keyof typeof GENSHIN_UI_ICONS;
+
+/**
+ * Marks the artwork pool has no honest glyph for. Rendered typographically by
+ * `<CodexGlyph>` — a third-party icon library is never an option here.
+ */
+export const CODEX_GLYPHS = {
+  up: "▴",
+  down: "▾",
+  prev: "◂",
+  next: "▸",
+  close: "✕",
+  refresh: "↻",
+  confirm: "✓",
+  edit: "✎",
+  add: "+",
+  open: "↗",
+} as const;
+
+export type CodexGlyphName = keyof typeof CODEX_GLYPHS;

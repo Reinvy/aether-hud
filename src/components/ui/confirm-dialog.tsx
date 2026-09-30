@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { StatusDot } from "@/components/ui/status-dot";
-import { AlertTriangle } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -69,6 +70,7 @@ export function ConfirmDialog({
             onClick={onConfirm}
             loading={saving}
           >
+            <CodexGlyph name="confirm" />
             {confirmLabel}
           </Button>
         </>
@@ -76,8 +78,8 @@ export function ConfirmDialog({
     >
       <div className="space-y-4">
         <div className="flex items-start gap-3">
-          <div className="shrink-0 codex-radius-card border border-crimson-600/30 bg-crimson-600/8 p-2.5">
-            <AlertTriangle aria-hidden="true" className="h-5 w-5 text-crimson-600" />
+          <div className="shrink-0">
+            <AssetIcon icon="warning" size="md" />
           </div>
           <div className="min-w-0 space-y-1.5">
             <span className="codex-label-active text-[9px]">Please confirm</span>

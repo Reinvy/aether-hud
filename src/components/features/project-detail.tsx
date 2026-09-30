@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, GitBranch } from "lucide-react";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { elementForCategory, formatGrade } from "@/lib/project-meta";
 import type { ProjectDto } from "@/lib/dto";
 
@@ -34,7 +34,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           href="/#projects"
           className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider"
         >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          <CodexGlyph name="prev" />
           Back to domains
         </Link>
 
@@ -125,7 +125,6 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     aria-label={`Enter the ${project.title} domain`}
                     className="codex-btn-primary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
-                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     Enter Domain
                   </a>
                 )}
@@ -137,7 +136,6 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     aria-label={`View the ${project.title} source`}
                     className="codex-btn-secondary codex-sheen codex-focus inline-flex items-center gap-2 px-5 py-2.5 font-serif text-[11px] font-bold uppercase tracking-wider transition-all"
                   >
-                    <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                     Forge Lore
                   </a>
                 )}

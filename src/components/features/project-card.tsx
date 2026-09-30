@@ -4,7 +4,7 @@ import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { elementForCategory, resolveRarity } from "@/lib/project-meta";
 import { EASE_CODEX } from "@/lib/motion-variants";
 import type { ProjectDto } from "@/lib/dto";
@@ -156,16 +156,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 aria-label={`Enter Domain ${project.title}`}
                 className="codex-btn-primary codex-sheen codex-focus relative z-10 px-4 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
-                <span className="w-3.5 h-3.5 relative">
-                  <Image
-                    src={GENSHIN_UI_ICONS.domain}
-                    alt=""
-                    width={14}
-                    height={14}
-                    className="codex-icon-ink object-contain"
-                    unoptimized
-                  />
-                </span>
+                <AssetIcon icon="domain" size="sm" />
                 <span>Enter Domain</span>
               </a>
             )}
@@ -177,16 +168,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 aria-label={`View code for ${project.title}`}
                 className="codex-btn-secondary codex-sheen codex-focus relative z-10 px-3.5 py-2 font-serif text-[11px] font-bold tracking-wider uppercase transition-all inline-flex items-center gap-1.5"
               >
-                <span className="codex-icon-plate h-7 w-7 shrink-0">
-                  <Image
-                    src={GENSHIN_UI_ICONS.trainingGuide}
-                    alt=""
-                    width={16}
-                    height={16}
-                    className="codex-icon-on-plate h-4 w-4 object-contain"
-                    unoptimized
-                  />
-                </span>
+                <AssetIcon icon="trainingGuide" size="sm" />
                 <span>Forge Lore</span>
               </a>
             )}

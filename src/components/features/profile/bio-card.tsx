@@ -1,6 +1,6 @@
 "use client";
 
-import { ScrollText } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -20,7 +20,7 @@ export function BioCard({ value, onChange }: BioCardProps) {
     <Card variant="glass" hover="none" className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <ScrollText className="h-4 w-4 text-gold-ink" aria-hidden="true" />
+          <AssetIcon icon="archive" size="sm" />
           <CardTitle>Biography</CardTitle>
         </div>
       </CardHeader>

@@ -2,9 +2,9 @@
 
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Badge } from "@/components/ui/badge";
-import { IconBox } from "@/components/ui/icon-box";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { IconButton } from "@/components/ui/icon-button";
 import { RowActions } from "@/components/ui/row-actions";
 import { cn } from "@/lib/utils";
@@ -76,7 +76,7 @@ export const SectionRow = memo(function SectionRow({
       {/* Order */}
       <td className="px-4 py-4">
         <div className="flex items-center gap-1">
-          <span className="font-mono text-[11px] tabular-nums text-leather-muted">
+          <span className="font-display text-[11px] tabular-nums text-leather-muted">
             {String(section.order).padStart(2, "0")}
           </span>
           <IconButton
@@ -85,7 +85,7 @@ export const SectionRow = memo(function SectionRow({
             className="disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => onMove(section, -1)}
           >
-            <ChevronUp className="h-3.5 w-3.5" />
+            <CodexGlyph name="up" />
           </IconButton>
           <IconButton
             label={`Move ${section.title} down`}
@@ -93,23 +93,19 @@ export const SectionRow = memo(function SectionRow({
             className="disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => onMove(section, 1)}
           >
-            <ChevronDown className="h-3.5 w-3.5" />
+            <CodexGlyph name="down" />
           </IconButton>
         </div>
       </td>
       {/* Title */}
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <IconBox>
-            <span className="font-mono text-[10px] text-gold-ink">
-              {String(section.order + 1).padStart(2, "0")}
-            </span>
-          </IconBox>
+          <AssetIcon icon="deckList" tone="ink" size="sm" />
           <div>
-            <p className="font-mono text-xs font-medium tracking-wider text-leather-dark">
+            <p className="font-display text-xs font-semibold tracking-[0.08em] text-leather-dark">
               {section.title}
             </p>
-            <p className="font-mono text-[9px] tracking-wider text-leather-muted">
+            <p className="codex-label">
               {section.key}
             </p>
           </div>
@@ -123,7 +119,7 @@ export const SectionRow = memo(function SectionRow({
       </td>
       {/* Subtitle */}
       <td className="px-4 py-4 hidden sm:table-cell">
-        <span className="font-mono text-[10px] text-leather-muted">
+        <span className="font-body text-[10px] text-leather-muted">
           {section.subtitle || "—"}
         </span>
       </td>
@@ -135,23 +131,13 @@ export const SectionRow = memo(function SectionRow({
           aria-pressed={section.enabled}
           aria-label={`${section.enabled ? "Hide" : "Show"} ${section.title}`}
           className={cn(
-            "inline-flex items-center gap-1.5 codex-btn px-2.5 py-1 text-[10px] font-mono tracking-wider transition-all hover-scale-sm press-scale codex-focus",
+            "inline-flex items-center gap-1.5 codex-btn px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] transition-all hover-scale-sm press-scale codex-focus",
             section.enabled
               ? "bg-jade-400/10 text-jade-ink hover:bg-jade-400/20"
               : "bg-crimson-600/8 text-crimson-600 hover:bg-crimson-600/8"
           )}
         >
-          {section.enabled ? (
-            <>
-              <Eye className="h-3 w-3" />
-              ACTIVE
-            </>
-          ) : (
-            <>
-              <EyeOff className="h-3 w-3" />
-              HIDDEN
-            </>
-          )}
+          {section.enabled ? "Active" : "Hidden"}
         </button>
       </td>
       {/* Actions */}

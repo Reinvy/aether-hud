@@ -3,14 +3,15 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Boxes, Plus, Trash2 } from "lucide-react";
 import { ApiError, apiRequest } from "@/lib/api-client";
 import { fadeInUp } from "@/lib/motion-variants";
 import { planReorder } from "@/lib/reorder";
 import { useData } from "@/lib/use-data";
 import { useListControls } from "@/lib/use-list-controls";
 import { ActionError } from "@/components/ui/action-error";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 import { CodexLoader } from "@/components/ui/codex-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -201,13 +202,13 @@ export default function DashboardProjects() {
   return (
     <div className="codex-grid-bg min-h-full p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
-        icon={Boxes}
+        icon="domain"
         eyebrow="DOMAIN ARCHIVE // ARTIFACTS"
         title="Manage domains"
         titleHighlight="domains"
         actions={
           <Button variant="primary" size="sm" onClick={openNew}>
-            <Plus className="h-4 w-4" />
+            <CodexGlyph name="add" />
             New domain
           </Button>
         }
@@ -231,7 +232,7 @@ export default function DashboardProjects() {
             selectionCount={list.selected.size}
             bulkActions={
               <Button variant="danger" size="sm" onClick={requestBulkDelete}>
-                <Trash2 className="h-3.5 w-3.5" />
+                <AssetIcon icon="pinDelete" tone="ink" size="sm" />
                 Delete selected
               </Button>
             }
@@ -256,7 +257,7 @@ export default function DashboardProjects() {
 
           {list.filteredCount === 0 ? (
             <EmptyState
-              icon={<Boxes className="h-5 w-5" />}
+              icon="domain"
               title={list.query ? "No domains matches this search" : "No domains yet"}
               message={
                 list.query
@@ -266,7 +267,7 @@ export default function DashboardProjects() {
               action={
                 !list.query ? (
                   <Button variant="primary" size="sm" onClick={openNew}>
-                    <Plus className="h-4 w-4" />
+                    <CodexGlyph name="add" />
                     New domain
                   </Button>
                 ) : undefined

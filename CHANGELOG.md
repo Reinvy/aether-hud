@@ -4,6 +4,37 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2026-09-30] — C6 Console Redesign & Single Icon Language
+
+One icon language for the whole repo: the artwork pool in `public/ui-icons/`, plus
+typographic marks for the roles the pool has no glyph for. `lucide-react` and the
+terminal typeface are gone.
+
+### Icon foundation
+- **`src/lib/ui-icons.ts`** — 13 new pool keys (`list`, `deckList`, `survey`, `elementalSight`, `pinDelete`, `back`, `quitGame`, `paimonMenu`, `lobby`, `memoryCore`, `performanceMedal`, `archiveTravelLog`, `previewTone`) and the new `CODEX_GLYPHS` table (`▴ ▾ ◂ ▸ ✕ ↻ ✓ ✎ + ↗`) with `CodexGlyphName`.
+- **`src/components/ui/asset-icon.tsx`** (new) — the only renderer of pool art: `tone="plate"` (leather medallion, never filtered), `tone="ink"` (mono silhouette on parchment), `tone="plain"` (dark fills).
+- **`src/components/ui/codex-glyph.tsx`** (new) — typographic marks; **`.codex-glyph`** added to the class registry.
+- **`src/components/ui/element-plate.tsx`** (new) + `elementForSkillCategory()` in `src/lib/element-assets.ts` — a skill's vision medallion; the local category→element map in `skills-section.tsx` is gone.
+
+### Console
+- `DASHBOARD_NAV[].icon` is now typed `GenshinIconKey`; the sidebar's string-keyed lucide `iconMap` (and its silent `Activity` fallback) is deleted; nav items, drawer close, collapse, logout and dossier links render pool art / glyphs.
+- All 10 console views rebuilt on the shared shell (`codex-grid-bg` page frame → dossier `DashboardPageHeader` with a closing hairline → toolbar → ledger rows): `Card variant="ledger"` replaces the four nested glass+card double surfaces, `StatCard`/`EmptyState`/`WidgetError`/`InfoRow` take `GenshinIconKey`, every create/save button carries `✓`/`+`, every destructive control carries the `pinDelete` silhouette.
+- Landing, `/projects/[id]`, login, 404/500 error surfaces and the session gate converted to `AssetIcon`; 20-key social icon registries collapsed to one channel mark (`community`); the skill/social forms no longer expose a per-record icon column.
+- Pagination, selects, modals, row actions, confirm dialogs and the toolbar search mark use `CodexGlyph` / pool art; every `font-mono` (36 occurrences, 13 files) rewritten on the codex scale.
+- The `JetBrains_Mono` loader, the `--font-mono` token and the `.font-mono` rule are removed; `.codex-badge` is now sans.
+
+### Tests & docs
+- `e2e/navigation.test.mjs` — TEST 8 is now behavioural (console vs public channel sets must match, the landing must render the collapsed set and disclose the full roster); TEST 10 locks every `DASHBOARD_NAV` icon to a pool key whose asset exists on disk; new TEST 10b sweeps the whole pool (paths under `/ui-icons/`, raster only, files present, paths unique).
+- `DESIGNS.md` §4.1–§6.2 rewritten (parchment-only tokens, one typeface system, the three icon rules + the console nav table); `AGENTS.md` §2/§3/§4.6 updated; `README.md` design-system claims corrected.
+- `lucide-react` removed from `package.json` and the lockfile.
+
+### Verified
+- `npx tsc --noEmit` 0 errors; `npx eslint src/` 0 problems; `npm run build` clean; `node e2e/navigation.test.mjs` 418/418; `node e2e/run-tests.mjs` 93/93.
+- Browser sweep over `/`, `/login`, all 10 console pages, `/projects/proj-01`, unknown route at 1440×900 and 390×844: 0 broken assets, every plate ≥16×16, no colour-emoji glyph fallback, contrast audit 0 failures (4.5:1 text / 3:1 icons).
+- Interaction: wrong then correct password, create + destructive DELETE surfaces the static-mode 503 message, Escape/backdrop close, motion toggle drives `no-animations`, mobile drawer traps focus, locks scroll and restores it on Escape.
+
+---
+
 ## [2026-08-17] — C5 Performance & Code Maintenance
 
 ### Lint gate

@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 
 interface FormModalProps {
   open: boolean;
@@ -66,6 +67,7 @@ export function FormModal({
             onClick={onClose}
             disabled={saving}
           >
+            <CodexGlyph name="prev" />
             Cancel
           </Button>
           <Button
@@ -75,6 +77,7 @@ export function FormModal({
             size="sm"
             loading={saving}
           >
+            <CodexGlyph name="confirm" />
             {saveLabel}
           </Button>
         </>

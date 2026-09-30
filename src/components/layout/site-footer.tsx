@@ -1,9 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowUp } from "lucide-react";
 import { APP_NAME, PORTFOLIO_CONFIG } from "@/lib/constants";
 import { PUBLIC_NAV } from "@/lib/navigation";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
+import { AssetIcon } from "@/components/ui/asset-icon";
+import { CodexGlyph } from "@/components/ui/codex-glyph";
 
 interface SiteFooterProps {
   siteName?: string;
@@ -33,16 +32,7 @@ export function SiteFooter({
       <div className="mx-auto max-w-7xl px-4 pt-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="flex flex-col items-center gap-6 lg:flex-row lg:justify-between">
           <div className="flex items-center gap-3">
-            <span className="codex-icon-plate h-7 w-7 shrink-0">
-              <Image
-                src={GENSHIN_UI_ICONS.archive}
-                alt=""
-                width={20}
-                height={20}
-                className="codex-icon-on-plate h-4 w-4 object-contain"
-                unoptimized
-              />
-            </span>
+            <AssetIcon icon="archive" size="sm" className="shrink-0" />
             <span className="font-display text-xs font-bold uppercase tracking-[0.2em] text-leather-dark">
               {siteName}
             </span>
@@ -76,7 +66,7 @@ export function SiteFooter({
               aria-label="Scroll back to the top of the dossier"
               className="inline-flex items-center gap-1.5 codex-radius-sm border border-leather-caramel/25 px-3 py-1.5 text-xs font-semibold text-leather-muted transition-colors hover:text-leather-dark codex-focus"
             >
-              <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+              <CodexGlyph name="up" className="text-sm" />
               Back to top
             </a>
           </div>

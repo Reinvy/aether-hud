@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { cn } from "@/lib/utils";
 
 interface ActionErrorProps {
@@ -21,11 +21,12 @@ export function ActionError({ message, className }: ActionErrorProps) {
     <div
       role="alert"
       className={cn(
-        "flex items-start gap-3 codex-btn border border-crimson-600/30 bg-crimson-600/8 px-3 py-2",
+        "flex items-center gap-3 codex-btn border border-crimson-600/30 bg-crimson-600/8 px-3 py-2",
         className
       )}
     >
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-crimson-600" aria-hidden="true" />
+      {/* `warning` is colour art, so it renders on a plate, never as ink. */}
+      <AssetIcon icon="warning" size="sm" />
       <p className="font-body text-xs text-crimson-600">{message}</p>
     </div>
   );

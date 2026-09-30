@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { GENSHIN_UI_ICONS } from "@/lib/ui-icons";
 import { PUBLIC_NAV } from "@/lib/navigation";
+import { AssetIcon } from "@/components/ui/asset-icon";
 import { useActiveSection } from "@/lib/use-active-section";
 import { useMotionPrefs } from "@/components/motion-provider";
 
@@ -41,16 +39,7 @@ export function MobileNavDock() {
                   : "hover:bg-leather-caramel/10"
               )}
             >
-              <span className="codex-icon-plate h-7 w-7">
-                <Image
-                  src={GENSHIN_UI_ICONS[item.icon]}
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="codex-icon-on-plate h-4 w-4 object-contain transition-transform"
-                  unoptimized
-                />
-              </span>
+              <AssetIcon icon={item.icon} size="sm" />
             </a>
           );
         })}
@@ -64,7 +53,11 @@ export function MobileNavDock() {
           aria-label={animationsEnabled ? "Disable motion effects" : "Enable motion effects"}
           className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 p-1.5 text-leather-dark transition-transform hover:scale-105 codex-focus"
         >
-          <Sparkles className={cn("h-4 w-4", animationsEnabled ? "opacity-100" : "opacity-45")} aria-hidden="true" />
+          <AssetIcon
+            icon="wish"
+            size="sm"
+            className={cn(animationsEnabled ? "opacity-100" : "opacity-45")}
+          />
         </button>
 
         <Link
@@ -72,16 +65,7 @@ export function MobileNavDock() {
           aria-label="Codex Console"
           className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full bg-leather-caramel/10 transition-transform hover:scale-105 codex-focus"
         >
-          <span className="codex-icon-plate h-7 w-7">
-            <Image
-              src={GENSHIN_UI_ICONS.archive}
-              alt=""
-              width={16}
-              height={16}
-              className="codex-icon-on-plate h-4 w-4 object-contain"
-              unoptimized
-            />
-          </span>
+          <AssetIcon icon="archive" size="sm" />
         </Link>
       </div>
     </nav>
